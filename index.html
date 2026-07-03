@@ -3,255 +3,259 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Daily AI · 入口</title>
+<title>Daily AI · 每日 AI 简报</title>
 <style>
   :root {
     --bg: #0b0d10;
+    --bg-2: #0e1116;
     --card: #14181d;
     --border: #232830;
+    --border-2: #2d343d;
     --text: #e6e8eb;
     --muted: #8b929b;
+    --muted-2: #5e6770;
     --accent: #7ee787;
     --accent-2: #79c0ff;
-    --warn: #d29922;
+    --accent-3: #d2a8ff;
+    --gradient: linear-gradient(135deg, #7ee787 0%, #79c0ff 60%, #d2a8ff 100%);
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
     background: var(--bg);
     color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     line-height: 1.6;
     min-height: 100vh;
   }
-  .container { max-width: 880px; margin: 0 auto; padding: 56px 24px 96px; }
-  .hero { text-align: center; padding: 16px 0 40px; }
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
+
+  /* 背景网格 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(126,231,135,0.06), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(121,192,255,0.06), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(210,168,255,0.04), transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 28px 96px;
+    text-align: center;
+  }
+
+  .brand-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
     border: 1px solid var(--border);
     border-radius: 999px;
     font-size: 12px;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 56px;
+    backdrop-filter: blur(8px);
+    background: rgba(20,24,29,0.6);
   }
-  .badge.live {
-    border-color: rgba(126, 231, 135, 0.4);
-    color: var(--accent);
-  }
-  .badge.live::before {
-    content: '';
-    display: inline-block;
-    width: 6px; height: 6px;
+  .brand-dot {
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--accent);
-    margin-right: 6px;
-    animation: pulse 2s infinite;
+    animation: pulse 2.4s ease-in-out infinite;
+    box-shadow: 0 0 0 4px rgba(126,231,135,0.18);
   }
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(1.18); }
   }
+
   h1 {
-    font-size: 38px;
-    margin: 8px 0;
-    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    font-size: clamp(48px, 9vw, 84px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    background: var(--gradient);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    letter-spacing: -1px;
+    margin-bottom: 18px;
+    animation: fadeUp 0.7s ease-out;
   }
-  .subtitle { color: var(--muted); font-size: 15px; margin-top: 8px; }
-  .url-bar {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin: 24px auto;
-    max-width: 640px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: ui-monospace, "SFMono-Regular", monospace;
-    font-size: 13px;
-    color: var(--accent-2);
-    overflow-x: auto;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .url-bar:hover { border-color: var(--accent); }
-  .url-bar::before {
-    content: '🔗';
-    flex-shrink: 0;
-  }
-  .url-bar .copy-hint {
-    margin-left: auto;
+  .slogan {
+    font-size: clamp(16px, 2.4vw, 19px);
     color: var(--muted);
-    font-size: 12px;
-    flex-shrink: 0;
+    max-width: 560px;
+    margin: 0 auto 64px;
+    animation: fadeUp 0.8s ease-out 0.1s backwards;
   }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 32px;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s ease-out 0.25s backwards;
   }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    transition: all 0.15s;
+    border-radius: 14px;
+    padding: 22px 24px;
+    text-align: left;
+    transition: all 0.2s ease;
     text-decoration: none;
     color: inherit;
     display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    background: var(--gradient) border-box;
+    -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
   }
   .card:hover {
-    border-color: var(--accent);
     transform: translateY(-2px);
+    border-color: var(--border-2);
   }
+  .card:hover::after { opacity: 0.6; }
   .card-icon {
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: 22px;
+    margin-bottom: 12px;
+    display: block;
   }
   .card-title {
     font-size: 16px;
     font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .card-desc {
-    color: var(--muted);
     font-size: 13px;
-    margin-bottom: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
   }
   .card-link {
-    color: var(--accent-2);
+    font-family: ui-monospace, "SFMono-Regular", monospace;
     font-size: 12px;
-    font-family: ui-monospace, monospace;
+    color: var(--accent-2);
     word-break: break-all;
+    display: block;
   }
-  .card-meta {
+  .card-tag {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: rgba(126, 231, 135, 0.1);
-    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
     font-size: 11px;
     margin-top: 12px;
   }
-  .card-meta.soon {
-    background: rgba(210, 153, 34, 0.1);
-    color: var(--warn);
+  .tag-ok { background: rgba(126,231,135,0.12); color: var(--accent); }
+  .tag-pending { background: rgba(210,153,34,0.12); color: #e3b341; }
+
+  .signature {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted-2);
+    font-size: 13px;
+    animation: fadeUp 0.8s ease-out 0.4s backwards;
   }
-  .info {
-    background: rgba(47, 129, 247, 0.08);
-    border-left: 3px solid #2f81f7;
-    padding: 14px 18px;
-    border-radius: 4px;
-    margin: 24px 0;
-    font-size: 14px;
+  .signature strong { color: var(--muted); font-weight: 500; }
+  .signature a {
+    color: var(--accent-2);
+    text-decoration: none;
+    transition: color 0.15s;
   }
-  .info strong { color: var(--accent-2); }
+  .signature a:hover { color: var(--accent); }
+  .signature .sep { margin: 0 10px; color: var(--muted-2); }
+
   code {
     background: rgba(255,255,255,0.06);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: ui-monospace, monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--accent-2);
-  }
-  .footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 56px;
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <div class="badge live">在线 · 国内 CDN 加速</div>
-      <h1>Daily AI · 入口</h1>
-      <p class="subtitle">每日 AI 简报与示例的固定访问地址</p>
+  <div class="wrap">
+    <div class="brand-row">
+      <span class="brand-dot"></span>
+      <span>Daily AI · 在线 · CDN 加速</span>
     </div>
 
-    <div class="url-bar" onclick="copyURL(this)" title="点击复制">
-      <span class="url-text">https://cdn.jsdelivr.net/gh/eeeric-code/daily-ai@main/index.html</span>
-      <span class="copy-hint">点我复制</span>
-    </div>
-
-    <div class="info">
-      📌 <strong>收藏这个 URL</strong>，所有每日简报和示例都从这一个入口分发。
-      每次 Mavis 推送新内容后，刷新就能看到最新版本。
-    </div>
+    <h1>AI Daily</h1>
+    <p class="slogan">
+      每天一封，覆盖全球 AI 学术 + 产业的真实动态。<br/>
+      由 Mavis 自动整理与分发。
+    </p>
 
     <div class="grid">
       <a class="card" href="./example/" target="_blank">
-        <div class="card-icon">🧪</div>
+        <span class="card-icon">🧪</span>
         <div class="card-title">工作流验证示例</div>
-        <div class="card-desc">第一次推送的演示页面，验证了"git push → jsdelivr CDN → 浏览器访问"完整链路。</div>
-        <div class="card-link">/example/index.html</div>
-        <div class="card-meta">✓ 可访问</div>
+        <div class="card-desc">第一次推送的演示页面，看一眼让你安心。</div>
+        <code class="card-link">/example/index.html</code>
+        <span class="card-tag tag-ok">可访问</span>
       </a>
 
       <a class="card" href="./ai-daily/" target="_blank">
-        <div class="card-icon">📰</div>
+        <span class="card-icon">📰</span>
         <div class="card-title">每日 AI 简报</div>
-        <div class="card-desc">每天 9:00 由 Mavis cron 任务自动生成 + 推送。覆盖学术、产业、资本、监管。</div>
-        <div class="card-link">/ai-daily/index.html</div>
-        <div class="card-meta soon">⏳ 等待首次推送</div>
-      </a>
-
-      <a class="card" href="https://github.com/eeeric-code/daily-ai" target="_blank">
-        <div class="card-icon">📦</div>
-        <div class="card-title">GitHub 仓库</div>
-        <div class="card-desc">所有页面文件的源仓库，查看 commit 历史、版本、回滚。</div>
-        <div class="card-link">github.com/eeeric-code/daily-ai</div>
-        <div class="card-meta">✓ 可访问</div>
+        <div class="card-desc">每天 9:00 自动推送 · 学术 + 产业双视角。</div>
+        <code class="card-link">/ai-daily/index.html</code>
+        <span class="card-tag tag-pending">待首次推送</span>
       </a>
     </div>
 
-    <div class="info">
-      🛠️ <strong>工作流说明</strong>：Mavis 通过 GitHub Contents API 把 HTML 推到这个 repo
-      （<code>eeeric-code/daily-ai</code>），jsdelivr CDN 自动同步并全球分发。
-      URL 永久固定，除非你改 repo 名。<br/>
-      <br/>
-      💡 <strong>国内访问说明</strong>：用 jsdelivr CDN（<code>@main</code> 分支），
-      国内走的是网宿/蓝汛 CDN 节点，速度比 GitHub Pages 快 5-10 倍。
+    <div class="signature">
+      <strong>访问地址</strong>
+      <a href="https://cdn.jsdelivr.net/gh/eeeric-code/daily-ai@main/index.html" target="_blank">
+        cdn.jsdelivr.net/gh/eeeric-code/daily-ai@main/index.html
+      </a>
+      <span class="sep">·</span>
+      <a href="https://github.com/eeeric-code/daily-ai" target="_blank">GitHub</a>
+      <span class="sep">·</span>
+      <span id="lastUpdate">—</span>
     </div>
-
-    <p class="footer">
-      <span style="color: var(--accent);">●</span> Powered by Mavis × jsdelivr CDN<br/>
-      上次更新：<span id="lastUpdate">—</span>
-    </p>
   </div>
 
 <script>
-  // 写入最后更新时间（从 GitHub API 拿最新 commit）
+  // 从 GitHub API 拉最后更新时间
   fetch('https://api.github.com/repos/eeeric-code/daily-ai/commits?per_page=1')
     .then(r => r.json())
     .then(d => {
       if (Array.isArray(d) && d[0]) {
         const ts = new Date(d[0].commit.author.date);
-        document.getElementById('lastUpdate').textContent = ts.toLocaleString('zh-CN');
+        document.getElementById('lastUpdate').textContent =
+          '更新于 ' + ts.toLocaleString('zh-CN', { hour12: false });
       }
     })
     .catch(() => {});
-
-  // 点击 url bar 复制
-  function copyURL(el) {
-    const text = el.querySelector('.url-text').innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      const hint = el.querySelector('.copy-hint');
-      const orig = hint.innerText;
-      hint.innerText = '✓ 已复制';
-      hint.style.color = 'var(--accent)';
-      setTimeout(() => { hint.innerText = orig; hint.style.color = ''; }, 1500);
-    });
-  }
 </script>
 </body>
 </html>
