@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mavis × GitHub Pages · 你的固定 URL 已就位</title>
+<title>Daily AI · 入口</title>
 <style>
   :root {
     --bg: #0b0d10;
@@ -13,6 +13,7 @@
     --muted: #8b929b;
     --accent: #7ee787;
     --accent-2: #79c0ff;
+    --warn: #d29922;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,15 +25,8 @@
     line-height: 1.6;
     min-height: 100vh;
   }
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 48px 24px;
-  }
-  .hero {
-    text-align: center;
-    padding: 32px 0 24px;
-  }
+  .container { max-width: 880px; margin: 0 auto; padding: 56px 24px 96px; }
+  .hero { text-align: center; padding: 16px 0 40px; }
   .badge {
     display: inline-block;
     padding: 4px 12px;
@@ -40,113 +34,224 @@
     border-radius: 999px;
     font-size: 12px;
     color: var(--muted);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .badge.live {
+    border-color: rgba(126, 231, 135, 0.4);
+    color: var(--accent);
+  }
+  .badge.live::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
   h1 {
-    font-size: 32px;
+    font-size: 38px;
     margin: 8px 0;
     background: linear-gradient(120deg, var(--accent), var(--accent-2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    letter-spacing: -1px;
   }
-  .subtitle {
+  .subtitle { color: var(--muted); font-size: 15px; margin-top: 8px; }
+  .url-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 24px auto;
+    max-width: 640px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: ui-monospace, "SFMono-Regular", monospace;
+    font-size: 13px;
+    color: var(--accent-2);
+    overflow-x: auto;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .url-bar:hover { border-color: var(--accent); }
+  .url-bar::before {
+    content: '🔗';
+    flex-shrink: 0;
+  }
+  .url-bar .copy-hint {
+    margin-left: auto;
     color: var(--muted);
-    font-size: 16px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
   }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px 24px;
-    margin: 16px 0;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
   }
-  .card h2 {
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .card-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  .card-title {
     font-size: 16px;
-    margin: 0 0 12px;
-    color: var(--accent);
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
   }
+  .card-desc {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .card-link {
+    color: var(--accent-2);
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    word-break: break-all;
+  }
+  .card-meta {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(126, 231, 135, 0.1);
+    color: var(--accent);
+    font-size: 11px;
+    margin-top: 12px;
+  }
+  .card-meta.soon {
+    background: rgba(210, 153, 34, 0.1);
+    color: var(--warn);
+  }
+  .info {
+    background: rgba(47, 129, 247, 0.08);
+    border-left: 3px solid #2f81f7;
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .info strong { color: var(--accent-2); }
   code {
-    font-family: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, monospace;
     background: rgba(255,255,255,0.06);
     padding: 2px 6px;
     border-radius: 4px;
+    font-family: ui-monospace, monospace;
     font-size: 13px;
     color: var(--accent-2);
   }
-  pre {
-    background: #0a0c0f;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    overflow-x: auto;
-    font-size: 13px;
-  }
-  pre code {
-    background: transparent;
-    padding: 0;
-    color: var(--text);
-  }
-  ul { padding-left: 20px; }
-  li { margin: 6px 0; }
   .footer {
     text-align: center;
     color: var(--muted);
     font-size: 13px;
-    margin-top: 32px;
+    margin-top: 56px;
   }
-  .heart { color: #ff7b72; }
 </style>
 </head>
 <body>
   <div class="container">
     <div class="hero">
-      <div class="badge">✓ 工作流验证成功</div>
-      <h1>你的固定 URL 已就位 🚀</h1>
-      <p class="subtitle">以后 Mavis 给你做的每个网页都会出现在这里。</p>
+      <div class="badge live">在线 · 国内 CDN 加速</div>
+      <h1>Daily AI · 入口</h1>
+      <p class="subtitle">每日 AI 简报与示例的固定访问地址</p>
     </div>
 
-    <div class="card">
-      <h2>这是哪里？</h2>
-      <p>这是你 GitHub Pages 站点的 <code>example/index.html</code>。</p>
-      <p>访问你 repo 根目录的 <code>index.html</code>（Mavis 会帮你创建），
-         就能直接看到主页。</p>
+    <div class="url-bar" onclick="copyURL(this)" title="点击复制">
+      <span class="url-text">https://cdn.jsdelivr.net/gh/eeeric-code/daily-ai@main/index.html</span>
+      <span class="copy-hint">点我复制</span>
     </div>
 
-    <div class="card">
-      <h2>接下来怎么玩？</h2>
-      <ul>
-        <li>跟 Mavis 说 <code>"做一个 xxx 网页"</code></li>
-        <li>Mavis 自动生成 HTML + 推送到这个 repo</li>
-        <li>刷新这个页面（或子页面）就能看到</li>
-        <li>所有历史版本都在 Git commit 里，可以回滚</li>
-      </ul>
+    <div class="info">
+      📌 <strong>收藏这个 URL</strong>，所有每日简报和示例都从这一个入口分发。
+      每次 Mavis 推送新内容后，刷新就能看到最新版本。
     </div>
 
-    <div class="card">
-      <h2>固定 URL 是什么？</h2>
-      <pre><code>https://&lt;你的用户名&gt;.github.io/&lt;repo 名&gt;/</code></pre>
-      <p style="color: var(--muted); font-size: 14px;">
-        比如：<code>https://octocat.github.io/static-pages/</code><br/>
-        这个 URL <strong>永远不变</strong>，除非你改 repo 名。
-      </p>
+    <div class="grid">
+      <a class="card" href="./example/" target="_blank">
+        <div class="card-icon">🧪</div>
+        <div class="card-title">工作流验证示例</div>
+        <div class="card-desc">第一次推送的演示页面，验证了"git push → jsdelivr CDN → 浏览器访问"完整链路。</div>
+        <div class="card-link">/example/index.html</div>
+        <div class="card-meta">✓ 可访问</div>
+      </a>
+
+      <a class="card" href="./ai-daily/" target="_blank">
+        <div class="card-icon">📰</div>
+        <div class="card-title">每日 AI 简报</div>
+        <div class="card-desc">每天 9:00 由 Mavis cron 任务自动生成 + 推送。覆盖学术、产业、资本、监管。</div>
+        <div class="card-link">/ai-daily/index.html</div>
+        <div class="card-meta soon">⏳ 等待首次推送</div>
+      </a>
+
+      <a class="card" href="https://github.com/eeeric-code/daily-ai" target="_blank">
+        <div class="card-icon">📦</div>
+        <div class="card-title">GitHub 仓库</div>
+        <div class="card-desc">所有页面文件的源仓库，查看 commit 历史、版本、回滚。</div>
+        <div class="card-link">github.com/eeeric-code/daily-ai</div>
+        <div class="card-meta">✓ 可访问</div>
+      </a>
     </div>
 
-    <div class="card">
-      <h2>文件结构</h2>
-      <pre><code>your-repo/
-├── index.html              # 站点首页（你访问根 URL 看到的）
-├── example/
-│   └── index.html          # ← 你现在在这里
-├── about/index.html        # /about/ 路径
-├── assets/
-│   └── style.css           # 共享样式
-└── ...</code></pre>
+    <div class="info">
+      🛠️ <strong>工作流说明</strong>：Mavis 通过 GitHub Contents API 把 HTML 推到这个 repo
+      （<code>eeeric-code/daily-ai</code>），jsdelivr CDN 自动同步并全球分发。
+      URL 永久固定，除非你改 repo 名。<br/>
+      <br/>
+      💡 <strong>国内访问说明</strong>：用 jsdelivr CDN（<code>@main</code> 分支），
+      国内走的是网宿/蓝汛 CDN 节点，速度比 GitHub Pages 快 5-10 倍。
     </div>
 
     <p class="footer">
-      Built with <span class="heart">♥</span> by Mavis × GitHub Pages
+      <span style="color: var(--accent);">●</span> Powered by Mavis × jsdelivr CDN<br/>
+      上次更新：<span id="lastUpdate">—</span>
     </p>
   </div>
+
+<script>
+  // 写入最后更新时间（从 GitHub API 拿最新 commit）
+  fetch('https://api.github.com/repos/eeeric-code/daily-ai/commits?per_page=1')
+    .then(r => r.json())
+    .then(d => {
+      if (Array.isArray(d) && d[0]) {
+        const ts = new Date(d[0].commit.author.date);
+        document.getElementById('lastUpdate').textContent = ts.toLocaleString('zh-CN');
+      }
+    })
+    .catch(() => {});
+
+  // 点击 url bar 复制
+  function copyURL(el) {
+    const text = el.querySelector('.url-text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const hint = el.querySelector('.copy-hint');
+      const orig = hint.innerText;
+      hint.innerText = '✓ 已复制';
+      hint.style.color = 'var(--accent)';
+      setTimeout(() => { hint.innerText = orig; hint.style.color = ''; }, 1500);
+    });
+  }
+</script>
 </body>
 </html>
