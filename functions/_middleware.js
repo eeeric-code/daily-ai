@@ -19,10 +19,8 @@ export async function onRequest(context) {
   // 拦截 /archive (Cloudflare Pages 308 trailing-slash redirect 会把这个路径 fallback 到 /index.html)
   // 直接 serve /archive.html 内容
   if (url.pathname === '/archive' || url.pathname === '/archive/') {
-    const archiveReq = await context.env.ASSETS
-      ? context.env.ASSETS.fetch(new URL('/archive.html', url.origin))
-      : fetch(new URL('/archive.html', url.origin));
-    const body = await archiveReq.text();
+    const archiveResponse = await fetch(new URL('/archive.html', url.origin));
+    const body = await archiveResponse.text();
     return new Response(body, {
       status: 200,
       headers: {
