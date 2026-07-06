@@ -16,19 +16,8 @@ export async function onRequest(context) {
     });
   }
 
-  // 拦截 /archive (Cloudflare Pages 308 trailing-slash redirect 会把这个路径 fallback 到 /index.html)
-  // 直接 serve /archive.html 内容
-  if (url.pathname === '/archive' || url.pathname === '/archive/') {
-    const archiveResponse = await fetch(new URL('/archive.html', url.origin));
-    const body = await archiveResponse.text();
-    return new Response(body, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=300',
-      },
-    });
-  }
+  // 2026-07-06 fix removed: /archive 物理文件 archive/index.html 已存在,Cloudflare Pages
+  // 优先 serve 物理文件 > SPA fallback,不再需要 middleware 拦截
 
   // 其他请求放行
   return context.next();
