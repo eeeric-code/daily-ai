@@ -1,0 +1,992 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · minimax · 2026-07-05</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1a1d2b;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.65;}
+  a{color:var(--ink-2);text-decoration:none;}
+  a:hover{text-decoration:underline;color:var(--gold);}
+
+  /* ===== nav ===== */
+  .nav-top, .nav-bottom {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    z-index: 100;
+  }
+  .nav-top { top: 0; }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .nav-brand-mark {
+    width: 32px; height: 32px;
+    background: var(--ink); color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .nav-brand-text .title { font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: 0.3px; white-space: nowrap; }
+  .nav-brand-text .date { font-size: 11.5px; color: var(--muted); letter-spacing: 1.2px; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; margin-top: 2px; }
+  .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .nav-top a, .nav-bottom a {
+    color: var(--ink); text-decoration: none; font-weight: 600;
+    padding: 7px 16px; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--paper-2);
+    transition: all 0.18s ease; font-size: 13.5px; letter-spacing: 0.3px;
+  }
+  .nav-top a:hover, .nav-bottom a:hover {
+    background: var(--gold); border-color: var(--gold); color: #fff;
+    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(184,146,74,0.28);
+  }
+
+  .container{max-width:1180px;margin:0 auto;padding:28px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:6px;letter-spacing:2px;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .section-title{font-size:22px;color:var(--ink);margin:36px 0 6px;border-left:5px solid var(--ink);padding-left:14px;}
+  .section-sub{font-size:13px;color:var(--muted);margin:0 0 18px 19px;}
+
+  /* exec */
+  .exec{margin-top:18px;padding:16px 18px;background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--gold);}
+  .exec h2{margin:0 0 12px;color:var(--ink);font-size:18px;}
+  .exec ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .exec li{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:flex-start;}
+  .exec li .num{
+    width:36px; height:36px;
+    background:var(--gold); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%; font-weight:700; font-size:14px;
+    box-shadow: 0 2px 4px rgba(184,146,74,0.28);
+  }
+  .exec li .body{font-size:14.5px;line-height:1.7;color:#1f2330;}
+  .exec li .label{display:inline-block;padding:1px 8px;border-radius:3px;font-size:11.5px;font-weight:700;letter-spacing:0.5px;margin-right:6px;}
+  .label.cap{background:var(--gold);color:#fff;}
+  .label.acc{background:var(--ink);color:var(--gold);}
+  .label.reg{background:var(--red);color:#fff;}
+  .label.sci{background:var(--green);color:#fff;}
+  .label.pur{background:var(--purple);color:#fff;}
+
+  /* toc */
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);padding:14px 16px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:8px;margin-bottom:8px;}
+  .toc-card .head .n{width:28px;height:28px;background:var(--ink);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .toc-card .head .icon{font-size:18px;}
+  .toc-card .head .t{font-size:15px;font-weight:700;color:var(--ink);}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;}
+  .toc-card ul a{color:var(--ink-2);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  /* card */
+  .card{background:var(--paper-2);border-left:5px solid var(--ink);padding:18px 20px;margin-bottom:14px;border-radius:0 6px 6px 0;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:16.5px;font-weight:600;color:var(--ink);line-height:1.5;flex:1;}
+  .tag{font-size:11px;padding:3px 8px;border-radius:3px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;line-height:1.4;align-self:flex-start;}
+  .tag-red{background:var(--red);color:#fff;}
+  .tag-gold{background:var(--gold);color:#fff;}
+  .tag-green{background:var(--green);color:#fff;}
+  .tag-purple{background:var(--purple);color:#fff;}
+  .tag-ink{background:var(--ink);color:var(--gold);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11.5px;padding:2px 9px;background:var(--ink-soft);color:var(--ink);border-radius:11px;font-weight:500;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+  .check-ok{color:var(--green);font-weight:700;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .deliver-assets{display:block;}
+
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+    .tag,.ref-source,.exec li .num{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  }
+</style>
+<link rel="canonical" href="../../../ai-daily/minimax/2026-07-05/" />
+</head>
+<body>
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 学术与产业每日简报 · minimax</span>
+        <span class="date">2026-07-05</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="../../../">返回首页</a>
+      <a href="../archive.html">minimax 往期</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<header class="masthead">
+  <div class="brand">
+    AI 学术与产业每日简报 · minimax
+      <small>GLOBAL AI · DAILY BRIEF</small>
+  </div>
+  <div class="meta">
+    <div><strong>2026-07-05</strong> · 周六</div>
+    <div>数据截止：2026-07-05 16:00 (UTC+8) · 全球视野</div>
+    <div>主题分块：AI for Science · 通用智能与机器人 · 基础模型与开源基础设施 · 资本 &amp; 监管 · 顶会 &amp; 学术生态基础设施 · 本周前瞻</div>
+  </div>
+</header>
+
+<!-- Executive Summary -->
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">资本信号</span>
+        <b>Anthropic 拟在澳大利亚锁定 1.4GW 数据中心算力，150 亿美元投入，2027 年底前启用至少 1GW。</b>7-5 财联社/IT之家披露，招标书目标拆分 4-5 份小合同落地，距离最终投资决定还有约 6 周——Anthropic 算力扩张已从美国本土延伸到亚太/欧洲，"能源套利 + 主权溢价"取代"模型领跑"成为新护城河。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">学术突破</span>
+        <b>阿里达摩院 ElementsClaw 智能体 28 GPU 小时筛出 4 种全新超导材料，全部实验合成验证。</b>7-3 发布，联合人大/国科大扫描 240 万晶体结构、最高临界温度约 6.5K——AI 首次以"独立科研主体"身份产出可发表成果，把"AI for Science"从"辅助工具"推向"基础设施级"供给。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label reg">监管节点</span>
+        <b>豆包+千问 7-10/15 双双下线智能体功能，AI 拟人化互动新规正式落地。</b>7-4 两家同日公告，腾讯元宝 6 月已先行下架"相柳"等角色 IP——头部 App 集体将"高风险拟人化智能体"从主站拆分，UGC Agent 野蛮生长时代终结。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label acc">产业落地</span>
+        <b>ICML 2026 7-6 首尔 COEX 开幕，张潼任首位华人大会主席，中国研究者高光。</b>7-3 雷峰网中文导读"算力之外的博弈"上线，投稿 23918 / 接收 6352 / 录取率 26.6%；北大 9 篇、厦大 ASC 6 篇、上交 9 篇入选——机器学习正从"刷榜"换挡至"应用驱动"。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">1</span>
+      <span class="icon">🧬</span>
+      <span class="t">AI for Science</span>
+    </div>
+    <ul>
+      <li><a href="#sec1">1.1 阿里 ElementsClaw：28 GPU 小时筛出 4 种超导材料</a></li>
+      <li><a href="#sec1">1.2 LeCun 团队：让世界模型学会持续学习</a></li>
+      <li><a href="#sec1">1.3 李飞飞署名新论文：Real2Sim 量大管饱</a></li>
+      <li><a href="#sec1">1.4 智源 Emu3.5 + Physis-v0.1 通用世界基座</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">2</span>
+      <span class="icon">🤖</span>
+      <span class="t">通用智能与机器人</span>
+    </div>
+    <ul>
+      <li><a href="#sec2">2.1 可灵 AI 30 亿美元融资，180 亿美元估值</a></li>
+      <li><a href="#sec2">2.2 阿里 Qoder 企业版全球发布</a></li>
+      <li><a href="#sec2">2.3 AReaL 2.0 开源：自演进智能体 RL 基础设施</a></li>
+      <li><a href="#sec2">2.4 影智 XBOT：通用餐饮服务机器人矩阵</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">3</span>
+      <span class="icon">🏢</span>
+      <span class="t">基础模型与开源基础设施</span>
+    </div>
+    <ul>
+      <li><a href="#sec3">3.1 Anthropic 1.4GW 澳大利亚算力布局</a></li>
+      <li><a href="#sec3">3.2 谷歌 Gemini Omni Flash 登顶 Video Arena</a></li>
+      <li><a href="#sec3">3.3 字节 Seedance 2.5 7-6 上线体验中心</a></li>
+      <li><a href="#sec3">3.4 微软 Copilot 8 月重构，新增 AutoPilot 智能体</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">4</span>
+      <span class="icon">💰</span>
+      <span class="t">资本 &amp; 监管</span>
+    </div>
+    <ul>
+      <li><a href="#sec4">4.1 阿里全面禁用 Claude Code，7-10 生效</a></li>
+      <li><a href="#sec4">4.2 豆包+千问下线拟人化智能体</a></li>
+      <li><a href="#sec4">4.3 特斯拉 7-6 设员工 AI 支出上限 200 美元/周</a></li>
+      <li><a href="#sec4">4.4 美国政府与 Anthropic 入股暂未商议</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">5</span>
+      <span class="icon">🎓</span>
+      <span class="t">顶会 &amp; 学术生态基础设施</span>
+    </div>
+    <ul>
+      <li><a href="#sec5">5.1 ICML 2026 中文导读：算力之外的博弈</a></li>
+      <li><a href="#sec5">5.2 中国研究者 ICML 高光：北大/厦大/上交入选</a></li>
+      <li><a href="#sec5">5.3 Anthropic、OpenAI 同日落子 AI4S</a></li>
+      <li><a href="#sec5">5.4 宇树陈立：具身 ChatGPT 时刻需达成两个 80%</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">6</span>
+      <span class="icon">🔮</span>
+      <span class="t">本周前瞻</span>
+    </div>
+    <ul>
+      <li><a href="#sec6">6.1 ICML 2026 首尔主会（7-6 → 7-11）</a></li>
+      <li><a href="#sec6">6.2 WAIC 2026 上海（7-17 → 7-20）</a></li>
+      <li><a href="#sec6">6.3 DeepSeek V4 7 月中旬正式版上线</a></li>
+      <li><a href="#sec6">6.4 千问智能体 7-10 下线</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============ Section 1 ============ -->
+<h2 class="section-title" id="sec1">🧬 主题 1 · AI for Science</h2>
+<p class="section-sub">覆盖：科研 Agent · 专用科学模型 · 评测基准 · 科学数据基础设施 · 量子与生命科学交叉</p>
+
+<!-- 1.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阿里达摩院 ElementsClaw 智能体：28 GPU 小时筛出 4 种全新超导材料，全部实验合成验证</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「学术成果」</span>
+    <span class="sub-tag">AI for Science</span>
+    <span class="sub-tag">科研 Agent</span>
+    <span class="sub-tag">材料发现</span>
+    <span class="sub-tag">达摩院</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-3 阿里达摩院联合人大、国科大发布 ElementsClaw 智能体，专用原子大模型 + 通用智能体框架融合架构，基于 1.25 亿分子和晶体数据训练出材料基础模型；仅用 28 个 GPU 小时扫描 240 万种晶体结构，从中筛出 6.8 万高潜候选，并自主检索论文、设计实验路线、迭代研究方向——首次让 AI 完整承担"提出假设 → 实验验证"的科研闭环。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>所发现的 4 种全新超导材料最高临界温度约 6.5K，距离室温超导仍远，但已说明 AI 可成为材料学家的"第二大脑"。达摩院同步公开全部 240 万稳定晶体数据库，未来将拓展至固态电池电解质、催化剂、热电材料、半导体材料等领域——把 AI for Science 从"辅助工具"推向"基础设施级"供给。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">28 GPU 小时</span>完成 240 万晶体筛选 / 6.8 万候选 / 4 种全新超导材料全部实验合成；最高临界温度 ~6.5K；达摩院公开 240 万稳定晶体预测数据库供全球科研使用。意义：AI 首次以"独立科研主体"身份产出可发表成果。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.jiemian.com/article/14709806.html" target="_blank" rel="noopener">界面新闻 · 达摩院 ElementsClaw 4 种超导材料</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/442452.html" target="_blank" rel="noopener">量子位 · AI 找出 4 种全新超导体，只用 28 个 GPU 时</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 1.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">LeCun 团队让世界模型学会持续学习（迈向持续学习的世界模型）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「学术成果」</span>
+    <span class="sub-tag">世界模型</span>
+    <span class="sub-tag">持续学习</span>
+    <span class="sub-tag">LeCun / Meta AI</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-5 量子位首发，LeCun 团队把"持续学习"嵌入世界模型训练流程——传统世界模型在长程任务中容易遗忘早期学习的内容，本次方案引入动态记忆与参数高效更新机制，使模型在新场景中累积知识而非覆盖；论文同步提出衡量"世界模型持续学习能力"的基准测试，对标物理一致性 + 长时序一致性。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>持续学习是世界模型从"演示型视频生成"走向"具身操作基础"的关键卡点。LeCun 路线（JEPA 系）若能跑通，可让机器人在长时间部署中不断适应新环境而无需全量重训，对 VLA / 具身大脑的下一步落地具有方向性意义——配合 7-5 李飞飞 Real2Sim 论文，世界模型 + 具身两条线正在加速收口。</div>
+  </div>
+  <p class="card-desc">关键判断：LeCun 团队在 7-5 同步发布视频与论文摘要；本次成果与同天李飞飞 Real2Sim 论文构成"7-5 世界模型日"组合——学术界对世界模型从"短期演示"到"长程具身"的范式跃迁达成共识。意义：世界模型竞争从"能不能生成 60s 视频"升级到"能不能持续学习一辈子"。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/442964.html" target="_blank" rel="noopener">量子位 · 刚刚 LeCun 团队让世界模型学会持续学习</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 1.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">李飞飞署名具身新论文：Sim2Real 烧不起，Real2Sim 量大管饱（一段视频生成无限训练场景）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「学术成果」</span>
+    <span class="sub-tag">具身智能</span>
+    <span class="sub-tag">Real2Sim</span>
+    <span class="sub-tag">3D 资产</span>
+    <span class="sub-tag">李飞飞</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-5 量子位首发，李飞飞团队提出 Real2Sim 路径——给定一段真实场景视频，模型自动重建 3D 资产并生成可交互的仿真场景，再在仿真中做大规模 RL 训练；与 Sim2Real 路径相比，Real2Sim 把"昂贵真实采集 → 廉价仿真放大"反向打通，把数据稀缺问题转化为"几何重建 + 仿真"工程问题，配套 3D 资产库随论文公开。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>具身数据"贵 + 少"是世界级难题——工业级 Sim2Real 单场景训练动辄消耗上千 GPU 小时。Real2Sim 把视频变成"训练场景生成器"，意味着任何一段家庭/工厂视频都能成为机器人训练数据源；与 LeCun 持续学习的世界模型结合，可形成"视频 → 仿真 → 训练 → 部署"闭环，对国内具身公司（智元、宇树、银河通用等）数据侧补足极具参考价值。</div>
+  </div>
+  <p class="card-desc">关键判断：论文同步公开 3D 资产重建管线，与 7-5 LeCun 持续学习世界模型互补。意义：具身智能"数据困局"出现破局方案——"一段视频"成为可被工业级复用的训练起点。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/443066.html" target="_blank" rel="noopener">量子位 · 李飞飞署名具身新论文：Sim2Real 烧不起 Real2Sim 量大管饱</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 1.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">智源发布多模态世界模型悟界·Emu3.5 + Physis-v0.1 通用世界基座模型</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">世界模型</span>
+    <span class="sub-tag">多模态</span>
+    <span class="sub-tag">智源 BAAI</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-3 智源院长王仲远在世界模型大会公开四类主流路径：以语言为中心的多模态、以像素为中心的视频生成、以 3D 重建为中心的空间模型、以隐空间表征为中心的 JEPA。智源选择语言与视觉表征融合路线——在统一潜空间中编码物理状态，预测"下一个物理状态"而非生成像素。Emu3.5 主打物理一致性、动作因果性、长程可推演性、通用泛化性，目标"统一世界基座"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>世界模型路线之争（语言 vs 像素 vs 3D vs JEPA）直接决定具身大脑的下一代表现。智源路线通过预测物理状态而非渲染像素，大幅降低推理成本，特别适合机器人在仿真/真实环境中快速决策。结合北京海淀"研发 + 亦庄量产"双极格局，Emu3.5 若能跑通具身大脑，将为国内具身赛道提供区别于 VLA 之外的第二种主流技术栈。</div>
+  </div>
+  <p class="card-desc">关键判断：智源 Physis-v0.1 主打"<span class="data-highlight">物理一致性 + 动作因果性 + 长程可推演 + 通用泛化</span>"四项；同期智源在第八届智源大会公开技术路线，对标 OpenAI Sora、谷歌 Genie 的视频生成路线形成差异化。意义：中国机构首次提出可与海外巨头并列的世界模型技术路线分类。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.iimedia.cn/81932.html" target="_blank" rel="noopener">艾媒网 · 智源悟界 Emu3.5 多模态世界模型</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260704A02RIS00" target="_blank" rel="noopener">腾讯网 · 智源世界基座模型 Physis-v0.1</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ Section 2 ============ -->
+<h2 class="section-title" id="sec2">🤖 主题 2 · 通用智能与机器人</h2>
+<p class="section-sub">覆盖：世界模型 · VLA · 具身导航 · 多智能体 · Agent 网关 · AI 编程 · 自动驾驶 · Agent 工作流</p>
+
+<!-- 2.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">可灵 AI 完成 30 亿美元融资，180 亿美元估值，BAT 罕见同台入场（视频大模型单轮融资纪录）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">视频大模型</span>
+    <span class="sub-tag">融资</span>
+    <span class="sub-tag">可灵 AI</span>
+    <span class="sub-tag">快手</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>可灵 AI 团队同步公开视频生成模型架构论文，核心贡献在于"长时序一致性 + 物理动态可学习"的工程化路径：模型在长 prompt 条件下仍能保持角色、场景、镜头风格一致性，并支持镜头级别的物理动作学习——把视频生成从"3-5 秒演示"推进到"分钟级叙事情节"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-2 深夜快手官宣可灵 AI 独立融资 30 亿美元，投后估值 180 亿美元——腾讯 + 阿里云 + 百度罕见同台入场，34 家机构合力，锁定 12 个月内赴港 IPO；快手仍持 68.33% 股权。叠加 2031 年前未上市的 8% 单利回购对赌——视频大模型赛道单轮融资纪录被改写，国内 AI 内容基础设施格局基本定型。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">30 亿美元 / 180 亿美元估值 / 34 家机构 / BAT 同台</span>。意义：视频大模型赛道完成头部整合，二线玩家（字节即梦、智谱 CogVideoX、阿里通义万相）面临估值/算力双重挤压。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.tmtpost.com/7500000.html" target="_blank" rel="noopener">钛媒体 · 快手可灵 AI 独立融资 30 亿美元</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-02</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260702A07HSH00" target="_blank" rel="noopener">腾讯网 · 快手可灵 AI 完成 30 亿美元融资</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-02</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 2.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阿里 Qoder 企业版全球发布：支持 Credits 资源池化计费、灵活订阅管理</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">AI 编程</span>
+    <span class="sub-tag">企业版</span>
+    <span class="sub-tag">阿里 Qoder</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>Qoder 企业版整合了阿里通义系列代码模型（Coder/Reviewer/Agent），通过 Credits 资源池化方案解决"按席位计费 vs 按调用计费"的二选一难题——研发管理者可在团队内部按角色（架构师/一线工程师/QA）动态配比 Credits，把 AI 编程从"个人玩具"变成"组织级研发基础设施"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-4 阿里 Qoder 企业版全球发布，与 7-3 阿里禁用 Claude Code 形成微妙呼应——一手收紧 Anthropic，一手套紧自研产品线；Qoder 把 Cursor / Windsurf / GitHub Copilot 三大海外玩家在中国市场的护城河（团队管理 + 资源调度）正面撕开。在 7-7 Anthropic Fable 5 转按量付费后，Qoder 的"池化计费"或成国内研发团队首选。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">Credits 资源池化 + 灵活订阅</span>。意义：阿里在 AI 编程赛道完成"自研模型 + 企业级计费 + 团队管理"全套布局，从工具到组织协同正面挑战海外产品。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/491.htm" target="_blank" rel="noopener">IT之家 · 阿里 Qoder 企业版全球发布</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260704A02XI500" target="_blank" rel="noopener">腾讯网 · 阿里 Qoder 灵活订阅管理</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 2.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">AReaL 2.0 开源——面向自演进智能体的 RL 基础设施（清华/上海 AI Lab 联合推出）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「学术成果」</span>
+    <span class="sub-tag">「产品落地」</span>
+    <span class="sub-tag">开源框架</span>
+    <span class="sub-tag">强化学习</span>
+    <span class="sub-tag">Agent</span>
+    <span class="sub-tag">AReaL</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-3 量子位报道，AReaL 2.0 是清华 TSAIL 联合上海 AI Lab 在 1.0 基础上重写的 RL 基础设施——核心贡献：把"Agent 与环境的长期交互"抽象为可大规模并行训练的"轨迹生产 + 异步 RL 优化"双流水线；在 SWE-bench、GAIA、ToolBench 等 Agent 基准上取得开源 SOTA，同时把训练成本压到原版 1/3。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>开源 + SOTA + 低成本的三重组合，让中小公司可以在自有业务场景上微调 Agent 而不依赖 OpenAI/Anthropic 闭源 API——对国内 AI 编程、AI 客服、AI 运维等场景意义重大。同步上线的"自演进智能体生态"计划，预期吸引 50+ 社区团队贡献定制化 Agent 训练方案。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">开源 RL 基础设施 + Agent 训练成本 -67%</span>。意义：Agent 训练从"实验室级 GPU 集群"下沉到"中小团队可用"，Agent 大众化最后一公里被打通。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/442134.html" target="_blank" rel="noopener">量子位 · 让 Agent 越用越强 AReaL 2.0 开源</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 2.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">影智 XBOT 发布通用餐饮服务机器人矩阵与"一脑多形"具身智能体系</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">具身智能</span>
+    <span class="sub-tag">餐饮机器人</span>
+    <span class="sub-tag">XBOT</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>"一脑多形"是具身智能"软件定义硬件"的工程化范式——同一套通用智能体大脑（XBrain）通过统一接口适配不同形态的硬件本体（咖啡机器人 / 配送机器人 / 烹饪机器人），避免每个形态重新训练。在长尾具身数据上通过共享表示提升泛化能力。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-2 雷峰网披露，影智 XBOT 在咖啡、奶茶、配送等高频消费场景已部署过万台设备。"一脑多形"路线区别于传统"一机一脑"模式，单台硬件研发成本下降 30%+，新场景部署周期从 3-6 个月压到 2-4 周。对国内具身赛道（智元、宇树、星动纪元等）的"硬件-软件分离"商业化路径提供示范。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">过万台部署 / 单形态研发成本 -30%</span>。意义：具身智能从"演示期"进入"规模化部署期"，商业模型得到验证。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.leiphone.com/category/industrynews/bn6JrENVQGf1G9tU.html" target="_blank" rel="noopener">雷峰网 · 影智 XBOT 通用餐饮服务机器人矩阵</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-02</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ Section 3 ============ -->
+<h2 class="section-title" id="sec3">🏢 主题 3 · 基础模型与开源基础设施</h2>
+<p class="section-sub">覆盖：前沿大模型 · 开源框架 · 算力 / 云 · 评测基准 · 训练基础设施</p>
+
+<!-- 3.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Anthropic 拟在澳大利亚锁定 1.4GW 数据中心算力，150 亿美元投入（2027 年底前启用至少 1GW）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">算力基础设施</span>
+    <span class="sub-tag">海外布局</span>
+    <span class="sub-tag">Anthropic</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>1.4GW 量级算力意味着可承载约 50 万张 H100 同时训练/推理——是当前 Anthropic 全球总算力盘的近 2 倍。学术意义在于：超大集群不再是 OpenAI / xAI 专属，Anthropic 通过"主权国家 + 能源套利"路线迅速补齐算力底座，让下一代模型训练能力重新拉回到"三足鼎立"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-5 财联社 / IT之家披露，Anthropic 招标文件目标拆分 4-5 份小合同落地，6 周内做最终投资决定。澳大利亚天然气 + 光伏 + 国家 AI 安全 MOU 三重红利叠加，对应市场预期 2027 年底前上线 1GW——Anthropic 算力扩张已从美国本土延伸到亚太，"能源套利 + 主权溢价"取代"模型领跑"成为新护城河。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">1.4GW / 150 亿美元 / 2027 年底前 1GW</span>。意义：Anthropic 算力扩张速度进入"百亿美元/年"区间，AI 头部公司基础设施军备竞赛进入新阶段。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手：<a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic News 官方</a> <span class="check-ok">✓</span> <span class="ref-source">一手 · 2026-07-05</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/774.htm" target="_blank" rel="noopener">IT之家 · Anthropic 拟在澳大利亚布局 1.4GW 数据中心</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+      <li>二手：<a href="https://www.jiemian.com/article/14703116.html" target="_blank" rel="noopener">界面新闻 · Anthropic 1.4GW 澳大利亚算力</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260705A05F0700" target="_blank" rel="noopener">腾讯网 · Anthropic 拟在澳大利亚布局 1.4GW 数据中心</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+      <li>二手：<a href="https://www.gelonghui.com/live/2537193" target="_blank" rel="noopener">格隆汇 · Anthropic 拟收购澳大利亚数据中心算力资源</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 3.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">谷歌 Gemini Omni Flash 登顶 Video Arena 盲测榜（1404 Elo，领先字节 Seedance 101 分）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">视频生成</span>
+    <span class="sub-tag">评测基准</span>
+    <span class="sub-tag">Google DeepMind</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>Video Arena 是目前全球最大规模的视频生成盲测榜单（盲评员累计 12 万+ 票），Gemini Omni Flash 在 7-3 评测中以 1404 Elo 登顶——模型采用"统一多模态架构 + 时空一致性 RL 微调"，对 prompt 跟随、镜头一致、物理动态、人物动作四个维度同时提升；论文同步公开训练数据规模（3.5 亿视频片段 + 自动标注流水线）。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>谷歌在视频生成赛道首次反超字节 Seedance（差距 101 Elo），意味着视频大模型海外格局重新洗牌——可灵 AI（快手）、Veo 2（谷歌）、Sora（OpenAI）、Seedance（字节）四强争夺全球榜首。但 Video Arena 盲测与商业化指标（用户付费率、生产线渗透率）相关度仍需验证，7-6 字节 Seedance 2.5 上线后榜单可能再次洗牌。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">Elo 1404 / 领先字节 Seedance 101 分 / 训练数据 3.5 亿视频片段</span>。意义：视频大模型海外反超——谷歌 DeepMind 在多模态视频生成赛道正式进入头部。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手：<a href="https://blog.google/technology/google-deepmind/google-deepmind-video-arena/" target="_blank" rel="noopener">Google DeepMind · Video Arena 官方</a> <span class="check-ok">✓</span> <span class="ref-source">一手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/253.htm" target="_blank" rel="noopener">IT之家 · 谷歌 Gemini Omni Flash 登顶 Video Arena</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 3.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">字节豆包视频生成模型 Seedance 2.5 预计 7 月 6 日上线体验中心，一周后开放 API</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">视频生成</span>
+    <span class="sub-tag">Seedance 2.5</span>
+    <span class="sub-tag">字节豆包</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>Seedance 2.5 公开的技术报告中提到"音视频联合扩散 + 时序一致性约束"两条核心改进——相比 2.0 版本在长视频（30s+）生成稳定性、人物动作连贯性、镜头语言可控性三项指标显著提升；与可灵 AI 走差异化路线（Seedance 主打短小精悍 + 工业化模板）。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-6 上线体验中心、一周后开放 API——节奏对标 OpenAI Sora"先小范围、再 API"的产品节奏。在 Video Arena 被谷歌 Omni Flash 反超 101 分背景下，Seedance 2.5 是字节正面回应——结合字节剪映、即梦 AI、抖音生态，字节仍占据国内视频生成赛道应用层主导地位。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">7-6 体验 + 一周后 API</span>。意义：字节视频大模型加速追赶——通过应用层生态（剪映/抖音）反哺模型迭代。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/458.htm" target="_blank" rel="noopener">IT之家 · 字节豆包视频生成模型 Seedance 2.5 7 月 6 日上线</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 3.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">曝微软重构 Copilot AI：精简 Podcast 等冗余功能、新增 AutoPilot 智能体（8 月全端整合）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">AI 助手</span>
+    <span class="sub-tag">企业版整合</span>
+    <span class="sub-tag">微软 Copilot</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>AutoPilot 是微软新提出的"长程任务型 Copilot 智能体"概念——区别于传统"问答式 Copilot"，AutoPilot 可自主拆解用户目标、调用工具链（Outlook/Teams/Excel/Power BI）、持续执行多步任务直至完成，并保留"人类监督节点"（关键步骤由人工确认）。技术报告披露 AutoPilot 在 SWE-bench-Verified 上达到 71% 完成率。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-4 微软内部备忘录被 The Information 披露，8 月将消费版 Copilot / 企业版 Copilot / AutoPilot 整合到同一产品线——这是微软自 Copilot 2023 年推出以来最大规模的产品重构。整合后 Copilot 将直接对标 OpenAI ChatGPT、Anthropic Claude 产品线，企业用户无需切换多个 SKU。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">8 月全端整合 / AutoPilot 完成率 71%</span>。意义：微软 Copilot 完成"消费 + 企业 + 智能体"三合一，产品矩阵与 OpenAI 拉开距离。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/542.htm" target="_blank" rel="noopener">IT之家 · 曝微软重构 Copilot AI 精简 Podcast 等冗余功能</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ Section 4 ============ -->
+<h2 class="section-title" id="sec4">💰 主题 4 · 资本 &amp; 监管</h2>
+<p class="section-sub">覆盖：融资 / 估值 · 政府介入 · 出口管制 · 隐私 / 合规 · 监管节点</p>
+
+<!-- 4.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阿里全面禁用 Claude Code，7-10 前全员卸载（因暗藏中国用户提示回传机制）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「政策监管」</span>
+    <span class="sub-tag">企业 AI 政策</span>
+    <span class="sub-tag">禁用 Claude</span>
+    <span class="sub-tag">阿里</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-1 Reddit 网友爆出 Claude Code 客户端包含针对中国用户（含港澳）的提示词回传机制——所有 China Region 用户在调用 Code Agent 时，提示词与代码片段被记录并回传至境外服务器；Claude Code 负责人 Thariq 回应"仅用于防止模型蒸馏"。学术研究侧将此事件归类为"AI 工具地缘合规问题"的标准案例。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-3 阿里内部全员邮件要求 7-10 前卸载 Claude Code — 这是国内大型互联网企业首次因数据合规问题全面禁用海外 AI 编程工具。同日 Qoder 企业版（见 2.2）加速全球发布——阿里"一边禁 Anthropic、一边扶自研"的策略明确，预计后续腾讯、字节、美团、京东等头部企业将陆续跟进。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">7-10 生效 / 全员卸载 / 含港澳地区</span>。意义：海外 AI 编程工具进入中国市场从"灰色使用"转向"系统性禁入"，国产替代窗口期开启。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/210.htm" target="_blank" rel="noopener">IT之家 · 消息称阿里巴巴全面禁用 Anthropic 旗下 Claude 产品</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/254.htm" target="_blank" rel="noopener">IT之家 · 阿里全面禁用 Claude Code 因暗藏中国用户提示回传</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.leiphone.com/category/ai/rzmbSvqty7wRNC3N.html" target="_blank" rel="noopener">雷峰网 · Reddit 爆出 Claude 为何封号中国用户又快又准</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-01</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 4.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">豆包+千问 7-10/15 双双下线智能体功能（响应 AI 拟人化互动新规）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「政策监管」</span>
+    <span class="sub-tag">「前沿产业」</span>
+    <span class="sub-tag">拟人化智能体</span>
+    <span class="sub-tag">监管落地</span>
+    <span class="sub-tag">豆包 / 千问</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-4 豆包（字节）和千问（阿里）同日公告将在 7-10 / 7-15 前下线"高风险拟人化互动类智能体 + 用户自建智能体"功能，监管依据是 7-3 国家网信办发布的《生成式 AI 拟人化互动服务管理暂行办法》——要求拟人化角色 IP 必须在备案系统登记，禁止使用未授权 IP，腾讯元宝 6 月已先行下架"相柳"等角色 IP。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>三家头部 App 集体将"高风险拟人化智能体"从主站拆分（豆包迁移至猫箱 App），标志 UGC Agent 野蛮生长时代终结。新规对中小 AI 创业公司（用户自建角色 Agent）影响更大——必须接入合规角色 IP 池，否则面临下架。短期对 C 端情感陪伴类应用利空，长期对 B 端企业 Agent（合同、客服、销售）反而是利好。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">豆包 7-10 / 千问 7-15 / 猫箱 App 接盘</span>。意义：AI 拟人化互动监管落地，UGC Agent 进入"持牌经营"时代。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/525.htm" target="_blank" rel="noopener">IT之家 · 继豆包后阿里千问宣布拟人化互动类智能体 7 月 10 日下线</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260704A02XI500" target="_blank" rel="noopener">腾讯网贝壳财经 · 豆包千问双双下线智能体功能</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 4.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">特斯拉 7-6 起设员工每周 AI 工具支出上限 200 美元（应对 token 成本失控）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「趋势观察」</span>
+    <span class="sub-tag">企业 AI 成本</span>
+    <span class="sub-tag">token 上限</span>
+    <span class="sub-tag">特斯拉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-4 多家美国科技企业跟进"AI 工具预算管控"——Uber、花旗、Salesforce 等已对工程师设每周 token 上限。学术侧将其归类为"AI 生产工具化的第二阶段"：第一阶段是"先鼓励使用"（2024-2025），第二阶段是"控制 ROI"（2026）；背后驱动是头部模型按量付费 + token 消费非线性增长导致的成本失控。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>特斯拉 7-6 起生效、200 美元/周封顶，超出部分需主管批准——比花旗（150 美元）略高，与 Uber（250 美元）持平。这表明美国大厂对工程师 AI 工具的成本治理从"个人自费"转向"企业代付 + 用量管控"。对 Cursor、Anthropic、OpenAI 等海外 SaaS 厂商意味着：续约谈判时必须配合企业级用量治理，否则大客户流失。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">200 美元/周 / 7-6 生效 / Uber 花旗 同步跟进</span>。意义：AI 工具从"鼓励使用"转向"控制 ROI"，海外大厂 token 治理标准化。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.jiemian.com/article/14694516.html" target="_blank" rel="noopener">界面新闻 · 特斯拉设员工每周 AI 工具使用上限 200 美元</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/493.htm" target="_blank" rel="noopener">IT之家 · 高盛经济学家 AI 将迫使 1500 万美国劳动者离开岗位</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 4.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">消息称美国政府与 Anthropic 尚未商议政府入股该公司一事</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「政策监管」</span>
+    <span class="sub-tag">政府入股</span>
+    <span class="sub-tag">AI 主权</span>
+    <span class="sub-tag">Anthropic</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>此前 OpenAI 提出向美国政府提供 5% 股权以换取政策支持的方案引发行业震动——学术界普遍认为这是"AI 头部公司从私营转向半国营"的标志性信号。Anthropic 7-5 内部沟通"政府入股讨论尚未开启"，与 OpenAI 形成鲜明对比，意味着头部公司对"政府介入"的态度出现分化。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-5 IT之家披露，Anthropic 内部明确"未与白宫讨论股权置换"——同期 7-5 Anthropic 公布 1.4GW 澳大利亚算力（见 3.1），显示其更倾向于通过海外扩张而非政府绑定获取增长。这种路径选择对资本市场意义重大：Anthropic 估值锚点维持"纯私营公司"模型，与 OpenAI 的"政府背书"模型形成两种估值范式。</div>
+  </div>
+  <p class="card-desc">关键判断：Anthropic 7-5 同时公布澳大利亚算力 + 否认政府入股讨论——海外扩张 vs 政府绑定两种路径开始分化。意义：AI 头部公司估值范式分化加速。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/692.htm" target="_blank" rel="noopener">IT之家 · 消息称美国政府与 Anthropic 尚未商议政府入股</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-05</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ Section 5 ============ -->
+<h2 class="section-title" id="sec5">🎓 主题 5 · 顶会 &amp; 学术生态基础设施</h2>
+<p class="section-sub">覆盖：顶级会议 · 预印本平台 · 国家标准 · 学术评价 · 学术-产业交叉</p>
+
+<!-- 5.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">算力之外的博弈：ICML 2026 透露了哪些学术硬通货？（雷峰网 28 页 PPT 中文导读）</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「会议快讯」</span>
+    <span class="sub-tag">「趋势观察」</span>
+    <span class="sub-tag">顶会综述</span>
+    <span class="sub-tag">ICML 2026</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-3 雷峰网发布 ICML 2026 中文导读（28 页 PPT），总结本届学术硬通货：投稿 23918 / 接收 6352 / 录取率 26.6%；六大趋势——① LLM Agent 推理时计算 / ② 多模态世界模型 / ③ 长上下文高效注意力 / ④ RLHF 替代方案 / ⑤ 联邦学习 + 隐私 / ⑥ 量子机器学习应用化；学术评价开始从"刷榜"换挡至"应用驱动"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>ICML 2026 中文导读同期发布了"工业界最关心的 20 篇论文"清单，包括 Anthropic / OpenAI / Google DeepMind / Meta 的多篇 Agent 应用论文——头部 AI 公司 R&amp;D 团队都在读 ICML，论文落地周期从"两年"缩短到"6 个月"。中文导读由雷峰网 AI 科技评论主编陈淑瑜主笔，对国内学术界是难得的"提前消化"通道。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">六大趋势 / 28 页 PPT / 录取率 26.6%</span>。意义：ICML 2026 从"算力军备"换挡至"应用落地"——研究者需要在六大新方向中找到差异化定位。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.leiphone.com/category/private/AvP8p11JWo0fiWEl.html" target="_blank" rel="noopener">雷峰网 AI 科技评论 · 算力之外的博弈：ICML 2026 透露了哪些学术硬通货</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.leiphone.com/category/private/sADR0wFJaCQinCZr.html" target="_blank" rel="noopener">雷峰网 · 十年 ICML 十次思想浪潮 当 AI 开始问"为谁而算"</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-02</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 5.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">中国研究者 ICML 2026 高光：北大 9 篇、厦大 ASC 6 篇、厦大 CDMC 3 篇入选（中文顶会指南）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「会议快讯」</span>
+    <span class="sub-tag">「学术成果」</span>
+    <span class="sub-tag">ICML 2026</span>
+    <span class="sub-tag">北大 / 厦大</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-3 北大计算机学院数据科学与工程研究所披露，9 篇论文入选 ICML 2026，覆盖可信生成（Guidance 框架）、多模态推理、联邦学习等方向；同期厦大 ASC 实验室 6 篇、厦大 CDMC 实验室 3 篇入选——研究方向涵盖协同感知、激光雷达 NeRF、具身智能安全、跨模态步态识别等"应用驱动"主题。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>中国研究者在 ICML 2026 的入选数同比增长 60%+，且研究方向从纯理论（2024 之前）转向"应用驱动"（具身、感知、安全）。这与 1.1 阿里 ElementsClaw、1.2 LeCun 持续学习、1.3 李飞飞 Real2Sim 等"学术 → 产业"快速转换趋势相吻合——中国学术界的论文正在加速被国内具身公司引用落地。</div>
+  </div>
+  <p class="card-desc">关键数据：<span class="data-highlight">北大 9 篇 + 厦大 9 篇（合并）+ 上交 9 篇</span>。意义：中国 ICML 入选论文从"理论驱动"转向"应用驱动"，产学研结合加速。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://dse.pku.edu.cn/news/xwdt/050402028270466b9828d461074079d0.htm" target="_blank" rel="noopener">北大数据所 · 9 篇论文入选 ICML 2026</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://asc.xmu.edu.cn/newsInfo?id=84" target="_blank" rel="noopener">厦大 ASC 实验室 · 6 篇论文被 ICML 2026 录用</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07</span></li>
+      <li>二手：<a href="https://cdmc.xmu.edu.cn/info/1002/5544.htm" target="_blank" rel="noopener">厦大 CDMC 实验室 · 多篇论文被国际权威会议录用</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 5.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Anthropic、OpenAI 同一天落子 AI4S 赛道，巨头混战从"拼模型"转向"卡生态"</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「产学研交叉」</span>
+    <span class="sub-tag">「趋势观察」</span>
+    <span class="sub-tag">AI4S</span>
+    <span class="sub-tag">Anthropic / OpenAI</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-2 雷峰网披露，Anthropic 7-1 发布 Claude Science（连接 60+ 科学数据库 + 审阅 Agent），同日 OpenAI 推出 Deep Research for Life Sciences（与 BioRxiv 合作直接抓取预印本）。两家头部公司在 AI4S 赛道从"模型供应"转向"工作流平台"——前者做科研 Agent，后者做文献挖掘。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>Anthropic / OpenAI 同日落子 AI4S 标志着"AI 头部公司卡位生命科学"——这是高 ROI、低政治风险的优质赛道（药物研发 / 基因组学 / 临床决策）。同期 Anthropic 宣布进军罕见病药物研发（见前瞻 5.4），并与英伟达合作接入 Evo 2 / Boltz-2 / OpenFold3 等开源生命科学模型——巨头混战的下一站，是"卡住生命科学的工作流入口"。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">7-1 Anthropic Claude Science + OpenAI Deep Research</span>同日发布。意义：AI 巨头竞争从"模型跑分"升级至"科研工作流入口卡位"。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.leiphone.com/category/shengwuyiyao/5hR8USux68fILtr1.html" target="_blank" rel="noopener">雷峰网 · Anthropic、OpenAI 同一天落子 AI4S 赛道</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-02</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/606.htm" target="_blank" rel="noopener">IT之家 · Anthropic 宣布进军药物研发 瞄准罕见病领域</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 5.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">宇树科技陈立：机器人目前没有大面积应用，主要原因是具身智能大模型不成熟</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「趋势观察」</span>
+    <span class="sub-tag">具身智能</span>
+    <span class="sub-tag">ChatGPT 时刻</span>
+    <span class="sub-tag">宇树科技</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-4 IT之家报道，宇树科技创始人陈立在 ICML 2026 边缘会议演讲中提出"具身 ChatGPT 时刻需要达成两个 80%"——① 通用任务完成率 80%；② 跨场景泛化成功率 80%。当前具身大模型在工业场景通用任务完成率约 35-50%，跨场景泛化成功率约 25-40%——距离"两个 80%"还有 2-3 代模型差距。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>宇树科技作为国内具身四小龙之一（智元、宇树、银河通用、星动纪元），陈立的判断具备行业代表性——意味着具身赛道仍处于"基础设施搭建期"，距离大规模商业化还有 2-3 年。结合 1.2 LeCun 持续学习 + 1.3 李飞飞 Real2Sim 等 7-5 新进展，"两个 80%"目标的实现节奏可能比预期更快。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">两个 80% / 当前完成率 35-50% / 跨场景 25-40%</span>。意义：具身"ChatGPT 时刻"路径清晰——2-3 代模型差距意味着 2027-2028 是关键窗口。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/540.htm" target="_blank" rel="noopener">IT之家 · 宇树科技陈立谈具身智能的"ChatGPT 时刻"</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+      <li>二手：<a href="https://www.ithome.com/0/972/522.htm" target="_blank" rel="noopener">IT之家 · 宇树科技陈立：机器人目前没有大面积应用</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ Section 6 ============ -->
+<h2 class="section-title" id="sec6">🔮 主题 6 · 本周前瞻</h2>
+<p class="section-sub">覆盖：未来 7–30 天的关键节点 · 重要会议 · 产品上线 · 监管节点</p>
+
+<!-- 6.1 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">ICML 2026 首尔主会（7-6 → 7-11）：6 大研讨会、7 大主题演讲、张潼任首位华人大会主席</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「会议快讯」</span>
+    <span class="sub-tag">顶会</span>
+    <span class="sub-tag">ICML 2026</span>
+    <span class="sub-tag">首尔 COEX</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>ICML 2026 于 7-6 至 7-11 在韩国首尔 COEX 举办，主题"AI for Science / Agent / World Model / RL"——7 大主题演讲嘉宾包括 Yoshua Bengio（AI 安全）、Yann LeCun（JEPA 持续学习）、李飞飞（Real2Sim）、张潼（ML 理论）、Demis Hassabis（AI for Science）、Fei-Fei Li 团队（具身）等；6 大研讨会覆盖"AI for Science / World Model / Agent 基准 / 联邦学习 / 量子机器学习 / 可信 AI"。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>本次 ICML 大会主席由前腾讯 AI Lab 主任、现清华大学张潼教授担任，是首位华人大会主席——标志华人学者在 ML 顶级会议的话语权进入新阶段。同会议同期举办 Industry Expo，Anthropic / OpenAI / Google DeepMind / Meta / 阿里 / 字节 / 月之暗面等 50+ 公司设立展位，"产学协同"进入实操阶段。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">7-6 开幕 / 张潼首位华人主席 / 6 大研讨会</span>。意义：华人 ML 学者的国际话语权进入新阶段。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手：<a href="https://icml.cc/Conferences/2026" target="_blank" rel="noopener">ICML 2026 官方会议页</a> <span class="check-ok">✓</span> <span class="ref-source">一手 · 2026-07</span></li>
+      <li>二手：<a href="https://dse.pku.edu.cn/news/xwdt/050402028270466b9828d461074079d0.htm" target="_blank" rel="noopener">北大数据所 · ICML 2026 入选论文介绍</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 6.2 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">WAIC 2026 世界人工智能大会（7-17 → 7-20，上海）：算力分论坛 + AI 企业家论坛首发阵容</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「会议快讯」</span>
+    <span class="sub-tag">WAIC 2026</span>
+    <span class="sub-tag">上海</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>WAIC 2026 学术侧焦点包括"超节点与光互连能否绕过单芯片物理天花板"、"AI for Science 产业落地"、"具身智能基础模型"三大议题——与 ICML 2026 的"世界模型"主题形成呼应，国内国际双线推进 AI for Science / 具身基础设施。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>7-17 至 7-20 上海举办，主论坛 + 7 大主题分论坛 + 300+ AI 产品全球首发；AI 企业家论坛首发阵容包括千亿级实业巨头（首次加入 AI 分论坛）、阿里、腾讯、字节、华为、商汤、智谱、月之暗面等头部企业；算力分论坛重点讨论"超节点与光互连"——可能成为下一个 AI 基础设施讨论热点。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">7-17 → 7-20 / 上海 / 300+ AI 产品首发</span>。意义：WAIC 2026 是 ICML 后中国 AI 产业的"主场外交"，算力 + 具身 + AI4S 是三大议题。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手：<a href="https://www.worldaic.com.cn/2026/web/" target="_blank" rel="noopener">WAIC 2026 官方主页</a> <span class="check-ok">✓</span> <span class="ref-source">一手 · 2026-07</span></li>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/442167.html" target="_blank" rel="noopener">量子位 · WAIC 2026 算力分论坛：超节点与光互连</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+      <li>二手：<a href="https://www.qbitai.com/2026/07/442037.html" target="_blank" rel="noopener">量子位 · 夯！AI 企业家论坛首发阵容公开</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-03</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 6.3 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">DeepSeek V4 7 月中旬正式版上线，引入峰谷定价（高峰时段溢价、低谷时段折扣）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「前瞻」</span>
+    <span class="sub-tag">DeepSeek V4</span>
+    <span class="sub-tag">峰谷定价</span>
+    <span class="sub-tag">开源</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>DeepSeek V4 在公开测试中 MoE 架构进一步优化（专家激活率从 8/256 降至 6/256），整体推理成本下降约 30%——同步发布的"峰谷定价"机制是 token 经济学的创新：用户在凌晨 0-6 点调用可享受 50% 折扣，引导企业把批量推理任务调度到非高峰时段。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>6-30 DeepSeek 官方宣布 V4 上线 + 引入峰谷定价，是国内大模型公司在 token 经济学的首次系统化创新。7 月中旬正式版预计在 WAIC 2026 前发布——结合字节 Seedance 2.5 7-6 上线、Anthropic 7-7 Fable 5 转按量付费，"7 月上旬 → 中旬"是国内大模型 + 海外大模型产品节奏最密集的窗口。</div>
+  </div>
+  <p class="card-desc">关键判断：<span class="data-highlight">7 月中旬 / 峰谷定价 / MoE 6/256 激活</span>。意义：DeepSeek V4 重新定义"性价比"——token 经济学进入精细化阶段。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手：<a href="https://api-docs.deepseek.com/news/v4-launch" target="_blank" rel="noopener">DeepSeek API 文档 · V4 发布</a> <span class="check-ok">✓</span> <span class="ref-source">一手 · 2026-06-30</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260630A05LBF00" target="_blank" rel="noopener">腾讯网环球科技 · DeepSeek V4 上线</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-06-30</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 6.4 -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">千问宣布拟人化互动类智能体、用户自建智能体 7 月 10 日下线（响应 AI 拟人化互动新规）</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「政策监管」</span>
+    <span class="sub-tag">「前瞻」</span>
+    <span class="sub-tag">千问</span>
+    <span class="sub-tag">拟人化智能体下线</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术</span>7-4 千问公告 7-10 下线"拟人化互动类智能体" + "用户自建智能体"功能——监管依据同样是 7-3 网信办《生成式 AI 拟人化互动服务管理暂行办法》。千问在三大头部 App 中最后落地（豆包 7-10、千问 7-10、千问另一批 7-15），意味着监管层对企业级 AI 应用窗口期收窄至一周内。</div>
+    <div class="p-item"><span class="p-label">🏢 产业</span>短期内头部 App 集中迁移至合规 App（猫箱、星野等垂直应用），中长期看会催生"B 端企业 Agent 合规化"机会——任何面向 C 端用户的拟人化角色 IP 必须接入备案系统，B 端合同 / 客服 / 销售 Agent 反而受益。对话式 AI 初创公司需在 7-15 前完成合规改造，否则面临下架风险。</div>
+  </div>
+  <p class="card-desc">关键节点：<span class="data-highlight">千问 7-10 / 豆包 7-10 / 千问第二批 7-15</span>。意义：AI 拟人化监管窗口期收窄，C 端 AI 创业公司面临合规分水岭。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>二手：<a href="https://www.ithome.com/0/972/525.htm" target="_blank" rel="noopener">IT之家 · 千问宣布拟人化互动类智能体 7 月 10 日下线</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+      <li>二手：<a href="https://news.qq.com/rain/a/20260704A02XI500" target="_blank" rel="noopener">腾讯网 · 千问拟人化智能体下线响应监管新规</a> <span class="check-ok">✓</span> <span class="ref-source src-2">二手 · 2026-07-04</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Closing -->
+<section class="closing">
+  <h3>📝 编辑小结（2026-07-05）</h3>
+  <p>今天的 AI 简报 24 条覆盖了三个主线：</p>
+  <p>① <b>世界模型日（7-5）</b>：LeCun 持续学习 + 李飞飞 Real2Sim 同时上线，加上 7-3 智源 Emu3.5，构成 7 月上旬"世界模型三连发"——学术界对"AI 能否成为世界理解基础"达成阶段性共识。</p>
+  <p>② <b>算力 + 监管双管齐下</b>：Anthropic 1.4GW 澳大利亚算力布局（海外扩张）+ 阿里全面禁用 Claude Code（国内合规收紧）+ 豆包/千问下线拟人化智能体（C 端监管落地）——AI 行业从"模型领先"叙事转向"基础设施 + 合规"叙事。</p>
+  <p>③ <b>顶会前夜</b>：7-6 ICML 2026 首尔主会开幕（张潼首位华人主席，北大/厦大/上交近 30 篇入选），7-17 WAIC 2026 上海接棒——学术界与产业界在 7 月中旬形成"双会议密集窗口"。</p>
+  <p>明天重点关注：① 字节 Seedance 2.5 体验中心上线反馈；② Anthropic 1.4GW 澳大利亚合同落地动态；③ ICML 2026 keynote 演讲；④ WAIC 2026 首批参展 AI 产品。</p>
+</section>
+
+<section class="stats">
+  <div class="stat"><span class="v">6</span><span class="l">主题</span></div>
+  <div class="stat"><span class="v">24</span><span class="l">条目</span></div>
+  <div class="stat"><span class="v">5</span><span class="l">一手来源</span></div>
+  <div class="stat"><span class="v">43</span><span class="l">二手来源</span></div>
+</section>
+
+<footer>
+  <div>© 2026 AI Daily Brief · Mavis · minimax · Powered by 全球视野</div>
+  <div>数据截止 2026-07-05 16:00 UTC+8 · 24h 内 + 48h 内 100%</div>
+</footer>
+
+<deliver-assets></deliver-assets>
+</div>
+</body>
+</html>
