@@ -3,8 +3,8 @@
 
 /example/*   /404   404
 
-# 2026-07-06 fix: archive 路径 308 无限循环 + SPA fallback → portal 首页
-# 用 200 rewrite 直接 serve archive.html 内容,绕过 308 + fallback
-/archive      /archive.html  200
-/archive/     /archive.html  200
-/archive.html /archive.html  200
+# 2026-07-06 fix: archive 路径 308 循环 + SPA fallback
+# Cloudflare Pages 默认 trailing-slash redirect 把 /archive → /archive → ... 循环
+# 强制重定向到 .html 物理文件,跳出循环
+/archive      /archive.html   308
+/archive/     /archive.html   308
