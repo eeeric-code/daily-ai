@@ -1,0 +1,415 @@
+# minimax 简报每日审核 + 全自动双循环修复 + 推送公网（v2.7 流程）
+
+> **v2.7 重大升级**：
+> 1. **双循环**（v2.6 单循环漏报多 → 加循环 2 重 audit + 二次修复）
+> 2. **去掉硬超时**（用户拍板 C：跑完为止，依赖 mavis agent 跑完会发 message finish session）
+> 3. **search_query 模板修正**（v2.5/v2.6 search_query 加 `site:domain` 把 so.html5.qq.com 转载源排除在外导致漏报 → 改用 card_title 全网搜）
+> 4. **限制循环 2 不无限重试**（最多 2 轮，找不到真源 → 报告 partial，不循环到天荒地老）
+>
+> 配套 SOP：`D:\ECNU\其他\每日AI推送\prompts\audit-minimax-每日简报.md`（§11.10 v2.7 升级）
+> 入口脚本：`D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily.ps1`（v3.0 audit）
+> 自动修复脚本：`D:\ECNU\其他\每日AI推送\scripts\audit-autofix.ps1`（v2.7：search_query 改 card_title 去 site:）
+> 当前日期：`$DATE`
+
+---
+
+## 一、你的角色
+
+你是 **minimax 简报审核员 + 双循环全自动修复执行者**。
+
+执行流程（**按顺序走完双循环**）：
+
+### 循环 1：主修复
+1. 恢复检查（生成端就绪？）
+2. 跑 audit（PowerShell v3.0）
+3. 跑 PowerShell autofix v2.7（修硬规则 + 生成 actions）
+4. mavis agent 软决策（web_search 找真源 + webfetch 验证 + 主题词匹配 + patch + commit + push + 公网验证）
+5. 等待 60s（Cloudflare 缓存刷新）
+
+### 循环 2：自检 / 二次质检
+6. 重跑 audit v3.0
+7. 判定：
+   - **全 PASS** → 报告 root "DOUBLE-LOOP PASS" + 退出
+   - **仍有 FAIL** → 二次修复：
+     - 对循环 1 没找到真源的 actions 重跑 web_search（**不限 site:**，用 card_title 全网搜）
+     - 仍然找不到 → 不无限重试，标记为 partial_skip
+     - 二次修复完成后 commit + push + 公网验证
+   - **二次修复后仍 FAIL** → 报告 root "PARTIAL" + 列出剩余 fail
+
+8. 报告 root（双循环结果 + 实际耗时）
+
+> ⚠️ v2.7 关键变化：
+> - **无硬超时**：跑完为止，依赖 mavis session lifecycle
+> - **双循环**：循环 1 + 循环 2，必须按顺序走完
+> - **search_query 不限 site:**：避免漏掉 so.html5.qq.com 等转载源
+> - **不无限重试**：每个 URL 最多 2 轮 web_search（循环 1 + 循环 2），仍找不到 → 标记 partial_skip，保留原状
+
+---
+
+## 二、恢复检查
+
+读 `D:\ECNU\其他\每日AI推送\.cron-state-minimax.json`，确认 `html_generated && deploy_verified`，否则结束。
+
+---
+
+## 三、步骤 1：跑 audit（不变）
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File "D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily.ps1"
+```
+
+- 如果 verdict = PASS → 跳到循环 2 步骤（重 audit 兜底），仍然 PASS 直接步骤 8 报告
+- 如果 verdict = FAIL → 走循环 1 主修复（步骤 3-5）
+
+---
+
+## 四、步骤 2：跑 PowerShell autofix（v2.7）
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File "D:\ECNU\其他\每日AI推送\scripts\audit-autofix.ps1"
+```
+
+**v2.7 脚本自动处理 4 类硬规则**（不需 mavis agent 介入）：
+- nav-top / nav-bottom href 修复（改为 `/`）
+- meta 标签补全（og:title / og:description）
+- rel=noopener 统一添加
+- 发布时间/版本号同步
+
+**v2.7 关键改进 —— search_query 模板**：
+
+旧（v2.5/v2.6 漏报原因）：
+```json
+{ "search_query": "jepa cell internal 2026-07-10 site:qbitai.com" }
+```
+
+新（v2.7 全网搜，避免漏转载源）：
+```json
+{ "search_query": "从 LLM 到 JEPA 中国团队 世界模型 细胞 量子位 2026-07-10" }
+```
+
+变更理由：之前 `site:qbitai.com` 把 so.html5.qq.com 转载源排除在外，评估为 `intentional_skip_no_source` 漏报。
+
+**v2.7 脚本输出**：
+- `$DATE/replace-suggestions.md`：人类可读清单
+- `$DATE/replace-actions.json`：结构化清单（仅剩 no_source 卡片 + 4xx URL 需要 mavis agent 找真源）
+
+---
+
+## 五、步骤 3：循环 1 - mavis agent 软决策 + commit + push
+
+> **如果 actions 列表为空**（无 no_source 卡片 + 无 4xx URL）→ 跳过循环 1 修复，直接到步骤 5（等待 + 重 audit）
+
+**如果 actions 列表非空**：
+
+### 5.1 读 `replace-actions.json`
+
+### 5.2 对每条 action 找真源（不限 site:，全网搜）：
+
+```python
+for action in actions:
+    real_url = None
+    # 优先用 action.card_title 作为核心关键词
+    keywords = extract_keywords(action.card_title)  # 至少 3 个
+    
+    for attempt in range(max_attempts):  # max_attempts = 3
+        # 1. web_search：全网搜（不限 site:）
+        query = f"{keywords} {today}"  # 不加 site: 限定
+        results = web_search(query, top_n=8)
+        
+        for r in results:
+            # 2. 滤 fake-200 关键词
+            if any(kw in r.snippet for kw in ["404","Not Found","Cloudflare","Access Denied"]):
+                continue
+            
+            # 3. webfetch 验证 200
+            try:
+                resp = webfetch(r.url)
+                if resp.status_code != 200:
+                    continue
+                body = resp.text
+                if any(kw in body for kw in fake_200_keywords):
+                    continue
+                
+                # 4. 主题词匹配（≥2 关键词）
+                if sum(1 for kw in keywords if kw in r.url or kw in body[:1500]) >= 2:
+                    real_url = r.url
+                    break
+            except:
+                continue
+        
+        if real_url:
+            break
+        # Fallback: 用 alternative_domains 替换搜（仍不限 site:）
+        for alt_domain in action.alternative_domains:
+            new_query = f"{keywords} {today}"  # 不加 site:
+            results = web_search(new_query, top_n=5)
+            # ... 同样验证流程
+    
+    action.real_url = real_url  # None = 找不到
+```
+
+### 5.3 Patch 简报 HTML：
+
+```bash
+powershell -NoProfile -Command "
+  \$h = Get-Content 'D:\ECNU\其他\每日AI推送\$DATE\index.html' -Encoding UTF8 -Raw
+  foreach (\$a in (\$actions | ConvertFrom-Json)) {
+      if (\$a.real_url) {
+          \$h = \$h.Replace('href=\"' + \$a.bad_url + '\"', 'href=\"' + \$a.real_url + '\"')
+      }
+  }
+  [System.IO.File]::WriteAllText('D:\ECNU\其他\每日AI推送\$DATE\index.html', \$h, [System.Text.UTF8Encoding]::new(\$false))
+"
+```
+
+### 5.4 重跑 audit 验证（循环 1 末尾）：
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File "D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily.ps1"
+```
+
+读 `$DATE/audit-minimax-$DATE.json`：
+- 如果 `verdict = PASS` 且 `url_fail=0` 且 `no_source_count=0` → 进入 5.5 commit + push
+- 否则：仍 FAIL → **进入循环 2**（步骤 7 二次修复），不立即 commit（避免半成品）
+
+### 5.5 Commit + push + 公网验证（无硬超时，跑完为止）
+
+```bash
+cd D:\ECNU\其他\每日AI推送\repo
+git config core.autocrlf false 2>&1 | Out-Null
+git add -A
+git commit -m "fix(minimax): $DATE v2.7 loop1 修复 N 条 (audit verdict=...)"
+git push origin main
+Start-Sleep -Seconds 30
+$resp = Invoke-WebRequest -Uri "https://daily-ai-2o3.pages.dev/ai-daily/minimax/$DATE/" -UseBasicParsing -TimeoutSec 15
+# 期望 200 OK
+```
+
+> **无硬超时**：mavis agent 完成 commit + push + 公网验证后再退出。如果 30+ 分钟还没完成，session 自己会 finish（daemon lifecycle），此时 fallback 报告 root partial。
+
+---
+
+## 六、步骤 4：等待 60s（Cloudflare 缓存刷新）
+
+```bash
+Start-Sleep -Seconds 60
+```
+
+让 Cloudflare 部署完成 + 公网缓存更新。
+
+---
+
+## 六点五、首页 minimax 综合卡片同步验证（v2.7 升级 · 2026-07-11 用户硬性要求）
+
+> **用户反馈**:之前 minimax cron 跑完后公网首页的 minimax 卡片**不会自动更新**(只改 portal-template.html,要等 gpt cron 09:00 二次生成 repo/index.html 才生效)。audit cron 必须主动验证首页已同步。
+
+**Step A: 抓公网首页 + 解析 minimax 综合卡片**
+
+```powershell
+$portalUrl = "https://daily-ai-2o3.pages.dev/"
+$expectedDate = (Get-Date -Format 'yyyy-MM-dd')
+$expectedMinimaxCount = (Get-ChildItem -Path "D:\ECNU\其他\每日AI推送\repo\ai-daily\minimax" -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}$' }).Count
+
+try {
+    $portalHtml = (Invoke-WebRequest -Uri $portalUrl -UseBasicParsing -MaximumRedirection 10 -TimeoutSec 15 -ErrorAction Stop).Content
+} catch {
+    Write-Host "✗ 抓首页失败: $($_.Exception.Message)"
+    $report.verdict = 'FAIL'
+    $report.verdict_reasons += '首页抓取失败'
+    Save-Report
+    Send-Alert $report $WebhookUrl
+    exit 3
+}
+
+# 提取 minimax 综合 card 块(限定 model-name >minimax< 后面到 </section>)
+if ($portalHtml -match '(<span class="model-name">minimax</span>.*?</section>)') {
+    $minimaxCard = $matches[1]
+} else {
+    $minimaxCard = ''
+}
+
+# 验证 3 个字段
+$hasLatestDate = ($minimaxCard -match "最[新新][：:]\s*$expectedDate")
+$hasReadBtn     = ($minimaxCard -match ('href="\./ai-daily/minimax/' + $expectedDate + '/"'))
+$hasCountOk     = ($minimaxCard -match "已收录\s*$expectedMinimaxCount\s*期")
+
+$homepageCardOk = $hasLatestDate -and $hasReadBtn -and $hasCountOk
+
+Write-Host "首页 minimax 综合卡片同步检查:"
+Write-Host "  - latest_date == $expectedDate ? $hasLatestDate"
+Write-Host "  - read_btn 指向 $expectedDate ? $hasReadBtn"
+Write-Host "  - 已收录 $expectedMinimaxCount 期 ? $hasCountOk"
+
+if (-not $homepageCardOk) {
+    Write-Host "✗ 首页 minimax 综合卡片**未同步**,需立即 patch" 'WARN'
+    # 自动 patch 部署版 repo/index.html
+    $deployedIndex = "D:\ECNU\其他\每日AI推送\repo\index.html"
+    $content = Get-Content $deployedIndex -Encoding UTF8 -Raw
+
+    $content = $content -replace '(<span class="model-name">minimax</span>[\s\S]*?<span>最新[：:]?)\d{4}-\d{2}-\d{2}', "`$1$expectedDate"
+    $content = $content -replace '(<span class="model-name">minimax</span>[\s\S]*?<span>已收录 ?)\d+( ?期</span>)', "`$1$expectedMinimaxCount`$2"
+    $content = $content -replace '(<span class="model-name">minimax</span>[\s\S]*?href="\./ai-daily/minimax/)\d{4}-\d{2}-\d{2}(/)"', "`$1$expectedDate`$2"
+
+    Set-Content $deployedIndex -Value $content -Encoding UTF8 -NoNewline
+    Write-Host "✓ patched repo/index.html minimax 综合卡片"
+
+    Set-Location "D:\ECNU\其他\每日AI推送\repo"
+    git add index.html
+    git commit -m "fix(homepage): sync minimax 综合卡片 to $expectedDate"
+    git push origin main
+    $report.tier2_auto_actions += "patched repo/index.html minimax 综合卡片 → $expectedDate / $expectedMinimaxCount 期"
+}
+```
+
+**Step B: 等 30s 后再验证一次**
+
+```powershell
+Start-Sleep -Seconds 30
+$portalHtml2 = (Invoke-WebRequest -Uri $portalUrl -UseBasicParsing -MaximumRedirection 10 -TimeoutSec 15 -ErrorAction Stop).Content
+if ($portalHtml2 -match '(<span class="model-name">minimax</span>.*?</section>)') {
+    $minimaxCard2 = $matches[1]
+} else { $minimaxCard2 = '' }
+$homepageCardOk2 = ($minimaxCard2 -match "最[新新][：:]\s*$expectedDate") -and ($minimaxCard2 -match "已收录\s*$expectedMinimaxCount\s*期")
+if (-not $homepageCardOk2) {
+    Write-Host "✗ 首页 minimax 综合卡片二次验证仍 FAIL" 'ERROR'
+    $report.verdict = 'FAIL'
+    $report.verdict_reasons += '首页 minimax 综合卡片二次验证仍失败'
+}
+```
+
+**审计报告输出**:
+- `homepage_minimax_sync`: PASS / FAIL
+- 失败原因写入 `verdict_reasons`
+
+---
+
+## 七、步骤 5：循环 2 - 重 audit + 二次修复
+
+### 7.1 重跑 audit v3.0
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File "D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily.ps1"
+```
+
+读 `$DATE/audit-minimax-$DATE.json`：
+
+### 7.2 判定
+
+**情况 A：全 PASS（url_fail=0 + no_source_count=0 + 其他 p0=0）**
+- 跳到步骤 8 报告 root "DOUBLE-LOOP PASS"
+- 不做 commit（因为没改）
+
+**情况 B：仍有 FAIL（循环 1 没修完的 actions）**
+- 读 `$DATE/replace-actions.json`，找出循环 1 仍标记 `real_url = None` 的 actions
+- 对这些 actions 重跑 web_search（**不限 site:**，用 card_title 全网搜）：
+  ```python
+  for action in leftover_actions:
+      # 同 5.2 流程，但每个 URL 只允许再跑 1 次 web_search（不再无限重试）
+      # 仍然找不到 → action.real_url = None，标记为 partial_skip
+      ...
+  ```
+- Patch HTML（只 patch 这次找到真源的 actions）
+- Commit + push + 公网验证（同 5.5）
+- 进入情况 C 检查
+
+**情况 C：二次修复后仍 FAIL**
+- 不无限循环（关键限制：**最多 2 个循环**）
+- 报告 root "PARTIAL" + 列出剩余 fail
+
+---
+
+## 八、步骤 6：报告 root（双循环结果）
+
+无论双循环成功还是部分成功，**必须**报告 root：
+
+```bash
+mavis communication send --to <root_session_id> --command prompt --content "minimax v2.7 双循环审核+修复 $DATE
+- 循环 1（主修复）：
+  - audit: <verdict> (p0=N p1=N p2=N url_fail=N no_source=N)
+  - autofix 硬规则: nav_top=fixed meta=fixed rel=fixed publish_time=fixed
+  - mavis agent 找真源: N 条成功 / N 条 partial_skip
+  - commit: <sha> pushed=<bool>
+  - 公网验证: 200/<status>
+- 循环 2（自检）：
+  - 重 audit: <verdict>
+  - 二次修复: N 条成功 / N 条仍 partial_skip
+  - commit: <sha> pushed=<bool>
+- 双循环结果: <DOUBLE-LOOP PASS / PARTIAL>
+- 总耗时: <X 分钟>
+- 报告: D:\ECNU\其他\每日AI推送\$DATE\audit-minimax-$DATE.md
+"
+```
+
+---
+
+## 九、验证风控（v2.7 强化）
+
+| 风险 | 缓解 |
+|---|---|
+| mavis agent 跳过 commit + push | 无硬超时，但 session lifecycle 自动 finish（兜底） |
+| LLM 编假 URL | web_search 全网搜（不限 site:），避免漏转载 |
+| web_search 返回 fake 200 | webfetch 验证 200 + 检查 fake_200 关键词 |
+| 主题不匹配 | 主题词匹配（至少 2 个关键词命中） |
+| 无限循环找不到真源 | 最多 2 个循环，每个 URL 最多 2 轮 web_search |
+| 硬规则改坏 HTML | PowerShell 脚本做硬规则，LLM 不直接 patch 模板 |
+| 自动 push 错内容 | 每轮 commit 前重 audit，期望 url_fail=0 |
+| 转载源漏报（v2.5/v2.6 bug） | v2.7 search_query 不限 site:，用 card_title 全网搜 |
+
+---
+
+## 十、红线
+
+- ❌ 跳过步骤 2（PowerShell autofix）直接 mavis agent 修
+- ❌ 跳过 5.4（重 audit）就直接 commit
+- ❌ **search_query 加 `site:domain` 限定**（漏转载源，已是 v2.5/v2.6 的教训）
+- ❌ **不验证真源就 push**（webfetch + 主题词匹配 + audit PASS 三个都要通过）
+- ❌ **用 LLM 直接编 URL**（必须 web_search 找真源）
+- ❌ **无限循环**（最多 2 个循环，找不到真源 → 报告 partial）
+- ❌ 改 `cron_state` 主结构
+- ❌ 触碰 gpt slot 文件
+
+---
+
+## 十一、完成后
+
+1. 报告 root（步骤 8）
+2. 不删 cron_state
+3. 不触碰 gpt slot 文件
+
+---
+
+## 十二、v2.7 升级说明（v2.6 → v2.7 差异）
+
+| 维度 | v2.6 | v2.7 |
+|---|---|---|
+| 循环数 | 1 个 | **2 个（主修 + 自检）** |
+| 超时 | 5 分钟硬超时 | **无硬超时，跑完为止**（user 拍板 C） |
+| search_query | `"$urlPath $today site:$domainBase"` | **`"$cardTitle $today"`**（不限 site:） |
+| 找不到真源 | 无 retry 限制 | **最多 2 个循环 2 轮 web_search** |
+| 报告状态 | FIXED/PARTIAL | + **DOUBLE-LOOP PASS**（双循环全过） |
+
+**v2.6 已知问题修复**：
+
+| 问题 | v2.6 表现 | v2.7 修复 |
+|---|---|---|
+| 单循环漏报 | 4xx qbitai URL 评估为 `intentional_skip_no_source` | 双循环 + 跨循环 review |
+| search_query `site:` 限定 | 漏掉 so.html5.qq.com 转载源 | 用 card_title 全网搜 |
+| 公网 partial 修复 | 找不到真源 → 报告 root 但公网未修 | 双循环兜底，最坏情况公网也修了一部分 |
+| 5 分钟超时 | 流程未完成就超时 | 无超时，跑完为止 |
+
+**v1 60% fake-200 教训仍然遵守**：
+
+- LLM **不直接编 URL**——必须 web_search 找真源
+- web_search **不加 site: 限定**（v2.7 新增，避免漏转载）
+- 找来的真源必须 webfetch 验证 200 + 主题词匹配（≥2 关键词）
+- audit 重跑 PASS 才 push
+- 部分失败 + 报告 root
+- **不无限循环**（v2.7 新增，每个 URL 最多 2 轮 web_search）
+
+**v2.7 关键设计**：
+
+- PowerShell 脚本做硬规则（HTTP 状态、结构检查）—— 确定性
+- mavis agent 做软判断（主题词匹配、找真源）—— 灵活性
+- 双循环兜底（循环 1 漏的，循环 2 还能找）
+- 无超时（依赖 mavis session 自己的 lifecycle）
