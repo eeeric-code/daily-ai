@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#05040d" />
+  <title>生日快乐 · 为你点亮一整个宇宙</title>
+  <style>
+    :root {
+      --ink: #fffaf4;
+      --muted: rgba(255, 250, 244, .66);
+      --line: rgba(255, 255, 255, .13);
+      --glass: rgba(11, 8, 28, .42);
+      --accent: #ffd9a6;
+      --pink: #ff90c8;
+      --violet: #a991ff;
+      --cyan: #7beeff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #05040d;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 47%, rgba(112, 70, 180, .18), transparent 34%),
+        radial-gradient(circle at 25% 20%, rgba(255, 96, 175, .10), transparent 31%),
+        radial-gradient(circle at 80% 14%, rgba(71, 189, 255, .10), transparent 28%),
+        linear-gradient(180deg, #090717 0%, #05040d 58%, #020208 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .32;
+      mix-blend-mode: soft-light;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      z-index: 9;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        radial-gradient(circle at center, transparent 38%, rgba(2, 2, 10, .25) 67%, rgba(2, 2, 8, .78) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.12), transparent 26%, transparent 70%, rgba(0,0,0,.52));
+    }
+
+    .topbar {
+      position: fixed;
+      top: max(24px, env(safe-area-inset-top));
+      left: 30px;
+      right: 30px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      pointer-events: none;
+    }
+
+    .eyebrow,
+    .counter {
+      font-size: 10px;
+      letter-spacing: .30em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.62);
+      white-space: nowrap;
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: .18em;
+    }
+
+    .counter::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55));
+    }
+
+    .hero {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: end;
+      pointer-events: none;
+    }
+
+    .headline {
+      position: absolute;
+      top: clamp(78px, 11vh, 122px);
+      left: 50%;
+      width: min(92vw, 980px);
+      transform: translateX(-50%);
+      text-align: center;
+      transform-style: preserve-3d;
+      perspective: 900px;
+    }
+
+    .headline .overline {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: clamp(10px, 1vw, 13px);
+      letter-spacing: .38em;
+      text-indent: .38em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      position: relative;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-size: clamp(45px, 8.8vw, 118px);
+      font-weight: 500;
+      line-height: .9;
+      letter-spacing: .015em;
+      color: #fff8ee;
+      text-shadow:
+        0 1px 0 #fff,
+        0 6px 24px rgba(255, 180, 222, .28),
+        0 0 52px rgba(190, 155, 255, .18);
+      animation: titleFloat 5.5s ease-in-out infinite;
+    }
+
+    h1::after {
+      content: attr(data-shadow);
+      position: absolute;
+      inset: 7px 0 auto;
+      z-index: -1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 198, 226, .17);
+      filter: blur(.2px);
+      transform: translateZ(-40px) scale(1.008);
+    }
+
+    .subtitle {
+      margin: 13px auto 0;
+      max-width: 620px;
+      color: rgba(255, 248, 239, .66);
+      font-size: clamp(12px, 1.45vw, 16px);
+      letter-spacing: .16em;
+      line-height: 1.8;
+    }
+
+    .bottom {
+      width: 100%;
+      padding: 0 30px max(26px, env(safe-area-inset-bottom));
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .message {
+      max-width: 440px;
+      padding: 17px 20px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 60px rgba(0,0,0,.22);
+      backdrop-filter: blur(15px) saturate(130%);
+      -webkit-backdrop-filter: blur(15px) saturate(130%);
+      pointer-events: auto;
+    }
+
+    .message strong {
+      display: block;
+      margin-bottom: 7px;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: .08em;
+    }
+
+    .message p {
+      margin: 0;
+      color: rgba(255,255,255,.67);
+      font-size: 12px;
+      line-height: 1.75;
+      letter-spacing: .06em;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      padding: 12px 18px;
+      color: #fffaf5;
+      background: rgba(255,255,255,.07);
+      font: inherit;
+      font-size: 11px;
+      letter-spacing: .18em;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.32);
+    }
+
+    button:active { transform: translateY(0) scale(.98); }
+
+    .hint {
+      color: rgba(255,255,255,.42);
+      font-size: 10px;
+      letter-spacing: .14em;
+      white-space: nowrap;
+    }
+
+    .halo {
+      position: fixed;
+      left: 50%;
+      top: 55%;
+      width: min(54vw, 660px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 177, 224, .10), rgba(113, 87, 225, .055) 42%, transparent 70%);
+      filter: blur(12px);
+      animation: haloPulse 4.6s ease-in-out infinite;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 112px;
+      z-index: 8;
+      transform: translate(-50%, 20px);
+      padding: 10px 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      color: rgba(255,255,255,.78);
+      background: rgba(10, 8, 24, .56);
+      backdrop-filter: blur(12px);
+      font-size: 11px;
+      letter-spacing: .12em;
+      opacity: 0;
+      transition: .35s ease;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @keyframes titleFloat {
+      0%, 100% { transform: translateY(0) rotateX(0deg); }
+      50% { transform: translateY(-5px) rotateX(1.4deg); }
+    }
+
+    @keyframes haloPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(.96); opacity: .72; }
+      50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar { left: 18px; right: 18px; top: max(18px, env(safe-area-inset-top)); }
+      .counter::before { width: 22px; }
+      .headline { top: 74px; }
+      .headline .overline { letter-spacing: .25em; text-indent: .25em; }
+      .subtitle { width: 86%; letter-spacing: .10em; line-height: 1.55; }
+      .bottom {
+        padding: 0 16px max(16px, env(safe-area-inset-bottom));
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .message { width: 100%; padding: 13px 15px; }
+      .message strong { margin-bottom: 4px; font-size: 15px; }
+      .message p { font-size: 10px; line-height: 1.55; }
+      .actions { width: 100%; justify-content: space-between; }
+      button { padding: 10px 14px; }
+      .hint { font-size: 9px; }
+      .toast { bottom: 132px; }
+    }
+
+    @media (max-height: 680px) {
+      .headline { top: 55px; }
+      .subtitle { display: none; }
+      .message p { display: none; }
+      .message { padding: 11px 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      h1, .halo { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene" aria-label="三维粒子生日蛋糕与星空动画"></canvas>
+  <div class="halo"></div>
+  <div class="vignette"></div>
+
+  <header class="topbar">
+    <div class="eyebrow">A LITTLE UNIVERSE · JUST FOR YOU</div>
+    <div class="counter"><span id="starCount">∞</span> WISHES</div>
+  </header>
+
+  <main class="hero">
+    <section class="headline" aria-label="生日祝福标题">
+      <p class="overline">Today, the universe celebrates you</p>
+      <h1 id="mainTitle" data-shadow="生日快乐">生日快乐</h1>
+      <p class="subtitle" id="subtitle">愿新一岁的每一次心动，都有星光回应。</p>
+    </section>
+
+    <div class="bottom">
+      <article class="message">
+        <strong id="messageTitle">致，独一无二的你</strong>
+        <p id="messageText">愿你眼里有光，心中有梦；所遇皆温柔，所行皆坦途。今天，整片星河都为你点亮。</p>
+      </article>
+
+      <div class="actions">
+        <span class="hint">移动探索 · 点击星空</span>
+        <button id="wishButton" type="button">点亮祝福 ✦</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">愿望已被星河收藏 ✦</div>
+
+  <script>
+    /* =========================
+       可在这里快速修改祝福文案
+       ========================= */
+    const CONFIG = {
+      title: "生日快乐",
+      subtitle: "愿新一岁的每一次心动，都有星光回应。",
+      messageTitle: "致，独一无二的你",
+      messageText: "愿你眼里有光，心中有梦；所遇皆温柔，所行皆坦途。今天，整片星河都为你点亮。",
+      candles: 5
+    };
+
+    document.title = `${CONFIG.title} · 为你点亮一整个宇宙`;
+    document.getElementById("mainTitle").textContent = CONFIG.title;
+    document.getElementById("mainTitle").dataset.shadow = CONFIG.title;
+    document.getElementById("subtitle").textContent = CONFIG.subtitle;
+    document.getElementById("messageTitle").textContent = CONFIG.messageTitle;
+    document.getElementById("messageText").textContent = CONFIG.messageText;
+
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d", { alpha: true });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let W = 0, H = 0, DPR = 1;
+    let focal = 760;
+    let cakeScale = 1;
+    let frame = 0;
+    let wished = false;
+
+    const pointer = { x: 0, y: 0, tx: 0, ty: 0, active: false };
+    const sceneRotation = { x: -0.07, y: 0, targetX: -0.07, targetY: 0 };
+    const palette = {
+      cream: [255, 236, 208],
+      gold: [255, 198, 121],
+      pink: [255, 126, 194],
+      rose: [255, 91, 156],
+      violet: [165, 135, 255],
+      lilac: [212, 181, 255],
+      cyan: [112, 230, 255],
+      white: [255, 255, 255]
+    };
+
+    const stars = [];
+    const dust = [];
+    const cake = [];
+    const orbit = [];
+    const flames = [];
+    const fireworks = [];
+    const wishes = [];
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      focal = Math.max(620, Math.min(900, W * .82));
+      cakeScale = Math.min(1.1, Math.max(.63, Math.min(W / 850, H / 820)));
+      buildTextDust();
+    }
+
+    function addPoint(group, x, y, z, color, size = 1.5, alpha = 1, glow = 0) {
+      group.push({ x, y, z, color, size, alpha, glow, seed: Math.random() * Math.PI * 2 });
+    }
+
+    function buildStars() {
+      stars.length = 0;
+      const count = Math.min(850, Math.floor((window.innerWidth * window.innerHeight) / 1100));
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: rand(-1.1, 1.1),
+          y: rand(-1.1, 1.1),
+          z: Math.random(),
+          size: rand(.25, 1.65),
+          alpha: rand(.18, .95),
+          twinkle: rand(.6, 2.2),
+          seed: rand(0, Math.PI * 2),
+          color: Math.random() < .13 ? (Math.random() < .5 ? palette.pink : palette.cyan) : palette.white
+        });
+      }
+    }
+
+    function addCylinder(radius, yTop, yBottom, colorA, colorB, density = 48, rows = 11, zSquash = .60) {
+      for (let iy = 0; iy < rows; iy++) {
+        const y = lerp(yTop, yBottom, iy / (rows - 1));
+        for (let i = 0; i < density; i++) {
+          const a = (i / density) * Math.PI * 2 + (iy % 2) * .035;
+          const wave = Math.sin(a * 7 + iy * .5) * 2.2;
+          const r = radius + wave;
+          const color = Math.random() > .46 ? colorA : colorB;
+          addPoint(cake, Math.cos(a) * r, y + rand(-1.5, 1.5), Math.sin(a) * r * zSquash, color, rand(1.0, 2.2), rand(.62, 1), 1);
+        }
+      }
+    }
+
+    function addDisk(radius, y, colorA, colorB, count = 340, zSquash = .60) {
+      for (let i = 0; i < count; i++) {
+        const a = rand(0, Math.PI * 2);
+        const r = radius * Math.sqrt(Math.random());
+        addPoint(cake, Math.cos(a) * r, y + rand(-2, 2), Math.sin(a) * r * zSquash, Math.random() < .72 ? colorA : colorB, rand(.8, 2), rand(.48, .92), .6);
+      }
+    }
+
+    function addFrostingRing(radius, y, color, bumps = 16, count = 260, zSquash = .60) {
+      for (let i = 0; i < count; i++) {
+        const a = (i / count) * Math.PI * 2;
+        const wave = 5 + Math.sin(a * bumps) * 5.5;
+        const r = radius + Math.cos(a * bumps) * 2.2;
+        addPoint(cake, Math.cos(a) * r, y + wave + rand(-1.8, 1.8), Math.sin(a) * r * zSquash, color, rand(1.2, 2.5), rand(.7, 1), 2);
+      }
+    }
+
+    function addBaseRing(radius, y, color, count = 250) {
+      for (let i = 0; i < count; i++) {
+        const a = (i / count) * Math.PI * 2;
+        addPoint(cake, Math.cos(a) * radius, y + Math.sin(a * 3) * .8, Math.sin(a) * radius * .43, color, rand(1, 2.1), rand(.55, .9), 1.5);
+      }
+    }
+
+    function buildCake() {
+      cake.length = 0;
+      flames.length = 0;
+      orbit.length = 0;
+
+      // 蛋糕托盘
+      addDisk(218, 180, palette.violet, palette.pink, 230, .42);
+      addBaseRing(220, 180, palette.lilac, 320);
+      addBaseRing(201, 174, palette.gold, 260);
+
+      // 三层蛋糕
+      addCylinder(174, 83, 166, palette.pink, palette.violet, 58, 13);
+      addDisk(174, 83, palette.cream, palette.pink, 430);
+      addFrostingRing(170, 78, palette.cream, 18, 310);
+
+      addCylinder(132, 22, 92, palette.lilac, palette.pink, 52, 11);
+      addDisk(132, 21, palette.cream, palette.lilac, 340);
+      addFrostingRing(129, 17, palette.cream, 15, 260);
+
+      addCylinder(91, -28, 31, palette.cream, palette.pink, 44, 10);
+      addDisk(91, -29, palette.cream, palette.gold, 250);
+      addFrostingRing(88, -34, palette.cream, 12, 210);
+
+      // 糖珠与高光
+      for (let i = 0; i < 170; i++) {
+        const tier = Math.random();
+        let radius, y;
+        if (tier < .48) { radius = 176; y = rand(92, 158); }
+        else if (tier < .80) { radius = 134; y = rand(30, 82); }
+        else { radius = 93; y = rand(-21, 23); }
+        const a = rand(0, Math.PI * 2);
+        const colors = [palette.gold, palette.cyan, palette.rose, palette.white];
+        addPoint(cake, Math.cos(a) * radius, y, Math.sin(a) * radius * .60, colors[(Math.random() * colors.length) | 0], rand(1.4, 2.8), rand(.62, 1), 2.5);
+      }
+
+      // 蜡烛
+      const candleCount = Math.max(1, Math.min(7, CONFIG.candles));
+      for (let c = 0; c < candleCount; c++) {
+        const spread = candleCount === 1 ? 0 : (c / (candleCount - 1) - .5);
+        const x = spread * 116;
+        const z = -Math.abs(spread) * 8 + (c % 2 ? 7 : -2);
+        for (let iy = 0; iy < 30; iy++) {
+          const y = -38 - iy * 2.25;
+          const stripe = ((iy + c * 2) % 8) < 3;
+          for (let a = 0; a < 10; a++) {
+            const ang = (a / 10) * Math.PI * 2;
+            addPoint(cake, x + Math.cos(ang) * 4.8, y, z + Math.sin(ang) * 3.2, stripe ? palette.pink : palette.cream, 1.35, .9, 1);
+          }
+        }
+        for (let i = 0; i < 34; i++) {
+          flames.push({ x, y: -114, z, seed: Math.random() * Math.PI * 2, radius: Math.random(), color: Math.random() < .55 ? palette.gold : palette.cream });
+        }
+      }
+
+      // 环绕粒子
+      for (let i = 0; i < 280; i++) {
+        orbit.push({
+          angle: rand(0, Math.PI * 2),
+          radius: rand(228, 345),
+          y: rand(-118, 185),
+          speed: rand(.0008, .0024) * (Math.random() < .5 ? -1 : 1),
+          zSquash: rand(.25, .55),
+          color: [palette.pink, palette.violet, palette.cyan, palette.gold][(Math.random() * 4) | 0],
+          size: rand(.45, 1.65),
+          alpha: rand(.18, .65),
+          seed: rand(0, Math.PI * 2)
+        });
+      }
+    }
+
+    function buildTextDust() {
+      dust.length = 0;
+      const off = document.createElement("canvas");
+      const ow = 900, oh = 220;
+      off.width = ow; off.height = oh;
+      const o = off.getContext("2d");
+      o.clearRect(0, 0, ow, oh);
+      o.fillStyle = "#fff";
+      o.textAlign = "center";
+      o.textBaseline = "middle";
+      o.font = '700 100px "PingFang SC", "Microsoft YaHei", sans-serif';
+      o.fillText("HAPPY BIRTHDAY", ow / 2, oh / 2);
+      const img = o.getImageData(0, 0, ow, oh).data;
+      const step = W < 620 ? 8 : 6;
+      const scale = W < 620 ? .43 : .54;
+      for (let y = 0; y < oh; y += step) {
+        for (let x = 0; x < ow; x += step) {
+          const a = img[(y * ow + x) * 4 + 3];
+          if (a > 80 && Math.random() > .12) {
+            dust.push({
+              x: (x - ow / 2) * scale,
+              y: (y - oh / 2) * scale - 188,
+              z: rand(-16, 16),
+              color: Math.random() < .17 ? palette.pink : palette.cream,
+              size: rand(.6, 1.65),
+              alpha: rand(.26, .74),
+              seed: rand(0, Math.PI * 2)
+            });
+          }
+        }
+      }
+    }
+
+    function rotatePoint(p, rx, ry) {
+      const cy = Math.cos(ry), sy = Math.sin(ry);
+      const cx = Math.cos(rx), sx = Math.sin(rx);
+      const x1 = p.x * cy - p.z * sy;
+      const z1 = p.x * sy + p.z * cy;
+      const y1 = p.y * cx - z1 * sx;
+      const z2 = p.y * sx + z1 * cx;
+      return { x: x1, y: y1, z: z2 };
+    }
+
+    function project(p, centerY) {
+      const depth = focal + p.z + 520;
+      const scale = focal / depth;
+      return {
+        x: W / 2 + p.x * scale * cakeScale,
+        y: centerY + p.y * scale * cakeScale,
+        z: p.z,
+        scale
+      };
+    }
+
+    function drawGlowDot(x, y, radius, color, alpha, glow = 0) {
+      if (glow > 0 && radius > .8) {
+        ctx.beginPath();
+        ctx.fillStyle = rgba(color, alpha * .12);
+        ctx.arc(x, y, radius * (2.8 + glow), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.fillStyle = rgba(color, alpha);
+      ctx.arc(x, y, Math.max(.25, radius), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawBackground(t) {
+      ctx.clearRect(0, 0, W, H);
+
+      // 柔和空间雾
+      const g = ctx.createRadialGradient(W * .5, H * .55, 0, W * .5, H * .55, Math.max(W, H) * .55);
+      g.addColorStop(0, "rgba(147,96,214,.065)");
+      g.addColorStop(.45, "rgba(70,38,125,.025)");
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+
+      for (const s of stars) {
+        const drift = t * (4 + s.z * 8);
+        let sx = (s.x * .5 + .5) * W + Math.sin(s.seed + t * .00008) * 8;
+        let sy = (s.y * .5 + .5) * H + drift * .004 * (s.z + .1);
+        sy = ((sy % (H + 40)) + H + 40) % (H + 40) - 20;
+        const tw = .65 + Math.sin(t * .001 * s.twinkle + s.seed) * .35;
+        const size = s.size * (.55 + s.z * 1.1);
+        drawGlowDot(sx, sy, size, s.color, s.alpha * tw, size > 1.2 ? 1.2 : 0);
+      }
+
+      // 极细轨道线
+      ctx.save();
+      ctx.translate(W / 2, H * .59);
+      ctx.rotate(-.12);
+      ctx.strokeStyle = "rgba(229,211,255,.065)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, (235 + i * 58) * cakeScale, (58 + i * 12) * cakeScale, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawParticleScene(t) {
+      const centerY = H * (W < 720 ? .58 : .59);
+      const autoY = reduceMotion ? 0 : t * .00010;
+      const rx = sceneRotation.x;
+      const ry = sceneRotation.y + autoY;
+      const queue = [];
+
+      for (const p of dust) {
+        const breathe = reduceMotion ? 0 : Math.sin(t * .0014 + p.seed) * 1.4;
+        const r = rotatePoint({ x: p.x, y: p.y + breathe, z: p.z }, rx * .28, ry * .18);
+        const q = project(r, centerY);
+        queue.push({ q, p, alpha: p.alpha * (.72 + Math.sin(t * .0017 + p.seed) * .28), glow: .6 });
+      }
+
+      for (const p of cake) {
+        const r = rotatePoint(p, rx, ry);
+        const q = project(r, centerY);
+        const depthFade = Math.max(.32, Math.min(1, .72 + r.z / 480));
+        queue.push({ q, p, alpha: p.alpha * depthFade, glow: p.glow });
+      }
+
+      for (const o of orbit) {
+        o.angle += reduceMotion ? 0 : o.speed * 16.66;
+        const pulse = 1 + Math.sin(t * .0012 + o.seed) * .035;
+        const p = {
+          x: Math.cos(o.angle) * o.radius * pulse,
+          y: o.y + Math.sin(o.angle * 2 + o.seed) * 9,
+          z: Math.sin(o.angle) * o.radius * o.zSquash
+        };
+        const r = rotatePoint(p, rx * .75, ry);
+        const q = project(r, centerY);
+        queue.push({ q, p: o, alpha: o.alpha * (.65 + Math.sin(t * .002 + o.seed) * .35), glow: .7 });
+      }
+
+      queue.sort((a, b) => a.q.z - b.q.z);
+      for (const item of queue) {
+        const radius = item.p.size * item.q.scale * cakeScale;
+        drawGlowDot(item.q.x, item.q.y, radius, item.p.color, Math.max(0, item.alpha), item.glow || 0);
+      }
+
+      // 烛火：使用叠加混合，形成温暖光晕
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (const f of flames) {
+        const wobble = reduceMotion ? 0 : Math.sin(t * .004 + f.seed) * 3.4;
+        const yPulse = reduceMotion ? 0 : Math.sin(t * .006 + f.seed * 2) * 4;
+        const p = {
+          x: f.x + wobble * f.radius,
+          y: f.y - f.radius * 18 + yPulse,
+          z: f.z + Math.cos(t * .003 + f.seed) * 2
+        };
+        const r = rotatePoint(p, rx, ry);
+        const q = project(r, centerY);
+        const radius = (1.3 + f.radius * 2.5) * q.scale * cakeScale;
+        drawGlowDot(q.x, q.y, radius, f.color, .18 + (1 - f.radius) * .48, 4.4);
+      }
+      ctx.restore();
+    }
+
+    function burst(x = W / 2, y = H * .46, amount = 115, strength = 1) {
+      const colors = [palette.gold, palette.pink, palette.violet, palette.cyan, palette.white];
+      for (let i = 0; i < amount; i++) {
+        const a = rand(0, Math.PI * 2);
+        const speed = rand(1.4, 5.7) * strength;
+        fireworks.push({
+          x, y,
+          vx: Math.cos(a) * speed,
+          vy: Math.sin(a) * speed - rand(.2, 1.6),
+          gravity: rand(.025, .055),
+          drag: rand(.968, .988),
+          life: rand(46, 90),
+          maxLife: 90,
+          size: rand(.7, 2.25),
+          color: colors[(Math.random() * colors.length) | 0],
+          trail: []
+        });
+      }
+    }
+
+    function addWishComet() {
+      wishes.push({
+        x: rand(W * .1, W * .4),
+        y: rand(H * .10, H * .32),
+        vx: rand(8, 12),
+        vy: rand(2.6, 4.4),
+        life: 90,
+        color: Math.random() < .5 ? palette.gold : palette.cyan
+      });
+    }
+
+    function drawFireworks() {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const p = fireworks[i];
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 5) p.trail.shift();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= p.drag;
+        p.vy = p.vy * p.drag + p.gravity;
+        p.life--;
+        const a = Math.max(0, p.life / p.maxLife);
+        if (p.trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(p.trail[0].x, p.trail[0].y);
+          for (const t of p.trail) ctx.lineTo(t.x, t.y);
+          ctx.strokeStyle = rgba(p.color, a * .26);
+          ctx.lineWidth = Math.max(.3, p.size * .55);
+          ctx.stroke();
+        }
+        drawGlowDot(p.x, p.y, p.size * (.5 + a), p.color, a, 2.2);
+        if (p.life <= 0) fireworks.splice(i, 1);
+      }
+
+      for (let i = wishes.length - 1; i >= 0; i--) {
+        const c = wishes[i];
+        c.x += c.vx;
+        c.y += c.vy;
+        c.life--;
+        const a = Math.min(1, c.life / 30);
+        const grad = ctx.createLinearGradient(c.x - 100, c.y - 35, c.x, c.y);
+        grad.addColorStop(0, rgba(c.color, 0));
+        grad.addColorStop(1, rgba(c.color, .75 * a));
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(c.x - 100, c.y - 35);
+        ctx.lineTo(c.x, c.y);
+        ctx.stroke();
+        drawGlowDot(c.x, c.y, 1.8, c.color, a, 3);
+        if (c.life <= 0 || c.x > W + 120) wishes.splice(i, 1);
+      }
+      ctx.restore();
+    }
+
+    function animate(t) {
+      frame++;
+      pointer.x += (pointer.tx - pointer.x) * .045;
+      pointer.y += (pointer.ty - pointer.y) * .045;
+      sceneRotation.targetY = pointer.x * .28;
+      sceneRotation.targetX = -0.07 + pointer.y * .13;
+      sceneRotation.y += (sceneRotation.targetY - sceneRotation.y) * .035;
+      sceneRotation.x += (sceneRotation.targetX - sceneRotation.x) * .035;
+
+      drawBackground(t);
+      drawParticleScene(t);
+      drawFireworks();
+
+      if (!reduceMotion && Math.random() < .0016) addWishComet();
+      requestAnimationFrame(animate);
+    }
+
+    function setPointer(clientX, clientY) {
+      pointer.tx = (clientX / W - .5) * 2;
+      pointer.ty = (clientY / H - .5) * 2;
+      pointer.active = true;
+    }
+
+    window.addEventListener("pointermove", e => setPointer(e.clientX, e.clientY), { passive: true });
+    window.addEventListener("pointerleave", () => { pointer.tx = 0; pointer.ty = 0; pointer.active = false; });
+    window.addEventListener("pointerdown", e => {
+      if (e.target.closest("button")) return;
+      burst(e.clientX, e.clientY, W < 680 ? 70 : 100, .85);
+    }, { passive: true });
+
+    const wishButton = document.getElementById("wishButton");
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    wishButton.addEventListener("click", () => {
+      wished = !wished;
+      burst(W / 2, H * .44, W < 680 ? 140 : 220, 1.35);
+      setTimeout(() => burst(W * .32, H * .38, 90, .9), 180);
+      setTimeout(() => burst(W * .68, H * .35, 90, .9), 340);
+      addWishComet();
+      wishButton.textContent = wished ? "愿望已点亮 ✓" : "点亮祝福 ✦";
+      document.getElementById("starCount").textContent = wished ? "ONE" : "∞";
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+    });
+
+    window.addEventListener("resize", resize);
+    buildStars();
+    buildCake();
+    resize();
+    burst(window.innerWidth / 2, window.innerHeight * .52, 45, .45);
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
