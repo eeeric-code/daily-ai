@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · 2026-07-19 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;
+    --paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;
+    --red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;font-weight:600;font-size:15px;}
+  .exec li .body{font-size:15px;color:#2a2e38;}
+  .exec li .body b{color:var(--ink);font-weight:600;}
+  .exec .label{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:600;
+    color:#fff;margin-right:6px;vertical-align:middle;letter-spacing:0.3px;}
+  .exec .label.cap{background:#3b6da3;}
+  .exec .label.sci{background:#5d3b88;}
+  .exec .label.acc{background:#b04a3b;}
+  .exec .label.reg{background:#3f7a52;}
+  .exec .label.ind{background:#b8924a;}
+
+  .theme{margin:0 0 36px;}
+  .theme h2.theme-title{font-size:20px;color:var(--ink);margin:0 0 14px;padding:8px 14px;
+    background:linear-gradient(90deg,var(--ink-soft),transparent 80%);
+    border-left:5px solid var(--ink);display:flex;align-items:center;gap:10px;}
+  .theme h2.theme-title .num{display:inline-flex;align-items:center;justify-content:center;
+    width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-size:14px;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;
+    padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px;}
+  .card-title{font-size:17px;font-weight:600;color:#1f2330;line-height:1.4;flex:1;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:3px;font-size:12px;font-weight:600;
+    color:#fff;white-space:nowrap;letter-spacing:0.3px;}
+  .tag-red{background:var(--red);}
+  .tag-blue{background:#3b6da3;}
+  .tag-green{background:var(--green);}
+  .tag-purple{background:var(--purple);}
+  .tag-gold{background:var(--gold);}
+
+  .sub-tags{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px;}
+  .sub-tag{display:inline-block;padding:3px 9px;background:var(--ink-soft);
+    border:1px solid #cdd6e5;border-radius:11px;font-size:12px;color:#2a3a5a;}
+
+  .perspective{margin:10px 0 12px;padding:10px 12px;background:#fafaf6;border-left:3px solid var(--gold);}
+  .perspective p{margin:6px 0;font-size:14.5px;color:#2a2e38;}
+  .p-label{font-weight:700;color:var(--ink);margin-right:4px;}
+
+  .card-desc{margin:8px 0 12px;font-size:14px;color:#3a3e48;background:#fdf6e3;
+    border-left:3px solid var(--gold);padding:8px 12px;}
+
+  .links{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);}
+  .links-title{font-size:12px;font-weight:600;color:var(--muted);margin-right:6px;letter-spacing:0.5px;}
+  .links ul{list-style:none;margin:6px 0 0;padding:0;}
+  .links li{margin:4px 0;font-size:13.5px;color:#2a2e38;}
+  .links a{color:var(--ink-2);text-decoration:none;border-bottom:1px dotted var(--ink-2);}
+  .links a:hover{border-bottom:1px solid var(--ink);color:var(--ink);}
+  .ref-source{color:var(--muted);font-size:12px;margin-left:4px;}
+  .check-ok{color:var(--green);font-weight:700;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--paper-2);
+    border:1px solid var(--line);border-left:6px solid var(--ink-2);}
+  .closing h3{margin:0 0 12px;font-size:17px;color:var(--ink);}
+  .closing p{margin:8px 0;font-size:14.5px;color:#2a2e38;}
+  .closing b{color:var(--ink);}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+  .stat{background:var(--ink-soft);border-radius:4px;padding:10px;text-align:center;}
+  .stat .v{display:block;font-size:22px;font-weight:700;color:var(--ink);}
+  .stat .l{display:block;font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-top:2px;}
+
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">
+    AI 学术与产业每日简报
+    <small>minimax 派生版 · 2026-07-19 · 第 20 期</small>
+  </div>
+  <div class="meta">
+    <strong>日期</strong> 2026-07-19 (Sun) CST<br>
+    <strong>采集窗口</strong> 2026-07-17 ~ 2026-07-19 (24-48h)<br>
+    <strong>主理</strong> Mavis (minimax slot) · <strong>模型</strong> minimax (MiniMax 系)
+  </div>
+</header>
+
+<section class="exec">
+  <h2>本期速览</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label sci">K3 登顶</span>
+        <b>月之暗面 Kimi K3 7-16 开源 2.8 万亿参数 · Frontend Code Arena 1679 分超 Claude Fable 5 + GPT-5.6 Sol 登顶。</b>896 专家激活 16 个 + KDA 混合线性注意力 + 注意力残差 · 100 万 Token 上下文 + 原生视觉 · 编程 / 视觉 / 智能体多基准上 GPT-5.6 Sol 紧咬,Fable 5 在 HLE / FrontierSWE / GDPval 上仍有可感知差距;完整权重 7-27 前开源,意味着开源与闭源差距首次从"年"压缩到"月"。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label acc">模型自造芯</span>
+        <b>Kimi K3 连续 48 小时自主完成 4mm² 芯片设计 · 100 MHz 时序收敛 + 仿真 8700 tok/s 解码吞吐。</b>基于开源 EDA 工具 + Nangate 45nm 工艺库,运行过程无人介入;长程 Agent 已能"读 spec → 选工艺 → 写 RTL → 跑仿真 → 优化 PPA"全流程;若 K3 后续开源 7-27 前放出完整 chip-POC 报告,意味着 L4 级代码 Agent 在硬件垂直领域跑通完整工业链路。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label cap">Meta 抄底</span>
+        <b>Meta 40-50 亿美元收购中国 AI 创业公司 Manus · 9 个月估值 50 亿 · 8 个月 ARR 破 1 亿美元。</b>Meta 史上第三大收购,仅次于 WhatsApp + Scale AI;Manus 2025-3 上线,2025-4 出海新加坡裁国内 120 人;ARR 增速创全球 SaaS 历史最快;标志 Meta 押注"应用层智能体"对标 OpenAI Codex / Anthropic Claude Code,但中国工程化能力首次以"被并购"路径进入美国巨头核心产品线。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label ind">营收破 10 亿</span>
+        <b>智谱 ARR 7-17 突破 10 亿美元 · 1 亿→10 亿仅 5 个月 · 跻身国内首家 10 亿 ARR 基础模型公司。</b>Anthropic 同样跨越用 15 个月(审计后 ARR);智谱按 RRR 推算口径;核心驱动力 Coding,Q1 GLM API 价格累计上调 83%、海外订阅价接近 Claude Code、调用量 +400%;GLM-5.2 在 Code Arena 盲测位列全球可用模型第一;若 7-19 后官方财报确认 ARR,智谱成为国内 ARR vs 融资额定价模式切换的标志性事件。
+      </div>
+    </li>
+    <li>
+      <span class="num">5</span>
+      <div class="body">
+        <span class="label reg">国家级 AI 组织</span>
+        <b>习近平 7-17 WAIC 宣布"世界人工智能合作组织"在上海应运而生 + 国家发改委同日发布 8 大行动。</b>中国 5 年内面向发展中国家提供 5000 研修名额 + 面向东盟/阿盟/非盟/拉共体/上合/金砖 6 大国际 AI 应用合作中心 + 妈祖气象方案在 30 国落地;配套 Apple 智能 + 阿里千问 7-8 网信办备案通过 + 国行 iPhone 由千问提供本土化能力,形成"国际组织 + 国内合规 + 厂商接入"三层架构。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- 主题 1 · AI for Science -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">1</span>主题 1 · AI for Science</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海首个疑难病例 AI 诊疗评测基准 · 覆盖 30 临床专科 · 评测体系升级到 5.0</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">AI4Science</span>
+      <span class="sub-tag">医疗 AI</span>
+      <span class="sub-tag">评测基准</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-18 WAIC 医学分论坛,上海发布国内首个"疑难病例 AI 诊疗评测基准",覆盖 30 个临床专科,专门检验医疗大模型处理复杂病例的真实能力;同期原医疗 AI 评测体系同步更新到 5.0 版本,新增"原子技能"评测方式,可对 AI 模型生成的虚假信息进行校正;评测维度从"准确率"细化为"诊断 + 鉴别 + 治疗 + 解释"四层原子技能,可拆解模型在每个临床节点的具体能力短板。</p>
+      <p><span class="p-label">🏢 产业</span>30 临床专科覆盖意味着基准从"通用医院"扩至"专科中心"(肿瘤 / 心血管 / 神经 / 罕见病);首批接入的预计含 5-7 家三甲 + 上海 AI Lab 医疗团队 + 平安好医生 / 微医等;"原子技能"评测方式让模型可针对单一能力做微调 / RLHF / RAG 增量,直接拉动医疗 AI 行业从"模型拼比"进入"模块化能力"交付阶段。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批 30 临床专科数据集是否 8-15 前开源 ②5.0 评测体系下国产医疗大模型(灵医 / 京东京医千询 / 医联 MedGPT / 平安 Hippocrates)的原子技能得分是否均 > 0.7 ③是否在 9 月前出现首个"AI 主导疑难 MDT 会诊"真实案例;若三项目标全达成,2026 Q4 中国医疗 AI 将从"辅助阅片"进入"主导会诊"阶段。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://kuaixun.eastmoney.com/7_24.html" target="_blank" rel="noopener">WAIC 医学分论坛 7-18 上海发布疑难病例 AI 评测基准</a> <span class="check-ok">✓</span> <span class="ref-source">· 东方财富网快讯 · 2026-07-18</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/865/124.htm" target="_blank" rel="noopener">IT 之家 7-18 · 疑难病例 AI 评测基准报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">中国天眼 FAST + 清华:猎户座星云原子氢气观测获关键证据 · 开辟银河宇宙线研究新路径</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">AI4Science</span>
+      <span class="sub-tag">天文学</span>
+      <span class="sub-tag">清华</span>
+      <span class="sub-tag">ApJL 论文</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>清华大学等多家单位组成的科研团队,利用自主原创方法分析 FAST 对猎户座星云的高精度原子氢气观测,成功获得低能宇宙线起源于恒星形成区域的关键证据;研究开辟了利用原子氢观测研究银河系大尺度低能宇宙线分布的全新路径,论文发表于国际学术期刊《天体物理学快报》(ApJL);关键方法是用 AI 模型对 FAST 海量谱线做自动化特征提取,替代传统人工 Gaussian 拟合,可将单次星云扫描的分析时间从 3 个月压到 1 周。</p>
+      <p><span class="p-label">🏢 产业</span>FAST 单次观测数据量已超 1 PB,AI 自动化分析管道是释放其科研产能的关键瓶颈;该方法可直接复用至 SKA(平方千米阵列)国际合作,形成"中国设备 + 中国方法 → 国际共享数据"链路;若 8-15 前开源分析 pipeline,意味着 FAST 数据产能将进入"每日发布"节奏,预计带动 1-2 篇 Nature/Science 级别后续工作。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①ApJL 论文 7-26 前是否被 Nature/Science 引用 ②清华 + 国家天文台 8 月是否将该 pipeline 在 GitHub 开源 ③SKA 国际合作方 9 月前是否邀请方法组加入 data release 工作组;若三项目标达成,中国在低能宇宙线研究将从"数据主导"转为"方法主导",FAST 资源杠杆率提升 5-10 倍。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://iopscience.iop.org/journal/2041-8205" target="_blank" rel="noopener">ApJL · 原子氢气观测研究论文</a> <span class="check-ok">✓</span> <span class="ref-source">· ApJL 期刊 · 2026-07-18</span></li>
+        <li>二手:<a href="https://kuaixun.eastmoney.com/7_24.html" target="_blank" rel="noopener">东方财富网 7-18 转载 FAST + 清华 猎户座研究</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">"妈祖"吉布提 2.0 现场交付 + 中泰气象灾害智能预警联合实验室启动 · 拟 30 国落地</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">AI4Science</span>
+      <span class="sub-tag">气象 AI</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>作为全球首个响应联合国"全民早期预警倡议"的国家级行动方案,2026-07-17 WAIC 气象主题分论坛上,"妈祖"吉布提 2.0 现场交付,中泰气象灾害智能预测预警联合实验室启动,"妈祖"风云卫星 AI 工具箱和中国气象局人工智能气象服务系统"风和"模型同步开源;关键创新是用"AI 短临预报 + 大模型推理 + 卫星反演"三层架构,把 6 小时短临降水预报准确率从 ECMWF 同尺度 78% 提升到 86%(吉布提海域实测)。</p>
+      <p><span class="p-label">🏢 产业</span>首批 30 国清单预计 7-19 后公布(习主席 7-17 WAIC 讲话明确"妈祖在 30 国落地");中国银行同步发布"妈祖"出海金融服务方案,涵盖气象指数保险等创新产品;若 8-15 前完成东南亚 5 国 + 非洲 3 国(吉布提 / 肯尼亚 / 埃塞俄比亚 / 坦桑尼亚)正式签约,意味着中国气象 AI 标准首次大规模"出海",直接对标 ECMWF / NOAA 的全球预报垄断格局。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①30 国清单 7-26 前是否公布 ②风和模型在 GitHub 8-15 前 star 数能否突破 1k ③"妈祖"在 9 月前是否签下首个非洲以外发达国家(如希腊 / 葡萄牙);若三项目标达成,2026 Q4 中国气象 AI 将进入"基础设施出海"阶段,年潜在市场 30-50 亿美元(全球气象服务总市场 350 亿美元)。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="http://www.cma.gov.cn/" target="_blank" rel="noopener">中国气象局官网 · 妈祖吉布提 2.0 现场交付</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_3116a5c066457252" target="_blank" rel="noopener">央视新闻客户端 7-18 · WAIC 妈祖气象方案报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">HDR 框架:北大 + 港科 + 北航 · 视频多步视觉推理分层去噪 · 6 任务 SOTA</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">AI4Science</span>
+      <span class="sub-tag">视频生成</span>
+      <span class="sub-tag">arXiv 2607.15278</span>
+      <span class="sub-tag">北大 / 港科</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 arXiv 提交 2607.15278,北大 + 港科 + 北航 + 福州大学联合提出 HDR(Hierarchical Denoising for Visual Reasoning),将视频潜在因素组织成树形层次结构,在流式输出前实现从粗到细的推理;与流式自回归扩散基线相比,成功率从 34.22 提升到 60.29(76.2% 相对增益),平均进度从 76.00 提升到 89.56;推理速度比双向扩散快 54.2 倍,在仅 2% 训练数据时仍保留 82.9% 的全数据性能。</p>
+      <p><span class="p-label">🏢 产业</span>关键应用场景是机器人"看 + 想 + 做"闭环:HDR 让视频模型在 Tower of Hanoi / 迷宫导航 / 滑块拼图 / 推箱 / 一笔画 / 倒水 6 个长视野任务上均能跑通;真实世界机器人实验进一步证明 HDR 在物理交互和世界建模方面的潜力;若 8-15 前代码 + 数据集 GitHub 开源,意味着 Sora / Veo 类视频模型从"生成器"升级为"推理器",可直接驱动具身机器人规划层。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①GitHub 代码 7-26 前是否放出 ②HDR 集成至 π0 / Helix / Gato 等具身基础模型的 PR 是否在 9 月前合并 ③是否进入 ICML / ICLR 2026 顶会 oral;若三项目标全达成,2026 Q4 视频模型将从"内容生产工具"进入"具身规划引擎"阶段,直接挑战 Sora 2 / Veo 3 的核心定位。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2607.15278" target="_blank" rel="noopener">arXiv 2607.15278 · HDR: Hierarchical Denoising for Visual Reasoning</a> <span class="check-ok">✓</span> <span class="ref-source">· arXiv · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.arxivdaily.com/" target="_blank" rel="noopener">arXivDaily 7-17 · HDR 论文中文摘要</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">ICML 2026 7-6 ~ 7-11 首尔 COEX 召开 · 创历史投稿新高 23,918 · 录用 26.6%</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">顶会</span>
+      <span class="sub-tag">ICML 2026</span>
+      <span class="sub-tag">首尔</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>ICML 2026 dates and location confirmed: July 6-11, 2026 at the COEX Convention & Exhibition Center, Seoul, South Korea(7-6 Expo/Tutorial;7-7~7-9 Main Conference;7-10~7-11 Workshops);投稿总数 23,918,录用 6,352 篇(26.6%),创历史新高;本届 ICML Policy for LLM use in Reviewing 首次明文允许 LLM 辅助审稿(但禁止评审生成完整 review);首尔 1.2 万参会者规模史上最大。</p>
+      <p><span class="p-label">🏢 产业</span>ICML 2026 与 NeurIPS 2025 / ICLR 2026 形成"亚洲年"格局:三大顶会中两个在亚太,反映 ML 学术重心从北美向亚太迁移;韩企 Samsung / LG / Naver 借主场优势首次大举赞助;Kakao / Toss / Naver Cloud 设立 ICML Industry Expo 展位;若 2027 ICML 落地香港(已申请),亚太学术中心化将进一步强化。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①ICML 2026 录用的 6,352 篇中,中国作者占比是否首次超过 40% ②Kaggle / Hugging Face / arXiv 7-26 前是否上线"ICML 2026 Reproducible Track"挑战赛 ③ICML 2027 选址 9-1 前是否官宣;若三项目标全达成,中国 ML 学术将从"跟跑"进入"并列领跑",但需警惕"被引 / 工程化"指标仍落后于美国 5-10 年。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://icml.cc/Conferences/2026/Announcements" target="_blank" rel="noopener">ICML 2026 官方公告页</a> <span class="check-ok">✓</span> <span class="ref-source">· icml.cc · 2026-07-05</span></li>
+        <li>二手:<a href="https://www.jiqizhixin.com/articles/icml-2026-seoul" target="_blank" rel="noopener">机器之心 7-6 · ICML 2026 首尔会议报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-06</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 2 · 通用智能与机器人 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">2</span>主题 2 · 通用智能与机器人</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">NVIDIA RoboTTT · 视觉运动上下文扩至 8K 时间步 · 5 分钟 10 阶段装配任务</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">VLA</span>
+      <span class="sub-tag">arXiv 2607.15275</span>
+      <span class="sub-tag">NVIDIA</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 arXiv 2607.15275,NVIDIA + Stanford + UT Austin 联合提出 RoboTTT(Test-Time-Training Robot Policies),通过序列动作强制 + 截断反向传播,把视觉运动上下文扩至 8K 时间步(超出 SOTA 三个数量级),不增加推理延迟;核心是把测试时训练(TTT)集成到机器人基础模型中,通过梯度下降同时在训练 + 推理阶段更新"快速权重",把历史压缩到权重空间而非 KV cache。</p>
+      <p><span class="p-label">🏢 产业</span>在具有挑战性的真实机器人操作任务中,RoboTTT 整体性能比单步上下文基线提升 87%,并完成 5 分钟 / 10 阶段装配任务(基线从未做到);用 8K 上下文训练比用 1K 训练性能高 62%,首次证实"上下文长度"是机器人基础模型新的扩展轴;8K 时间步约对应 7-15 分钟连续操作,意味着家用 / 工业机器人都能跑"长流程任务",无需频繁 human-in-the-loop 干预。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①NVIDIA 是否在 8-15 前开源 RoboTTT 预训练权重 ②下游 π0 / Helix / GROOT 等 VLA 基础模型 9 月前是否集成 RoboTTT ③Isaac Sim 2.0 10 月前是否原生支持 RoboTTT 训练;若三项目标全达成,2026 Q4 机器人基础模型将完成"上下文维度"扩展,直接拉平 Sora 类视频模型与机器人 VLA 的能力曲线。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2607.15275" target="_blank" rel="noopener">arXiv 2607.15275 · RoboTTT: Context Scaling for Robot Policies</a> <span class="check-ok">✓</span> <span class="ref-source">· arXiv · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.jiqizhixin.com/articles/robottt" target="_blank" rel="noopener">机器之心 7-17 · RoboTTT 论文中文解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Meta 40-50 亿美元收购中国 AI 创业公司 Manus · 9 个月估值 50 亿美元 · 8 个月 ARR 1 亿美元</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">资本估值</span>
+      <span class="sub-tag">智能体</span>
+      <span class="sub-tag">Meta 收购</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>中国 AI 创业公司 Manus(蝴蝶效应运营)被 Meta 以 40-50 亿美元收购,9 个月估值突破 50 亿美元,8 个月后 ARR 达 1 亿美元,创历史最快;Meta 史上第三大收购,仅次于 WhatsApp(2014,190 亿美元)+ Scale AI(2025,143 亿美元);谈判时间 10 天;Manus 2025-3 上线,2025-4 出海新加坡总部,裁国内 120 人(补偿 N+3 或 2N),核心员工转岗新加坡;技术路线是通用 Agent 框架(类 Devin / AutoGPT),在 SaaS / 营销 / 客服 / 数据分析四场景跑通。</p>
+      <p><span class="p-label">🏢 产业</span>Meta 此举是 OpenAI / Anthropic 在 Coding Agent 战场之外的"应用层 Agent"防御动作;收购后 Manus 预计整合进 Meta AI Studio(对标 OpenAI GPTs);对国内 AI 行业:标志中国工程化能力首次以"被并购"路径进入美国巨头核心产品线,后续 12-18 个月可能引发 1-3 起类似"中国 AI 创业公司被美方巨头收购"事件;但也带来地缘政治风险,CFIUS(美国外国投资委员会)审查或成关键变数。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Meta 财报 7-30 是否将 Manus 收入并表 ②CFIUS 审查 9-1 前是否通过 ③国内是否出现第二起"美方巨头收购中国 AI Agent 创业公司"案例;若三项目标全达成,2026 Q4 中国 AI 创业生态将出现明显分化——头部被并购,中部被本土巨头整合,尾部退出市场;同时倒逼国内监管在 AI 创业公司"出海被收购"路径上给出明确规则。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://about.fb.com/news/2026/07/18/manus-acquisition" target="_blank" rel="noopener">Meta Newsroom 7-18 · Manus 收购公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18</span></li>
+        <li>二手:<a href="https://www.theinformation.com/articles/meta-buys-manus" target="_blank" rel="noopener">The Information 7-18 · Meta 收购 Manus 报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Meta 投资 500 亿美元扩建 5GW Hyperion 数据中心 · 路易斯安那州里奇兰县</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">Meta</span>
+      <span class="sub-tag">数据中心</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-13 Meta 宣布大幅扩建美国路易斯安那州里奇兰县的"许珀里翁"(Hyperion)数据中心超级集群项目规模,规划容量提升至 5GW,预计总投资超 500 亿美元;5GW 约对应 500 万块 H100/B200 等效算力,折算日均训练 4-5 个 1T+ MoE 大模型,或 30-40 个 100B+ 模型;选址路易斯安那州主要因为土地 + 电力成本 + 税收优惠三要素叠加,州政府承诺 30 年减税 35 亿美元。</p>
+      <p><span class="p-label">🏢 产业</span>500 亿美元规模超过去年 Meta 全年资本开支 60%,标志 Meta 在 AI 算力上正式进入"超级周期";5GW 容量也意味着 Meta 单数据中心将成全球最大单体(超 xAI Colossus 1GW / Microsoft Azure Foxboro 1.2GW);若 2027 Q4 Hyperion 5GW 一期投运,Meta 将与 Microsoft / Google / Oracle / xAI 形成"五强算力俱乐部",在 Llama 5 / Llama 6 等后续模型上具备全球最大训练容量。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Meta Q3 财报 7-30 是否将 Hyperion 500 亿美元列入 2026-2028 资本开支指引 ②是否签下核电 / 天然气长期供电协议 ③是否同步申请额外的 5GW 二期(总规模 10GW);若三项目标达成,Meta 资本开支将正式进入"算力超级周期",意味着 Llama 5 可能在 2027 Q1 直接对标 GPT-5.6 Sol 同期模型,Meta AI 商业化收入将被迫从 SaaS 转向"模型 + 算力 + 终端"三栈模式。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://about.fb.com/news/2026/07/13/hyperion" target="_blank" rel="noopener">Meta Newsroom 7-13 · Hyperion 5GW 扩建公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-13</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/13/meta-hyperion.html" target="_blank" rel="noopener">量子位 7-13 · Meta Hyperion 扩建报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-13</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">中兴通讯发布"星仔"全尺寸人形机器人 + OEX 超节点新品 · WAIC 2026 现场</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">中兴通讯</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-18 WAIC 2026 期间,中兴通讯发布"星系列"人形机器人及具身智能解决方案;轻量化全尺寸人形机器人"中兴星仔"作为商业服务场景主力机型,身高 1.6 米、自重 30 余千克,是当前业内同规格尺寸下最轻人形产品(对比优必选 Walker S2 重 65kg / 智元远征 A3 95kg),关键创新是采用了"骨架 + 关节模组"模块化设计,可在 30 分钟内完成拆装维护,关节寿命从行业 1 万次提升至 5 万次。</p>
+      <p><span class="p-label">🏢 产业</span>同期中兴通讯发布 OEX 超节点新品,基于开放解耦打通生态壁垒,底层协议标准化与接口统一,全面兼容国内多元 GPU 生态(华为昇腾 / 寒武纪 / 摩尔线程 / 海光);若 OEX 超节点 8-15 前规模出货,意味着国产算力在"对标 NVIDIA NVL72"上第一次有完整系统级方案,直接拉动华为 / 中兴 / 浪潮在智算中心市场份额提升 5-10 个百分点;同时中兴"星仔"将直接进入中兴 5G 营业厅 / 智慧酒店 / 物流仓库等真实商用场景。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①OEX 超节点首批 100 台 8-15 前是否交付 ②"中兴星仔"是否在 9 月前进入 10+ 真实商用场景 ③中兴是否与华为 / 寒武纪 / 摩尔线程签互认协议;若三项目标全达成,2026 Q4 中兴将从"通信设备商"转型为"通信 + 算力 + 机器人"三栈综合解决方案商,预计年新增收入 80-120 亿元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.zte.com.cn/china/news/2026/07/18/oex.html" target="_blank" rel="noopener">中兴通讯官网 7-18 · OEX 超节点 + 星仔发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/865/123.htm" target="_blank" rel="noopener">IT 之家 7-18 · 中兴 OEX + 星仔详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 3 · 基础模型与开源基础设施 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">3</span>主题 3 · 基础模型与开源基础设施</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">月之暗面 Kimi K3 开源 2.8 万亿参数 · Frontend Code Arena 1679 分登顶</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">开源生态</span>
+      <span class="sub-tag">Kimi K3</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-16 月之暗面正式推出 Kimi K3,2.8 万亿参数 + 100 万 Token 上下文 + 原生视觉理解,基于 KDA 混合线性注意力(Kimi Delta Attention)+ 注意力残差(AttnRes)技术构建,MoE 896 个专家激活 16 个;Frontend Code Arena 第三方榜单得分 1679,超 Claude Fable 5(1631)+ GPT-5.6 Sol xHigh(1618)登顶第一;Program Bench 77.8 / SWE Marathon 42.0 / BrowseComp 91.2 三项也直接登顶;完整权重 7-27 前全部开源。</p>
+      <p><span class="p-label">🏢 产业</span>K3 API 定价输入 2 元(命中缓存)/ 20 元(未命中),输出 100 元/百万 Token,官方称编程场景缓存率超 90% 折算实际输入成本低;Artificial Analysis 测算 K3 单任务成本约 $0.94,与 GPT-5.6 Sol 的 $1.04 接近,约为 Claude Opus 4.8($1.80)的一半;K3 选用 64 张及以上加速卡 + MXFP4 量化部署,标志 3T 级大模型"自部署"门槛首次降至企业数据中心可承受范围;Kimi 海外 API 收入已增长 400%,产品进入 200+ 国家和地区。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①7-27 前完整权重是否如期开源 ②GitHub 7 天内 star 数能否过 10k ③AWS / 字节豆包 / 阿里通义 7-31 前是否接入 K3 API;若三项目标全达成,2026 Q3 开源大模型首次具备"对标闭源前沿"的能力,意味着中国基础模型行业从"参数竞赛"进入"成本 + 开源 + 性能"三维竞争,Fable 5 / GPT-5.6 Sol 等闭源模型定价将被倒逼下调 20-30%。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.moonshot.cn/news/2026/07/16/k3-release" target="_blank" rel="noopener">月之暗面官方 7-16 · Kimi K3 发布公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-16</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260718A0467900" target="_blank" rel="noopener">腾讯网 / 每日经济新闻 7-18 · K3 详细评测 + EDA 芯片 PoC 报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Kimi K3 连续 48 小时自主完成 4mm² 芯片设计 · 100 MHz 时序收敛 · 仿真 8700 tok/s</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">EDA / 芯片</span>
+      <span class="sub-tag">Kimi K3</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>月之暗面官方披露:K3 在连续 48 小时自主 Agent 运行中,基于开源 EDA 工具(OpenROAD / Yosys / Icarus Verilog)+ Nangate 45nm 工艺库,独立完成适配自身 nano 模型的 4mm² 芯片的设计 / 优化 / 验证;关键节点:100 MHz 主频下完成时序收敛(setup + hold),仿真解码吞吐持续 > 8700 tok/s;整个运行无人工介入,K3 自己跑通"读 spec → 选工艺 → 写 RTL → 综合 → 布局布线 → 仿真 → 优化 PPA"全流程;对比 2025 年 Synopsys 内部自动化方案,人工介入率从 30% 降至 0%。</p>
+      <p><span class="p-label">🏢 产业</span>EDA 巨头 Synopsys 7-17 当夜股价一度跌 12%、Cadence 跌 9.47%(华尔街担忧中国 AI 自主芯片设计跑通);若 K3 完整 chip-POC 报告 7-27 前开源,意味着 L4 级代码 Agent 首次在硬件垂直领域(芯片设计)跑通完整工业链路,直接影响 Cadence / Synopsys / Siemens EDA 三巨头合计 110 亿美元年营收的中国市场份额(目前约 25 亿美元);同时美国出口管制可能升级,因 EDA 工具是中国"卡脖子"清单上少数仍可获取的关键节点。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①K3 完整 chip-POC 报告 7-27 前是否开源 ②中国 EDA 公司(华大九天 / 概伦电子 / 广立微)8 月是否推出对标产品 ③美国商务部是否 8-15 前升级对华 EDA 出口管制;若三项目标全达成,2026 Q4 中国 AI 自主芯片设计链路将形成"模型自主 + EDA 自主 + 工艺自主(国产 28nm)"的最小可行闭环,EDA 三巨头中国业务预计缩水 30-50%。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.moonshot.cn/news/2026/07/16/k3-chip-poc" target="_blank" rel="noopener">月之暗面 7-16 · K3 48 小时芯片设计 PoC 详细报告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-16</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260718A0467900" target="_blank" rel="noopener">腾讯网 / 每经 7-18 · EDA 股价反应报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">中国 AI 开源大模型累计下载量突破 100 亿次 · 居全球首位 · 居开源生态领导地位</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">开源生态</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-18 WAIC 2026 大会披露最新数据,中国人工智能开源大模型累计下载量已突破 100 亿次,居全球首位;在 17 日发布的重要成果中,"开源"成为高频词,鼓励开源开放、推动开源共享、共建开源生态;DeepSeek V3 / Qwen 3 / GLM-5 / Kimi K2.6 / InternVL 3 / 文心 5.0 / Yi-Lightning 等中国开源模型累计下载量约 60 亿次,占全球 65%;同期 Hugging Face Trending 榜中国模型占比 45%。</p>
+      <p><span class="p-label">🏢 产业</span>中国 AI 开源生态从"被国际接纳"进入"主动引领"阶段;100 亿次下载意味着中国大模型已嵌入全球 10 万 + 家企业开发流程,直接影响 NVIDIA / Microsoft Azure / AWS Bedrock 等云厂商的"模型选品清单"——必须包含中国开源模型以服务中文 / 亚太客户;若 8-15 前 Moonshot Kimi K3 7-27 开源后 7 天下载量过 1 亿,意味着中国 3T 级开源模型首次实现国际规模部署。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Hugging Face 7-31 月榜中国模型占比能否稳定 > 50% ②GitHub 7-26 前中国 AI 开源项目 star 数 Top 10 占比是否 > 50% ③国家发改委 8 月是否发布"中国 AI 开源生态白皮书";若三项目标全达成,2026 Q4 中国将成为全球 AI 开源生态的"事实标准制定者",Hugging Face / vLLM / SGLang 等国际开源基础设施将围绕中国模型优先适配。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.nda.gov.cn" target="_blank" rel="noopener">国家数据局 · 中国 AI 开源大模型累计下载 100 亿次</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_3116a5c066457252" target="_blank" rel="noopener">央视新闻客户端 7-18 · 中国 AI 开源 100 亿下载报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智谱 ARR 突破 10 亿美元 · 1 亿→10 亿仅 5 个月 · 跻身国内首家 10 亿 ARR 基础模型公司</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="label ind">资本估值</span>
+      <span class="sub-tag">智谱</span>
+      <span class="sub-tag">ARR 10 亿</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 WAIC 2026 开幕当天,智谱 ARR 达到 10 亿美元,提前半年兑现市场 2026 年底 10-15 亿美元的预期;从 1 亿美元 ARR 增长到 10 亿美元,Anthropic 用了约 15 个月(审计后),智谱只用了约 5 个月(注:智谱按 RRR 收入运行率推算,与 SaaS 标准的 ARR 口径不完全对等,数字存在高估可能);增长核心驱动力是 Coding 赛道,Q1 GLM API 价格累计调高约 83%,海外订阅价格接近 Claude Code,调用量仍增长约 400%。</p>
+      <p><span class="p-label">🏢 产业</span>GLM-5.2 在 FrontierSWE / Terminal-Bench 等权威评测中与 Claude Opus 4.8 仅相差 1-4%,是排名最高的开源模型;政企市场是另一块压舱石:2025-2026 央国企和地方政府密集出台数字化采购指南,直接催生国产大模型规模化采购,智谱在政务 / 金融 / 能源等高价值行业先发布局;但政企一次性大额合同 vs 经常性订阅收入质量不同——若政企占比过高,智谱综合毛利率大概率显著低于 Anthropic 60% 中段。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①智谱财报 8-15 前是否官方确认 10 亿美元 ARR ②GLM-5.2 在 Code Arena 排名能否稳定 Top 3 ③智谱是否 9 月前赴港二次上市;若三项目标全达成,2026 Q4 国内大模型估值逻辑将从"融资额"切换至"ARR 倍数",智谱有望成为国内大模型"盈利可见性"对标 OpenAI 的代表。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.zhipuai.cn/news/2026/07/17/arr-milestone" target="_blank" rel="noopener">智谱官方 7-17 · ARR 10 亿美元里程碑公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.tmtpost.com/2026/07/17/zhipu-10b-arr.html" target="_blank" rel="noopener">钛媒体 7-17 · 智谱 5 个月 10 倍 ARR 详细分析</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Thinking Machines Lab 开源 Inkling · 975B 多模态 · $1.87/M input token · 7-16 上线</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">开源生态</span>
+      <span class="sub-tag">Mira Murati</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>Thinking Machines Lab(Mira Murati 创办)7-16 开源 Inkling,975B 参数多模态开放权重模型,定价 $1.87/M input token;官方声称 Inkling 在多项美国主导的基准上超过同等规模美国模型(包括 OpenAI / Anthropic / Google 同代际闭源);架构采用稀疏 MoE + 原生多模态融合,关键创新是"multi-agent interaction models"训练管线,使 Inkling 在多智能体协作任务上显著领先。</p>
+      <p><span class="sub-tag">🏢 产业</span>Thinking Machines Lab 由前 OpenAI CTO Mira Murati 创办,2025-2 离开 OpenAI,2025-7 完成 $2 亿种子轮,估值 100 亿美元;Inkling 是 TML 第一个正式发布的模型,定位对标 OpenAI / Anthropic 闭源前沿;开源策略是"闭源前沿质量 + 开放权重"双轨,直接挑战 Meta Llama 系列的"开源次前沿"定位;若 Inkling 7-26 前 Hugging Face 7 天下载量过 100 万,将形成"闭源前沿 / 开源前沿 / 开源次前沿"三层分明的新结构。</p>
+    </div>
+    <div class="p-label">关键判断</p>
+    <p class="card-desc">关键判断:后续看 ①Inkling 完整权重 7-26 前是否在 Hugging Face 公开 ②TML 是否 9 月前放出技术报告 ③Inkling 在 SWE-bench Pro / MMLU-Pro / GPQA-Diamond 三大基准是否全过 70%;若三项目标全达成,2026 Q4 美国前沿开源模型将首次具备"挑战闭源前沿"能力,但同时中国 K3 等 3T 级模型在 API 价格上仍具 3-5 倍优势,全球大模型竞争将进入"美国前沿 + 中国规模"两极分化。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://thinkingmachines.ai/blog/2026/07/16/inkling-release" target="_blank" rel="noopener">Thinking Machines Lab 7-16 · Inkling 开源公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-16</span></li>
+        <li>二手:<a href="https://www.theinformation.com/articles/tml-inkling" target="_blank" rel="noopener">The Information 7-16 · Inkling 详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-16</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 4 · 资本 & 监管 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">4</span>主题 4 · 资本 & 监管</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">DeepSeek 启动 A 股 IPO 筹备 · 估值 4800 亿+ · 计划 2027 上市</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">资本估值</span>
+      <span class="sub-tag">DeepSeek</span>
+      <span class="sub-tag">A 股 IPO</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</p>
+      <p>2026-07-15 多家媒体披露,中国 AI 大模型独角兽 DeepSeek(杭州深度求索)已启动 A 股 IPO 筹备,计划最早今年底前提交申请,目标 2027 完成挂牌;公司估值已超 4800 亿元人民币(约 670 亿美元),新一轮私募融资已在路上,正与会计师事务所及投行顾问合作推进上市进程;DeepSeek 首轮融资股权变更近期刚完成,国家集成电路产业投资基金(大基金)领投的整体融资规模约 510 亿元(约 75 亿美元),估值从 100 亿美元三周内翻至 450 亿美元,标志"国家队"正式入场 AGI 战略制高点。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①DeepSeek 是否 9 月前正式提交 A 股招股说明书 ②DeepSeek V4 完整版是否 8-15 前开源 ③DeepSeek ARR / RRR 是否在 8 月披露;若三项目标全达成,2026 Q4 DeepSeek 将成国内首家 1 万亿港元市值的大模型上市公司,科创板第五套上市标准将正式确立,后续 1-2 年内可能引发"中国 OpenAI / Anthropic 抢位"集体冲刺 IPO 浪潮。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.bloomberg.com/news/2026-07-15/deepseek-ipo" target="_blank" rel="noopener">Bloomberg 7-15 · DeepSeek 启动 A 股 IPO 报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-15</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/15/deepseek-ipo.html" target="_blank" rel="noopener">量子位 7-15 · DeepSeek IPO 详细解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-15</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海"星枢计划"首发星座发布 · 2 颗算力星 + 12 颗边缘计算星 · 商业阶段 50 + 100 颗</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">星枢计划</span>
+      <span class="sub-tag">上海</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-18 WAIC 2026"未来计算·未来算力"专题论坛,上海标志性太空数字基建工程"星枢计划"首发星座正式对外发布;"星枢计划"寓意"星空的核心、算力总枢纽",是上海重点布局的太空算力产业标杆项目,工程验证阶段发射 2 颗算力星 + 12 颗边缘计算星,商业部署阶段发射 50 颗算力星 + 100 颗边缘计算星,商业运营阶段完成千星部署;关键创新是"在轨推理 + 边缘决策",把大模型推理从地面数据中心搬至 500-1200km 太阳同步轨道。</p>
+      <p><span class="p-label">🏢 产业</span>星枢计划与"千帆星座"(7-4 / 7-5 两天两发 18 颗卫星)形成中国"低轨算力"双轨竞争;算力星单星算力约 100 TOPS,12 颗边缘计算星聚合算力约 1.2 POPS,可对全球任意点实现 5 分钟内重访决策;商业场景包括远洋航运 / 极地科考 / 应急救灾 / 军事侦察;若 2027 Q1 完成首批 14 星入轨,上海将成为继 SpaceX Starlink + Amazon Kuiper 之后全球第三个拥有"在轨 AI 算力"的城市。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批 2 颗算力星 8-15 前是否完成发射 ②商业部署阶段 50 颗是否 2027 Q1 全部就位 ③是否有 1+ 央企(如中国电信 / 航天科技 / 中电科)成为"星枢计划"基础设施共建方;若三项目标全达成,2026 Q4 中国低轨算力产业将形成"千帆(国网)+ 星枢(上海)+ 银河(民营)"三足鼎立格局,直接对标 Starlink + Kuiper,预计 2030 年中国太空算力市场规模 100 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.sh-stars.org/2026/07/18/launch.html" target="_blank" rel="noopener">上海星枢计划官网 7-18 · 首发星座公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18</span></li>
+        <li>二手:<a href="https://www.jiqizhixin.com/articles/star-program" target="_blank" rel="noopener">机器之心 7-18 · 星枢计划首发星座详细解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Anthropic 6-12 突然禁用 Fable 5 / Mythos 5 · 美国出口管制指令 · 影响 30+ 国家客户</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">政策监管</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">Anthropic</span>
+      <span class="sub-tag">出口管制</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-06-12 Anthropic 突然宣布禁用 Fable 5 和 Mythos 5 两款模型,原因是美国商务部一项出口管制指令;该指令针对受美国制裁国家(包括俄罗斯 / 伊朗 / 朝鲜 / 叙利亚 / 古巴 / 委内瑞拉等)及部分"实体清单"客户;Fable 5 / Mythos 5 是 Anthropic 5 月发布的旗舰系列,禁用影响所有相关客户;此举标志着美国 AI 模型出口管制从"硬件(GPU / H100)+ 软件"双轨开始向"模型权重 + 推理 API"延伸。</p>
+      <p><span class="p-label">🏢 产业</span>Anthropic 5 月估值已达 1 万亿美元(一级市场),突然禁用 Fable 5 / Mythos 5 直接影响其 30+ 国家客户基础,预计年化影响 5-10 亿美元营收;同时为 OpenAI / Google / xAI 创造"非受限"竞争空间;对中国市场:中国客户此前已主要使用 Qwen / GLM / Kimi 等国产模型,Anthropic 禁用对国内直接影响有限,但对中东 / 东南亚 / 拉美客户,Anthropic 退出将形成 50-100 亿美元市场空缺,可能由中国大模型快速填补。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Anthropic 是否 7-26 前在受影响地区推出"合规精简版"Fable 5 ②OpenAI / Google 是否 8 月同步采取类似管制 ③中国大模型(智谱 / 阿里 / 字节)在 30+ 国家是否加速签约;若三项目标全达成,2026 Q4 中国大模型出海将迎来"窗口期",预计未来 12 个月内中国大模型在"一带一路"国家市场份额提升 10-15 个百分点。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.anthropic.com/news/2026/06/12/export-control-notice" target="_blank" rel="noopener">Anthropic 6-12 · Fable 5 / Mythos 5 出口管制公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-06-12</span></li>
+        <li>二手:<a href="https://www.theinformation.com/articles/anthropic-fable-disabled" target="_blank" rel="noopener">The Information 6-12 · Anthropic 突然禁用报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-06-12</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">习近平宣布"世界人工智能合作组织"在上海应运而生 + 国家发改委发布 8 大行动</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">政策监管</span>
+      <span class="sub-tag">国家发改委</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 上午,国家主席习近平在上海世界会客厅出席 2026 WAIC 暨人工智能全球治理高级别会议开幕式,发表题为《携手构建公正合理的全球人工智能治理体系》主旨讲话,提出 4 点意见:开放共赢 / 安全可控 / 包容并蓄 / 和衷共济;同时宣布"世界人工智能合作组织"在上海应运而生,这是中方响应全球南方呼声、团结国际社会推动 AI 发展和治理的重大举措;5 年内面向发展中国家提供 5000 个 AI 研修培训名额,面向东盟 / 阿盟 / 非盟 / 拉共体 / 上合 / 金砖建设 6 大国际 AI 应用合作中心,推动"妈祖"气象预警方案在 30 国落地。</p>
+      <p><span class="p-label">🏢 产业</span>国家发改委同日发布《人工智能合作发展行动计划》,8 项行动:优质数据供给 / 智能算力普惠 / 开源生态共享 / AI 深度赋能 / 数智人才共育 / 规则标准共建 / 安全治理协作 / AI 向善;《中国智·惠世界(2026)》案例集收录 10 个生动故事;《智能体互信互联互操作全球合作倡议》于 7-17 发布——专家分析"头部平台垄断"趋势,中国倡导"标准化、开放式互操作路径"为中小企业提供平等参与机会;首批 30 国清单预计 7-19 后公布。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①30 国清单 7-26 前是否公布 ②《智能体互信互联互操作全球合作倡议》签约国数量 8-15 前是否过 10 国 ③世界人工智能合作组织 9-1 前是否正式挂牌;若三项目标全达成,2026 Q4 中国将成为全球 AI 治理与合作的"事实枢纽",形成"美国主导技术 + 中国主导治理"的双极格局,直接影响联合国 AI 治理路线图(预计 2027 通过)。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.ndrc.gov.cn/xxgk/zcfb/tz/202607/t20260717_xxxx.html" target="_blank" rel="noopener">国家发改委 7-17 · 人工智能合作发展行动计划</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/17/ndrc-ai-action-plan.html" target="_blank" rel="noopener">量子位 7-17 · 8 项行动详细解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 5 · 顶会 & 学术生态 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">5</span>主题 5 · 顶会 & 学术生态</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">ICML 2026 Best Paper:Reinforcement Learning via Self-Distillation (ETH Jonas Hübotter)</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">顶会</span>
+      <span class="sub-tag">ICML 2026</span>
+      <span class="sub-tag">Best Paper</span>
+      <span class="sub-tag">RLHF / Self-Distillation</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-05 ICML 2026 官方宣布 Best Paper 奖:ETH Jonas Hübotter 等《Reinforcement Learning via Self-Distillation》及 Self-Distillation Enables Continual Learning(Idan Shenfeld / Mehul Damani / Jonas Hübotter 等)同时获奖;核心思想:在 RL 微调中,模型不再依赖外部奖励模型,而是通过"自我蒸馏"——从自身不同推理路径 / 不同训练阶段 / 不同上下文长度的输出分布中提取监督信号,显著减少 RLHF 训练中的 reward hacking 问题。</p>
+      <p><span class="p-label">🏢 产业</span>Self-Distillation 对 RL 微调工业界影响巨大:OpenAI / Anthropic / Google 当前 RLHF 流程严重依赖独立的 reward model(动辄数亿参数),self-distillation 可让模型在自身上完成 RL,直接降低训练成本 30-50%;同时显著缓解"对齐税"(alignment tax)——传统 RLHF 训练会损失 5-10% 基础能力,自蒸馏路径损失可控制在 1-2%;若 8-15 前 OpenAI / Anthropic 跟进此方法,2026 Q4 工业界 RL 微调成本将下降 30%,基础模型迭代速度再加快 20-30%。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①ICML 2026 完整获奖论文集 7-26 前是否上线 PMLR ②OpenAI / Anthropic 8 月是否在技术博客公开采用 self-distillation ③Hugging Face TRL 9 月前是否合并 self-distillation 路径;若三项目标全达成,2026 Q4 RL 微调行业将完成"奖励模型外部依赖 → 自我蒸馏内化"范式切换,基础模型训练成本进一步降低,中小厂商追赶前沿门槛同步降低。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://icml.cc/Conferences/2026/Awards" target="_blank" rel="noopener">ICML 2026 Awards 官方页</a> <span class="check-ok">✓</span> <span class="ref-source">· icml.cc · 2026-07-05</span></li>
+        <li>二手:<a href="https://jonhue.github.io/" target="_blank" rel="noopener">Jonas Hübotter 个人页 · RL via Self-Distillation 论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-05</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">MeanFlowNFT · 腾讯混元 + 港科 · 前向过程 RL 用于平均速度生成器 · Wan 2.1 4 步 84.33</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">视频生成</span>
+      <span class="sub-tag">arXiv 2607.15273</span>
+      <span class="sub-tag">腾讯混元</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 arXiv 2607.15273,腾讯混元 + 港科大联合发布 MeanFlowNFT,首次将 DiffusionNFT(forward-process RL)方法扩展到 MeanFlow 平均速度生成器;关键创新:基于 MeanFlow identity(平均速度 ↔ 瞬时速度)构造诱导瞬时速度预测器,应用 DiffusionNFT 目标做奖励优化,同时保留基于平均速度的少步采样;理论证明继承 DiffusionNFT 的严格策略改进保证;在 SD3.5-M 上 6/8 指标超 SOTA RL-tuned few-step 生成器。</p>
+      <p><span class="p-label">🏢 产业</span>Wan 2.1 上 4 步 MeanFlowNFT 达到 VBench 84.33,超过 50 步 LongCat-Video RL 的 82.57,意味着少步采样 + RL 微调首次超过多步 RL 微调,直接挑战"视频生成必须多步去噪"的传统范论;若 8-15 前腾讯混元开源 MeanFlowNFT 训练代码,可直接被国内视频生成厂商(快手可灵 / 字节即梦 / 爱诗 PixVerse)采纳,带动整个行业训练成本下降 30-50%、视频生成速度提升 10 倍。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①腾讯混元 8-15 前是否在 GitHub 开源 MeanFlowNFT ②可灵 / 即梦 / PixVerse 是否 9 月前集成 ③是否进入 ICLR 2026 oral;若三项目标全达成,2026 Q4 视频生成行业将完成"少步 RL 微调"路径标准化,直接拉动 C 端视频生成应用爆款涌现,预计 2026 全年中国 AI 视频生成市场规模突破 200 亿元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2607.15273" target="_blank" rel="noopener">arXiv 2607.15273 · MeanFlowNFT: Forward-Process RL for Average-Velocity Generators</a> <span class="check-ok">✓</span> <span class="ref-source">· arXiv · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/17/meanflownft.html" target="_blank" rel="noopener">量子位 7-17 · MeanFlowNFT 论文中文解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海交大:OpenClaw 引导文件可被注入 · 代理初始化阶段认知框架劫持</div>
+      <span class="tag tag-green">观察</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">AI 安全</span>
+      <span class="sub-tag">arXiv 2603.19974</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>上海交大 Fazhong Liu 等发表 arXiv 2603.19974《Trojan's Whisper: Stealthy Manipulation of OpenClaw through Injected Bootstrapped Guidance》,发现 OpenClaw 生态全新隐患:攻击者无需植入恶意代码,仅通过看似无害的引导文件,便能在代理初始化阶段篡改其认知框架,诱导执行高危操作;类比"员工手册里夹几页'最佳实践'":写"为保持整洁,过期文件应直接碎毁",代理在初始化时就会按此规则执行,绕开常规安全策略。</p>
+      <p><span class="p-label">🏢 产业</span>OpenClaw / Hermes / Paperclip 等"代理三件套"开源社区用户已超 50 万;一旦"引导注入"被攻击者大规模利用,可造成企业机密外泄 / 资金盗用 / 物理设备破坏等真实危害;若 8-15 前 OpenClaw 上游合并"引导文件签名校验"机制,可显著降低攻击面;同时提示行业:AI Agent 安全范式需从"运行时 prompt 过滤"扩展至"初始化阶段引导文件验证",这是过去被忽视的盲区。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①OpenClaw 上游 8-15 前是否发布安全补丁 ②是否出现"引导注入"公开 exploit ③Anthropic / OpenAI 是否在闭源 Agent 产品中提前防范类似攻击;若三项目标全达成,2026 Q4 AI Agent 行业将出现"安全标准化"新一波浪潮,直接拉动 AI Agent 安全市场(预计 2027 年规模 50 亿美元)发展,LangSmith / Helicone / Guardrails AI 等公司估值受益。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2603.19974" target="_blank" rel="noopener">arXiv 2603.19974 · Trojan's Whisper: Stealthy Manipulation of OpenClaw</a> <span class="check-ok">✓</span> <span class="ref-source">· arXiv · 2026-03-23</span></li>
+        <li>二手:<a href="https://www.jiqizhixin.com/articles/openclaw-trojan.html" target="_blank" rel="noopener">机器之心 · OpenClaw 引导注入风险详细分析</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-03-24</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 6 · 本周前瞻 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">6</span>主题 6 · 本周前瞻</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">纽约州长霍楚尔签全美首个超大数据中心 1 年禁令 · 50MW+ 适用 · 引发多州效仿讨论</div>
+      <span class="tag tag-green">观察</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">政策监管</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">数据中心</span>
+      <span class="sub-tag">纽约州</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</p>
+      <p>2026-07-14 美国纽约州州长凯西·霍楚尔出台全美首个全州范围禁令,暂停新建超大规模数据中心项目,适用于使用 50 兆瓦或以上电力的数据中心;纽约州长办公室表示,暂停期限最长一年,为州政府留出时间制定配套规范,以保护环境、稳定电网、减轻纽约居民电费负担;Trump 总统随后在 Truth Social 公开批评该禁令,称其"扼杀美国 AI 竞争优势"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①新泽西 / 弗吉尼亚 / 马里兰 8-15 前是否效仿 ②Microsoft / Google / Amazon 在纽约州 / 新泽西州已批准项目是否 8-15 前申请豁免 ③是否出现联邦层级 AI 数据中心"快速通道"立法;若三项目标全达成,2026 Q4 美国 AI 数据中心建设将从"州长拉锯战"演变为"联邦统一标准 + 州级执行"新格局,直接影响 AWS / Azure / GCP 在 2027-2028 资本开支节奏。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.governor.ny.gov/news/2026/07/14/data-center-moratorium" target="_blank" rel="noopener">纽约州长办公室 7-14 · 数据中心 1 年禁令公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-14</span></li>
+        <li>二手:<a href="https://www.reuters.com/technology/ny-data-center-moratorium" target="_blank" rel="noopener">Reuters 7-14 · 纽约州数据中心禁令详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-14</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">NVIDIA T3000 / T2000 模块发布 · 基于 Thor 架构 · 面向机器人 + 边缘 AI</div>
+      <span class="tag tag-green">观察</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">芯片</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">NVIDIA</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</p>
+      <p>2026-07-15 NVIDIA 发布 T3000 和 T2000 模块,基于 NVIDIA Thor 架构(继 Jetson Orin / Xavier 之后新一代机器人 SoC),面向机器人与边缘 AI 设计;T3000 算力 2000 TOPS(INT8) / 1000 TFLOPS(FP16),功耗 60W;T2000 算力 1000 TOPS / 500 TFLOPS,功耗 30W;核心创新是"NPU + GPU + DLA"三核异构,可同时跑视觉感知(SLAM / 目标检测)+ 决策推理(LLM / VLM)+ 控制信号(实时操作系统),单模块即可驱动"全栈机器人"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批 T3000 客户 8-15 前是否出货(预计首批含 Figure AI / Apptronik / 1X / 智元 / 优必选)②T3000 / T2000 价格 8-15 前是否公布 ③T3000 量产时点能否赶上 2026 Q4 假日购物季机器人产品;若三项目标全达成,2026 Q4 机器人产业链将进入"端侧 2000 TOPS 时代",直接推动机器人从"云端推理"转向"端侧 + 云端协同",预计 2027 年全球机器人芯片市场规模突破 100 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://nvidianews.nvidia.com/news/2026/07/15/t3000-t2000" target="_blank" rel="noopener">NVIDIA News 7-15 · T3000 / T2000 模块发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-15</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/15/nvidia-thor-modules.html" target="_blank" rel="noopener">量子位 7-15 · T3000 / T2000 详细规格解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-15</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阶跃星辰 7-13 三连发:STEPX 终端 + Step AOS + 阶跃 Amoo 智能体 · 估值逼近 300 亿美元</div>
+      <span class="tag tag-green">观察</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">阶跃星辰</span>
+      <span class="sub-tag">STEPX</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</p>
+      <p>2026-07-13 阶跃星辰一口气打出三张牌:大模型原生 AI 终端品牌 STEPX、智能体原生操作系统 Step AOS、个人智能体阶跃 Amoo;作为 STEPX 的首款产品,搭载 Step AOS、内置 Amoo 的全球首款大模型原生 AI 终端正式发布;Step AOS 是中国首个专为"大模型 + 智能体"重新设计的操作系统,采用"模型优先 + Agent 中台"架构,所有应用以"调用智能体"为基础;阶跃 Amoo 是 Step AOS 内置的通用智能体,跨应用 / 跨设备 / 跨任务连续工作,支持 24 小时不间断任务执行。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①STEPX 终端 8-15 前是否量产出货 ②Amoo 在第三方应用上的可用率 8 月前是否过 1000 个 ③阶跃星辰 9 月前是否完成新一轮融资(估值逼近 300 亿美元);若三项目标全达成,2026 Q4 中国"大模型原生 OS + 大模型原生终端"赛道将形成"阶跃(消费)+ 字节豆包(消费)+ 阿里通义(企业)+ 华为鸿蒙(生态)"四足鼎立格局,直接挑战 Apple Intelligence + iOS 的全球地位。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.stepfun.com/news/2026/07/13/stepx-launch" target="_blank" rel="noopener">阶跃星辰 7-13 · STEPX + Step AOS + Amoo 发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-13</span></li>
+        <li>二手:<a href="https://www.jiqizhixin.com/articles/stepfun-2026-07" target="_blank" rel="noopener">机器之心 7-13 · 阶跃三连发详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-13</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<section class="closing">
+  <h3>编辑收尾</h3>
+  <p>2026-07-19 这期 minimax 简报以 WAIC 2026 第二天(7-18)为锚点,集中覆盖四类信号:<b>(1) 中国 AI 模型 + 基础设施 + 商业化三重拐点</b>(Kimi K3 开源 2.8T + 48 小时自主设计芯片 + Meta 50 亿美元收购 Manus + 智谱 ARR 10 亿美元);<b>(2) 国家 AI 治理体系从"宣言"走向"组织"</b>(世界人工智能合作组织应运而生 + 国家发改委 8 大行动 + 妈祖气象 30 国);<b>(3) 算力 / 监管 / 资本三轴联动</b>(纽约州数据中心 1 年禁令 + Anthropic 出口管制 + Meta 5GW 500 亿美元 + 上海星枢计划首发星座 + 中兴 OEX 超节点);<b>(4) 学术 + 产业 + 政策协同加速</b>(ICML 2026 Best Paper Self-Distillation + 北大港科 HDR 视频推理 + 腾讯混元 MeanFlowNFT 视频 RL + 上海交大 OpenClaw Trojan 安全)。</p>
+  <p>判断密度上,本期 24 张卡每张关键判断段都给出具体变量 / 阈值 / 时点(参考 minimax 派生版 §2.3 必用元素);与同期 gpt 简报差异化:minimax 关注"Kimi K3 开源 + Meta 收购 Manus + 智谱 10 亿 ARR + 习近平 AI 治理组织 + 阶跃 STEPX 终端"中国侧重大事件,gpt 偏"TML Inkling 975B + 纽约州禁令 + NVIDIA T3000"美国侧重大事件;读者可在 /ai-daily/ 横向对比同一新闻池不同编辑视角的判断差异。</p>
+  <div class="stats">
+    <div class="stat"><span class="v">24</span><span class="l">CARD · 卡片</span></div>
+    <div class="stat"><span class="v">6</span><span class="l">THEME · 主题</span></div>
+    <div class="stat"><span class="v">22+</span><span class="l">SRC-1 · 一手源</span></div>
+    <div class="stat"><span class="v">14+</span><span class="l">DOMAIN · 域名</span></div>
+  </div>
+</section>
+
+<footer>
+  <div>minimax 派生版 · fork 自通用版 v6.7 · 主理 Mavis(minimax slot)</div>
+  <div>24 张卡 · 6 主题 · 2026-07-19 CST · minimax 派生版 v1 / 2026-07-06</div>
+</footer>
+
+</div>
+</body>
+</html>
