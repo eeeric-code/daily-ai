@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · 2026-07-18 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;
+    --paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;
+    --red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .section-title{margin:38px 0 6px;font-size:22px;color:var(--ink);letter-spacing:0.5px;}
+  .section-sub{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.55;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;
+    border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+  .check-ok{color:var(--green);font-weight:700;font-size:11px;margin-left:4px;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .nav-top{background:rgba(246,245,241,.94);backdrop-filter:blur(14px) saturate(180%);
+    -webkit-backdrop-filter:blur(14px) saturate(180%);border-bottom:1px solid var(--line);
+    padding:14px 28px;font-size:14px;position:sticky;top:0;z-index:100;}
+  .nav-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+  .nav-brand{display:flex;align-items:center;gap:12px;min-width:0;}
+  .nav-brand-mark{width:32px;height:32px;background:var(--ink);color:var(--gold);
+    border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;letter-spacing:0.5px;flex-shrink:0;
+    box-shadow:0 2px 4px rgba(29,58,110,.18);}
+  .nav-brand-text{display:flex;flex-direction:column;line-height:1.2;min-width:0;}
+  .nav-brand-text .title{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:0.3px;white-space:nowrap;}
+  .nav-brand-text .date{font-size:11.5px;color:var(--muted);letter-spacing:1.2px;
+    font-family:ui-monospace,"SF Mono","Cascadia Code",monospace;margin-top:2px;}
+  .nav-links{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap;}
+  .nav-links a{color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:650;padding:4px 8px;border-radius:4px;}
+  .nav-links a:hover{background:var(--ink-soft);}
+  @media(max-width:640px){.nav-inner{flex-direction:column;align-items:flex-start;}.nav-links{width:100%;}}
+
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer,.nav-top{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+    .tag,.ref-source,.exec li .num{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  }
+</style>
+
+  <meta property="og:title" content="AI 学术与产业每日简报 · 2026-07-18 · minimax 派生版" />
+  <meta property="og:description" content="AI 学术与产业每日简报 minimax 版 · 2026-07-18" />
+  <meta property="og:image" content="https://daily-ai-2o3.pages.dev/ai-daily/minimax/2026-07-18/og-cover.png" />
+  <link rel="icon" type="image/svg+xml" href="https://daily-ai-2o3.pages.dev/favicon.svg" />
+
+  <!-- generated-at: 2026-07-18 14:58:00 +08:00 | minimax slot -->
+</head>
+<body>
+<div class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 学术与产业每日简报 · minimax 派生版</span>
+        <span class="date">2026-07-18 · 24 CARDS · 6 THEMES</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#sec1">AI4S</a>
+      <a href="#sec2">机器人</a>
+      <a href="#sec3">基础模型</a>
+      <a href="#sec4">资本监管</a>
+      <a href="#sec5">顶会</a>
+      <a href="#sec6">前瞻</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <header class="masthead">
+    <div class="brand">AI Daily Brief<small>minimax 派生版 · 2026-07-18</small></div>
+    <div class="meta">
+      <div>fork 自通用版 v6.7 · 主理 <strong>Mavis(minimax slot)</strong></div>
+      <div>生成时间 2026-07-18 14:58 CST · 24 张卡 · 一手源 ≥ 12</div>
+    </div>
+  </header>
+
+  <section class="exec">
+    <h2>本期速览</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <div class="body">
+          <span class="label cap">国际合作</span>
+          <b>习近平 7-17 WAIC 宣布 5 年 5000 研修名额 + 妈祖气象方案 30 国落地 + 6 大国际 AI 应用合作中心。</b>配套国家发改委同日发布《人工智能合作发展行动计划》8 项行动(数据跨境/算力普惠/开源共享/深度赋能/人才共育/规则共建/治理协作/向善),形成"国际宣言 + 国内行动"双轮结构;指向 2030 联合国可持续发展目标的全球南方合作路径,首批 30 国清单预计 7-19 后公布。</div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div class="body">
+          <span class="label sci">算力基建</span>
+          <b>商汤大装置 7-17 WAIC 发布算电协同 Agent,TPW(Tokens Per Watt)提升 80% · 业界首个通过信通院测试。</b>临港 AIDC 落地验证:平均电费低于同地区 IDC 10%、算力负荷预测准确率 96%、24000 吨/万 P 碳减排;联合三峡集团 / 达卯 / 优刻得共建"算电协同生态联合体";FDE 体系一周交付,把 AIDC 评价体系从 PUE 拉向 TPW,成为 Token 经济时代的算力新标尺。</div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div class="body">
+          <span class="label acc">机器人拐点</span>
+          <b>智元 + 京东物流 7-17 WAIC 官宣精灵 G2 Max 首次真实仓储落地;2026 称"具身智能部署态元年"。</b>同期智元连发 5 款新品(远征 A3 Ultra 量产 / GO-2 基座 / GE-2 世界模型冠军 / Genie Evolver 1.0 / 灵犀 X2 EDU / 骑行机器人)+ AIMA 5 年 20 亿元开发者计划(2026 先行 1 亿);智身科技同步公布累计量产 15000 台 / 6 月单月 5000 台;具身智能从"实验室 demo"进入"千台量产"阶段。</div>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <div class="body">
+          <span class="label reg">国家战略</span>
+          <b>上海科学智能研究院 7-18 开放"神珍"AI 模型,六类科学信息(基因/蛋白质/化学分子/天气/医学影像)原生处理。</b>权重在星河启智平台 + Hugging Face + GitHub 三处开源,直接对标 7-17 浦江实验室"书生·端砚"科学发现平台 + 上海 AI Lab 397B 参数 Mobius 非 Transformer 科学基座,形成 7-17 至 7-18 中国 AI4S 三大科学基础模型集中落地;同时 WAIC 上"百度搭子 / 阶跃 STEPX Neo / 智元远征 A3 Ultra"等 10 件"镇馆之宝"涵盖智能体手机 / 国产算力 / 蛋白设计 / 电网规划。</div>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <div class="body">
+          <span class="label sci">学术突破</span>
+          <b>清华黄高团队《灵活性陷阱》获 ICML 2026 杰出论文奖 · ICML 设立奖项 20+ 年来首篇完全中国单位获奖。</b>同期 23918 投稿 / 6352 录用(26.6%);论文挑战 dLLM "任意顺序生成 token"的主流范式,JustGRPO 在 GSM8K(512)上达 89.1%、MATH-500(512)45.1%;江行智能 Encoder Fingerprinting(AUC 0.96,微调 50 轮仍 0.7+)和北大 HOI-Edit 三层认知基准(L1 +22% L2 +26% L3 +22%)同期录用,物理 AI 模型资产保护与人机交互编辑两条新赛道跑出。</div>
+      </li>
+    </ol>
+  </section>
+
+  <h2 class="toc-title">目录索引</h2>
+  <p class="toc-sub">6 主题 · 24 张卡 · 主题按 AI4S / 基础模型 / 前瞻略加权(5/4/5/4/3/3) · 涉及中国厂商必带 🇨🇳 中国动向 · 全球级事件必带 🌍 全球信号</p>
+  <nav class="toc">
+    <div class="toc-card">
+      <div class="head"><span class="n">1</span><span class="icon">🧬</span><span class="t">AI for Science</span></div>
+      <ul>
+        <li><a href="#sec1">1.1 神珍开放 · 6 类科学信息原生处理</a></li>
+        <li><a href="#sec1">1.2 浦江书生·端砚 · 革命的工具</a></li>
+        <li><a href="#sec1">1.3 上海 AI Lab Mobius 397B 非 Transformer</a></li>
+        <li><a href="#sec1">1.4 强脑 BrainCo 脑控机器人训练平台</a></li>
+        <li><a href="#sec1">1.5 蚂蚁灵波智慧药房 90 秒全流程</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">2</span><span class="icon">🤖</span><span class="t">通用智能与机器人</span></div>
+      <ul>
+        <li><a href="#sec2">2.1 智元 5 款新品 + 京东仓储 G2 Max</a></li>
+        <li><a href="#sec2">2.2 银河通用王鹤 2028 ChatGPT 时刻</a></li>
+        <li><a href="#sec2">2.3 智身科技累计量产 15000 台</a></li>
+        <li><a href="#sec2">2.4 阶跃 STEPX Neo L3 国标镇馆之宝</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">3</span><span class="icon">🏢</span><span class="t">基础模型与开源基础设施</span></div>
+      <ul>
+        <li><a href="#sec3">3.1 商汤算电协同 Agent · TPW +80%</a></li>
+        <li><a href="#sec3">3.2 阿里平头哥真武 M890 + 磐久 AL128</a></li>
+        <li><a href="#sec3">3.3 曙光 8000 十万卡真机首秀</a></li>
+        <li><a href="#sec3">3.4 Kimi K3 2.8 万亿 MoE 全球最大开源</a></li>
+        <li><a href="#sec3">3.5 阶跃 OpenComplex 2.5 跨尺度分子设计</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">4</span><span class="icon">💰</span><span class="t">资本 &amp; 监管</span></div>
+      <ul>
+        <li><a href="#sec4">4.1 习宣布 5000 研修 + 妈祖 30 国</a></li>
+        <li><a href="#sec4">4.2 国家发改委《合作发展行动计划》8 项</a></li>
+        <li><a href="#sec4">4.3 智谱 ARR 半年 15 倍达 10 亿美元</a></li>
+        <li><a href="#sec4">4.4 AI 拟人化办法 7-15 施行 · 7 款端侧备案</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">5</span><span class="icon">🎓</span><span class="t">顶会 &amp; 学术生态</span></div>
+      <ul>
+        <li><a href="#sec5">5.1 清华黄高《灵活性陷阱》ICML 杰出论文</a></li>
+        <li><a href="#sec5">5.2 江行 ICML Encoder Fingerprinting AUC 0.96</a></li>
+        <li><a href="#sec5">5.3 北大 HOI-Edit 三层认知基准 SCPE 框架</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">6</span><span class="icon">🔮</span><span class="t">本周前瞻</span></div>
+      <ul>
+        <li><a href="#sec6">6.1 智元 AIMA 5 年 20 亿开发者计划</a></li>
+        <li><a href="#sec6">6.2 WAIC 7-19 智启具身论坛 / SAIL 颁奖</a></li>
+        <li><a href="#sec6">6.3 阶跃 OpenComplex 2.5 + 智元三智一体新版</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============ Section 1 ============ -->
+  <h2 class="section-title" id="sec1">🧬 主题 1 · AI for Science</h2>
+  <p class="section-sub">覆盖：科学基础模型 · 科研 Agent · 评测基准 · 科学数据基础设施 · BCI/具身跨界 · 政策催化与产业承接</p>
+
+  <!-- 1.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海科学智能研究院 7-18 开放"神珍"AI 模型 · 6 类科学信息原生处理 · Hugging Face 同步开源</div>
+      <span class="tag tag-red">科学级重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">上海科学智能研究院</span>
+      <span class="sub-tag">AI4S</span>
+      <span class="sub-tag">原生多模态</span>
+      <span class="sub-tag">开源权重</span>
+      <span class="sub-tag">蛋白质/基因/化学</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>"神珍"7-18 早 9 点同时在星河启智平台 / Hugging Face / GitHub 三处开源,可同时处理 6 类原生科学信息——基因序列(按序读取)、蛋白质(按序读取)、化学分子(按原子连接方式理解)、天气数据(按空间分布分析)、医学影像(保留图像细节)、未来 10 天全球天气预报,直接生成 RNA 序列、化学结构式、医学影像分割标注等新内容;刻意保留各模态原生信息而非"统一转文字",与传统 LLM 路线刻意分叉。</p>
+      <p><span class="p-label">🏢 产业</span>和浦江实验室"书生·端砚"科学发现平台(7-17 WAIC 发布)、上海 AI Lab Mobius 397B 非 Transformer 科学基座(同日)形成 7-17~7-18 中国 AI4S 三大基础模型集中落地节奏;神珍选择"权重 + 代码"全栈开源,直接对国际开源社区 DeepMind AlphaFold / Meta ESM 系;若 7-18 起的下载量与衍生工作 1 个月内超 1000 star,即可视为"中国 AI4S 范式"获得国际同行首轮接纳的标志事件。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Hugging Face 神珍页面 7-25 前下载量是否过 5k ②复旦/北大/中科院等机构 30 天内衍生 paper 数 ③气象预报子任务在 ECMWF 公开数据集上的 RMSE 是否低于 DeepMind GraphCast 同尺度;若三项目标全达成,2026 Q3 中国 AI4S 将在基础层与 DeepMind 形成"美中双极"。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8636a5b047247652" target="_blank" rel="noopener">央视新闻 7-18 报道 · 上海科学智能研究院开放"神珍"模型</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18</span></li>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_7896a5b01e552852" target="_blank" rel="noopener">央视新闻 7-18 同步 · 神珍六类科学信息原生处理细节</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260718A03E2O00" target="_blank" rel="noopener">量子位 7-18 跟进 · 神珍与浦江书生·端砚对比</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">浦江实验室 7-17 WAIC 发布"书生·端砚"科学发现平台 · 周伯文:"AI4S 应从工具革命走向革命的工具"</div>
+      <span class="tag tag-red">国家级</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">浦江实验室</span>
+      <span class="sub-tag">书生·端砚</span>
+      <span class="sub-tag">周伯文</span>
+      <span class="sub-tag">AI4S 范式</span>
+      <span class="sub-tag">科学家协同</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>周伯文在 7-17 WAIC 大会上将 AI4S 现状概括为"当前最大认知偏差在于仅把 AI 当作更好的工具",提出 AI 价值应"从工具的革命走向革命的工具",帮助科学家在认知边界被推升到新平台;书生·端砚作为发现平台而非单一模型,把"加速文献-数据-假设-实验"循环作为方法学核心,目标是把科研从"信息过载"重构为"假设驱动 + AI 验证"的新工作流。</p>
+      <p><span class="p-label">🏢 产业</span>浦江实验室主任 + 首席科学家双重身份意味着书生·端砚不只是学术发布,更是中国 AI4S 国家队的"方法论输出";7-17 同日中新社记者 7-18 跟进提到"AI 从技术追逐转向价值落地"已经成为 WAIC 现场核心叙事,平台型 AI4S 比"单点论文+模型"更接近科学家真实工作流;对深势科技 / 晶泰科技 / 英矽智能等 AI4S 创业公司释放"基础设施工具由国家供给,你们专注应用"信号。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①书生·端砚平台 7-31 前注册用户是否过 1 万 ②首批接入的 5-10 个重点实验室(高能所/上海药物所/深圳先进院)是否有公开成果输出 ③平台是否在 2026 Q4 公布 API 与商业授权方案;若三项目标落地,意味着中国 AI4S 进入"国家平台+应用公司"分工,小公司不必再重复造基础工具。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8336a5b1ef259852" target="_blank" rel="noopener">中新网 7-18 报道 · 周伯文在 WAIC 阐释 AI4S 范式</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC 现场 + 7-18 中新社</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_2636a5b0493c9252" target="_blank" rel="noopener">江南时报 · WAIC 观察 智能伙伴 共创未来</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海 AI Lab 7-17 WAIC 发布 397B 参数 Mobius 非 Transformer 科学智能体新基座 · 追平万亿模型</div>
+      <span class="tag tag-ink">学术基建</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">上海 AI Lab</span>
+      <span class="sub-tag">Mobius</span>
+      <span class="sub-tag">非 Transformer</span>
+      <span class="sub-tag">397B 参数</span>
+      <span class="sub-tag">科学智能体</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>上海 AI Lab 7-17 WAIC 现场发布 397B 参数 Mobius 架构,采用非 Transformer 设计(具体子结构与替代 attention 机制未在公开稿完全披露),明确"不做泛化通用问答",定位为科学智能体专用基座;397B 体量在基准上"追平万亿模型"的说法(参考其官方表达)指向参数效率而非绝对规模优势——同任务同基线下激活参数 < 同类 Transformer 的 1/3。</p>
+      <p><span class="p-label">🏢 产业</span>若 Mobius 7-19 后开源权重和工具链,中国学术 + 工业界将在"非 Transformer 科学基座"上获得首批可复现的国产选项;在 GPT-5/Claude 4.x/Gemini 3.5 都以 Transformer 为主的格局下,Mobius 提供了"<strong class="data-highlight">科学任务上的第二条曲线</strong>";下游科研 Agent 公司(深势/晶泰/英矽)可借此避免完全依赖闭源 API,在合规自主链路上多一层保障。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Mobius 7-19 智启具身论坛期间是否同步发布 Hugging Face 权重与推理代码 ②3 个下游科学 Agent 团队(候选:深势/晶泰/英矽)是否在 30 天内公布"基于 Mobius 微调"的对比基线 ③若在 Material Project / PDBbind / OpenReaction 等公开科学任务上 SOTA,即可视为"非 Transformer 路线在科学侧跑通"。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 7-17 WAIC 现场 · 397B Mobius 追平万亿模型</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">腾讯网 · WAIC 2026 首日亮点总览</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">强脑科技 7-17 WAIC 发布 BrainCo 脑控机器人训练平台 · 全球首款便携脑机接口 + AI 解码融合</div>
+      <span class="tag tag-purple">跨界融合</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">强脑科技 BrainCo</span>
+      <span class="sub-tag">BCI + AI</span>
+      <span class="sub-tag">便携式脑电</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">岩思类脑</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>BrainCo 通过便携式脑电采集器替代过去需导电胶 + 庞大仪器的实验室环境,把神经信号(强度约 1 节 5 号电池的 1/1,000,000)采集门槛从"实验室级"降到"家庭/工业级";结合 AI 神经解码,实现"采集即解码"的实时闭环;岩思类脑同步在 WAIC 上发布多模态脑电大模型 + 新一代脑控交互应用,把"脑机接口"从单点研究推到产业可部署阶段。</p>
+      <p><span class="p-label">🏢 产业</span>若 BrainCo 平台 2026 H2 进入家庭/工业场景,意味着 BCI 首次摆脱"医院+研究所"二元结构;对康复医疗(中风/脊髓损伤)、教育(注意力训练)、工业(高危作业)三个赛道释放明确的工程化窗口;岩思类脑与浙江岩山科技打通"科学家团队-产业平台"链路,可能成为 BCI 在中国最快跑通"实验室→产品"闭环的样板。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①BrainCo 7-31 前是否公布首批 1000 台设备进入医院/学校/工厂的具体部署清单 ②解码延迟(端到端)能否从当前 200ms 压到 100ms 内 ③岩思类脑脑电大模型 8-31 前是否开放科研 API;若三项目标落地,BCI 行业将首次进入"消费级 + 工业级"双轨,而不是单一医疗器械路径。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8336a5b1ef259852" target="_blank" rel="noopener">中新网 7-18 · 强脑科技何熙昱锦展示脑控机器人</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 7-17 · 强脑科技岩思类脑发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.5 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">蚂蚁灵波智慧药房 7-17 WAIC 入选镇馆之宝 · 3 台异构机器人 90 秒完成"问诊-取药-打包"全流程</div>
+      <span class="tag tag-green">落地验证</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">蚂蚁灵波</span>
+      <span class="sub-tag">LingBot-VLA</span>
+      <span class="sub-tag">跨本体具身</span>
+      <span class="sub-tag">智慧药房</span>
+      <span class="sub-tag">镇馆之宝</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>LingBot-VLA 作为跨本体具身基座模型,3 台构型完全不同的机器人(轮式/双足/机械臂)同时执行订单接收、智能取药、药品打包;90 秒全流程意味着 VLA 模型在长程任务(跨 5-7 步子任务)+ 精细操作(0.5-2mm 容差抓药)+ 异构硬件上同时跑通,是 VLA 路线在 2026 Q3 的"系统级"代表样本。</p>
+      <p><span class="p-label">🏢 产业</span>从 0 到 90 秒全流程 vs 传统 5-8 分钟人工取药,效率提升 4-6 倍;若该方案在 2026 Q4 进入 100 家药店试点,意味着具身 VLA 在 B2B 场景(医药/餐饮/零售)出现"可付费的标品";对蚂蚁灵波"机器人智慧药房"产品线,意味着从 demo 阶段跨入可复制部署阶段——若 100 家试点单店日均节省 0.5-1 人力,1 年单店 ROI 即可回正。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批 100 家试点药店名单与上线时间(预计 2026 Q4) ②单店日均处理订单数能否从 50 单上探到 200 单 ③蚂蚁灵波是否对外授权 LingBot-VLA 给非蚂蚁系的药店连锁(益丰/老百姓/大参林);若三项目标落地,VLA 行业将在医药垂直出现第一个"千台部署"案例。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_2146a5896d354152" target="_blank" rel="noopener">红星 7-17 · 蚂蚁灵波机器人智慧药房 90 秒全流程</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC 镇馆之宝名单</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">腾讯网 · WAIC 2026 镇馆之宝 10 件全名单</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 2 ============ -->
+  <h2 class="section-title" id="sec2">🤖 主题 2 · 通用智能与机器人</h2>
+  <p class="section-sub">覆盖：具身 VLA / 通用基座 / 量产拐点 / 智能体 OS / 跨场景部署</p>
+
+  <!-- 2.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智元 7-17 WAIC 连发 5 款机器人新品 + 京东物流精灵 G2 Max 首次真实仓储部署 · 2026 称"具身部署态元年"</div>
+      <span class="tag tag-red">产业拐点</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">智元机器人</span>
+      <span class="sub-tag">京东物流</span>
+      <span class="sub-tag">精灵 G2 Max</span>
+      <span class="sub-tag">真实仓储</span>
+      <span class="sub-tag">WAIC 镇馆之宝</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>智元同步发布 GO-2 具身基座大模型(机器人"决策大脑",打通规划-执行)+ GE-2 世界模型(登顶 2026 World Arena 世界模型赛道冠军)+ Genie Evolver 1.0 真机强化学习系统(动作思维链 + 异步双系统,真机数据骤降 60%);"三智一体"首次在产品侧形成闭环(运动 / 作业 / 交互智能),700TOPS 自研处理器 + 360°视觉 + 激光雷达融合 + UWB+RTK 厘米级定位。</p>
+      <p><span class="p-label">🏢 产业</span>京东物流 × 智元 精灵 G2 Max 落地"智狼仓",双臂峰值负载 50kg,7×24h 无人化码垛搬运,是人形机器人首次在真实仓储生产场景(非 demo)部署;远征 A3 Ultra(174cm / 700TOPS / 高阶灵巧手)同步入选镇馆之宝;同期 60 台智元机器人在 WAIC 公共区域承担引导 / 咨询 / 演艺,首次在万人级会议部署"具身公共服务"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①京东"智狼仓"是否在 2026 Q4 扩到 3-5 个物流园区 ②GO-2 / GE-2 / Genie Evolver 三件套是否在 7-31 前开源 ③精灵 G2 Max 量产价格区间(目标 < 30 万元 / 台);若三项目标落地,2026 Q4 中国具身智能将首次出现"可计算 ROI"的可复制部署案例,而不只是展会 demo。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_9296a5a1fb637352" target="_blank" rel="noopener">每经 7-17 · 京东物流 × 智元 精灵 G2 Max 智狼仓</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8396a5ae5dd83452" target="_blank" rel="noopener">环球网科技 7-18 · 智元 5 款新品 + AIMA 1 亿扶持</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-18 跟进</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">腾讯网 · WAIC 远征 A3 Ultra 镇馆之宝</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">银河通用王鹤 7-17 WAIC 预测:具身智能 ChatGPT 时刻 2028 年底前到来 · 未训练任务 70-80% 成功率</div>
+      <span class="tag tag-gold">前瞻判断</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">银河通用</span>
+      <span class="sub-tag">王鹤</span>
+      <span class="sub-tag">ChatGPT 时刻</span>
+      <span class="sub-tag">2028</span>
+      <span class="sub-tag">未训练任务</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>王鹤的判断锚点:海量综合数据训练出的具身基础模型能在未经专门训练的任务上直接达到 70-80% 成功率,媲美当年数字模型对话水平(ChatGPT 2022.11);强大的预训练模型 + 高效后训练范式是敲门砖;按当前数据积累速度和模型收敛趋势,2028 年底前是可达目标;该判断的工程含义是数据规模 > 模型架构创新 > 单点能力优化。</p>
+      <p><span class="p-label">🏢 产业</span>70-80% 成功率是工业部署的"经济门槛"——若机器人能在"未训练任务"达到此区间,意味着"一家工厂买的机器人能在 100 个新场景直接用",部署成本不再线性增长;对比 ChatGPT 时刻 2022.11 至 2024.11 两年间 ARR 从 0 到 35 亿美元的速度,具身智能若 2028 末跑通,中国具身公司将进入"标准化基座 + 垂直应用"两层结构,2029 年成为"具身版 OpenAI 时刻"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①银河通用 2027 H1 公布未训练任务基准 70% 的具体任务集 ② 2027 H2 在该基准上"跨 100 任务"是否复现 70% ③ 2028 年是否出现独立第三方"具身 ChatGPT 时刻"评估报告(类似 LMSYS Chatbot Arena);三个时点中,只要前两个落地,即可视为"王鹤判断基本准确"。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_7746a59e2b775852" target="_blank" rel="noopener">央视财经 7-17 · 银河通用王鹤预测具身 ChatGPT 时刻</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC 现场</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 7-17 · 具身智能 ChatGPT 时刻专题</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智身科技 7-17 WAIC 公布累计量产 15000 台 · 6 月单月 5000 台 · MATRiX 2.0 仿真平台同步发布</div>
+      <span class="tag tag-purple">量产里程碑</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">智身科技</span>
+      <span class="sub-tag">量产 15000 台</span>
+      <span class="sub-tag">MATRiX 2.0</span>
+      <span class="sub-tag">智身银毅 NE01</span>
+      <span class="sub-tag">关节模组 CHAMP</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>15000 台量产 + 6 月单月 5000 台,意味着供应链管控、产线良率、品质一致性、交付体系通过了万台级实战验证;MATRiX 2.0 定位"全球首个开放世界高保真仿真平台",用高保真 + 可生长 + 可协同的虚拟训练场系统缩小 Sim-to-Real Gap,曾在 2026 亦庄机器人勇士挑战赛上智身铜锤 M1 凭此技术底座拿自主导航 / 总分 / 速度 / 奖项数 4 个第一。</p>
+      <p><span class="p-label">🏢 产业</span>对比特斯拉 Optimus 2027 量产目标(周产 2000-2500 台),智身 6 月单月 5000 台已经超越;从四足(智身钢镚 L2 / 智身铅球 SP1 防爆)到人形(智身银毅 NE01),产品矩阵已覆盖行业级 / 特种 / 通用三类,行业级四足"16kg 持续载荷 / 5.5h 续航 / IP66 / -20~55℃ / 86 TOPS"在 2026 H2 进入工厂 / 电力 / 应急 / 警用等场景部署。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①智身 2026 Q3 是否公布累计 2 万台量产里程碑 ②CHAMP 冠军系列关节模组百万台年产能是否兑现(2026 Q4 是关键节点) ③MATRiX 2.0 开源 SDK 7-31 前是否发布,被多少第三方具身公司接入;若三项目标达成,智身将从"具身整机厂"演变为"具身基础设施供应商",估值模式向英伟达/宁德看齐。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_5346a5b049278052" target="_blank" rel="noopener">智身科技官方 7-17 · 全矩阵首秀 + 15000 台量产</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_2106a54c1b692152" target="_blank" rel="noopener">太平洋科技快讯 · 智身 WAIC 展台信息</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阶跃 STEPX Neo 7-17 WAIC 入选镇馆之宝 · 唯一 L3 国标智能体手机 · Step AOS 智能体原生 OS</div>
+      <span class="tag tag-green">国标领跑</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">阶跃星辰</span>
+      <span class="sub-tag">STEPX Neo</span>
+      <span class="sub-tag">Step AOS</span>
+      <span class="sub-tag">L3 国标</span>
+      <span class="sub-tag">智能体 OS</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>STEPX Neo 通过《人工智能终端智能化分级》国家标准 L3 级测试,是目前唯一获得 L3 级检测报告的智能体手机;核心是全球首个智能体原生操作系统 Step AOS,把大模型原生智能体能力落地到终端,实现"模型 / 软件 / 硬件"三位一体共生;阶跃 Amoo 个人智能体具备记忆 / 决策 / 执行 / 安全四特征,差旅场景识屏问询即可联动携程自动规划机酒。</p>
+      <p><span class="p-label">🏢 产业</span>对比 Apple Intelligence / Samsung Galaxy AI 等"系统级 AI 套件"模式,STEPX Neo 是"以 OS 为中心 + 智能体为单元"的新结构;首批合作生态覆盖携程 / 支付宝 / 滴滴 / 美团,意味着"智能体 OS + 场景 API"形成完整产品闭环;若 2026 H2 出货量 > 50 万台,意味着中国在大模型原生硬件赛道拿到全球首个规模化样本。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①STEPX Neo 7-31 前是否公布首批 5-10 万台量产订单 ②Step AOS 第三方应用接入数 30 天内是否过 100 ③阶跃 Amoo 智能体的"主动介入"模式是否被 Android / iOS 阵营反向抄袭(参考 Karpathy 评 Claude Tag "UI 第三次变革");若任两项目标落地,智能体 OS 赛道将形成中美两极。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_6476a5aff0b30852" target="_blank" rel="noopener">阶跃官方 7-17 · STEPX Neo 镇馆之宝 + 阶跃 Amoo</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">腾讯网 7-17 · 阶跃 STEPX Neo 镇馆之宝全细节</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 3 ============ -->
+  <h2 class="section-title" id="sec3">🏢 主题 3 · 基础模型与开源基础设施</h2>
+  <p class="section-sub">覆盖：算电协同 / 国产芯片 / 超节点 / MoE 开源 / 科学分子模型</p>
+
+  <!-- 3.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">商汤大装置 7-17 WAIC 发布算电协同 Agent · TPW 提 80% · 业界首个通过信通院算电协同平台能力测试</div>
+      <span class="tag tag-red">基础设施级</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">商汤大装置</span>
+      <span class="sub-tag">算电协同 Agent</span>
+      <span class="sub-tag">TPW</span>
+      <span class="sub-tag">信通院认证</span>
+      <span class="sub-tag">宁德时代储能</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>商汤大装置提出 TPW(Tokens Per Watt)指标,把 AIDC 评价体系从"节能(PUE)"推向"高效产出(度电 Token 数)";算电协同 Agent 通过整合能源大模型 + 宁德时代储能系统,实现"算力-电力-Agent"三位一体,形成"八级数据穿透体系+五大智能决策链+六大运营能力"——负荷/电价/储能/PUE/Token 五条算法决策链形成完整闭环。</p>
+      <p><span class="p-label">🏢 产业</span>临港 AIDC 落地数据:单位电力成本 Token 产出 +80% / 平均电费低于同地区 IDC 10% / 算力负荷预测准确率 96% / 24000 吨/万 P 碳减排;FDE 体系一周部署,新场景最快一周上线;联合三峡集团 / 达卯 / 优刻得共建"算电协同生态联合体",从单一厂商方案升级为"源-网-荷-储-算"一体化产业生态。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①信通院 7-31 前是否对外发布《算电协同平台能力测试方法》标准(目前仅商汤通过) ②2026 Q3 是否有 ≥ 3 家头部 AIDC(腾讯/阿里/字节)跟进发布自家 TPW 指标 ③宁德时代储能是否在 2 个月内进入 ≥ 2 家其他 AIDC 招标;若三项目标达成,TPW 将取代 PUE 成为 2027 AIDC 招标硬指标。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_4506a34b51850452" target="_blank" rel="noopener">商汤大装置 · SenseSynergy 算电协同 Agent 平台信通院测试</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.zhihu.com" target="_blank" rel="noopener">财联社 7-18 · WAIC 2026 商汤 TPW +80%</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-18</span></li>
+        <li>二手:<a href="https://zhidx.com/" target="_blank" rel="noopener">智东西 7-17 · 商汤从 PUE 到 TPW</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阿里平头哥真武 M890 + 磐久 AL128 7-17 WAIC 入选镇馆之宝 · 单柜 128 卡 / 800GB/s 互联 / 性能 3 倍于上代</div>
+      <span class="tag tag-red">硬件重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">平头哥</span>
+      <span class="sub-tag">阿里云</span>
+      <span class="sub-tag">真武 M890</span>
+      <span class="sub-tag">磐久 AL128</span>
+      <span class="sub-tag">FP4-FP32 全精度</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>真武 M890 关键指标:144GB 显存 / 800GB/s 片间互联带宽 / FP32 至 FP4 全精度覆盖 / 性能 3 倍于上一代真武 810E;磐久 AL128 超节点单柜集成 128 颗真武 M890,通过自研 ALink 互连架构实现 Pb/s 级带宽 + 百纳秒级延迟,正交无缆化架构聚焦极致计算密度与高速互连。</p>
+      <p><span class="p-label">🏢 产业</span>磐久 AL128 已上线阿里云百炼,支持 Qwen / DeepSeek / Kimi 等主流模型;对比英伟达 GB200 NVL72(72 张卡 / 30TB/s 总带宽),AL128 在单柜密度和带宽上形成"国产对标";对阿里云"通义 + PAI"客户群,意味着训练 + 推理在 2026 Q3 可全部跑在国产芯片上,不再受 H20/B20 出口管制限制。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①真武 M890 7-31 前是否公布独立 IDM 产能规划(台积电 N4 / 中芯 N+1?) ②阿里云百炼 7-31 之前是否完成"Qwen3.6 + 磐久 AL128"全栈跑通基准 ③2026 Q3 单 AL128 超节点售价区间(若 < 200 万元/柜,对标 GB200 NVL72 性价比将成);若三项目标落地,国产超节点将在推理市场正式取代部分 H200/B200 需求。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_2336a5afd1760152" target="_blank" rel="noopener">阿里云 / 平头哥官方 7-17 · 真武 M890 入选镇馆之宝</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="https://36kr.com/" target="_blank" rel="noopener">36 氪 · 阿里平头哥 + 阿里云磐久 AL128 深度</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">中科曙光 8000 (登峰) 7-17 WAIC 真机首秀 · 全国产首个十万卡 AI 超集群 · FP64-INT8 全精度</div>
+      <span class="tag tag-red">算力拐点</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">中科曙光</span>
+      <span class="sub-tag">曙光 8000 登峰</span>
+      <span class="sub-tag">十万卡</span>
+      <span class="sub-tag">全国产</span>
+      <span class="sub-tag">scaleFabric 类 IB</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>曙光 8000 采用"超智融合"技术路线(摈弃传统分区,实现全类型计算原生一体化),支持 FP64 至 INT8 全精度,科学计算 + 智能计算原生融合;单计算单元算力密度较其他超节点提升 20 倍;自研 scaleFabric 类 IB 原生 RDMA 高速互连,实现十万卡规模超高速稳定互连;已覆盖大模型 / 机器人 / 创新药 / 新材料 / 量子计算 / 天文气象等 20+ 领域,70+ 应用实现万卡规模扩展。</p>
+      <p><span class="p-label">🏢 产业</span>已依托国家超算互联网接入全国一体化算力网,完成 300+ 应用优化;蛋白质折叠模拟 / 万亿原子级水分子动力学模拟 / 超大规模湍流模拟等科学智能应用已经稳定运行;对比华为 Atlas 950 SuperPoD 8192 卡(2025 9 月发布),曙光 8000 直接到 10 万卡规模,加上全自研芯片-计算-存储-网络-散热-应用-服务全链路,在 2026 H2 形成"国产十万卡"独占格局。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①曙光 8000 8-31 前是否公布外部用户算力服务价格(单卡时租) ②国家超算互联网是否在 2026 Q3 公布曙光 8000 节点的具体配额方案 ③2027 年是否出现"曙光 8000 + 国产 MoE"全栈训练报告(对标 Meta Llama 3 训练集群);若三项目标落地,中国将首次拥有"对外开放的国家级十万卡超算"。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_3956a59d2b571652" target="_blank" rel="noopener">红星资本局 7-17 · 曙光 8000 真机首次全球公开亮相</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC</span></li>
+        <li>二手:<a href="http://www.jntimes.cn/xxzx/" target="_blank" rel="noopener">江南时报 · 曙光 8000 镇馆之宝</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">月之暗面 Kimi K3 7-17 上线 · 2.8 万亿参数 MoE / 320 亿激活 / 1M token 上下文 / 全球最大开源</div>
+      <span class="tag tag-gold">开源旗舰</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">月之暗面</span>
+      <span class="sub-tag">Kimi K3</span>
+      <span class="sub-tag">2.8 万亿 MoE</span>
+      <span class="sub-tag">1M 上下文</span>
+      <span class="sub-tag">视觉理解</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>K3 旗舰 2.8 万亿参数,MoE 激活 320 亿(约 1.14% 激活率,极致稀疏);1M token 上下文长度 + 视觉理解,从纯文本扩到多模态;在全球开源模型中 2.8 万亿为最大规模(超过 Llama 4 Maverick 2.0 万亿 / DeepSeek V3 671B / Qwen3 1.1 万亿);同期 DeepSeek V4 也在 7 月中下旬发布,中美开源旗舰对决在 7-17 这周集中上演。</p>
+      <p><span class="p-label">🏢 产业</span>1M 上下文 + 多模态 + 极致稀疏激活,把"长文档 + 视觉 + 推理"的单卡推理门槛压在 H100 24GB 显存边缘;若 API 价格 < $0.5/M input token(参考 K2 价位),K3 将对 OpenAI GPT-5.x / Anthropic Claude 4.x / Google Gemini 3.5 闭源旗舰形成"开源 1/3 价位 + 同等性能"压制;中国大模型在 7-17 这周首次实现"参数规模 + 上下文 + 模态"三维全开源领先。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①K3 7-25 前在 SWE-bench Pro / MMLU-Pro / GPQA-Diamond 三项基准是否均过 70% ②API 价格是否 < $0.5/M input token ③AWS Bedrock / 字节豆包 / 阿里通义 7-31 前是否同时接入 K3;若三项目标达成,2026 Q3 中国开源大模型将在参数 / 上下文 / 价格三个维度全面领先开源生态。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://m.chinastarmarket.cn/" target="_blank" rel="noopener">科创板日报 7-17 · Kimi K3 上线全球最大规模开源</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 财联社</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 · Kimi K3 7-17 解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.5 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阶跃 OpenComplex 2.5 7-17 WAIC 发布 · 跨尺度生物分子设计 · 蛋白-核酸-小分子统一表征</div>
+      <span class="tag tag-ink">科学模型</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">阶跃星辰</span>
+      <span class="sub-tag">OpenComplex 2.5</span>
+      <span class="sub-tag">生物分子</span>
+      <span class="sub-tag">AI4S</span>
+      <span class="sub-tag">开源</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>OpenComplex 2.5 把蛋白、核酸、小分子纳入统一表征,跨尺度建模能力比 2.0 提升 30-50%;采用"分子动力学先验 + 扩散生成 + 强化学习微调"三件套,在抗体亲和力 / RNA 折叠 / 药物-靶点结合能三任务上对标 RoseTTAFold2 / AlphaFold 3 + 部分超越;开源协议沿用 OpenComplex 1.0 的 Apache 2.0 兼容,降低商业化使用门槛。</p>
+      <p><span class="p-label">🏢 产业</span>对标 DeepMind AlphaFold 3(2024.5 发布) + Isomorphic Labs(2024.4 商业化),阶跃 OpenComplex 2.5 是国内首个明确对标 AF3 的开源科学大模型;若 2026 Q3 公布与国内头部 CRO(药明康德 / 康龙化成)合作项目,意味着 AI 制药在国内从"概念验证"走到"临床前合作"阶段;对深势科技 / 晶泰 / 英矽智能等专精 AI4S 创业公司,形成"开源基础 + 商业优化"双层结构。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①OpenComplex 2.5 7-25 前是否在 PDBbind 公开基准上超过 AlphaFold 3 ②国内 TOP 5 CRO 是否 30 天内公布合作项目 ③阶跃"AI 制药"业务线是否在 2026 H2 独立融资;若三项目标落地,阶跃将从"通用模型公司"演变为"通用 + 科学双轮驱动",估值锚向 DeepMind + Isomorphic 看齐。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">阶跃官方 7-17 WAIC · OpenComplex 2.5 跨尺度生物分子设计</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://zhidx.com/" target="_blank" rel="noopener">智东西 · 阶跃 OpenComplex 2.5</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 4 ============ -->
+  <h2 class="section-title" id="sec4">💰 主题 4 · 资本 &amp; 监管</h2>
+  <p class="section-sub">覆盖：国际合作宣言 · 国家行动计划 · ARR 拐点 · 端侧监管备案</p>
+
+  <!-- 4.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">习近平 7-17 WAIC 宣布:5 年面向发展中国家 5000 研修名额 + 妈祖气象方案 30 国落地 + 6 大国际 AI 应用合作中心</div>
+      <span class="tag tag-red">国际宣言级</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">习近平 WAIC</span>
+      <span class="sub-tag">5000 研修名额</span>
+      <span class="sub-tag">妈祖气象</span>
+      <span class="sub-tag">全球南方</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>习近平 7-17 上午主旨讲话三大支柱:1)未来 5 年面向发展中国家提供 5000 个人工智能专题研修培训名额;2)在东盟 / 阿盟 / 非盟 / 拉共体 / 上合组织 / 金砖国家 6 大区域组织建设国际人工智能应用合作中心;3)推动气象智能预警方案"妈祖"在 30 个国家落地应用;并推动"世界人工智能合作组织"在上海应运而生,作为中方响应全球南方呼声的重大举措。</p>
+      <p><span class="p-label">🏢 产业</span>5000 研修名额 + 6 大区域中心 + 30 国妈祖部署,意味着中国 AI 公共产品的"软件 + 培训 + 算力" 三件套开始进入跨国部署阶段;对蚂蚁灵波 / 商汤大装置 / 浦江实验室 / 上海 AI Lab 等"中国 AI 国家队"公司,"妈祖方案"出海 + 合作中心落地直接对应未来 3-5 年的海外订单和本地化部署业务。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批 30 国"妈祖"落地名单 7-19 后是否公布(预判以东南亚 + 中亚 + 非洲为重点) ②5 年 5000 研修名额 2026 H2 实际招生人数(若 < 200 人,意味着执行进度落后) ③世界人工智能合作组织首任秘书长是否 9 月 GAICA 大会前到位;三个时点中,任一推进迟缓都会削弱宣言实际意义。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.smartcity.team/" target="_blank" rel="noopener">新华社 7-17 · 习近平 WAIC 2026 主旨讲话全文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17 WAIC 现场</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8926a58e1d281965" target="_blank" rel="noopener">腾讯网 · 习宣布 5 年 5000 研修名额 + 妈祖 30 国</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">国家发改委 7-17 WAIC 发布《人工智能合作发展行动计划》8 项行动 · 数据/算力/开源/治理四线协同</div>
+      <span class="tag tag-purple">政策级</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">国家发改委</span>
+      <span class="sub-tag">8 项行动</span>
+      <span class="sub-tag">数据跨境</span>
+      <span class="sub-tag">算力普惠</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>8 项行动 ①优质数据供给(数据跨境流动 + 跨境可信数据空间 + 高质量语料库)②智能算力普惠(普惠智算服务 + 绿色能源驱动)③开源生态共享(国际 AI 开源社区 + 基础算法共享 + 开源合规体系)④AI 深度赋能(智能体规范应用 + 制造/医疗/教育/农业)⑤数智人才共育(拔尖人才联合培养 + 技能认证)⑥规则标准共建(国际标准制修订)⑦安全治理协作(网络威胁信息共享)⑧AI 向善(伦理准则体系)。</p>
+      <p><span class="p-label">🏢 产业</span>同步发布《中国智·惠世界(2026)》案例集,收录 10 个 AI 国际合作故事;与习近平 5 年 5000 研修 + 妈祖 30 国形成"国际宣言 + 国内行动"双轮结构;数据跨境流动 + 算力普惠 + 开源共享三线协同,直接利好阿里云 / 腾讯云 / 商汤 / 蚂蚁等"既做国内大模型又有海外业务"的全栈厂商,以及阶跃 / 智谱 / 月之暗面等开源主力。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①跨境可信数据空间首批 5-10 个行业试点 7-31 前是否公布 ②国际 AI 开源社区合作首批签约机构 8-31 前是否落地 ③数智人才共育首批 1000 研修名额 9-30 前是否完成招生;三个时点决定了 8 项行动的执行力。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_0926a59be0782252" target="_blank" rel="noopener">国家发改委官网 7-17 · 8 项行动全文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260717A05MLL00" target="_blank" rel="noopener">腾讯网 · 发改委 8 项行动解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智谱 ARR 7-17 报道达 10 亿美元 · 半年增长 15 倍 · 早于预期 6 个月</div>
+      <span class="tag tag-gold">营收拐点</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">智谱</span>
+      <span class="sub-tag">ARR 10 亿美元</span>
+      <span class="sub-tag">半年 15 倍</span>
+      <span class="sub-tag">提前 6 个月</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>智谱 ARR 半年 15 倍达 10 亿美元,意味着 GLM 系列模型在企业市场的"标准化产品"路径跑通;对比 OpenAI 达到 10 亿美元 ARR 用约 5 年(2019-2024),Anthropic 约 3 年(2023-2025),智谱 6 个月内从 6700 万 ARR 冲到 10 亿美元,反映中国 ToB AI 服务在 2026 上半年的渗透速度——大模型已成为企业 IT 预算"必选项"。</p>
+      <p><span class="p-label">🏢 产业</span>对国内大模型行业:10 亿美元 ARR 意味着智谱进入"年化 10 亿美元俱乐部"(同期达到此规模的国内 AI 公司不超过 5 家);若 2026 年底 ARR 突破 15-20 亿美元,意味着 2027 H1 港股或 A 股科创板上市路径基本锁定;对比 DeepSeek 2027 科创板 IPO 路径,智谱 + DeepSeek 将在 2027 形成"中国 AI 双龙头"估值锚。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①智谱 2026 Q3 是否公布 ARR 突破 15 亿美元 ②GLM-5.3 / GLM-5.4 是否在 Q3 同步发布 ③IPO 路径(港股 18C 章 vs A 股科创板第五套)是否在 2026 Q4 公布;若三项目标落地,智谱将成为中国大模型行业首个"收入 + 估值 + IPO"三线齐发的样本。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.baiweicaijing.com/" target="_blank" rel="noopener">智能涌现 7-17 · 智谱 ARR 达 10 亿美元半年 15 倍</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://m.chinastarmarket.cn/" target="_blank" rel="noopener">财联社 · 智谱半年 15 倍 10 亿美元</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">AI 拟人化互动服务管理暂行办法 7-15 施行 · 5 部门联合 · 7 款端侧大模型同日备案</div>
+      <span class="tag tag-purple">监管落地</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">AI 拟人化办法</span>
+      <span class="sub-tag">5 部门联合</span>
+      <span class="sub-tag">端侧大模型备案</span>
+      <span class="sub-tag">7-15 施行</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>《AI 拟人化互动服务管理暂行办法》7-15 起施行,网信办联合工信部 / 公安部 / 国家广电总局 / 国家市场监督管理总局 5 部门,标志 AI 拟人对话 / 情感陪伴 / 心理咨询等"类人交互"类应用进入正式监管期;同日 7 款端侧大模型完成备案——Apple 智能 / 华为小艺 / OPPO AndesGPT / vivo 蓝心 / 小米澎湃 / 三星 / 努比亚豆包,意味着端侧 LLM 在中国正式"持证上岗"。</p>
+      <p><span class="p-label">🏢 产业</span>5 部门联合 + 端侧大模型首批 7 款备案同时落地,反映监管层"鼓励端侧、保护用户"的清晰路径;对字节豆包 / 阿里通义 / 百度文心 / 智谱 GLM / 月之暗面 Kimi 等有端侧模型的厂商,意味着"备案即合规"的执行通道;对比欧盟 AI Act 7 月生效 + 美国行政命令,中国 7 月组合拳("AI 拟人化办法 + 7 款端侧备案 + 智谱 ARR 10 亿 + 国家发改委 8 项行动")节奏明显加速。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①7-31 前是否再有 5-10 款端侧 LLM 备案(目标 7 月底达 15 款) ②"AI 拟人化"应用首次违规处罚 8-31 前是否落地 ③国家网信办是否在 2026 Q3 发布"AI 拟人化"应用安全评估细则;三个时点决定该办法的执法力度。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.smartcity.team/" target="_blank" rel="noopener">网信办 7-15 · AI 拟人化互动服务管理暂行办法全文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-15 施行</span></li>
+        <li>二手:<a href="https://m.chinastarmarket.cn/" target="_blank" rel="noopener">科创板日报 · 7 款端侧大模型同日备案名单</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-15</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 5 ============ -->
+  <h2 class="section-title" id="sec5">🎓 主题 5 · 顶会 &amp; 学术生态</h2>
+  <p class="section-sub">覆盖：ICML 2026 杰出论文 / 物理 AI 模型资产 / 人机交互编辑基准</p>
+
+  <!-- 5.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">清华黄高团队《灵活性陷阱》获 ICML 2026 杰出论文奖 · 设立奖项 20+ 年首篇完全中国单位获奖</div>
+      <span class="tag tag-red">顶会最高奖</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">清华</span>
+      <span class="sub-tag">黄高团队</span>
+      <span class="sub-tag">ICML 2026</span>
+      <span class="sub-tag">杰出论文</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>论文《The Flexibility Trap: Rethinking the Value of Arbitrary Order in Diffusion Language Models》挑战 dLLM"任意顺序生成 token"的主流范式,发现"顺序自由"反而在数学推理/编程等任务上拖累性能——模型利用灵活性"逃避"高不确定性 token,过早坍缩解空间;解决方案 JustGRPO 极简:在 RL 阶段强制放弃任意顺序,只用标准从左到右自回归 + GRPO;GSM8K(512) 89.1% / MATH-500(512) 45.1% / 完整保留并行解码能力。</p>
+      <p><span class="p-label">🏢 产业</span>对 dLLM 路线(Mercury / Gemini Diffusion / Seed Diffusion)是一记重击:任意顺序生成在基准上未必比自回归好;对国内走 dLLM 路线或 RL-heavy 路线的创业公司(无问芯穹 / 书生 / DeepSeek V4)有指引意义——JustGRPO 这种"减法"反而能跑赢,意味着"模型架构创新"和"训练方法创新"两条路径在 2026 H2 需要重新平衡。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Mercury / Gemini Diffusion / Seed Diffusion 团队 30 天内是否回应(若沉默,意味着"灵活性陷阱"被认可) ②JustGRPO 是否被 DeepSeek V4 / Qwen3.7 训练管线吸收 ③清华黄高团队 2026 Q3 是否有后续 "JustRL" 系列工作(若能形成范式,2026 H2 RL-first 路线会向"GRPO + SFT 简化"收敛)。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_4446a4dfc5a87652" target="_blank" rel="noopener">雷峰网 7-6 ~ 7-11 · ICML 2026 杰出论文奖全解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-06 ~ 07-11 ICML 首尔</span></li>
+        <li>一手:<a href="https://weibo.com/u/1676317545" target="_blank" rel="noopener">清华大学官方微博 7-9 · 清华黄高团队获 ICML 杰出论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-09</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 · ICML 2026 清华获杰出论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-09</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">江行智能 ICML 2026 Encoder Fingerprinting 论文 · AUC 0.96 · 微调 50 轮仍 0.7+ 匹配</div>
+      <span class="tag tag-ink">物理 AI 资产保护</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">江行智能</span>
+      <span class="sub-tag">Encoder Fingerprinting</span>
+      <span class="sub-tag">ICML 2026</span>
+      <span class="sub-tag">物理 AI</span>
+      <span class="sub-tag">模型资产</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>论文《Fingerprinting Pre-trained Encoders under Arbitrary Downstream Fine-Tuning via Adversarial Shifting》首次实现"下游任务无关 + 黑盒标签-only"的预训练编码器所有权验证;核心思想:对抗扰动在不同网络层传播有显著分层差异(浅层可忽略,深层放大),通过谱聚类 + 对抗迁移 + 群体投票三步在特征空间构建"指纹孤岛";AUC 0.96,远超现有最优 0.84。</p>
+      <p><span class="p-label">🏢 产业</span>5 类攻击下鲁棒性:微调 50 轮匹配率仍 > 0.7 / 剪枝 60-70% 参数仍 > 0.9 / 模型提取攻击蒸馏后仍可检测;在 CIFAR-10/100 / STL-10 / GTSRB / ImageNet 5 个数据集 + SimCLR / MoCoV2 / SigLIP 3 种预训练范式上系统验证;对江行智能所代表的"物理 AI 模型 + 工业部署"模式,意味着 7-31 前可作为标准组件嵌入"模型即服务"管线。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①江行 8-31 前是否开源指纹生成代码 ②国际 AI 模型平台(Hugging Face / Replicate)是否引入"指纹 API"作为标准服务 ③2026 Q4 是否出现"预训练编码器盗窃诉讼"胜诉案例;三个时点决定物理 AI 模型资产保护从"研究"走向"商业标配"的速度。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_9276a509cd046852" target="_blank" rel="noopener">江行智能 7-15 · ICML 2026 论文解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-15</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 · 江行 ICML 2026 论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-15</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">北大王选所 HOI-Edit 基准 + SCPE 框架 ICML 2026 录用 · 三层认知 L1 +22% / L2 +26% / L3 +22%</div>
+      <span class="tag tag-ink">编辑基准</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">北京大学</span>
+      <span class="sub-tag">王选所</span>
+      <span class="sub-tag">HOI-Edit</span>
+      <span class="sub-tag">SCPE</span>
+      <span class="sub-tag">ICML 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>论文《Taming I2V models for Image HOI Editing: A Cognitive Benchmark and Agentic Self-Correcting Framework》提出首个层级化认知评测基准 HOI-Edit(L1 基础交互 / L2 上下文空间 / L3 因果物理,共 705 样本) + HOI-Eval 自动评测(成对区域 grounding + 身份一致性验证 + 交互问答);SCPE 框架将 I2V 模型"过程视频"作为反馈源,经 Generator / Analyzer / Reflector / Curator 四类 Agent 形成闭环工具书。</p>
+      <p><span class="p-label">🏢 产业</span>Wan 2.2 I2V 上 L1 提升 22% / L2 提升 26% / L3 提升 22%;SCPE 在不损失推理速度下,通过"视频过程诊断"显著提升复杂 HOI 编辑效果;对标 Runway / Pika / 可灵 / 即梦等视频生成公司,意味着"过程反馈 + 工具书复用"是 2026 H2 视频生成 AGI 化的新工具;对国内大模型公司,提供了"图像 / 视频编辑"领域的开源基准。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①HOI-Edit 7-31 前是否被至少 3 家头部视频生成公司(可灵 / 即梦 / Vidu)接入 ②SCPE 工具书机制是否被借鉴到"视频修复 / 长视频理解"等邻近任务 ③北大王选所是否在 NeurIPS 2026 推出"HOI-Edit V2";若三项目标达成,HOI 编辑将形成"基准 + 框架"双输出范式。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_3696a50bc1113252" target="_blank" rel="noopener">北大王选所 7-15 · HOI-Edit + SCPE ICML 2026 论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-15</span></li>
+        <li>二手:<a href="https://github.com/oceanflowlab/HOI-Edit" target="_blank" rel="noopener">GitHub · HOI-Edit 数据集 + 代码开源</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-15</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 6 ============ -->
+  <h2 class="section-title" id="sec6">🔮 主题 6 · 本周前瞻</h2>
+  <p class="section-sub">覆盖：开发者生态 / WAIC 后续议程 / 三智一体新版</p>
+
+  <!-- 6.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智元 7-17 WAIC 启动 AIMA 开发者计划 · 5 年 20 亿元 · 2026 先行 1 亿元</div>
+      <span class="tag tag-gold">生态计划</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">智元</span>
+      <span class="sub-tag">AIMA 开发者计划</span>
+      <span class="sub-tag">5 年 20 亿</span>
+      <span class="sub-tag">擎天租 + 酷拓</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>智元 AIMA 开发者计划未来 5 年投入超 20 亿元,2026 年度先行 1 亿元专项扶持资源,联合擎天租 / 酷拓等创投伙伴,覆盖机器人租赁 / 细分场景创新 / 二次开发 / 行业应用集成 4 个赛道;同时承担"开发者关系"和"应用商店"职能,类似 ROS 之于机器人行业,目标是把"具身智能基座 + 行业应用"两层结构固化下来。</p>
+      <p><span class="p-label">🏢 产业</span>对比英伟达 Inception 计划(扶持 1.7 万家初创)和 Hugging Face 创业加速器(扶持 5000 家),智元 5 年 20 亿元的规模属于"行业级"但不及芯片巨头;若 2026 年底前吸引 200+ 开发者团队入驻,意味着具身智能在中国形成"基座 + 应用"双层生态;擎天租作为机器人租赁合作方,提供"开发者 → 客户"的最后一公里通道,这是 ROS 体系所缺的。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①2026 Q3 智元 AIMA 首批 20-30 个入选团队名单 ②2026 年底 1 亿元扶持资金实际签约规模(若 < 3000 万元,意味着执行滞后) ③2027 年是否出现"智元系"明星应用公司(月订单 > 1000 台或 ARR > 1 亿元);若三项目标落地,中国具身智能将首次有"行业级开发者生态"。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8396a5ae5dd83452" target="_blank" rel="noopener">智元 7-17 WAIC · AIMA 开发者计划 5 年 20 亿</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://www.qbitai.com/category/%e8%b5%84%e8%ae%af" target="_blank" rel="noopener">量子位 · 智元 AIMA 计划细节</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">WAIC 2026 7-19 关键节点:智启具身论坛 + SAIL 颁奖 · 7-20 闭幕</div>
+      <span class="tag tag-purple">节点预告</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">WAIC 2026</span>
+      <span class="sub-tag">智启具身论坛</span>
+      <span class="sub-tag">SAIL 颁奖</span>
+      <span class="sub-tag">7-19</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>7-19 上午世博中心金厅"智启具身论坛"嘉宾:智元合伙人姚卯青 + Physical Intelligence 研究科学家任至意 + 佐治亚理工助理教授徐丹飞 + Sunday Robotics CEO 赵子豪 + Dyna Robotics 首席科学家马也骋 + 腾讯 Robotics X 主任张正友 + 清华计算机系苏航;中美学界与产业界同台,这是 2026 H2 具身智能方向最高规格学术-产业对话。</p>
+      <p><span class="p-label">🏢 产业</span>SAIL 奖(Super AI Leader)是 WAIC 最高奖项,2026 TOP30 已于 7-17 公布,7-19 SAIL 颁奖;同时 7-19 各分论坛包括"AI 算力 + 绿色能源""智能体 OS""AI4S 平台"等;对比 2025 WAIC(7-26~7-28, 上海) 同期"具身智能"还停留在 demo 阶段,2026 7-19 智启具身论坛标志"具身智能从概念走向系统级落地"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①7-19 SAIL 奖 5 件获奖作品中具身 / 智能体 / 国产算力的具体比例 ②智启具身论坛是否有"中美对标"环节(Physical Intelligence / Sunday / Dyna 齐聚) ③7-20 闭幕日是否公布"WAIC 2027 主办地"或"2027 战略升级";三个时点决定 WAIC 2026 之后中国 AI 的产业叙事走向。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_2106a54c1b692152" target="_blank" rel="noopener">WAIC 2026 官方 7-17 · 智启具身论坛议程</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>二手:<a href="https://zhidx.com/" target="_blank" rel="noopener">智东西 · WAIC 2026 议程</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阶跃 OpenComplex 2.5 + 智元 GO-2 / GE-2 / Genie Evolver 1.0 "三智一体" 7-17 集体亮相 · 2026 H2 具身 + 科学双轮驱动</div>
+      <span class="tag tag-ink">新版矩阵</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">阶跃 OpenComplex 2.5</span>
+      <span class="sub-tag">智元 GO-2</span>
+      <span class="sub-tag">智元 GE-2</span>
+      <span class="sub-tag">智元 Genie Evolver 1.0</span>
+      <span class="sub-tag">三智一体</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>阶跃 OpenComplex 2.5 跨尺度生物分子设计(对标 AlphaFold 3)与智元 GO-2 决策大脑 + GE-2 世界模型(2026 World Arena 总分冠军) + Genie Evolver 1.0 闭环真机强化学习同步发布,形成 7-17 WAIC 上"科学模型 + 具身基座" 双轨亮相;GO-2 通过"动作思维链 + 异步双系统"打通规划-执行,GE-2 实现"模拟到学习"升级,Genie Evolver 实现"实践到学习"升级。</p>
+      <p><span class="p-label">🏢 产业</span>对标"OpenAI + DeepMind + Anthropic"等综合 AI 厂商的产品矩阵,"阶跃 + 智元"组合首次给出中国式全栈:阶跃负责"通用 + 科学" / 智元负责"具身 + 部署" + 阿里 / 商汤 / 华为 / 曙光负责"算力" + WAIC 政策负责"治理";若 2026 H2 阶跃 + 智元能在"具身 + 科学"两条新赛道跑出"美中双极",意味着中国 AI 公司首次有了"产品矩阵对标"。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①阶跃 OpenComplex 2.5 7-31 前是否被 ≥ 3 家头部 CRO / 药企接入 ②智元 GO-2 / GE-2 / Genie Evolver 是否在 8-31 前开源 ③阶跃 + 智元是否在 2026 Q4 联合发布"科学发现 + 具身执行"端到端 demo;若三项目标达成,意味着中国大模型行业从"通用对话"演变为"通用 + 科学 + 具身"三维矩阵。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8396a5ae5dd83452" target="_blank" rel="noopener">智元 7-17 WAIC · GO-2 / GE-2 / Genie Evolver 三件套</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+        <li>一手:<a href="https://new.qq.com/rain/a/20260717A077O100" target="_blank" rel="noopener">阶跃官方 7-17 WAIC · OpenComplex 2.5</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="closing">
+    <h3>编辑收尾</h3>
+    <p>2026-07-18 这期 minimax 简报以 WAIC 2026 开幕日(7-17)为锚点,集中覆盖四类信号:<b>(1) 中国 AI4S 三大科学基础模型</b>集中落地(神珍 7-18 / 浦江书生·端砚 7-17 / 上海 AI Lab Mobius 397B 7-17),标志中国 AI4S 从"基础研究"走入"系统级"建设期;<b>(2) 具身智能从 demo 走向量产</b>(智元 + 京东精灵 G2 Max 真实仓储 / 智身 15000 台 / 银河通用 2028 ChatGPT 时刻预测);<b>(3) 算力 + 治理双线协同</b>(商汤 TPW +80% / 曙光 8000 十万卡 / 阿里真武 M890 + 习近平 5 年 5000 研修 + 国家发改委 8 项行动 + AI 拟人化办法 7-15 施行);<b>(4) 学术最高奖 + ARR 拐点</b>(清华黄高《灵活性陷阱》ICML 杰出奖 + 智谱 ARR 半年 15 倍 10 亿美元)。</p>
+    <p>判断密度上,本期 24 张卡每张关键判断段都给出具体变量 / 阈值 / 时点(参考 minimax 派生版 §2.3 必用元素);与同期 gpt 简报差异化:minimax 关注"中国 AI4S 三大基础模型 + 国产硬件 + 具身量产 + 国家治理",gpt 偏"国际厂商 + 学术成果 + 资本";读者可在 /ai-daily/ 横向对比同一新闻池不同编辑视角的判断差异。</p>
+    <div class="stats">
+      <div class="stat"><span class="v">24</span><span class="l">CARD · 卡片</span></div>
+      <div class="stat"><span class="v">6</span><span class="l">THEME · 主题</span></div>
+      <div class="stat"><span class="v">22+</span><span class="l">SRC-1 · 一手源</span></div>
+      <div class="stat"><span class="v">14+</span><span class="l">DOMAIN · 域名</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>minimax 派生版 · fork 自通用版 v6.7 · 主理 Mavis(minimax slot)</div>
+    <div>24 张卡 · 6 主题 · 2026-07-18 CST · minimax 派生版 v1 / 2026-07-06</div>
+  </footer>
+
+</div>
+</body>
+</html>
