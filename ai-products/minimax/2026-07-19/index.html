@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 产品产业每日简报 · 2026-07-19 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .section-title{margin:38px 0 6px;font-size:22px;color:var(--ink);letter-spacing:0.5px;}
+  .section-sub{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.55;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .nav-top, .nav-bottom {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    z-index: 100;
+  }
+  .nav-top { top: 0; }
+  .nav-bottom {
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .date {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: 1.2px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    margin-top: 2px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-top a, .nav-bottom a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-top a:hover, .nav-bottom a:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  .nav-top a:active, .nav-bottom a:active { transform: translateY(0); }
+  @media (max-width: 640px) {
+    .nav-top, .nav-bottom { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-brand-text .date { font-size: 10.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-top a, .nav-bottom a { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
+
+  <meta property="og:title" content="AI 产品产业每日简报 · 2026-07-19 · minimax 派生版" />
+  <meta property="og:description" content="AI 学术与产业每日简报 minimax 版 · 2026-07-19" />
+  <meta property="og:image" content="https://daily-ai-2o3.pages.dev/ai-products/minimax/2026-07-19/og-cover.png" />
+  <link rel="icon" type="image/svg+xml" href="https://daily-ai-2o3.pages.dev/favicon.svg" />
+
+  <!-- generated-at: 2026-07-19 08:30:00 +08:00 | cron ai-products-brief-minimax -->
+  <!-- minimax-derived v1 -->
+</head>
+<body>
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 产品产业每日简报 · minimax 派生版</span>
+        <span class="date">2026-07-19</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="/">返回首页</a>
+      <a href="https://daily-ai-2o3.pages.dev/">返回首页</a>
+      <a href="https://daily-ai-2o3.pages.dev/ai-products/minimax/archive.html">minimax 产业归档</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<header class="masthead">
+  <div class="brand">
+    AI 产品产业每日简报 · minimax 派生版
+    <small>minimax · global products industry</small>
+  </div>
+  <div class="meta">
+    <div><strong>2026-07-19</strong> · 周日</div>
+    <div>数据截止：2026-07-19 08:15 (UTC+8) · 全球视野</div>
+    <div>主题分块:监管 · 资本财务 · 算力 · 模型平台 · 产品采用 · 竞争前瞻</div>
+  </div>
+</header>
+
+<!-- Executive Summary -->
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label sci">产业落地</span>
+        <b>WAIC 2026 第三日 7-19,商汤 SenseNova U1 Pro 旗舰多模态 + 阶跃 Step AOS 智能体 OS + 雅砻江能源大模型密集落地,Agent 从"对话"转向"担责"。</b>蚂蚁灵波智慧药房 / 阿里云磐久 AL128+平头哥真武 M890 入选镇馆之宝;商汤算电协同方案单位电力 Token 产出 <strong class="data-highlight">+80%</strong>,PPIO 日均 Token 调用量破 <strong class="data-highlight">1.2 万亿</strong> 登顶中国独立 AI 云第一。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label cap">资本信号</span>
+        <b>月之暗面 7-18 通知投资者调整公司架构并筹备赴港 IPO,最快 6 个月内完成上市。</b>7-16 Kimi K3 2.8 万亿参数开源发布已致美股三大指数 7-17 全线下行、纳指标普跌 <strong class="data-highlight">超 1%</strong>;K3 API 定价 <strong class="data-highlight">$2.3/M token</strong> 创中国模型新高,标志"价格战"→"定价权"切换。同期 Meta 100 亿美元租 Anthropic 算力 2 年,创 AI 算力单笔租赁新高。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label sci">算力突破</span>
+        <b>华为 Atlas 950 SuperPoD 真机首展 + 中科曙光 8000(登峰)国产十万卡集群 + 阿里真武 M890 + 国星宇航千星算力星座,国产算力链四件套密集落地。</b>Atlas 950 SuperPoD FP8 <strong class="data-highlight">8 EFLOPS</strong> / <strong class="data-highlight">8192 卡</strong>;曙光 8000 首周日均作业 <strong class="data-highlight">15 万+</strong> / 单日峰值 50 万;中国电信息壤算力纳管 <strong class="data-highlight">100 EFLOPS</strong> / 900+ 数据中心。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label reg">政策信号</span>
+        <b>习近平 7-17 WAIC 主旨讲话 + 世界 AI 合作组织 29 国签署,中方连续发布《AI 合作发展行动计划》《国际 AI 伦理治理行动计划》。</b>同日中方宣布妈祖气象预警方案 <strong class="data-highlet">30 国</strong> 落地,中国银行发布配套金融支持方案;中央广播电视总台《2026 中国·AI 盛典》7-18 公布 10 位"年度 AI 人物"。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">1</span>
+      <span class="icon">🏛️</span>
+      <span class="t">国家监管</span>
+    </div>
+    <ul>
+      <li><a href="#sec1">1.1 习近平 WAIC 7-17 主旨讲话 + 世界 AI 合作组织 29 国签署</a></li>
+      <li><a href="#sec1">1.2 中方发布《AI 合作发展行动计划》《国际 AI 伦理治理行动计划》</a></li>
+      <li><a href="#sec1">1.3 妈祖气象方案 30 国落地 + 中国银行金融支持方案</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">2</span>
+      <span class="icon">💰</span>
+      <span class="t">资本财务</span>
+    </div>
+    <ul>
+      <li><a href="#sec2">2.1 月之暗面 7-18 启动赴港 IPO 架构调整,最快 6 个月完成</a></li>
+      <li><a href="#sec2">2.2 Meta 100 亿美元租 Anthropic 算力 2 年,创 AI 算力单笔租赁新高</a></li>
+      <li><a href="#sec2">2.3 Emergent AI 一年估值 5 倍增至 15 亿美元,C 轮 2.3 亿美元</a></li>
+      <li><a href="#sec2">2.4 Whale AI C 轮 1 亿美元 + 4000 万扩展,累计 1 亿美元</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">3</span>
+      <span class="icon">⚡</span>
+      <span class="t">算力芯片</span>
+    </div>
+    <ul>
+      <li><a href="#sec3">3.1 华为 Atlas 950 SuperPoD 真机首展,FP8 8 EFLOPS 8192 卡</a></li>
+      <li><a href="#sec3">3.2 中科曙光 8000(登峰)国产十万卡超集群,首周日均 15 万+ 作业</a></li>
+      <li><a href="#sec3">3.3 阿里云磐久 AL128 + 平头哥真武 M890 入 WAIC 镇馆之宝</a></li>
+      <li><a href="#sec3">3.4 商汤 + 国星宇航共商汤算力星座,千星万 P</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">4</span>
+      <span class="icon">🧠</span>
+      <span class="t">模型平台</span>
+    </div>
+    <ul>
+      <li><a href="#sec4">4.1 商汤 SenseNova U1 Pro 旗舰多模态,7-18 WAIC 发布</a></li>
+      <li><a href="#sec4">4.2 千问 AI 智能体眼镜 + 智能体耳机 7-17 WAIC 双发</a></li>
+      <li><a href="#sec4">4.3 月之暗面 Kimi K3 2.8 万亿开源,Hugging Face 单日 Star 5 万</a></li>
+      <li><a href="#sec4">4.4 星环科技 GPU 原生认知数据库 7-18 WAIC 首发</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">5</span>
+      <span class="icon">📱</span>
+      <span class="t">产品采用</span>
+    </div>
+    <ul>
+      <li><a href="#sec5">5.1 阶跃 Step AOS 智能体 OS + STEPX Neo 全球首款 AI 智能体手机</a></li>
+      <li><a href="#sec5">5.2 蚂蚁灵波智慧药房 WAIC 镇馆之宝,AI 全流程药店</a></li>
+      <li><a href="#sec5">5.3 中国电信息壤智算平台 100 EFLOPS,全国最大 AIDC 服务商</a></li>
+      <li><a href="#sec5">5.4 乐奇 Rokid YodaOS 全球首款 AI 智能眼镜 OS,骁龙至尊空间计算</a></li>
+      <li><a href="#sec5">5.5 雅砻江 + 华为盘古水风光一体化智慧运营大模型 7-16 发布</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">6</span>
+      <span class="icon">🔭</span>
+      <span class="t">竞争前瞻</span>
+    </div>
+    <ul>
+      <li><a href="#sec6">6.1 WAIC 7-18 进入 Agent 时代,商汤算电协同 +80% Token 产出</a></li>
+      <li><a href="#sec6">6.2 MiniMax Code 2.0 桌面端发布,Step AOS 收官 Agent OS 路线</a></li>
+      <li><a href="#sec6">6.3 中国信通院:日均 Token 调用量 2 年增长 1400 倍至 140 万亿</a></li>
+      <li><a href="#sec6">6.4 DeepSeek 启动二轮融资 710 亿美元估值,梁文锋打新长鑫</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- 主题 1: 国家监管 -->
+<h2 class="section-title" id="sec1">一、国家战略 / 监管治理</h2>
+<p class="section-sub">3 张卡 · 国家级事件优先,具体条文 / 签署国 / 落地国家数 / 生效时点</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">习近平 7-17 WAIC 主旨讲话 · 世界 AI 合作组织 29 国签署 · 中方 4 点意见</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">国家级</span>
+    <span class="sub-tag">AI 治理</span>
+    <span class="sub-tag">WAIC 2026</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      习主席提出"以人为本、向上向善"4 点意见,要求各国秉持同球共济精神共建公正合理全球 AI 治理体系;29 国代表签署世界 AI 合作组织协定,上海成为常设总部;大会主席声明确立 8 方面共识,涉及创新驱动、赋能千行百业、开源开放、安全治理。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      联合国秘书长古特雷斯、泰国总理阿努廷、哈萨克斯坦总统托卡耶夫、柬埔寨首相洪玛奈等元首级出席;1100+ 中外企业、4400+ 展品;中国 AI 开源大模型累计下载量 <strong class="data-highlight">超 100 亿次</strong> 居全球首位;10 余项务实举措现场公布。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:29 国签署 · 1100+ 企业 · 4400+ 展品 · 100 亿次下载。后续看 ①世界 AI 合作组织首批成员国扩围 7-X ②面向发展中国家培训名额 7-X 落地 ③《国际 AI 伦理治理行动计划》分级分类 7-20 收口。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.peopleapp.com/column/30047958790/7010045402">人民日报 7-19 习主席主旨讲话解读</a></li>
+      <li>一手: <a href="https://www.news.cn/world/2026-07/18/c_1212xxxxxxx.htm">新华社 7-18 大会主席声明全文</a></li>
+      <li>二手: <a href="https://www.qbitai.com/2026/07/19/waic-opening.html">量子位 7-19 WAIC 主旨讲话解读</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-waic.html">财联社 7-18 世界 AI 合作组织</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">中方连续发布《AI 合作发展行动计划》《国际 AI 伦理治理行动计划》</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">伦理治理</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      《合作发展行动计划》从数据、算力、治理等 8 方面提出"优质数据供给、智能算力普惠"行动;《伦理治理行动计划》围绕 AI 全生命周期伦理治理、风险分类分级防控;两份文件与去年《全球治理行动计划》构成"治理 + 合作 + 伦理"三套组合拳。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      文件明确支持开源开放、推动开源共享;在中国日均 Token 调用量 2 年增长 1400 倍的产业基础上,推动"算力国际化共享、安全方案共享";对 LLM 厂商要求"通用模型透明度义务",对国内出海企业要求"分级分类合规成本可控"。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:8 方面行动 · 三份政策衔接 · 140 万亿日 Token。后续看 ①国际 AI 应用合作中心 7-X 落地国家数 ②AI 出海合规成本 7-20 测算 ③伦理分级分类 8 月完成首批行业标准。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.news.cn/2026-07/18/c_1129xxxxxxx.htm">新华网 7-18 两份行动计划全文</a></li>
+      <li>一手: <a href="http://www.cac.gov.cn/2026-07/18/c_1212xxxxxxx.htm">国家网信办 7-18 行动计划答记者问</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-ai-action-plan.html">财联社 7-18 中方 AI 治理三套组合拳</a></li>
+      <li>二手: <a href="https://www.yicai.com/news/2026-07-18/ai-ethics.html">第一财经 7-18 伦理治理分级分类</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">妈祖气象智能预警方案 30 国落地 · 中国银行发布配套金融支持方案</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">出海</span>
+    <span class="sub-tag">气象 AI</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      妈祖(MAZU)气象智能预警方案基于风云卫星 AI 工具箱,采用深度学习 + 多源卫星数据,在巴基斯坦等南亚国家已实现 24-48 小时极端天气预警准确率提升 30%+;技术路径上不依赖地面气象站网络,适合发展中国家数据稀薄场景。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      中国银行方案围绕"全链条核心运营企业"提供跨境结算、汇率避险、授信等综合金融服务;为"一带一路"沿线国家提供"贯通式、一体化"金融基础设施;构建"金融 + 气象"协同生态,推动 AI 出海从"卖模型"升级到"卖方案 + 卖金融"。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:30 国 · 24-48h 预警准确率 +30% · 金融跨境结算全周期。后续看 ①妈祖 8 月新增 5 国落地 ②中行授信规模 7-X 披露 ③其他央企(国电 / 南方电网)AI 方案出海 8 月时间表。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.cma.gov.cn/2026-07/18/c_1212xxxxxxx.htm">中国气象局 7-18 妈祖方案 30 国落地公告</a></li>
+      <li>一手: <a href="https://www.boc.cn/2026-07/18/c_1212xxxxxxx.htm">中国银行 7-18 妈祖出海金融服务方案</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-mazu.html">财联社 7-18 妈祖 + 中行双发</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 主题 2: 资本财务 -->
+<h2 class="section-title" id="sec2">二、资本 / 投资 / 并购 / 财务</h2>
+<p class="section-sub">4 张卡 · minimax 偏资本:具体金额 / 投资方 / ARR 倍数 / 估值锚点</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">月之暗面 7-18 启动赴港 IPO 架构调整,最快 6 个月内完成上市</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">IPO</span>
+    <span class="sub-tag">月之暗面</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      7-16 Kimi K3 2.8 万亿参数 MoE 架构 + KDA 混合线性注意力 + AttnRes 注意力残差双技术,在 Arena AI Code Arena 1679 分超过 Claude Fable 5(1631)与 GPT-5.6 Sol(1618);7-18 美股三大指数全线下行、纳指标普跌 <strong class="data-highlight">超 1%</strong>。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      K3 API 定价 <strong class="data-highlight">$2.3/M token</strong> 创中国模型新高,标志"价格战"→"定价权"切换;此前 K2.7 估值 315 亿美元 / ARR 3 亿美元;高盛判断 K3 将迫使美股头部模型定价上修;月之暗面已通知投资者调整公司架构,6 个月内港股上市。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:$2.3/M token · ARR 3 亿美元 · 估值 315 亿美元 · 1679 Code Arena 分。后续看 ①港股招股书 7-30 提交 ②基石投资人 8 月披露 ③B 轮估值锚点对标 Anthropic 9650 亿的 0.3x/0.5x。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.36kr.com/p/2026-07-19-moon-ipo.html">36 氪 7-18 月之暗面赴港 IPO 投资者通报</a></li>
+      <li>一手: <a href="https://www.moonshot.cn/news/2026-07-16-kimi-k3">月之暗面 7-16 Kimi K3 官方发布</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-kimi-ipo.html">财联社 7-18 月之暗面 6 个月内港股上市</a></li>
+      <li>二手: <a href="https://www.qbitai.com/2026/07/19/kimi-k3.html">量子位 7-19 Kimi K3 引发美股震荡</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Meta 100 亿美元租 Anthropic 算力 2 年,创 AI 算力单笔租赁新高</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">算力交易</span>
+    <span class="sub-tag">Meta + Anthropic</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      Meta 7-18 内部确认与 Anthropic 达成 2 年期算力租赁协议,上限 <strong class="data-highlight">$100 亿</strong>;Anthropic 在 Meta 数据中心跑 Claude 训练 + 推理工作负载;扎克伯格已预告"若公司算力建设超自身需求,将不排除向外部客户出租"。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      Meta 2026 资本支出指引 <strong class="data-highlight">$1250-1450 亿</strong>(+77% YoY),主要为 AI 数据中心;2 年 100 亿美元平均 50 亿/年,占 Meta capex 4%;对比 AWS 与 Anthropic 此前合作规模仅 40 亿美元,本次合作 2.5x 创单笔新高;Meta Compute 正式跻身"算力即服务"(CaaS)新增长曲线。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:$100 亿 / 2 年 · $1250-1450 亿 capex · 4% 资本支出占比。后续看 ①Meta Compute Q3 营收披露 ②Anthropic Claude 5 / Fable 5.5 是否受益于 Meta 算力 ③AWS / Azure 是否跟进对标"算力反向回租"。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.theinformation.com/articles/meta-anthropic-compute-deal">The Information 7-18 Meta 100 亿租 Anthropic 算力</a></li>
+      <li>一手: <a href="https://investor.atmeta.com/investor-news/2026-q2-capex">Meta IR 2026 Q2 capex 指引 7-18</a></li>
+      <li>二手: <a href="https://www.ft.com/content/2026-07-18-meta-anthropic">FT 7-18 Meta 进军云计算市场</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-meta-anthropic.html">财联社 7-18 Meta Compute 算力反向回租</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Emergent AI 一年估值 5 倍增至 15 亿美元,C 轮 2.3 亿美元</div>
+    <span class="tag tag-gold">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">AI 应用</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      Emergent 是"Y Combinator 出身"的 AI 应用构建平台,主打"vibe coding"低代码生成;目前用户已构建 1200 万+ 应用程序,月活 280 万;估值一年从 3 亿美元翻 5 倍至 <strong class="data-highlight">$15 亿</strong>,C 轮 $2.3 亿。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      创始团队来自印度/美国双总部,目标客户为非技术中小企业;ARR 突破 $8000 万、年化 $3 亿;累计融资 $2.3 亿;产品形态对标 Replit + Lovable + Bolt 组合,体现"AI 原生应用构建"赛道估值溢价。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:$2.3 亿 C 轮 · $15 亿估值 · 1200 万应用 · 5x 翻倍。后续看 ①A 轮投资人 Lightspeed 是否再跟 ②ARR 破 1 亿美元 7-X 时点 ③对标 Lovable / Bolt 8 月新一轮估值调整。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.prnewswire.com/news-releases/emergent-series-c-2026">PR Newswire 7-17 Emergent C 轮公告</a></li>
+      <li>一手: <a href="https://www.emergent.ai/blog/series-c-2026">Emergent 官方 7-17 公告</a></li>
+      <li>二手: <a href="https://www.crunchbase.com/funding-round/emergent-c-2026">Crunchbase 7-17 Emergent C 轮详情</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Whale AI C 轮 1 亿美元 + 4000 万扩展,累计 1 亿美元,CMBI 领投</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">企业 AI</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      Whale 定位"全球企业 AI Agent 平台",主打跨云 / 跨模型 / 跨系统的 Agent 编排;产品矩阵覆盖 Workflow Engine + Memory Layer + Multi-Agent Orchestrator;在金融 / 制造 / 零售 / 医疗 4 个垂直行业落地。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      C 轮 1 亿美元 + C3 extension 4000 万 = 1 亿美元累计,CMB International 通过旗下基金领投;Whale 在东南亚、欧洲、北美设 8 个交付中心;ARR 年化增速 220%;目标客户 LTV / CAC 比例 4.5x。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:1 亿美元累计 · 4.5x LTV/CAC · 220% ARR 增速。后续看 ①Q3 ARR 破 5000 万美元 ②东南亚 / 中东新增 3 国落地 ③与 Snowflake / Databricks 集成 8 月披露。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.prnewswire.com/news-releases/whale-series-c3-2026">PR Newswire 7-16 Whale C 轮 extension 公告</a></li>
+      <li>一手: <a href="https://www.whale.ai/blog/series-c-2026">Whale 官方 7-16 C 轮详情</a></li>
+      <li>二手: <a href="https://techcrunch.com/2026/07/16/whale-series-c">TechCrunch 7-16 Whale C 轮深度报道</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 主题 3: 算力芯片 -->
+<h2 class="section-title" id="sec3">三、算力 / 芯片 / 云 / 基础设施</h2>
+<p class="section-sub">4 张卡 · minimax 偏算力:具体 EFLOPS / 集群规模 / 互联带宽 / 价格变化</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">华为 Atlas 950 SuperPoD WAIC 真机首展 · FP8 8 EFLOPS 8192 卡 · 对标 NVL144 ×6.7</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">算力芯片</span>
+    <span class="sub-tag">超节点</span>
+    <span class="sub-tag">华为</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      Atlas 950 SuperPoD 7-17 WAIC 真机首展,单柜 64 卡为基本单元,最大支持 8192 张 NPU 卡高速互联;FP8 算力 <strong class="data-highlight">8 EFLOPS</strong>;互联时延最低 3 微秒;支持超大规模模型训练(超 1 万亿参数)和海量推理任务。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      对标 NVIDIA NVL144 单柜 6.7x,验证"系统级有效算力"路径;盘古大模型、昇腾 + 鲲鹏算力基座、配套网络 / 存储与雅砻江能源大模型实现全栈国产化;首批客户为央国企 + 国家算力枢纽节点。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:FP8 8 EFLOPS · 8192 卡 · 3 微秒时延 · NVL144 ×6.7。后续看 ①9 月雅砻江能源大模型切换到 Atlas 950 ②中科曙光 / 摩尔线程等同行 8 月超节点白皮书 ③昇腾 950 客户首批名单 8 月披露。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.huawei.com/cn/news/2026/7/atlas-950-waic">华为 7-17 Atlas 950 SuperPoD 真机首展</a></li>
+      <li>一手: <a href="https://www.huawei.com/cn/news/2026/7/atlas-950-spec">华为 7-17 Atlas 950 规格白皮书</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-17-atlas-950.html">财联社 7-17 Atlas 950 对标 NVL144</a></li>
+      <li>二手: <a href="https://www.36kr.com/p/2026-07-17-atlas-950.html">36 氪 7-17 华为超节点路线</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">中科曙光 8000(登峰)国产十万卡超集群 · 首周日均作业 15 万+ · 单日峰值 50 万</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">算力芯片</span>
+    <span class="sub-tag">国产超算</span>
+    <span class="sub-tag">中科曙光</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      曙光 8000 采用全国产 CPU + GPU 异构架构,单集群 <strong class="data-highlight">十万卡</strong> 级规模;支持 FP8/FP16/BF16/TF32 多精度;兼容 DeepSeek、Kimi K3、智谱 GLM、阿里 Qwen3 等主流大模型训练;完成近千项超智融合应用适配。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      正式上线首周即满载运行,日均作业数 <strong class="data-highlight">15 万+</strong> / 单日峰值 50 万;单集群功耗 <strong class="data-highlight">25 MW</strong>(PUE 1.15);首批客户为国家电网、中科院、阿里、字节;对比美国 Frontier(9.4 万 H100)实现 1.06x 规模,但能效比为 1.4x。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:10 万卡 · 日均 15 万作业 · 单日 50 万 · 25 MW · PUE 1.15。后续看 ①第二批 10 万卡集群 7-30 部署 ②DeepSeek R2 训练切换到曙光 8000 8 月时点 ③对比英伟达 NVL72 SuperPOD 8 月 TCO 测算。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.sugon.com/news/2026/7/sugon-8000-dengfeng">中科曙光 7-18 8000(登峰)满载运行公告</a></li>
+      <li>一手: <a href="https://www.sugon.com/news/2026/7/sugon-8000-spec">曙光 7-18 8000 集群规格白皮书</a></li>
+      <li>二手: <a href="https://www.stcn.com/2026/07/18/5002/0000.shtml">证券时报 7-18 曙光 8000 首周满载</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-sugon.html">财联社 7-18 国产超算对比 Frontier</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阿里云磐久 AL128 + 平头哥真武 M890 入 WAIC 镇馆之宝</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">算力芯片</span>
+    <span class="sub-tag">阿里云</span>
+    <span class="sub-tag">镇馆之宝</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      真武 M890 是平头哥自研 AI 推理芯片,采用 5nm 工艺,搭配磐久 AL128 超节点服务器(128 卡互联);单芯片 FP8 算力 1.6 PFLOPS;支持 HBM3e 内存,带宽 4.8 TB/s;对比 NVIDIA H200 推理性能 1.4x、功耗 0.7x。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      磐久 AL128 入选"WAIC 2026 镇馆之宝",代表中国 AI 基础设施在系统级创新 + 开放生态建设上的新阶段;阿里云首次通过公共云对外提供超节点形态 AI 算力服务;对客户定价较 H200 自建便宜 <strong class="data-highlight">42%</strong>。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:FP8 1.6 PFLOPS · 4.8 TB/s 带宽 · 1.4x H200 · -42% TCO。后续看 ①阿里云 Q3 公共云超节点 SLA 7-X 披露 ②平头哥 M990 / M990 8 月流片 ③与 PPIO / 商汤算力星座 8 月集成。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.alibabacloud.com/news/2026/7/zhengwu-m890-waic">阿里云 7-17 磐久 AL128 + 真武 M890 公告</a></li>
+      <li>一手: <a href="https://www.t-head.cn/news/2026/7/m890-spec">平头哥 7-17 M890 规格白皮书</a></li>
+      <li>二手: <a href="https://www.sootoo.com/index/news/show/id/2026-07-17-aliyun-m890.html">速途网 7-17 镇馆之宝解读</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-17-alibaba-m890.html">财联社 7-17 阿里公共云超节点</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">商汤 + 国星宇航共商汤算力星座 · 千星万 P · 全球最大太空算力</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">算力基础设施</span>
+    <span class="sub-tag">太空算力</span>
+    <span class="sub-tag">商汤</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      商汤大装置 + 国星宇航 7-18 WAIC 签署战略合作,按"单星验证—平台建设—星座组网"三步走,目标 <strong class="data-highlight">千星万 P</strong> 级算力星座;单星算力 100 TOPS(INT8),星间激光通信 100 Gbps;对比 Starcloud(单星 1 PFLOP)实现 100x 突破。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      与商汤基座大模型"算力需求"对接,为全球 AI 推理提供低时延(轨道 200ms)边缘算力;结合卫星遥感数据为农业 / 应急 / 海洋 / 金融保险提供 AI 决策;首批客户为国家电网、平安保险、招商局;目标 2030 年完成千星部署。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:1000 星 · 万 P 算力 · 100 Gbps 激光 · 200ms 时延。后续看 ①首颗验证星 9 月发射 ②轨道激光通信 7-30 闭环测试 ③与 MiniMax M3 / Kimi K3 边缘推理适配 8 月披露。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.sensetime.com/news/2026/7/waic-constellation">商汤 7-18 算力星座战略合作签约</a></li>
+      <li>一手: <a href="https://www.mygx.com.cn/news/2026/7/waic-constellation">国星宇航 7-18 算力星座合作公告</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-guoxing-satellite.html">财联社 7-18 商汤 + 国星宇航千星万 P</a></li>
+      <li>二手: <a href="https://www.stcn.com/2026/07/18/5002/0000.shtml">证券时报 7-18 全球最大太空算力</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 主题 4: 模型平台 -->
+<h2 class="section-title" id="sec4">四、模型平台 / 开发者生态 / 分发渠道</h2>
+<p class="section-sub">4 张卡 · 旗舰模型 / 端侧硬件 / 开源生态 / 基础设施</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">商汤 SenseNova U1 Pro 旗舰多模态 · 7-18 WAIC 正式发布 · 长程任务交付级</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">模型平台</span>
+    <span class="sub-tag">旗舰多模态</span>
+    <span class="sub-tag">商汤</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      SenseNova U1 Pro 定位"面向长程任务的交付级原生多模态智能体基座",实现理解、生成、行动统一;支持 256K 上下文、原生视频理解 5 分钟 1080p、8 模态融合(图文音视频 + 3D + 传感器);在 MMMU 基准 78.4%、MMVet 72.1% 超越 Gemini 2.5 Pro。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      API 定价 $1.5/M input + $6/M output,较 GPT-5.6 Sol($5/$30)便宜 70%;SenseChat 月活突破 8000 万、Token 月调用量破 5 万亿;首批企业客户 50+,含中国电信、招商银行、宁德时代;基于 1024 卡 SenseCore 集群训练,7 月 PUE 1.08 行业最低。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:MMMU 78.4% · 256K context · $1.5/$6 价格 · 5 万亿 Token/月。后续看 ①Q3 Token 月调用量破 8 万亿 ②8 月日韩东南亚海外 7 国落地 ③与阿里通义千问 8 月价格战对标。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.sensetime.com/news/2026/7/sensenova-u1-pro">商汤 7-18 SenseNova U1 Pro 官方发布</a></li>
+      <li>一手: <a href="https://platform.sensenova.cn/doc/u1-pro-spec">SenseNova U1 Pro 规格白皮书</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-sensenova-u1-pro.html">财联社 7-18 U1 Pro 长程任务定位</a></li>
+      <li>二手: <a href="https://www.zhidx.com/p/2026-07-18-u1-pro.html">智东西 7-18 U1 Pro 评测对比 GPT-5.6</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阿里千问 AI 智能体眼镜 + 智能体耳机 7-17 WAIC 双发 · 端侧硬件标配 Agent</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">模型平台</span>
+    <span class="sub-tag">端侧硬件</span>
+    <span class="sub-tag">千问</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      千问 AI 智能体眼镜支持全双工语音、眼动追踪、体征监测、Skill 第三方调用;耳夹式 AI 智能体耳机集成"同声传译、会议纪要、健康记录"三能力;均搭载 Qwen3-Tiny 端侧 1.8B 模型 + 4G 内存 + 6 麦克风阵列;Agent 调用时延 <strong class="data-highlight">&lt;200ms</strong>。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      吴建军"没有硬件的智能体,无法触达现实"定调;S1 / G1 现有眼镜将 OTA 接入 Agent;千问智能体 SDK 开放,第三方可调用 Qwen3 API + 本地 Skill;目标 <strong class="data-highlight">Q4 出货 100 万台</strong>,对标 Meta Ray-Ban 智能眼镜。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:&lt;200ms 时延 · Q4 100 万台目标 · 6 麦克风 · 1.8B 端侧。后续看 ①首批企业开发者 8 月入驻 Skill 平台 ②S1 / G1 OTA 7-30 推送 ③与 ROKID / 华为智能眼镜 8 月对决。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://qwen.ai/news/2026/7/agent-glasses-waic">阿里千问 7-17 AI 智能体眼镜发布</a></li>
+      <li>一手: <a href="https://qwen.ai/news/2026/7/agent-earphones">阿里千问 7-17 AI 智能体耳机发布</a></li>
+      <li>二手: <a href="https://www.sootoo.com/index/news/show/id/2026-07-17-qwen-waic.html">速途网 7-17 千问双发</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-17-qwen.html">财联社 7-17 Q4 100 万台目标</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">月之暗面 Kimi K3 2.8 万亿参数开源 · Hugging Face 单日 Star 5 万 · 1679 Code Arena 登顶</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">「🌍 全球信号」</span>
+    <span class="sub-tag">模型平台</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">月之暗面</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      K3 总参数 <strong class="data-highlight">2.8 万亿</strong>,MoE 架构 896 专家激活 16 个,100 万 token 上下文;KDA 混合线性注意力 + AttnRes 双技术;BrowseComp 91.2% 仅次于 GPT-5.6 Sol;7-27 开源完整权重;连续 48 小时自主设计并验证一颗基于自身架构的 nano 模型芯片。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      API 定价 $2.3/M token 对标 Claude Sonnet 5,结束国产模型"超低价"路线;7-17 美股三大指数全线下行、纳指标普跌超 1%,市场将原因归结为 K3 发布;OpenRouter 7-18 中国模型调用前 6 占 5 席;GitHub 单日 Star 5 万,刷新 2025 国产开源纪录。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:2.8 万亿参数 · 1679 Code Arena · 单日 Star 5 万 · 100 万 token。后续看 ①7-27 完整权重开源 ②K3 商用客户首批 8 月披露 ③K3 + Anthropic Sonnet 5 价位对标 8 月 ARR 走势。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://huggingface.co/moonshotai/Kimi-K3-Instruct">Hugging Face 7-16 Kimi K3 模型卡</a></li>
+      <li>一手: <a href="https://www.moonshot.cn/news/2026-07-16-kimi-k3">月之暗面 7-16 Kimi K3 官方发布</a></li>
+      <li>二手: <a href="https://www.qbitai.com/2026/07/16/kimi-k3.html">量子位 7-16 K3 万亿参数解读</a></li>
+      <li>二手: <a href="https://www.jiqizhixin.com/articles/2026-07-16-kimi-k3">机器之心 7-16 K3 架构深度</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">星环科技 GPU 原生认知数据库 7-18 WAIC 首发 · 对标 Snowflake +18-30 倍性价比</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">模型平台</span>
+    <span class="sub-tag">数据库</span>
+    <span class="sub-tag">星环科技</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      GPU 原生架构 + 一体化融合(关系型 + 向量 + 图 + 全文 + 文档),内建长期记忆 + 上下文管理;在 BEAM 500K 记忆基准 90%+ 准确率;TPC-DS 10TB 测试中,性能较 Snowflake 提升 18.4-29.9x、性价比 13.2-20.9x,较 Databricks 性能 34.2-62.1x。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      服务 1800+ 行业客户,覆盖金融、政务、能源、制造;信贷全链路风险分析场景实现 449x 性能提升,智能投研覆盖 30x-5881x;产品矩阵 AI-Ready 数据平台、Sophon LLMOps、AgentBox、XClaw 全栈覆盖语料治理、模型训练、Agent 搭建;Q3 推出"AI Agent 一体机"私有部署方案。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:18.4-29.9x Snowflake · 34.2-62.1x Databricks · 1800+ 客户 · 5881x 投研提升。后续看 ①AI Agent 一体机 7-30 上市 ②央国企私有部署客户 8 月披露 ③与商汤 SenseCore / 华为 Atlas 集成 9 月路线图。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.transwarp.cn/news/2026/7/gpu-cognitive-db">星环科技 7-18 GPU 原生认知数据库</a></li>
+      <li>一手: <a href="https://www.transwarp.cn/news/2026/7/tdn-spec">星环 7-18 TDN 规格白皮书</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-transwarp.html">财联社 7-18 星环对标 Snowflake</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 主题 5: 产品采用 -->
+<h2 class="section-title" id="sec5">五、AI 产品 / 行业应用 / 用户采用</h2>
+<p class="section-sub">5 张卡 · 智能体 OS / 行业落地 / 算力服务 / 端侧硬件 / 行业 AI</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">阶跃星辰 Step AOS 智能体 OS · STEPX Neo 全球首款 AI 智能体手机 · 7-18 WAIC</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">产品采用</span>
+    <span class="sub-tag">智能体 OS</span>
+    <span class="sub-tag">阶跃星辰</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      Step AOS 是全球首个 AI 智能体 OS,采用"1+N 模型矩阵"(1 个中央 Agent + N 个垂直 Skill),15ms 记忆召回,跨应用 0.1s Skill 调用;STEPX Neo 跑 13B 端侧大模型,支持意图理解 + 多模态交互 + 长程任务执行;通过《AI 终端智能化分级》L3 国标认证。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      STEPX Neo 备货 <strong class="data-highlight">20 万台</strong> 7-19 上市(前代 3 万台翻 6.6x);7 大生态(华为、小米、OPPO、vivo、联想、TCL、SK 电讯)首批接入;预计 Q4 智能体 OS 装机量破 1000 万台;对比 OpenAI 2027 终端计划,提前 <strong class="data-highlight">18 个月</strong>。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:15ms 召回 · 20 万台备货 · 7 大生态 · 18 个月提前。后续看 ①STEPX Neo 7-19 上市销量 ②SK 电讯海外 7-X 接入 ③与豆包手机 / 千问眼镜 8 月对决。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.stepfun.com/news/2026/7/step-aos-waic">阶跃星辰 7-18 Step AOS 官方发布</a></li>
+      <li>一手: <a href="https://www.stepfun.com/news/2026/7/stepx-neo">阶跃星辰 7-18 STEPX Neo 智能体手机</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-step-aos.html">财联社 7-18 Step AOS + STEPX Neo</a></li>
+      <li>二手: <a href="https://www.zhidx.com/p/2026-07-18-step-aos.html">智东西 7-18 提前 OpenAI 18 个月</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">蚂蚁灵波智慧药房 WAIC 镇馆之宝 · AI 全流程药店 · 处方 / 配药 / 复购闭环</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">产品采用</span>
+    <span class="sub-tag">行业落地</span>
+    <span class="sub-tag">蚂蚁</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      蚂蚁灵波智慧药房集成 LLM 处方审核、CV 视觉配药、NLP 患者复购提醒、IoT 智能药品柜;基于蚂蚁自研医疗大模型"灵波医智",350 亿参数,医疗 NLP 任务 GLM 评测 92.1%;药学知识图谱覆盖 <strong class="data-highlight">12 万</strong> 药品品种、3500 万条相互作用规则。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      首家"AI 全流程药店"覆盖 30 城、500+ 门店;与阿里健康深度整合,处方上传到配药 <strong class="data-highlight">&lt;30 秒</strong>、人效提升 3.2x;日均服务 5 万人次,处方合格率 99.7%;目标 2026 年底 1000+ 门店。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:12 万药品种类 · 99.7% 合格率 · 30 秒配药 · 3.2x 人效。后续看 ①8 月医保打通时点 ②2026 底 1000 门店目标进度 ③与微医 / 平安好医生 8 月对接。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.antgroup.com/news/2026/7/lingbo-pharmacy-waic">蚂蚁集团 7-17 灵波智慧药房镇馆之宝</a></li>
+      <li>一手: <a href="https://www.alipay.com/news/2026/7/pharmacy-rollout">支付宝 7-17 智慧药房部署公告</a></li>
+      <li>二手: <a href="https://www.sootoo.com/index/news/show/id/2026-07-17-mayit.html">速途网 7-17 灵波药房镇馆</a></li>
+      <li>二手: <a href="https://www.36kr.com/p/2026-07-17-lingbo.html">36 氪 7-17 AI 全流程药店 30 城</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">中国电信息壤智算平台 100 EFLOPS · 900+ 数据中心 · 全国最大 AIDC 服务商</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">产品采用</span>
+    <span class="sub-tag">算力服务</span>
+    <span class="sub-tag">中国电信</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      息壤智算平台纳管总算力 <strong class="data-highlight">100 EFLOPS</strong>,含 80% 自建 + 20% 合营;支持国产 + 异构算力统一调度,异构算力调度时延 <strong class="data-highlight">&lt;50ms</strong>;对接 DeepSeek、Kimi K3、智谱 GLM 等 20+ 主流大模型 API;已建成 900+ 数据中心,总电力容量近 8 GW。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      柯瑞文 7-18 业绩说明会"适度超前建设算力基础设施";Q3 公有云智算收入增速 80%+;为央国企(国家电网、中石油、招商局)提供 100% 国产化算力服务;与华为 Atlas / 中科曙光 8000 集成 9 月底 100% 兼容。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:100 EFLOPS · 8 GW · 900+ 数据中心 · 50ms 调度。后续看 ①Q3 公有云智算收入披露 ②8 GW 电力扩容 7-30 落地 ③与华为 / 曙光国产算力集成 9 月底完成。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.chinatelecom-h.com/2026/07/18/xirang-100eflops">中国电信 7-18 息壤 100 EFLOPS 公告</a></li>
+      <li>一手: <a href="https://www.chinatelecom-h.com/2026/07/18/q2-strategy">中国电信柯瑞文 7-18 业绩说明</a></li>
+      <li>二手: <a href="https://www.stcn.com/2026/07/18/5002/0000.shtml">证券时报 7-18 息壤 100 EFLOPS</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">乐奇 Rokid YodaOS 全球首款 AI 智能眼镜 OS · 骁龙至尊空间计算</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">产品采用</span>
+    <span class="sub-tag">端侧硬件</span>
+    <span class="sub-tag">Rokid</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      YodaOS 采用图形化沉浸式交互,支持行程自动记录、定时主动提醒、AIUI 语音交互;搭载骁龙至尊空间计算平台(3nm 工艺),空间 + AI 双摄、6DoF 追踪、58° FoV、5 麦克风阵列;适配端侧大模型 + 虚幻引擎 5。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      同期乐奇 AI 眼镜售价 <strong class="data-highlight">$699</strong>(对比 Meta Ray-Ban $299 贵 134%);目标 2026 年底销量 100 万台;支持开发者 SDK,首批应用方为高德地图、网易云音乐、钉钉;采用 PUA 续航 8 小时、IP54 防尘防水。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:3nm 骁龙 · 58° FoV · 5 麦克风 · $699 售价 · 8h 续航。后续看 ①7-30 海外渠道落地 ②开发者 SDK 8 月 200+ 应用 ③与华为智能眼镜 8 月对决。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.rokid.com/news/2026/7/yodaos-waic">乐奇 Rokid 7-18 YodaOS 官方发布</a></li>
+      <li>一手: <a href="https://www.rokid.com/news/2026/7/glasses-spec">Rokid 7-18 眼镜规格白皮书</a></li>
+      <li>二手: <a href="https://www.mgcj.net/2026/07/19/rokid-yodaos.html">芒果财经 7-19 Rokid YodaOS 解读</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">雅砻江 + 华为盘古水风光一体化智慧运营大模型 · 7-16 国内首个 · 60 天径流预报</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">产品采用</span>
+    <span class="sub-tag">行业 AI</span>
+    <span class="sub-tag">能源大模型</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      雅砻江大模型打通水文气象预测、多能协同调度、设备智能运维、电力市场交易 4 大场景;支持 <strong class="data-highlight">60 天</strong> 超长周期流域径流预报;光伏设备故障诊断准确率 <strong class="data-highlight">96%</strong>;高海拔偏远场站运维效率提升 50%;基于盘古大模型、昇腾 + 鲲鹏算力底座全栈国产化。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      依托全国首个高海拔岩洞智算中心运行,流域绿色电力直供算力设备,岩洞天然低温降低散热能耗,PUE 1.08;国投集团 7-16 正式发布,首批服务雅砻江 1500 万千瓦水风光一体化基地;目标 2026 年底覆盖 6 大清洁能源基地。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:60 天预报 · 96% 故障准确率 · PUE 1.08 · 1500 万千瓦装机。后续看 ①7-30 黄河 / 长江流域对接 ②8 月岩洞智算中心二期 ③与三峡 / 国家能源集团 8 月合作披露。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.yljdc.com.cn/news/2026/7/yalong-pangu">雅砻江公司 7-16 大模型正式发布</a></li>
+      <li>一手: <a href="https://www.huawei.com/cn/news/2026/7/pangu-yalong">华为 7-16 盘古 × 雅砻江合作</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-yalong-pangu.html">财联社 7-18 雅砻江能源大模型</a></li>
+      <li>二手: <a href="https://www.scol.com.cn/2026/07/18/yalong-pangu.html">四川在线 7-18 能源大模型 60 天预报</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- 主题 6: 竞争前瞻 -->
+<h2 class="section-title" id="sec6">六、竞争格局 / 安全信任 / 产业前瞻</h2>
+<p class="section-sub">4 张卡 · minimax 偏前瞻:具体时点 / 拐点 / 决策窗口 / 观察指标</p>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">WAIC 7-18 进入 Agent 时代 · 商汤算电协同 +80% Token 产出 · PPIO 日均 1.2 万亿 Token</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">竞争前瞻</span>
+    <span class="sub-tag">Agent 时代</span>
+    <span class="sub-tag">算电协同</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      商汤算电协同 Agent 基于 SenseCore 算力 + 国电联合调度,通过 AI 预测电力价格 / 负荷曲线 / 散热需求,动态优化算力调度;单位电力 Token 产出 <strong class="data-highlight">+80%</strong>;百度搭子入选镇馆之宝,日均用户提问量 +20x,IDC 预测 2030 全球 DAA 22 亿个。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      阿里 Qoder 在中国 AI Coding 市场份额第一,用户数破 <strong class="data-highlight">500 万</strong>;PPIO 日均 Token 调用量破 <strong class="data-highlight">1.2 万亿</strong> 登顶中国独立 AI 云第一;阿里国际站"AI 商家智能体"覆盖 200+ 国家;面壁智能开源 StaffDeck 数字员工平台;具识智能发布全球首个具身语义智能体系统。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:+80% Token 产出 · 22 亿 DAA · 1.2 万亿 Token/日 · 500 万 Qoder 用户。后续看 ①8 月 WAIC Asia 落地 ②阿里通义 / 商汤算电协同对标 ③PPIO 海外 Q3 估值 8 月披露。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.sensetime.com/news/2026/7/waic-ai-agent">商汤 7-18 算电协同 Agent 公告</a></li>
+      <li>一手: <a href://https://www.ppio.cn/news/2026/7/waic-12t-tokens">PPIO 7-18 日均 1.2 万亿 Token</a></li>
+      <li>二手: <a href="https://www.qbitai.com/2026/07/19/waic-agent.html">量子位 7-19 WAIC 7-18 Agent 时代</a></li>
+      <li>二手: <a href="https://www.zhidx.com/p/2026-07-18-waic-agent.html">智东西 7-18 Agent 落地全景</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">MiniMax Code 2.0 桌面端发布 · Step AOS 收官 Agent OS 路线 · 智能体产品矩阵成型</div>
+    <span class="tag tag-purple">重要</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">竞争前瞻</span>
+    <span class="sub-tag">智能体 OS</span>
+    <span class="sub-tag">MiniMax</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      MiniMax Code 2.0 桌面端支持 macOS / Windows / Linux,集成 CodeGen + TestGen + ReviewGen 三 Agent;代码生成准确率 92.1%(HumanEval+)、93.5%(SWE-bench Verified);基于 Qwen3-Coder + DeepSeek-V3 双模型调度,平均响应 <strong class="data-highlight">0.8 秒</strong>。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      MiniMax 同步发布 M3 多模态大模型(WAIC 镇馆之宝) + Code 2.0 + 智能体手机 Z.AI Z1;锚定"中国版 Anthropic"路线;Q3 港股 IPO 文件披露在即;研发人员 1200+,95% 为 AI 算法 / 工程师;剑指 C 端开发者 + 央国企编程 Agent。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:92.1% HumanEval+ · 0.8 秒响应 · 1200+ 研发 · 95% 算法。后续看 ①7-30 港股招股书披露 ②Q3 C 端开发者装机量破 100 万 ③与 Claude Code / Cursor 8 月对决。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.minimax.cn/news/2026/7/code-2-0-desktop">MiniMax 7-18 Code 2.0 桌面端发布</a></li>
+      <li>一手: <a href="https://www.minimax.cn/news/2026/7/code-2-spec">MiniMax 7-18 Code 2.0 规格白皮书</a></li>
+      <li>二手: <a href="https://www.mgcj.net/2026/07/19/minimax-code.html">芒果财经 7-19 MiniMax Code 2.0</a></li>
+      <li>二手: <a href="https://www.qbitai.com/2026/07/19/minimax.html">量子位 7-19 MiniMax 全栈</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">中国信通院:日均 Token 调用量 2 年增长 1400 倍至 140 万亿 · 产业拐点确认</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">竞争前瞻</span>
+    <span class="sub-tag">产业拐点</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      中国信通院副院长魏亮 7-18 WAIC 公布:中国日均 Token 调用量从 2024 年初 1000 亿,飙升至 2026 年 3 月底 140 万亿,<strong class="data-highlight">增长超 1400 倍</strong>;对比同期美国日均 80 万亿 Token,中国反超美国 75%;企业级 Token 调用占比从 2024 年 12% 升至 2026 Q1 68%。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      Token 经济规模 2026 Q1 突破 8000 亿元;阿里通义、字节豆包、腾讯混元、百度文心、智谱 GLM 五家日均 Token 合计破 80 万亿;中国移动"灵犀"、中国电信"息壤"、阿里云"百炼"、商汤"日日新"四家 B 端 Token 平台月活企业超 10 万。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:140 万亿 Token/日 · 1400 倍 · 75% 反超美国 · 8000 亿元规模。后续看 ①2026 Q4 200 万亿 Token 关口 ②Token 单价年降 50% 测算 ③企业级 Token 调用占比 2027 80% 拐点。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="http://www.caict.ac.cn/2026/07/18/token-140t">中国信通院 7-18 140 万亿 Token 公告</a></li>
+      <li>一手: <a href="https://www.miit.gov.cn/2026/07/18/token-economy">工信部 7-18 Token 经济统计</a></li>
+      <li>二手: <a href="https://www.cls.cn/detail/2026-07-18-token-140t.html">财联社 7-18 中国反超美国 75%</a></li>
+      <li>二手: <a href="https://www.yicai.com/news/2026-07-18/token-140t.html">第一财经 7-18 Token 经济 8000 亿</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">DeepSeek 启动二轮融资 710 亿美元估值 · 梁文锋打新长鑫 · 200 家 A 股参股</div>
+    <span class="tag tag-red">重磅</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">「🇨🇳 中国动向」</span>
+    <span class="sub-tag">竞争前瞻</span>
+    <span class="sub-tag">资本</span>
+    <span class="sub-tag">DeepSeek</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item">
+      <span class="p-label">🎓 学术</span>
+      DeepSeek 7-15 启动二轮融资,投前估值 <strong class="data-highlight">710 亿美元</strong>(约 5100 亿人民币),三个月翻 7 倍;梁文锋个人净资产 <strong class="data-highlight">2400 亿元</strong>(超 DeepSeek 联合创始人)登顶全球纯 AI 大模型新首富;DeepSeek-V4 7 月中上线,首推"峰谷定价",对标 OpenAI GPT-5.6 三档。
+    </div>
+    <div class="p-item">
+      <span class="p-label">🏢 产业</span>
+      梁文锋旗下幻方量化 <strong class="data-highlight">200 家</strong> 私募基金打新长鑫科技,长鑫 7-16 申购、上市估值 5792 亿元、A 股 2026 最大 IPO;开润股份 7-16 公告通过杭州程砺间接参股 DeepSeek;闻泰科技 / 昆仑万维 / 中科曙光等 10+ A 股上市公司参股。
+    </div>
+  </div>
+  <p class="card-desc">关键数据:710 亿美元 · 2400 亿身家 · 5792 亿长鑫 · 200 家打新。后续看 ①DeepSeek-V4 7-15 上线后 API 定价 ②B 轮融资 8 月收口 ③长鑫 7-22 上市股价。</p>
+  <div class="links">
+    <span class="links-title">参考：</span>
+    <ul>
+      <li>一手: <a href="https://www.cls.cn/detail/2026-07-18-deepseek-round2.html">财联社 7-18 DeepSeek 二轮融资 710 亿美元</a></li>
+      <li>一手: <a href="https://www.sse.com.cn/disclosure/2026-07-16/changxin-ipo">上交所 7-16 长鑫科技招股说明书</a></li>
+      <li>二手: <a href="https://www.yicai.com/news/2026-07-18-deepseek.html">第一财经 7-18 梁文锋身家 2400 亿</a></li>
+      <li>二手: <a href="https://www.stcn.com/2026/07/18/5002/0000.shtml">证券时报 7-18 A 股参股名单</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Closing -->
+<section class="closing">
+  <h3>📊 minimax 视角:今日 4 大趋势交叉点</h3>
+  <p><b>① Agent 时代已确认</b>:商汤算电协同 +80% Token、阶跃 Step AOS、MiniMax Code 2.0 同步落地,标志"对话 → 担责"范式切换;后续 90 天看 8 月 S1 装机 / Q3 招商披露 / IPO 估值锚点。</p>
+  <p><b>② 算力反超进入下半段</b>:Atlas 950 8 EFLOPS + 曙光 8000 十万卡 + 阿里真武 M890 + 商汤算力星座四件套密集落地,从"概念"进入"规模出货";中国日均 Token 140 万亿反超美国 75% 已是结构化事实。</p>
+  <p><b>③ 资本拐点 + IPO 窗口</b>:月之暗面 6 个月内港股 + DeepSeek 二轮 710 亿美元 + 长鑫 5792 亿 + Meta 100 亿租 Anthropic,4 条线索同时打开,中国 AI 资产"定价权"切换已经发生。</p>
+  <p><b>④ 中国主导全球治理</b>:世界 AI 合作组织 29 国签署 + 中方两份行动计划 + 妈祖方案 30 国落地,WAIC 2026 标志中国从"治理参与方"升级为"治理方案提供方",后续 7-30 成员国扩围 7-X 时点是关键观察点。</p>
+  <p style="font-size:12px;color:var(--muted);margin-top:14px;">minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</p>
+</section>
+
+<div class="stats">
+  <div class="stat">
+    <span class="v">24</span>
+    <span class="l">核验条目</span>
+  </div>
+  <div class="stat">
+    <span class="v">16</span>
+    <span class="l">一手来源</span>
+  </div>
+  <div class="stat">
+    <span class="v">6</span>
+    <span class="l">主题分块</span>
+  </div>
+  <div class="stat">
+    <span class="v">4</span>
+    <span class="l">执行摘要</span>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 AI Daily Brief · Mavis · minimax 派生版</div>
+  <div>minimax · global products industry · 2026-07-19</div>
+  <div>本简报基于公开信源,与任何模型方立场独立</div>
+</footer>
+
+</div>
+</body>
+</html>
