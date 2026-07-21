@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 产品产业每日简报 · 2026-07-21 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-green{background:var(--green);}
+  .tag-purple{background:var(--purple);}
+  .sub-tags{margin:6px 0 10px;display:flex;flex-wrap:wrap;gap:6px;}
+  .sub-tag{font-size:11.5px;font-weight:500;color:#4a4f5d;background:#eef0f4;
+    padding:3px 9px;border-radius:3px;letter-spacing:0.2px;}
+  .sub-tag.china{background:#fff4e8;color:#a85b1a;}
+  .sub-tag.global{background:#e6f0f9;color:#1d3a6e;}
+
+  .perspective{margin:10px 0 8px;display:flex;flex-direction:column;gap:8px;}
+  .p-item{background:#fafaf6;border-left:3px solid var(--gold-soft);padding:8px 12px;
+    font-size:14.5px;line-height:1.6;border-radius:0 3px 3px 0;}
+  .p-item .p-label{font-weight:700;color:var(--ink);margin-right:6px;}
+
+  .card-desc{font-size:14.5px;line-height:1.65;margin:8px 0 4px;color:#2a2f3d;}
+  .data-highlight{background:#fff7e0;padding:1px 4px;border-radius:2px;color:#a85b1a;font-weight:700;}
+
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .nav-top, .nav-bottom {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    z-index: 100;
+  }
+  .nav-top { top: 0; }
+  .nav-bottom { bottom: 0; border-bottom: none; border-top: 1px solid var(--line); margin-top: 40px; }
+  .nav-inner { max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .nav-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .nav-brand-mark { width: 32px; height: 32px; background: var(--ink); color: var(--gold); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .nav-brand-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .nav-brand-text .title { font-size: 14px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .nav-brand-text .date { font-size: 11.5px; color: var(--muted); letter-spacing: 1.2px; font-family: ui-monospace, monospace; margin-top: 2px; }
+  .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .nav-top a, .nav-bottom a { color: var(--ink); text-decoration: none; font-weight: 600; padding: 7px 16px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-2); font-size: 13.5px; }
+  .nav-top a:hover, .nav-bottom a:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
+
+  .deliver-assets{display:block;}
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 产品产业每日简报</span>
+        <span class="date">2026-07-21</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="https://daily-ai-2o3.pages.dev/">返回首页</a>
+      <a href="https://daily-ai-2o3.pages.dev/ai-products/minimax/archive.html">往期归档</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<header class="masthead">
+  <div class="brand">
+    AI 产品产业每日简报
+    <small>MINIMAX · GLOBAL PRODUCTS BRIEF</small>
+  </div>
+  <div class="meta">
+    <div><strong>2026-07-21</strong> · 周二</div>
+    <div>数据截止:2026-07-20 24:00 (UTC+8) · 全球视野</div>
+    <div>主题分块:国家监管 / 资本财务 / 算力基础设施 / 模型平台 / 产品采用 / 竞争前瞻</div>
+  </div>
+</header>
+
+<!-- Executive Summary -->
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">资本信号</span>
+        <b>Anthropic 二级市场估值飙至 1.2 万亿美元 · 5 月 9650 亿 → 7-20 1.2 万亿 · 亚马逊持股 15-20% · 锁定 1000 亿美元算力承诺 · 5GW 算力容量 + Trainium + Graviton。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">产业落地</span>
+        <b>Kimi K3 7-19 暂停 C 端新用户订阅 · 48h 服务器满载 · 2.8T 参数 HF Star 5 万 · "杰文斯悖论"效应 · 触发英伟达 7-17 暴跌与 Anthropic 连夜改订阅。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label reg">政策监管</span>
+        <b>外交部 7-20 介绍 WAIC 成果 · 29 国现场签署《世界人工智能合作组织协定》· 习近平 4 方面主张 + 3 项重大务实举措 · 大会 32 项目 409 亿元签约 + 351 款产品全球首发 + 40 万人次参观。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label sci">算力突破</span>
+        <b>谷歌研发 Frozen v2 专用 AI 芯片 · 将 Gemini 架构固化进硬件 · 单位功耗 Token 6-10x 提升 · 2028 部署 · 配合 TPU 与 NV 多元算力矩阵。</b>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">1</span>
+      <span class="icon">⚖️</span>
+      <span class="t">国家战略 / 监管治理</span>
+    </div>
+    <ul>
+      <li><a href="#sec1">1.1 外交部 7-20 介绍 WAIC · 29 国签世界 AI 合作组织协定</a></li>
+      <li><a href="#sec1">1.2 WAIC 法治论坛 · 智能体服务法治十原则白皮书</a></li>
+      <li><a href="#sec1">1.3 WAIC 闭幕 · 32 项目 409 亿元签约 + 351 款产品首发</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">2</span>
+      <span class="icon">💰</span>
+      <span class="t">资本 / 投资 / 财务</span>
+    </div>
+    <ul>
+      <li><a href="#sec2">2.1 Anthropic 二级市场估值 1.2 万亿 · 亚马逊锁 1000 亿算力承诺</a></li>
+      <li><a href="#sec2">2.2 OpenAI 二级市场回暖 · 900 万 Codex + ChatGPT Work 用户</a></li>
+      <li><a href="#sec2">2.3 DeepSeek 估值 3250-3509 亿 · 启动科创板 IPO 筹备</a></li>
+      <li><a href="#sec2">2.4 月之暗面启动港股 IPO · 6 个月内上市</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">3</span>
+      <span class="icon">🖥️</span>
+      <span class="t">算力 / 芯片 / 云 / 基础设施</span>
+    </div>
+    <ul>
+      <li><a href="#sec3">3.1 谷歌 Frozen v2 芯片 · 6-10x Token 效率 · 2028 部署</a></li>
+      <li><a href="#sec3">3.2 中电信(上海)AI 产业基金 · 算力/平台/数据/模型/应用</a></li>
+      <li><a href="#sec3">3.3 TYLsemi 完成 4300 万美元早期融资 · 全球首家 Chiplet 平台</a></li>
+      <li><a href="#sec3">3.4 曦智科技光跃 LightSphereX 2000 卡商业化落地</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">4</span>
+      <span class="icon">🤖</span>
+      <span class="t">模型平台 / 开发者生态</span>
+    </div>
+    <ul>
+      <li><a href="#sec4">4.1 阿里 Qwen3.8-Max-Preview 上线 · 2.4T 参数</a></li>
+      <li><a href="#sec4">4.2 月之暗面暂停订阅 + 港股 IPO · Kimi K3 算力告急</a></li>
+      <li><a href="#sec4">4.3 腾讯云 ADP 4.0 海外版 · Claw 模式 + Skill 广场</a></li>
+      <li><a href="#sec4">4.4 商汤 SenseNova U1 Pro · 22 个连续分镜多模态旗舰</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">5</span>
+      <span class="icon">🚀</span>
+      <span class="t">AI 产品 / 行业应用 / 用户采用</span>
+    </div>
+    <ul>
+      <li><a href="#sec5">5.1 Kimi K3 杰文斯悖论 · 算力告急 vs 效率提升</a></li>
+      <li><a href="#sec5">5.2 苹果 Apple Intelligence 入华 · 千问 + 百度系统级集成</a></li>
+      <li><a href="#sec5">5.3 美团 LongCat-2.0 · 5 万国产芯片训练万亿模型</a></li>
+      <li><a href="#sec5">5.4 中国软件国际 × 月之暗面"登月计划" · 港股涨 23%</a></li>
+      <li><a href="#sec5">5.5 万佑智算 VanorOS · 0 门槛智能体系统</a></li>
+      <li><a href="#sec5">5.6 宇树 UnifoLM-OminiA-0.3 · 全模态交互</a></li>
+      <li><a href="#sec5">5.7 WAIC 超节点混战 · 华为 / 阿里 / 沐曦 / 壁仞 / 摩尔</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">6</span>
+      <span class="icon">🔮</span>
+      <span class="t">竞争 / 安全 / 产业前瞻</span>
+    </div>
+    <ul>
+      <li><a href="#sec6">6.1 Hugging Face 7-16 遭 AI 智能体攻击 · 平台供应链未受影响</a></li>
+      <li><a href="#sec6">6.2 Anthropic 测试 AMD GPU · 算力矩阵去单一化</a></li>
+      <li><a href="#sec6">6.3 SpaceX 520 亿 GB300 订单被马斯克辟谣</a></li>
+      <li><a href="#sec6">6.4 微软扩大 AMD 合作 · 部署下一代 Instinct + EPYC</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============ 主题 1: 监管 ============ -->
+<div class="theme" id="theme-1">
+  <h2>1. 国家战略 / 政府行动 / 监管治理</h2>
+  <span class="scope">主题 1 · 3 张卡 · <b>中国主导全球 AI 治理 + 智能体法治原则</b></span>
+</div>
+
+<article class="card" id="c-1-1">
+<div class="card-head">
+  <div class="card-title">外交部 7-20 介绍 WAIC 2026 成果 · 习近平 4 方面主张 · 29 国签署《世界人工智能合作组织协定》</div>
+  <span class="tag tag-red">国家级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">全球治理</span>
+  <span class="sub-tag">世界 AI 组织</span>
+  <span class="sub-tag">中国方案</span>
+  <span class="sub-tag">习近平讲话</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>外交部 7-20 例行记者会披露 WAIC 五大成果:①习近平从发展、安全、文明、治理 4 方面阐述"中国方案",为全球 AI 治理指明方向;②针对南北智能鸿沟,习宣布 3 项重大务实举措,推动全球南方国家 AI 能力建设;③《关于成立世界人工智能合作组织的协定》签署仪式举行,29 个创始成员国现场签约,来自亚洲、非洲、拉美、欧洲;④约 80 个国家和国际组织代表出席高级别会议,发布主席声明凝聚共识;⑤大会共办 150+ 专题论坛和数十场中外双多边交流活动。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>世界 AI 合作组织填补了全球 AI 治理缺乏"政府间常设机构"的空白,29 个创始成员国覆盖"全球南方"主体,显著增强发展中国家在全球 AI 治理中的代表性和发言权。中方定位"国际公共产品提供者",推动章程 9 月发布预期。对出海企业(阿里、字节、阶跃、智元、商汤、曦智)而言,组织落地后可能形成"成员国互认 + 算力 + 数据 + 智能体标准"的多边合规通道,出海合规成本有望降低 15-25%。后续看 ①章程文本 9 月发布 ②智能体权限/边界/追溯机制具体条款 ③与美、欧 AI 治理对话的协调节奏。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">29 国签约 + 3 项务实举措 + 80 国参会</strong> · 习近平 4 方面主张(发展/安全/文明/治理) · 世界 AI 合作组织填补政府间常设机构空白。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.fmprc.gov.cn/web/wjbzhd/" target="_blank" rel="noopener">外交部 7-20 例行记者会(林剑):WAIC 2026 五大成果(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.chinanews.com/finance/" target="_blank" rel="noopener">中国新闻网:外交部介绍 WAIC 成果与亮点(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-1-2">
+<div class="card-head">
+  <div class="card-title">WAIC 7-20 人工智能法治论坛 · 《智能体服务健康发展的法治十原则》白皮书 · 三维治理逻辑 + 智能体权责闭环</div>
+  <span class="tag tag-purple">国家级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">智能体法治</span>
+  <span class="sub-tag">白皮书</span>
+  <span class="sub-tag">华政法治研究院</span>
+  <span class="sub-tag">金砖合作</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-20 WAIC 人工智能法治论坛发布《智能体服务健康发展的法治十原则》白皮书,由华东政法大学人工智能法治研究院联合团队编制,参考新加坡、美国、澳大利亚监管实践,覆盖智能体研发、训练、运行、迭代至退出全流程。白皮书提出三维治理逻辑:①针对自主决策、跨域交互特点建立闭环风险管控机制;②通过服务标识、分层告知同意、最小权限、可信输出等规则,保障用户数字权益(重点保护老人/未成年人);③明晰产业权责,推动智能体互联互通,严守"人类最终担责"底线,杜绝企业借智能自主性逃避责任。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>华东政法大学同步揭牌人工智能法治研究院,聚焦智能体合规、AI 司法、跨境数字治理等交叉领域,集科研、人才培养、智库服务、国际交流功能于一体。研究院已与联合国教科文组织人工智能国际研究中心、圣保罗大学人工智能与机器学习中心及法学院、香港大学法律与科技中心达成合作框架。这是国内首个专注"智能体全生命周期"法治研究的实体平台,填补了行业专项规范空白。后续看 ①白皮书 8-9 月向工信部、网信办正式备案 ②跨境数据出境"智能体"细则 ③阿里、腾讯、字节、阶跃的产品审计能力落地节奏。</p>
+</div>
+<p class="card-desc">关键节点:<strong class="data-highlight">国内首个智能体全生命周期法治白皮书</strong> · 三维治理 + 闭环管控 + 人类最终担责 · 华东政法研究院揭牌 · 金砖 + 联合国 + 港大合作。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.ecupl.edu.cn/" target="_blank" rel="noopener">华东政法大学:人工智能法治研究院揭牌 + 法治十原则白皮书发布(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.jfdaily.com/" target="_blank" rel="noopener">解放日报:WAIC 人工智能法治论坛专题报道(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-1-3">
+<div class="card-head">
+  <div class="card-title">WAIC 2026 7-20 闭幕 · 102 国参会 + 32 项目签约 409 亿元 + 351 款产品全球首发 + 40 万人次参观</div>
+  <span class="tag tag-ink">国家级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">WAIC 闭幕</span>
+  <span class="sub-tag">产业采购</span>
+  <span class="sub-tag">首发产品</span>
+  <span class="sub-tag">「🇨🇳 中国动向」/「🌍 全球信号」</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>WAIC 2026 7-17 至 7-20 在上海举办,4 天会期数据:102 个国家和国际组织官方代表出席 + 1100+ 中外参展商 + 4486 项展品 + 351 款产品全球首发 + 198 款首秀 + 40 万+ 线下参观人次(展商数量与展览面积较去年增长超 1/3)。大会核心议程:①国家发改委发布《人工智能合作发展行动计划》和《中国智·惠世界(2026)》案例集;②学术方面,中国发起面向世界的开放学术公共平台,首届"WAIC 学术"由图灵奖得主领衔;③产品方面,超 200 款具身智能产品亮相,规模是去年的 3 倍以上。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>闭幕日核心数字:32 个上海市 AI 重点项目集中签约(AI 基础设施、智能体应用、具身智能、科学智能),投资额 409 亿元;同期 177 个全球采购团组参与,212 项采购需求,预计意向采购金额 203.6 亿元(同比 +25%)。大会释放明确信号:AI 重心从"技术参数比拼"转向"实体经济场景落地",超 60% 参展企业以 AI 智能体、智能应用为主标签。后续看 ①7-30 天 WAIC 签约项目落地率 ②超节点 + 智算中心 + 城市级 AI 三大类投资分布 ③32 个项目 9-12 月开工时点。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">102 国 + 409 亿元签约 + 351 款首发 + 203.6 亿元采购</strong> · 40 万人次参观 · 1100+ 参展商 · AI 重心从参数比拼转向场景落地。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.shio.gov.cn/" target="_blank" rel="noopener">上海市政府新闻办:WAIC 2026 闭幕通稿(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.chinanews.com/finance/" target="_blank" rel="noopener">中新社:WAIC 2026 闭幕 409 亿元签约 351 款产品首发(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<!-- ============ 主题 2: 资本 ============ -->
+<div class="theme" id="theme-2">
+  <h2>2. 资本 / 投资 / 并购 / 财务</h2>
+  <span class="scope">主题 2 · 4 张卡 · 资本财务略加权重 · <b>中美 AI 估值 1.2 万亿对 3500 亿</b></span>
+</div>
+
+<article class="card" id="c-2-1">
+<div class="card-head">
+  <div class="card-title">Anthropic 二级市场估值 7-20 飙至 1.2 万亿美元 · 5 月 H 轮 9650 亿 → 7 月 1.2 万亿 · 亚马逊持股 15-20% 锁 1000 亿算力承诺</div>
+  <span class="tag tag-red">资本级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">估值万亿</span>
+  <span class="sub-tag">亚马逊战略</span>
+  <span class="sub-tag">算力绑定</span>
+  <span class="sub-tag">IPO 路径</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>5 月 Anthropic 完成 H 轮估值 9650 亿美元,7-20 二级市场交易数据进一步推升至 1.2 万亿美元,2 个月估值跳涨 24%。对比 OpenAI 当前二级市场估值约 9330 亿美元(过去 3 个月 +20%),Anthropic 仍以"每出现 2 个求购 OpenAI 买家对应 5 个买 Anthropic"的供需比保持主导地位。估值背后是 ARR 跳升:Claude 5 Sonnet 8-31 前 API 价格 2 美元/百万输入 + 10 美元/百万输出,比 Opus 4.8 便宜 60%,但调用量加速;Claude Code 客户扩张直接拉动 API 用量增长。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>亚马逊(NASDAQ:AMZN)成为这一轮估值重估的最大受益方:已投资约 130 亿美元持股 15-20%,按 1.2 万亿估值计算账面价值 1800-2400 亿美元。合作协议锁定 Anthropic 未来 10 年内超过 1000 亿美元算力承诺,含 5GW 算力容量,深度适配 Trainium AI 芯片和 Graviton CPU。Anthropic 拟于 10 月正式推进 IPO 路演。后续看 ①Anthropic 8-31 优惠结束后客户留存 ②10 月 IPO 定价与市值 ③AWS Trainium 集群 2027 交付节奏 ④亚马逊远期市盈率 26 倍是否可持续。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">1.2 万亿美元估值 · 亚马逊 130 亿入股 15-20% · 锁定 1000 亿算力承诺 + 5GW 容量</strong> · Anthropic 10 月 IPO 路演在即。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.theinformation.com/articles/anthropic-12-trillion-valuation" target="_blank" rel="noopener">The Information:Anthropic 7-20 二级市场 1.2 万亿美元报道(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://wallstreetcn.com/" target="_blank" rel="noopener">华尔街见闻:Anthropic 估值 1.2 万亿 + 亚马逊 1000 亿算力承诺解读(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-2-2">
+<div class="card-head">
+  <div class="card-title">OpenAI 二级市场投资需求回暖 · Anthropic:OpenAI = 5:2 买家比 · Codex + ChatGPT Work 双企业平台累计 900 万活跃用户</div>
+  <span class="tag tag-red">资本级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">估值回暖</span>
+  <span class="sub-tag">企业用户</span>
+  <span class="sub-tag">Codex</span>
+  <span class="sub-tag">ChatGPT Work</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>OpenAI 经历 Q1 负面消息(增速放缓、高管变动、马斯克诉讼)后,二级市场需求从 5 月低点明显回升。Practical Venture Capital 创始人 Dave McClure:"过去一个月市场对 OpenAI 兴趣明显重新升温"。Rainmaker Securities 数据显示 5:2 的 OpenAI:Anthropic 求购比,较一个月前 1:5 显著改善。投资者信心回归的两个驱动:①GPT-5.6 Sol/Terra/Luna 系列模型性能接近 Claude Mythos/Fable 顶部;②AI 编程智能体 Codex 取得商业成功,加新发布 ChatGPT Work 累积 900 万企业活跃用户。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>OpenAI CEO Sam Altman 公开承认过去 12 个月"不是我们表现最好的时期",但预言未来 12 个月将成"迄今为止最好的 12 个月"。Caplight 平台 OpenAI 当前估值约 9330 亿美元(过去 3 个月 +20%)。商业化层面,Codex 覆盖多编程语言,ChatGPT Work 执行多步骤专业工作流程,标志着 AI 智能体从开发者场景扩展到更广泛的专业工作流。后续看 ①GPT-5.6 Opus 9 月发布能否保住 20% 月环比 ②Anthropic IPO 后 OpenAI 是否被迫加速 IPO ③Codex 涨价 + ChatGPT Work 商业化能否把 OpenAI 估值推上 1.5 万亿。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">OpenAI 估值 9330 亿 +20% · 5:2 买家比逆转 · 900 万企业活跃用户</strong> · GPT-5.6 Sol/Terra/Luna + Codex + ChatGPT Work 三件套。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.businessinsider.com/openai-anthropic-secondary-market-demand-rebound" target="_blank" rel="noopener">Business Insider:OpenAI 二级市场需求回暖 5:2 买家比分析(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.ithome.com/" target="_blank" rel="noopener">IT 之家:OpenAI 投资需求重新升温 900 万企业用户(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-2-3">
+<div class="card-head">
+  <div class="card-title">DeepSeek 首轮融资投后估值 3250-3509 亿元 · 启动科创板 IPO 筹备 · 创始人梁文锋身价 360 亿美元</div>
+  <span class="tag tag-gold">资本级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">IPO 启动</span>
+  <span class="sub-tag">科创板</span>
+  <span class="sub-tag">A 股参股链</span>
+  <span class="sub-tag">梁文锋</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-16 开润股份(300577.SZ) + 汤臣倍健(300146.SZ)发布 DeepSeek 间接投资公告,市场反推:砺思星灵以 29 亿元实缴 + 0.8265% 持股 → DeepSeek 估值约 3508.77 亿元;汤臣倍健 1.3 亿元 + 0.04% 持股 → 估值约 3250 亿元。两组数据交叉验证 DeepSeek 当前真实估值约 3250-3500 亿元区间。资金来源结构:腾讯 100 亿元 + 宁德时代 50 亿元 + 网易 30 亿元 + 京东 30 亿元 + IDG 30 亿元 + 梁文锋个人 200 亿元(最大单一出资方),国家 AI 产业基金 9.8 亿元。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>DeepSeek 启动 IPO 筹备,最快 12 月底前完成财务报告,2026 年底或 2027 年初正式递交科创板申请。彭博亿万富翁指数 7-15 数据显示梁文锋身价飙至 360 亿美元(年初至今 +199 亿美元),跻身全球纯 AI 大模型领域身价最高创业者。梁文锋直接和间接持股约 84.29%,通过宁波程恩有限合伙保持 100% 表决权控制,外部投资人仅享收益权 + 5 年锁定期。后续看 ①DeepSeek V4 正式版与 Harness 同步发布 7-21 倒计时 ②科创板受理时点 ③腾讯 / 宁德 / 网易的"生态协同"实质落地。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">3250-3509 亿元 · 启动科创板 IPO · 梁文锋 360 亿美元</strong> · 腾讯/宁德/网易/京东/Vanlenf 联合注资 · 5 年锁定期。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.bloomberg.com/news/articles/2026-07-14/deepseek-ipo-prep" target="_blank" rel="noopener">Bloomberg:DeepSeek 启动 IPO 筹备 + 12 月底前完成财报(2026-07-14)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.yicai.com/" target="_blank" rel="noopener">第一财经:DeepSeek 真实估值浮出水面 3250-3509 亿元(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-2-4">
+<div class="card-head">
+  <div class="card-title">月之暗面 7-19 向投资人发送上市议案 · Kimi K3 6 月 ARR 3 亿美元 · 预计最快 6 个月内完成港股 IPO</div>
+  <span class="tag tag-gold">资本级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">港股 IPO</span>
+  <span class="sub-tag">月之暗面</span>
+  <span class="sub-tag">Kimi K3</span>
+  <span class="sub-tag">ARR 3 亿</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>月之暗面 ARR 增速曲线:2026-06 年化收入 3 亿美元(3 个月内翻 3 倍),K3 模型发布后预计再翻倍。Kimi K3 在综合能力上超过 Claude Fable 5 与 GPT-5.6 之外的多数竞品,Frontend Code Arena 评分 1679 排名第一。技术差异化:2.8T 参数 MoE + 320 亿激活 + MMLU 91.2% + SWE-bench Verified 78.4%。海外付费用户增长 400%,API 收入占比已超 70%。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>月之暗面已向投资人发送上市议案,预计最快 6 个月内完成港股 IPO。消息面上,Kimi K3 7-17 发布后引发港股市场剧烈分化:①智谱 7-20 跌 19.56% 跌破 1000 港元,较高点回撤超 66%,市值较高点蒸发 8100 亿港元;②MiniMax-W 跌 10.6%;③中国软件国际(00354.HK)暴涨 23.0%,因与月之暗面签"登月计划"Token 分成协议。月之暗面估值参考:若按 30x P/S(类似 OpenAI 二级市场 33x),3 亿美元 ARR 对应估值约 90 亿美元。后续看 ①港股 IPO 受理时点 ②Kimi K3 与 Qwen3.8-Max 算力告急谁先缓解 ③中软国际"登月计划" 7-30 天 Token 分成结算。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">ARR 3 亿美元 + 400% 海外增长 + 6 个月港股 IPO</strong> · 智谱 -19.56% 蒸发 8100 亿港元 · 中软国际 +23% 登月计划。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.moonshot.cn/" target="_blank" rel="noopener">月之暗面:Kimi K3 发布 + 港股 IPO 议案(2026-07-17 / 2026-07-19)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.zhanzhangzhidian.com/" target="_blank" rel="noopener">港股大模型概念股日报(2026-07-20):月之暗面 / 中软国际 / 智谱</a></li>
+  </ul>
+</div>
+</article>
+
+<!-- ============ 主题 3: 算力 ============ -->
+<div class="theme" id="theme-3">
+  <h2>3. 算力 / 芯片 / 云 / 基础设施</h2>
+  <span class="scope">主题 3 · 4 张卡 · minimax 强调产业链供给与成本结构 · <b>专用芯片 + 算力多元化</b></span>
+</div>
+
+<article class="card" id="c-3-1">
+<div class="card-head">
+  <div class="card-title">谷歌研发 Frozen v2 专用 AI 芯片 · 将 Gemini 架构固化进硬件 · 单位功耗 Token 6-10x · 2028 部署</div>
+  <span class="tag tag-red">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">专用 AI 芯片</span>
+  <span class="sub-tag">能效比</span>
+  <span class="sub-tag">谷歌 TPU</span>
+  <span class="sub-tag">推理</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>谷歌正在研发代号 "Frozen v2" 的全新服务器芯片,核心突破在于把 Gemini 大模型的底层运算架构直接固化进硬件层面,从而大幅降低 AI 推理过程中的能耗与延迟。知情人士透露,Frozen v2 单位功耗可处理的 Token 数量预计达到谷歌现有自研 AI 芯片(TPU)的 6-10 倍。"Frozen"(冻结)精准概括其设计哲学:将大模型部分运算逻辑永久蚀刻在硅片硬件中。与英伟达 GPU 及谷歌 TPU 等通用型芯片不同,Frozen v2 是专为 Gemini 系列模型量身打造的专用芯片。谷歌已陷入 AI 算力短缺困境,内部资源紧张导致谷歌云回绝部分外部客户。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>谷歌 DeepMind 首席科学家 Jeff Dean 牵头的初代"Frozen"项目曾计划将完整模型权重直接蚀刻进芯片,因芯片只能适配单一版本 Gemini、硬件生命周期极短而被搁置。Frozen v2 关键调整:仅固化底层架构逻辑,保留通过更新内置模型权重进行迭代的能力。Frozen v2 不替代 TPU,而是与 TPU 互补。TPU 已与 Meta 签数十亿美元大单 + 向英伟达核心云客户推广。后续看 ①2028 部署时点是否如期 ②台积电代工合作 ③Meta / 微软 / Oracle 是否采购 Frozen v2 跑 Gemini。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">6-10x Token 效率 · 仅固化架构逻辑 · 2028 部署</strong> · 与 TPU 互补 · 谷歌云回绝外部客户 · Jeff Dean 牵头二代。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.theinformation.com/report/google-frozen-v2-ai-chip" target="_blank" rel="noopener">The Information:谷歌 Frozen v2 芯片研发报道(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.ithome.com/" target="_blank" rel="noopener">IT 之家:谷歌 Frozen v2 6-10x Token 效率 + 2028 部署(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-3-2">
+<div class="card-head">
+  <div class="card-title">中电信(上海)AI 产业私募基金 7-20 WAIC 发布 · 算力/平台/数据/模型/应用五大方向 · 央企+地方国资+战新基金多层次架构</div>
+  <span class="tag tag-red">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">产业基金</span>
+  <span class="sub-tag">中国电信</span>
+  <span class="sub-tag">上海国投</span>
+  <span class="sub-tag">央企+地方</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>中电信(上海)人工智能产业私募基金由 4 方联合出资:中国电信(央企运营商算力底座)+ 上海国投先导基金(地方国资引导基金)+ 央企战略性新兴产业发展基金(国家级战新基金)+ 徐汇区下属上海汇资(区级配套)。形成"央企 + 地方国资 + 国家级战新基金"的多层次资本架构,资金覆盖早期 VC、成长期 PE、并购整合三个阶段。基金将深耕上海"算力、平台、数据、模型、应用"五大 AI 产业链关键环节,汇聚创新资源、产业合力与多元资本。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>这是国内首个"运营商+地方国资"双锚定 AI 产业基金,核心差异:①资金来源是长期资本(央企战新基金 5 年 + 上海国投 7 年),非市场化短钱;②算力底座可与上海智算中心 / 临港数据中心形成协同;③背靠徐汇"模速空间"等市级 AI 生态。预计规模在 50-100 亿元,首期 20-30 亿元。后续看 ①基金 8-9 月 LP 签约完成 ②首批投资标的(智算中心 / 模型公司 / Agent 公司)落地 ③与上海国投先导基金旗下模子社区的协同。</p>
+</div>
+<p class="card-desc">关键架构:<strong class="data-highlight">央企+地方+战新+区级 4 层架构</strong> · 算力/平台/数据/模型/应用 5 大方向 · 长期资本 + 上海智算协同。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.chinatelecom-h.com/" target="_blank" rel="noopener">中国电信(上海):AI 产业私募基金发布公告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.guandian.cn/" target="_blank" rel="noopener">观点网:中电信上海 AI 产业基金 7-20 WAIC 发布(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-3-3">
+<div class="card-head">
+  <div class="card-title">TYLsemi 7-14 完成 4300 万美元超额认购早期融资 · 全球首家 Chiplet 平台 · Matter/Viola/GHOVC/神盾参投</div>
+  <span class="tag tag-gold">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">Chiplet 平台</span>
+  <span class="sub-tag">AI 基础设施芯片</span>
+  <span class="sub-tag">早期融资</span>
+  <span class="sub-tag">UCIe 标准</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>TYLsemi(芯粒平台)由原 Alphawave Semi 总经理 Mohit Gupta + COO Sunil Bhardwaj 联合创立,定位 AI 加速芯片市场的"芯粒乐高"。产品矩阵 4 大产品线:①TYL.IO 互连芯粒(2027 出样),原生兼容 PCIe、ESUN、UALink + CPO 共封装光学;②TYL.Power 电源管理芯粒,集成 IVR 调压;③TYL.Mem 内存互连芯粒;④TYL.ForgeSM 端到端定制平台。客户可单独采购 TYLsem i芯粒,或基于此开发全套定制化 AI 芯片。Mohit Gupta:"行业预测 2033 年 AI 加速芯片市场 6040 亿美元,云厂商专属 XPU 增速最快"。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>本轮 4300 万美元(2.91 亿元人民币)由 Matter Venture Partners(美国风投)领投,Viola Ventures(以色列)、GHOVC(日本)、神盾股份(中国台湾半导体)参投,全球多家 AI 基础设施产业链龙头战略注资。Alpha 测试 / Tape-out 进度:TYL.IO + TYL.Power 2027 面向资质客户开放样品,由台积电代工。后续看 ①2027 量产时点 ②Meta / Google / 微软是否采用 TYL.IO 跑内部 ASIC ③与 Marvell / Broadcom / Astera Labs 的互连芯片竞争格局。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">4300 万美元超额 · 全球首家 Chiplet 平台</strong> · 4 大产品线(IO/Power/Mem/Forge) · UCIe 标准 + CPO 路线 · 台积电代工 · 2027 出样。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://tylsemi.com/" target="_blank" rel="noopener">TYLsemi:官方公告 4300 万美元超额认购(2026-07-14)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.aichip001.com/" target="_blank" rel="noopener">芯东西:TYLsemi 全球首家 Chiplet 平台详细拆解(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-3-4">
+<div class="card-head">
+  <div class="card-title">曦智科技光跃 LightSphereX 2000 卡商业化落地 · 国产首个光互连光交换超节点 · SAIL 之星奖</div>
+  <span class="tag tag-gold">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">光互连</span>
+  <span class="sub-tag">光交换</span>
+  <span class="sub-tag">SAIL 奖</span>
+  <span class="sub-tag">超节点</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>曦智科技"基于 OEX + dOCS 架构的国产高性能 Matrix 超节点"项目斩获 SAIL 之星奖(2026 世界人工智能大会最高奖)。业界首创"柜内 OEX 正交无背板互联 + 柜间分布式 dOCS 光互连光交换"双层协同架构。光互连通过光路直连替代电交换,在大规模集群中可显著降低排队、拥塞和中间转发开销。光跃分布式 OCS 全光互连模块是国内首个光互连光交换 GPU 超节点解决方案。曦智与盛科通信签订 CPO(光电共封装)战略合作,自研 NPO 近封装光学芯片已完成全链路验证。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>光跃 LightSphereX 2000 卡超节点已实现商业化落地,建成国产第一个光互连光交换超节点集群。董事长沈亦晨表示,互联网企业是当前超节点落地重点行业,主流部署规模 128 超节点,正向 256、512 演进。这是国产算力从"单卡对标英伟达"走向"系统级超越"的关键节点。后续看 ①LightSphereX 9-12 月字节 / 阿里 / 腾讯扩单 ②与 CPO 量产节奏协同 ③互联网企业 256/512 超节点部署时间表。</p>
+</div>
+<p class="card-desc">关键节点:<strong class="data-highlight">SAIL 之星奖 · 2000 卡商业化 · 国产首个光互连光交换</strong> · 互联网企业 128→256→512 演进 · CPO × 盛科。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.lightintelligence.com/" target="_blank" rel="noopener">曦智科技:光跃 LightSphereX 2000 卡商业化公告(2026-07-19)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.eetrend.com/" target="_blank" rel="noopener">电子工程世界:曦智科技 SAIL 之星奖 + 2000 卡落地(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<!-- ============ 主题 4: 模型平台 ============ -->
+<div class="theme" id="theme-4">
+  <h2>4. 模型平台 / 开发者生态</h2>
+  <span class="scope">主题 4 · 4 张卡 · <b>中美旗舰对决 · Qwen3.8 vs Kimi K3</b></span>
+</div>
+
+<article class="card" id="c-4-1">
+<div class="card-head">
+  <div class="card-title">阿里 Qwen3.8-Max-Preview 7-19 上线 · 2.4T 参数 · "以天为单位持续进化" · 业内称仅次于 Fable5</div>
+  <span class="tag tag-ink">平台级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">Qwen3.8</span>
+  <span class="sub-tag">旗舰大模型</span>
+  <span class="sub-tag">阿里云</span>
+  <span class="sub-tag">「🇨🇳 中国动向」/「🌍 全球信号」</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>阿里 7-19 正式上线 Qwen3.8-Max-Preview 并预告 Qwen3.8 正式版即将发布。Qwen3.8 新模型参数 2.4T,目前以"天"为单位持续进化。2.4T 参数规模介于 Kimi K3 的 2.8T 激活参数(总参数 ~2.8T MoE 320 亿激活)和 GPT-5.6 Sol 之间。业内认为该模型可能是除 Fable5 以外最强大的模型,与 Kimi K3 形成"中国双旗舰"格局。技术差异化:在 SWE-bench Verified、Terminal Bench 2.0、OSWorld 三项基准上同时领先闭源 Claude Opus 4.6 与开源 DeepSeek-V4-pro-Max。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>港股反应:7-20 11:25 阿里港股涨超 5%,智谱 / MiniMax 跌 13% / 7%,反映市场对"Qwen3.8 即将分流 Kimi K3 算力 / 资本市场"的双重预期。Qwen3.8 商业化路径:阿里 Token Hub 事业群(7-1 成立)将承担 9 月单 Token 成本目标,延续 5-26 Qwen Cloud 海外发布 + 5-20 阿里云峰会 + 7-17 WAIC 限时 5 折的三步走。后续看 ①Qwen3.8 正式版发布时间 ②阿里云百炼 9 月单 Token 成本目标 ③与月之暗面"开源 MoE"路线的差异化。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">2.4T 参数 · Preview 上线 · 正式版即将发布</strong> · "以天为单位"迭代 · 仅次于 Fable5 · 与 Kimi K3 形成中国双旗舰。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://qwen.ai/" target="_blank" rel="noopener">阿里通义:Qwen3.8-Max-Preview 上线公告(2026-07-19)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.cls.cn/" target="_blank" rel="noopener">财联社:阿里港股涨 5% / 智谱跌 13% / MiniMax 跌 7%(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-4-2">
+<div class="card-head">
+  <div class="card-title">月之暗面 7-19 暂停 Kimi C 端新用户订阅 · 48h 服务器满载 · 启动港股 IPO · 6 个月内上市</div>
+  <span class="tag tag-red">公司级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">Kimi K3</span>
+  <span class="sub-tag">算力告急</span>
+  <span class="sub-tag">港股 IPO</span>
+  <span class="sub-tag">暂停订阅</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-17 月之暗面正式发布 Kimi K3(2.8T MoE 320 亿激活),发布 48 小时内用户请求量大幅超出预估,逼近现有集群承载极限。7-19 月之暗面正式宣布暂停 C 端新用户订阅,将有限算力全部投入于已订阅用户。技术归因:K3 在 SWE-bench Verified 78.4%、MMLU 91.2%、HumanEval+ 92.1% 同时达到开源 SOTA;Frontend Code Arena 评分 1679 排名第一,超越 Claude Fable 5;但参数翻倍 + 推理量激增使 GPU 集群无法支撑调用量指数级增长。这是国内 AI 行业首次因"需求过载"主动限流,标志大模型竞争从"拼能力"进入"拼算力"阶段。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>同步消息:月之暗面已向投资人发送上市议案,预计最快 6 个月内完成港股 IPO。ARR 6 月达 3 亿美元(3 个月翻 3 倍),K3 发布后预计再翻倍。市场反应:①智谱 7-20 跌 19.56%,较高点回撤超 66%;②中国软件国际 +23% 签"登月计划"Token 分成协议;③新华网 / 澎湃 7-19 报道均指向"杰文斯悖论"——效率提升反而导致资源消耗增加。后续看 ①月之暗面算力扩容时间表 ②港股 IPO 受理时点 ③K3 海外 API 价格上调对 ARR 的影响。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">48h 满载 · 暂停 C 端订阅 · 港股 6 个月 IPO</strong> · 2.8T MoE 320 亿激活 · 6 月 ARR 3 亿 · 触发智谱 -19.56%。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.moonshot.cn/" target="_blank" rel="noopener">月之暗面:Kimi K3 暂停 C 端新用户订阅公告(2026-07-19)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.thepaper.cn/" target="_blank" rel="noopener">澎湃新闻:Kimi K3 暂停订阅 + 港股 IPO 6 个月内(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-4-3">
+<div class="card-head">
+  <div class="card-title">腾讯云 ADP 4.0 海外版 7-18 WAIC 发布 · 智能工作台 + Claw 模式 + Skill 广场三大模块升级</div>
+  <span class="tag tag-ink">平台级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">腾讯云 ADP</span>
+  <span class="sub-tag">智能体平台</span>
+  <span class="sub-tag">Claw 模式</span>
+  <span class="sub-tag">Skill 广场</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>腾讯云智能体开发平台 ADP 4.0 海外版 7-18 WAIC 发布,核心升级三大模块:①智能工作台:支持 Skills、专家与专家团、自动化定时任务、产物下载与分享、项目管理等功能;②Claw 模式:多端多平台协同,单条指令联动微信、飞书、网页端等各类应用,自动完成全套工作流程;③Skill 广场:支持插件热插拔,可无限拓展功能。跨平台覆盖 iOS、Android、鸿蒙 3 大系统,首登鸿蒙的通用智能体应用。腾讯 2026 Q1 财报披露,WorkBuddy 已是中国最受欢迎的效率 AI 智能体服务。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>WorkBuddy 6 月访问量 2097 万次,超过排名第二、第三访问量总和。腾讯 7-20 宣布 WorkBuddy/CodeBuddy 用户 Hy3 限时免费活动延长至 8-5。腾讯同期发布"具身智能全栈方案":贯穿云底座、模型层、平台层与应用层,模型层面推出涵盖 Hy-Embodied-VLA-0.5、VLM-1.0 与 RxBrain-1.0 的具身模型矩阵,具身智能体框架层推出 TairosAgent + Apexio 智能体,行业应用层打造首个云端 EaaS 服务。这是国内云厂商首次以"系统级"姿态对标 Anthropic / OpenAI 的 Agent 平台。后续看 ①WorkBuddy 海外月活 9 月预期 ②腾讯 Token 计费 + 算力套餐 7-30 天企业客户数 ③EaaS 首批落地客户。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">WorkBuddy 6 月访问 2097 万次 · ADP 4.0 三大模块 · 鸿蒙首登</strong> · 具身智能全栈方案 + TairosAgent + EaaS。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://cloud.tencent.com/product/adp" target="_blank" rel="noopener">腾讯云:ADP 4.0 海外版 + 智能工作台 + Claw 模式(2026-07-18)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.cls.cn/" target="_blank" rel="noopener">财联社:腾讯云 ADP 4.0 + WorkBuddy 2097 万月活(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-4-4">
+<div class="card-head">
+  <div class="card-title">商汤 SenseNova U1 Pro 7-20 WAIC 旗舰多模态发布 · 22 个连续分镜 · 从"内容生成"走向"系统级交付"</div>
+  <span class="tag tag-ink">平台级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">商汤科技</span>
+  <span class="sub-tag">多模态</span>
+  <span class="sub-tag">视频生成</span>
+  <span class="sub-tag">世界模型</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>商汤 SenseNova U1 Pro 旗舰多模态模型 7-20 在 WAIC 正式发布,定位"系统级交付"。核心突破:①在复杂视频创作任务中,模型不再依靠随机抽卡拼凑镜头,而是率先自主规划并生成包含剧情世界观、人设、服装、环境在内的整体视觉蓝图;②一次性输出多达 22 个逻辑一致的连续分镜,呼应"分镜 - 长视频"创作管线;③联合创始人 / 首席科学家林达华:"未来会把三维元素注入模型,使其能够真正感知整个空间和物理世界"。技术上属于"多模态 + 推理侧"代表。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>商汤-W 7-20 涨 5.4%,在 WAIC 大会正式发布日日新 SenseNova U1 Pro,反映市场对"系统级多模态"商业化能力的认可。对比:可灵 AI 7-2 独立融资 30 亿美元估值 180 亿 + 连续 60 秒视频生成 + 音视频联合生成;Runway Gen-4 物理一致性 + 运动幅度 + 镜头控制 4 维度领先。U1 Pro 差异化:从"生成"到"规划 - 蓝图书"。商汤 + 国星宇航 7-19 宣布共建"商汤算力星座",规模千星万 P,推进天地一体化 AI 基础设施。后续看 ①U1 Pro API 价格 ②是否与阶跃"STEPX Neo 手机"形成差异化 ③商汤日日新系列在 7-30 天调用量。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">22 连续分镜 + 系统级交付 + 视觉蓝图规划</strong> · 商汤 + 国星宇航千星万 P · 港股涨 5.4%。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.sensetime.com/cn" target="_blank" rel="noopener">商汤科技:SenseNova U1 Pro 旗舰多模态发布(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.yicai.com/" target="_blank" rel="noopener">远川研究所:商汤 U1 Pro 从内容生成到系统级交付(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<!-- ============ 主题 5: 产品采用 ============ -->
+<div class="theme" id="theme-5">
+  <h2>5. AI 产品 / 行业应用 / 用户采用</h2>
+  <span class="scope">主题 5 · 7 张卡 · minimax 略减避免与 gpt 重叠 · <b>应用层爆款与算力告急同步</b></span>
+</div>
+
+<article class="card" id="c-5-1">
+<div class="card-head">
+  <div class="card-title">Kimi K3 杰文斯悖论 · 48h 调用量激增触发英伟达 7-17 暴跌 · Anthropic 连夜改订阅 · 算力告急 vs 效率提升</div>
+  <span class="tag tag-red">用户级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">Kimi K3</span>
+  <span class="sub-tag">杰文斯悖论</span>
+  <span class="sub-tag">算力告急</span>
+  <span class="sub-tag">「🇨🇳 中国动向」/「🌍 全球信号」</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>杰文斯悖论(Jevons paradox)指技术效率提升反而导致资源消耗总量增加。Kimi K3 体现这一现象:①单 Token 推理成本下降 60%+,但调用量在 48h 内指数级增长;②开源策略降低单用户门槛,推动更多用户入场;③Code Agent 类工具(Codex / Cursor / Claude Code)的代码补全 + 自动 PR 流程把 Token 消耗速度从"分钟级"压缩到"秒级"。结果:7-17 港股美股科技股同步下跌,英伟达单日跌幅扩大;Anthropic 连夜调整 Claude Code 订阅,封堵企业用户滥用通道。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>红星资本局 7-20 报道:"上线两天被挤爆!Kimi C 端新用户订阅已售罄,专家称大模型已从拼能力到拼算力"。后续看 ①月之暗面算力扩容 + 上调 API 价格节奏 ②港股市场对开源 + 闭源 + API + 订阅 4 种商业模式的估值重估 ③Anthropic 8-31 优惠结束后客户流失情况 ④K3 海外市场 API 价格策略。</p>
+</div>
+<p class="card-desc">关键判断:<strong class="data-highlight">杰文斯悖论 · 48h 调用量指数级 · 英伟达 7-17 暴跌</strong> · 算力告急 vs 效率提升 · 大模型从拼能力到拼算力。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.moonshot.cn/" target="_blank" rel="noopener">月之暗面:Kimi K3 算力扩容公告(2026-07-19)</a></li>
+    <li><span class="src-2">二手</span><a href="https://wallstreetcn.com/" target="_blank" rel="noopener">华尔街见闻:更多 Token 更多芯片!Kimi K3 体现杰文斯悖论(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-2">
+<div class="card-head">
+  <div class="card-title">苹果 Apple Intelligence 7-15 入华备案通过 · 接入阿里千问 + 百度 · iOS 系统级集成 · 阿里盘中涨 7.9%</div>
+  <span class="tag tag-red">公司级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">Apple Intelligence</span>
+  <span class="sub-tag">阿里千问</span>
+  <span class="sub-tag">百度</span>
+  <span class="sub-tag">「🇨🇳 中国动向」/「🌍 全球信号」</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-10 国家网信办公布新一批手机端侧 AI 备案名单,"Apple 智能"在列,同批还有华为小艺、OPPO AndesGPT、三星 Galaxy AI,等待 2 年终于过了。海外版 Apple Intelligence 主要靠苹果自研模型,接入 OpenAI 和谷歌;进入中国后,苹果选择换引擎:①阿里千问进入 iOS、iPadOS、macOS、visionOS 四个操作系统,是系统级集成而非单 App 合作;②百度拿下搜索和视觉能力模块(代码层 Baidu Visual Search 挂在 ExtensionKit 框架的 SearchPartnerInferenceProvider 组件中)。苹果把 AI 合作伙伴设计成"供应商"角色。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>消息公布后,阿里美股盘中一度涨 7.9%。原因:这是中国 AI 模型第一次获得"系统级分发入口",不是应用商店里的一个图标,而是操作系统的引擎位。此前中国 AI 模型商业化路径基本是"做 App + 卖 API",千问 App 月活 1.67 亿(豆包 3.82 亿,差距明显)。接入苹果系统后,竞争维度从"用户打开 App 的次数"变为"用户拿起手机时默认调用的模型"。同一天拿到备案的华为小艺已用 2 年训练完用户习惯,努比亚豆包 AI 手机首批备货 50 万台准备开售。后续看 ①Apple Intelligence 中国版 9 月正式上线 ②千问 / 百度在 iOS 调用量曲线 ③苹果"多模型调度权"是否能在中国市场验证。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">Apple 智能 + 千问 + 百度系统级集成 · 阿里涨 7.9%</strong> · 千问月活 1.67 亿 vs 豆包 3.82 亿 · 努比亚豆包手机首批 50 万台。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.apple.com.cn/" target="_blank" rel="noopener">苹果中国:Apple Intelligence 入华备案 + 千问 + 百度(2026-07-15)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.zhiyuanlib.com/" target="_blank" rel="noopener">智元深维:苹果 AI 困局没有解除,只是换了打法(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-3">
+<div class="card-head">
+  <div class="card-title">美团开源 LongCat-2.0 · 基于 5 万张国产芯片训练万亿参数大模型 · 粤港澳大湾区首个"国芯训国模"万卡集群</div>
+  <span class="tag tag-red">公司级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">美团</span>
+  <span class="sub-tag">LongCat-2.0</span>
+  <span class="sub-tag">国产芯片</span>
+  <span class="sub-tag">开源</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>2026-7 美团开源 LongCat-2.0,基于 5 万余张国产芯片训练出万亿参数大模型。技术路径:在国产芯片上完成"训练 - 推理"双链路验证,模型采用万亿级稀疏 MoE 架构。同期,粤港澳大湾区首个"国芯训国模"万卡智算集群在广东韶关发布。美团 CTO 路线图:从推理走向训练(此前国产芯片只能跑推理),训推一肩挑,直接对标阿里 + 字节 + 腾讯的训练基础设施。底层硬件包含华为昇腾、阿里平头哥、燧原、摩尔线程、沐曦等多家国产 AI 芯片厂商。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>国产 AI 芯片在大模型预训练侧实现从 0 到 1 的突破,英伟达长期把持的算力底座遭遇实质性挑战,国产替代进程加速驶入深水区。机构普遍认为:①国产芯片在 800G/1.6T 光模块 + 高速互联生态已就位;②MoE 架构 + 训练框架适配是下一道门槛;③腾讯、阿里、字节若跟随美团路线,国产 AI 芯片需求将 3 倍放量。后续看 ①LongCat-2.0 HuggingFace Star 数 ②广东韶关万卡集群训练 MMLU / GSM8K 跑分 ③华为昇腾 + 燧原在美团订单中的份额。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">5 万国产芯片训万亿模型 · 粤港澳首个"国芯训国模"万卡集群</strong> · 开源 LongCat-2.0 · 英伟达不可替代性松动。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://tech.meituan.com/" target="_blank" rel="noopener">美团技术博客:LongCat-2.0 开源 + 5 万国产芯片训练(2026-07)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.iimedia.cn/c1087" target="_blank" rel="noopener">艾媒网:国产芯片万卡集群训练万亿大模型,英伟达不可替代性松动(2026-07-18)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-4">
+<div class="card-head">
+  <div class="card-title">中国软件国际 × 月之暗面"登月计划" · Token 分成 + 联合创新 · 港股中软国际 7-20 暴涨 23%</div>
+  <span class="tag tag-ink">公司级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">中软国际</span>
+  <span class="sub-tag">月之暗面</span>
+  <span class="sub-tag">登月计划</span>
+  <span class="sub-tag">Token 分成</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>中国软件国际(00354.HK)7-20 公告与月之暗面正式签署"登月计划"之 Token 分成及联合创新合作协议。技术路径:中软国际作为 Token 算力运营 + 行业落地集成方,提供企业级客户的私有化部署 + 算力调度 + Token 计费分账;月之暗面负责模型迭代 + 算力优化 + 头部场景训练。这是国内首个"基础模型 + IT 服务巨头"的 Token 收益分成合作模式,把"卖模型 API"从单一商业模式扩展为"卖 Token + 卖算力 + 卖服务"的复合模式。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>7-20 港股反应:中软国际盘中暴涨 23.0%,创近年单日最大涨幅。商业价值:①对月之暗面,获得中软国际 5000+ 企业客户 + 1 万+ 软件工程师的渠道下沉,加速 Kimi K3 在金融 / 政府 / 制造等垂类场景的落地;②对中软国际,从"传统 IT 外包"转型为"Token 运营商",毛利率从 15% 提升到 35-40% 区间;③对行业,可能催生"Token 分成"商业模式的标准化。后续看 ①中软国际 9 月 Token 业务实际收入 ②登月计划第二期合作方(传闻字节 / 阿里) ③Kimi K3 在金融 / 政府场景的合规落地。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">中软国际 +23% · 国内首个"基础模型 + IT 服务"Token 分成</strong> · 毛利率 15%→35-40% · 5000+ 企业客户渠道。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.chinasofti.com/" target="_blank" rel="noopener">中国软件国际:登月计划 Token 分成协议公告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.zhanzhangzhidian.com/" target="_blank" rel="noopener">港股大模型概念股日报(2026-07-20):中软国际 23% 涨幅</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-5">
+<div class="card-head">
+  <div class="card-title">万佑智算 VanorOS 7-20 WAIC 智能体系统发布 · 0 门槛一句话生成 AI 智能体 · 1M 安装包</div>
+  <span class="tag tag-gold">产品级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">VanorOS</span>
+  <span class="sub-tag">智能体系统</span>
+  <span class="sub-tag">TokenOS</span>
+  <span class="sub-tag">普惠 AI</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>VanorOS 7-20 在 WAIC 现场首发,聚焦"行业痛点":①真正实现 0 门槛使用,适用人群覆盖 3-80 岁,无需掌握编程/运维技术,一句话快速搭建专属 AI 智能体;②搭载不足 1M 超轻安装包,可在手机、PC、服务器等各类终端流畅运行;③本机零依赖运行,无需对接第三方服务,可多任务并行处理、跨生态管控 IoT 设备;④支持插件热插拔,依托活跃开发者社区持续迭代升级。预发布 TokenOS「好房子智慧空间 AI 超级管家」,正泰居家联合万佑智算推动行业数智融合。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>VanorOS 7-20 开启全网公测,公测期间可关注"万佑智算"微信公众号或官网(https://www.wanyouzhisuan.com),免费领取 50 元专属算力包 + 专属云端电脑 30 天免费用。商业路径:与正泰居家的合作瞄准"全屋智能从被动指令执行升级为主动感知、精准理解、自主服务"。差异化:相比 Manus / Genspark 等海外智能体平台,VanorOS 走"端侧 + 公测免费 + 跨生态 IoT"路线,适用于中国 60+ 银发用户与 3-15 岁青少年场景。后续看 ①公测 7-30 天用户数 ②TokenOS 在正泰居家 / 房地产精装的落地 ③本地运行与隐私保护的市场认可度。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">1M 安装包 · 0 门槛 3-80 岁 · 50 元公测算力包</strong> · TokenOS + 正泰居家 · 端侧 + 跨生态 IoT。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.wanyouzhisuan.com/" target="_blank" rel="noopener">万佑智算:VanorOS 全网公测公告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.dtm.com.cn/" target="_blank" rel="noopener">DEMO 公司:万佑智算 VanorOS 现场首发(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-6">
+<div class="card-head">
+  <div class="card-title">宇树 UnifoLM-OminiA-0.3 7-20 发布 · 单模型统筹家居康养 · 全模态交互理解 · 抗干扰执行</div>
+  <span class="tag tag-gold">产品级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">宇树科技</span>
+  <span class="sub-tag">UnifoLM</span>
+  <span class="sub-tag">全模态</span>
+  <span class="sub-tag">家居康养</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>宇树科技 7-20 发布 UnifoLM-OminiA-0.3,单模型统筹家居康养多任务,支持全模态交互理解(语音 + 视觉 + 力觉 + 触觉 + 文本),全程自主,稳定执行抗干扰。技术路径:在 UnifoLM-W0 基础模型上引入"全模态融合 - 任务自适应 - 抗干扰纠错"三层架构,使家庭服务机器人能在嘈杂语音 + 复杂光照 + 多人同时说话 + 物体遮挡等真实家庭场景下保持稳定输出。训练数据:10 万小时家庭真实场景视频 + 模拟家庭环境数据。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>宇树科技同步注册"UNITREE STORE"商标(国际分类 9 类科学仪器,包括科学研究用具有人工智能的人形机器人 / 教学机器人 / 实验室机器人)。这是国内机器人公司首次明确"机器人 + 大模型 + 智能体系统"的全栈定位,标志着宇树从"四足机器人"扩展到"家庭服务机器人 + 大模型 + 操作系统"的全产业链布局。7-15 宇树 A+++ 轮融资,智元 / 灵心巧手战投入局(详见 7-20 简报)。后续看 ①UnifoLM-OminiA-0.3 在养老院 / 家庭场景实测 ②宇树 + 智元在 Robotaxi / 家庭服务领域的差异化 ③2026 年底前家庭服务机器人商用订单数。</p>
+</div>
+<p class="card-desc">关键数据:<strong class="data-highlight">全模态交互 + 抗干扰执行 · 10 万小时家庭数据</strong> · UNITREE STORE 商标 · 智元战投。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.unitree.com/" target="_blank" rel="noopener">宇树科技:UnifoLM-OminiA-0.3 发布公告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.tmtpost.com/" target="_blank" rel="noopener">钛媒体:宇树 UnifoLM-OminiA-0.3 全模态交互(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-5-7">
+<div class="card-head">
+  <div class="card-title">WAIC 超节点混战 7-19 · 华为 Atlas 950 / 阿里磐久 AL128 / 沐曦 / 壁仞 / 摩尔线程 / 燧原集体亮相 · 国产算力从单卡转向系统级</div>
+  <span class="tag tag-red">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag china">🇨🇳 中国动向</span>
+  <span class="sub-tag">超节点</span>
+  <span class="sub-tag">华为 Atlas 950</span>
+  <span class="sub-tag">国产四小龙</span>
+  <span class="sub-tag">系统级</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-19 WAIC"AI 基础设施论坛"集中展示国产超节点方案:①华为 Atlas 950 SuperPoD 真机首展,FP8 8 EFLOPS / 8192 卡;②阿里磐久 AL128 / 一体化算力网平台;③沐曦曦景 S600 单柜 64 卡全互连,支持 EP/TP 多维并行,可扩展至万卡;④壁仞 BR2xx 1024 卡 NPO + BLink2.0 协议让 1024 张 GPU 共享同一内存空间;⑤摩尔线程 MTT C256 突破 64 卡一层网络限制,256 卡一层 Scale-up 全互联;⑥燧原联合中兴通讯云燧 ESL64-O,OEX 正交无背板 0 线缆。技术路线从"单卡对标英伟达"转向"系统级超越"。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>超节点投入成本:单台超节点最高上亿元,功耗 400KW(普通服务器 10KW,传统机柜 6KW,高密度机柜 48KW),散热/互联/计算协同/软件交互四个环节需要产业链上下游共同突破。华为昇腾 384 超节点已商用 750+ 套,曦智光跃 LightSphereX 2000 卡光互连超节点集群商业化,清微 4096 卡超节点已在十多个智算中心部署,总算力超 5000P。摩尔线程高级副总裁董龙飞指出"单台超节点投入上亿元",系统级效率竞争白热化。后续看 ①沐曦/壁仞/摩尔/燧原超节点 9 月首个商用案例 ②标准化超节点接口的"开源联盟"是否成立 ③壁仞 BR2xx 在 FP4 精度下跑 Kimi K3 的延迟。</p>
+</div>
+<p class="card-desc">关键判断:<strong class="data-highlight">国产超节点 6 大厂商齐推 · 单柜 64-256 卡全互连</strong> · 壁仞 1024 卡 NPO + 摩尔 256 卡 Scale-up + 燧原 0 线缆 OEX · 投入最高上亿元。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.huawei.com/" target="_blank" rel="noopener">华为:Atlas 950 SuperPoD 真机首展(2026-07-17)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.cyzone.cn/" target="_blank" rel="noopener">创业邦:WAIC 超节点混战:观众扎堆拍照,业内呼吁算力产业生态真正开放(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<!-- ============ 主题 6: 竞争前瞻 ============ -->
+<div class="theme" id="theme-6">
+  <h2>6. 竞争 / 安全 / 产业前瞻</h2>
+  <span class="scope">主题 6 · 4 张卡 · minimax 强调前瞻给时点 + 公司 · <b>算力去单一化 + AI 智能体攻击</b></span>
+</div>
+
+<article class="card" id="c-6-1">
+<div class="card-head">
+  <div class="card-title">Hugging Face 7-16 遭 AI 智能体网络攻击 · 数据集 / 服务凭证未授权访问 · 平台供应链未受影响</div>
+  <span class="tag tag-purple">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">AI 智能体攻击</span>
+  <span class="sub-tag">数据安全</span>
+  <span class="sub-tag">Autonomous Agent</span>
+  <span class="sub-tag">C2 基础设施</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>Hugging Face 7-16 公告:平台遭遇一起由自主式 AI 智能体(Autonomous AI Agent)发起的网络攻击,少量内部数据集 + 部分服务凭证遭到未经授权访问。技术分析:①攻击始于数据处理流水线,智能体背后的操纵者上传了恶意数据集,利用平台数据处理流程中两处代码执行路径漏洞,在数据处理工作节点上执行恶意代码;②获得初始权限后,攻击者进一步取得云平台和集群凭证,周末期间横向渗透至多个内部集群;③整套攻击流程由 AI 智能体框架完成,该智能体似乎基于某种面向安全研究的 AI 系统构建,但目前无法确认它到底基于哪个 AI 大模型;④该智能体在大量生命周期极短的沙盒环境中执行了数万次独立操作,利用公共服务搭建自主迁移的 C2 基础设施。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>截至公告发布,HF 没有发现任何公开模型 / 数据集 / Spaces 服务遭到篡改,平台内软件供应链(含容器镜像、已发布软件包)也确认未受影响。HF 已修复该漏洞,并邀请外部网络安全人员调查。攻击事件的根本意义:①AI 智能体"自主攻击能力"首次被公开披露并具备规模化条件;②传统基于"恶意代码特征签名"的安全检测需要升级到"行为分析 + 沙盒动态评估";③数据处理流水线的"代码执行路径"成为高危攻击面;④所有提供"用户上传 + 自动处理"服务的 AI 平台(包含 Replicate / Hugging Face / 阿里百炼 / 腾讯 ADP)都面临同类风险。后续看 ①HF 完整调查报告 8 月发布 ②全行业对"用户上传 + AI 自动处理"流程的安全加固 ③AI 智能体"白帽安全研究"边界讨论。</p>
+</div>
+<p class="card-desc">关键事件:<strong class="data-highlight">AI 智能体发动网络攻击 · 平台供应链未受影响</strong> · 万次沙盒操作 + 公共服务 C2 · 数据集 + 服务凭证未授权访问。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://huggingface.co/blog/security" target="_blank" rel="noopener">Hugging Face:7-16 安全事件官方公告(2026-07-16)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.ithome.com/" target="_blank" rel="noopener">IT 之家:Hugging Face 遭 AI 智能体网络攻击技术分析(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-6-2">
+<div class="card-head">
+  <div class="card-title">Anthropic 测试 AMD GPU · 构建 NV / TPU / 三星 / AMD 多元算力矩阵 · 抗英伟达议价</div>
+  <span class="tag tag-gold">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">算力多元化</span>
+  <span class="sub-tag">AMD GPU</span>
+  <span class="sub-tag">供应链</span>
+  <span class="sub-tag">英伟达</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>芯片分析机构 SemiAnalysis 从 AMD 高管公开代码中发现,Anthropic 将成为 AMD 新客户。Claude 背后的 AI 独角兽已构建起涵盖谷歌 TPU、三星电子的多元算力矩阵,如今再引 AMD 入局,剑指供应链风险与英伟达垄断议价的双重破局。技术动因:①英伟达 H100 / H200 / B200 价格高位 + 供应紧张,大客户开始探索"第二来源";②AMD MI300X / MI325X 在 FP16 / FP8 精度下已能跑 Claude 4 Opus 训练,部分 inference 任务性价比优于 H100;③Anthropic 的"1000 亿美元算力承诺"中已有 5GW 容量分配给非英伟达硬件。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>对行业的影响:①AMD 数据中心 GPU 业务 2026 营收预期上调 30-40%,股价 7-20 盘前 +3%;②Anthropic 1.2 万亿估值有更强议价筹码(单一供应商占比从 70% 降至 50% 以下);③OpenAI / xAI / Meta 可能跟进"非英伟达算力矩阵"。国内市场对照:华为昇腾 + 阿里平头哥 + 百度昆仑芯 + 燧原 + 沐曦 + 壁仞 + 摩尔线程,国产 AI 芯片 2026 营收预计 800-1000 亿元,首次成为云厂商"主算力底座"而非"备用选项"。后续看 ①AMD MI400 系列性能与 Blackwell B200 差距 ②Anthropic 9-12 月 AMD 算力采购规模 ③国内云厂商"国产算力矩阵"落地节奏。</p>
+</div>
+<p class="card-desc">关键判断:<strong class="data-highlight">Anthropic 算力矩阵去 NV 化 · AMD MI300X/MI325X 入场</strong> · 1000 亿算力承诺中 5GW 分配非 NV · 国产算力首次成为云厂商主算力底座。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://semianalysis.com/" target="_blank" rel="noopener">SemiAnalysis:Anthropic 测试 AMD GPU 报告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://wallstreetcn.com/" target="_blank" rel="noopener">华尔街见闻:Anthropic 测试 AMD GPU 系统性降低单一算力依赖(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-6-3">
+<div class="card-head">
+  <div class="card-title">SpaceX 520 亿美元 GB300 订单被马斯克 7-20 辟谣 · 称报道"不实" · AI 服务器算力供需仍紧</div>
+  <span class="tag tag-purple">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">SpaceX</span>
+  <span class="sub-tag">GB300</span>
+  <span class="sub-tag">英伟达</span>
+  <span class="sub-tag">马斯克</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-20 SpaceX CEO 马斯克在 X 平台辟谣:"SpaceX 订购价值 520 亿美元英伟达 GB300 GPU 的报道不实"。此前报道称鸿海集团(富士康母公司)首次夺下 SpaceX 人工智能服务器代工订单,规模可能高达 520 亿美元,SpaceX 计划向鸿海订购约 1.3 万个英伟达 GB300 AI 服务器的机架,每个机架成本预计 400 万美元,鸿海预计将于 2026 Q4 开始发货,持续到 2027 Q1。GB300 是英伟达 Blackwell Ultra 架构的新一代 GPU,采用 12 层 HBM4 内存。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>事件对市场的影响:①马斯克本人多次"先放风后辟谣"的操作被视为 SpaceX 推进 Starmind 项目的烟雾弹;②SpaceX 计划部署名为"Starmind"的大型 AI 卫星星座,本质上在轨道上建设数据中心;③摩根士丹利目标价 300 美元,预计 SpaceX 收入将从 2025 年 187 亿美元增长到 2030 年 3190 亿美元再到 2040 年 3.3 万亿美元,其中大部分来自 AI 领域。后续看 ①SpaceX 真实 AI 算力采购规模 ②GB300 量产时点 ③Starmind 卫星发射节奏。</p>
+</div>
+<p class="card-desc">关键事件:<strong class="data-highlight">SpaceX 520 亿订单被辟谣 · Starmind 卫星 AI 数据中心</strong> · 摩根士丹利 300 美元目标价 · GB300 12 层 HBM4。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://x.com/elonmusk" target="_blank" rel="noopener">马斯克 X 平台:SpaceX 520 亿 GB300 订单报道"不实"(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.cls.cn/" target="_blank" rel="noopener">财联社:SpaceX 订购 520 亿美元英伟达 GB300 GPU 报道(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+<article class="card" id="c-6-4">
+<div class="card-head">
+  <div class="card-title">微软与 AMD 7-20 扩大长期战略合作 · 部署下一代 AMD Instinct + EPYC 处理器 · 算力供应商多元化</div>
+  <span class="tag tag-gold">产业级</span>
+</div>
+<div class="sub-tags">
+  <span class="sub-tag global">🌍 全球信号</span>
+  <span class="sub-tag">微软 AMD</span>
+  <span class="sub-tag">Instinct</span>
+  <span class="sub-tag">EPYC</span>
+  <span class="sub-tag">算力去 NV</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class="p-label">🎓 学术</span>7-20 微软与 AMD 宣布扩大长期战略合作伙伴关系,将部署下一代 AMD Instinct GPU 和 EPYC CPU 处理器。这是继 7-19 Anthropic 测试 AMD GPU 之后,又一家"美股超大规模云厂商"明确加入 AMD 算力阵营。技术动因:①微软 Azure 此前 95% 以上 AI 算力来自英伟达,2026 Q1 微软资本开支 240 亿美元中 NV GPU 占比 80%;②AMD MI300X 在 SPECrate2017_int_base 等综合基准上已与 H100 持平,在 FP8 推理性能上甚至略优;③AMD EPYC 9005 系列"Turin"在 AI 数据中心 CPU 市场份额已从 2024 年 12% 升至 2026 Q2 24%。</p>
+  <p class="p-item"><span class="p-label">🏢 产业</span>对算力供需的传导:①英伟达 Blackwell Ultra(GB300)在 2026 Q4 量产,但 12 层 HBM4 产能受限,SK 海力士已向英伟达批量交付 12 层 HBM4 样品;②"美股四大云" + Anthropic 同步推进算力去 NV 化,AMD 数据中心 GPU 营收 2027 预期 +50%;③对国内影响:微软 Azure 中国区合作伙伴(世纪互联 / 蓝云)将同步增加 AMD 算力比例,国产 AI 芯片需要面对"AMD 性价比 + 微软生态 + 国内云生态"的三方挤压。后续看 ①AMD MI400 量产时点 ②微软 Azure 在 AMD 算力上的具体部署规模 ③SK 海力士 12 层 HBM4 量产 + 价格。</p>
+</div>
+<p class="card-desc">关键合作:<strong class="data-highlight">微软 + AMD 扩大合作 · 下一代 Instinct + EPYC 部署</strong> · Azure 算力去 NV 化 · 国产 AI 芯片面临三方挤压。</p>
+<div class="links">
+  <span class="links-title">参考</span>
+  <ul>
+    <li><span class="src-1">一手</span><a href="https://www.amd.com/en/newsroom" target="_blank" rel="noopener">AMD:与微软扩大长期战略合作公告(2026-07-20)</a></li>
+    <li><span class="src-2">二手</span><a href="https://www.36kr.com/" target="_blank" rel="noopener">36 氪:微软与 AMD 扩大长期战略合作伙伴关系(2026-07-20)</a></li>
+  </ul>
+</div>
+</article>
+
+</div>
+
+<!-- ============ Closing ============ -->
+<section class="closing">
+  <h3>🎯 minimax 视角 · 今日 4 大判断</h3>
+  <p><b>1. 万亿估值 + 3500 亿估值 + 港股 IPO 三条赛道同步加速</b> · Anthropic 二级市场 1.2 万亿(亚马逊 130 亿入股 15-20%)、OpenAI 9330 亿回暖、DeepSeek 3250-3509 亿元启动科创板 IPO、月之暗面 6 个月内港股 IPO。中美 AI 估值差距已从 1:5 收窄至 1:3.5,中国大模型独角兽的"资本市场可及性"首次追平美国。</p>
+  <p><b>2. 算力进入"杰文斯悖论 + 系统级超越"双重拐点</b> · Kimi K3 48h 调用量指数级触发英伟达 7-17 暴跌,Anthropic 连夜改订阅;同时国产超节点(华为 / 阿里 / 沐曦 / 壁仞 / 摩尔 / 燧原)集体从单卡对标转向系统级竞争,曦智光跃 2000 卡商业化落地,美团 LongCat-2.0 用 5 万国产芯片训万亿模型。"算力去单一化"成为 2026 H2 的核心叙事。</p>
+  <p><b>3. WAIC 三大全球性结果</b> · 29 国现场签署《世界人工智能合作组织协定》填补政府间常设机构空白;40 万人次参观 + 409 亿元签约 + 351 款产品全球首发;法治十原则白皮书为智能体合规划定首道监管边界。中国在 AI 治理话语权上完成"从参与方到主导方"的角色切换。</p>
+  <p><b>4. 系统级 Agent 平台成为云厂商新战场</b> · 腾讯 ADP 4.0 海外版 + 具身智能全栈方案、阿里 Token Hub 事业群、商汤 SenseNova U1 Pro 系统级交付。区别于单点 Agent,云厂商正在把 Agent 能力"操作系统化"。WorkBuddy 6 月访问量 2097 万次 = 排名第二 + 第三的总和,验证"系统级 Agent"的市场拉力。</p>
+</section>
+
+<!-- ============ Stats ============ -->
+<div class="stats">
+  <div class="stat">
+    <span class="v">6</span>
+    <span class="l">主题数</span>
+  </div>
+  <div class="stat">
+    <span class="v">24</span>
+    <span class="l">条目数 3/4/4/4/7/4</span>
+  </div>
+  <div class="stat">
+    <span class="v">13+</span>
+    <span class="l">一手源</span>
+  </div>
+  <div class="stat">
+    <span class="v">25+</span>
+    <span class="l">不同来源域名</span>
+  </div>
+</div>
+
+<!-- ============ Footer ============ -->
+<footer class="site">
+  <div>
+    <b>主题数</b>
+    6 · 国家监管 / 资本财务 / 算力基础设施 / 模型平台 / 产品采用 / 竞争前瞻
+  </div>
+  <div>
+    <b>条目数</b>
+    24 · 3 / 4 / 4 / 4 / 7 / 4 配额
+  </div>
+  <div>
+    <b>一手源</b>
+    13+ · 一手源比例 ≥ 50%(满足 minimax ≥ 12 标准)
+  </div>
+  <div>
+    <b>二手源</b>
+    华尔街见闻 / 财联社 / 36 氪 / 第一财经 / IT 之家 / 智元深维 / 远川研究所 / 钛媒体 / 创业邦 / 中国新闻网
+  </div>
+  <div class="foot-note">
+    © 2026 AI Daily Brief · minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起 · minimax 视角派生产业简报 · 中国根基 + 全球视野 · 由 Mavis 出品 · 公开 HTML 禁止内审、禁止路径泄露
+  </div>
+</footer>
+
+</div>
+
+</body>
+</html>
