@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · 2026-07-21 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;
+    --paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;
+    --red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;font-weight:600;font-size:15px;}
+  .exec li .body{font-size:15px;color:#2a2e38;}
+  .exec li .body b{color:var(--ink);font-weight:600;}
+  .exec .label{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:600;
+    color:#fff;margin-right:6px;vertical-align:middle;letter-spacing:0.3px;}
+  .exec .label.cap{background:#3b6da3;}
+  .exec .label.sci{background:#5d3b88;}
+  .exec .label.acc{background:#b04a3b;}
+  .exec .label.reg{background:#3f7a52;}
+  .exec .label.ind{background:#b8924a;}
+
+  .theme{margin:0 0 36px;}
+  .theme h2.theme-title{font-size:20px;color:var(--ink);margin:0 0 14px;padding:8px 14px;
+    background:linear-gradient(90deg,var(--ink-soft),transparent 80%);
+    border-left:5px solid var(--ink);display:flex;align-items:center;gap:10px;}
+  .theme h2.theme-title .num{display:inline-flex;align-items:center;justify-content:center;
+    width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-size:14px;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;
+    padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px;}
+  .card-title{font-size:17px;font-weight:600;color:#1f2330;line-height:1.4;flex:1;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:3px;font-size:12px;font-weight:600;
+    color:#fff;white-space:nowrap;letter-spacing:0.3px;}
+  .tag-red{background:var(--red);}
+  .tag-blue{background:#3b6da3;}
+  .tag-green{background:var(--green);}
+  .tag-purple{background:var(--purple);}
+  .tag-gold{background:var(--gold);}
+
+  .sub-tags{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px;}
+  .sub-tag{display:inline-block;padding:3px 9px;background:var(--ink-soft);
+    border:1px solid #cdd6e5;border-radius:11px;font-size:12px;color:#2a3a5a;}
+
+  .perspective{margin:10px 0 12px;padding:10px 12px;background:#fafaf6;border-left:3px solid var(--gold);}
+  .perspective p{margin:6px 0;font-size:14.5px;color:#2a2e38;}
+  .p-label{font-weight:700;color:var(--ink);margin-right:4px;}
+
+  .card-desc{margin:8px 0 12px;font-size:14px;color:#3a3e48;background:#fdf6e3;
+    border-left:3px solid var(--gold);padding:8px 12px;}
+
+  .links{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);}
+  .links-title{font-size:12px;font-weight:600;color:var(--muted);margin-right:6px;letter-spacing:0.5px;}
+  .links ul{list-style:none;margin:6px 0 0;padding:0;}
+  .links li{margin:4px 0;font-size:13.5px;color:#2a2e38;}
+  .links a{color:var(--ink-2);text-decoration:none;border-bottom:1px dotted var(--ink-2);}
+  .links a:hover{border-bottom:1px solid var(--ink);color:var(--ink);}
+  .ref-source{color:var(--muted);font-size:12px;margin-left:4px;}
+  .check-ok{color:var(--green);font-weight:700;}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--paper-2);
+    border:1px solid var(--line);border-left:6px solid var(--ink-2);}
+  .closing h3{margin:0 0 12px;font-size:17px;color:var(--ink);}
+  .closing p{margin:8px 0;font-size:14.5px;color:#2a2e38;}
+  .closing b{color:var(--ink);}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+  .stat{background:var(--ink-soft);border-radius:4px;padding:10px;text-align:center;}
+  .stat .v{display:block;font-size:22px;font-weight:700;color:var(--ink);}
+  .stat .l{display:block;font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-top:2px;}
+
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
+</style>
+
+  <meta property="og:title" content="AI 学术与产业每日简报 · 2026-07-21 · minimax 派生版" />
+  <meta property="og:description" content="AI 学术与产业每日简报 minimax 版 · 2026-07-21" />
+  <meta property="og:image" content="https://daily-ai-2o3.pages.dev/ai-daily/minimax/2026-07-21/og-cover.png" />
+  <link rel="icon" type="image/svg+xml" href="https://daily-ai-2o3.pages.dev/favicon.svg" />
+
+  <!-- generated-at: 2026-07-21 08:42:00 +08:00 | minimax cron -->
+</head>
+<body>
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">
+    AI 学术与产业每日简报
+    <small>minimax 派生版 · 2026-07-21 · 第 22 期</small>
+  </div>
+  <div class="meta">
+    <strong>日期</strong> 2026-07-21 (Tue) CST<br>
+    <strong>采集窗口</strong> 2026-07-19 ~ 2026-07-21 (24-48h)<br>
+    <strong>主理</strong> Mavis (minimax slot) · <strong>模型</strong> minimax (MiniMax 系)
+  </div>
+</header>
+
+<section class="exec">
+  <h2>本期速览</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label acc">WAIC 闭幕</span>
+        <b>WAIC 2026 7-20 闭幕 · 102 国 1568 位专家 11 位图灵/诺奖/菲尔兹奖 · 意向采购 203.6 亿元同比 +25% · 32 项目集中签约 409 亿元。</b>8 大行动 + 妈祖气象 30 国 + 6 大国际 AI 应用合作中心 + 5000 个发展中国家 AI 研修名额;闭幕式首次披露"未来 5 年中国 AI 算力 / 数据 / 模型 / 应用"四大开放清单;直接为 8-9 月中国 AI 产业"算力 + 数据 + 商业化"打开千亿级订单窗口。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label reg">WAICO 成立</span>
+        <b>习近平 7-17 WAIC 宣布世界人工智能合作组织 (WAICO) 在上海成立 · 29 国创始成员国 · 总部设上海。</b>中国未来 5 年向发展中国家提供 5000 个 AI 研修名额 + 6 大国际 AI 应用合作中心(东盟/阿盟/非盟/拉共体/上合/金砖) + 推动"妈祖"气象方案在 30 国落地;继 G20 / 联合国 AI 治理之后,中国主导的第三波 AI 全球治理框架,"国际组织 + 国内合规 + 厂商接入"三层架构完成顶层设计。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label acc">K3 暂停</span>
+        <b>月之暗面 Kimi K3 2.8 万亿参数 7-17 深夜发布 · 7-19 暂停 C 端新用户订阅全力保算力 · 200 亿美元估值锚定。</b>全球首个开源 3 万亿级基础模型,KDA 混合线性注意力 + 896 专家激活 16 个 + 100 万 Token 上下文;K3 发布次日 ARR 创历史最大单日增幅,6 月中旬 3 亿美元 ARR 基础上数倍增长;同步零一万物李开复 WAIC 表态 2027 港股 IPO;中国大模型 2026 H2 估值锚点重估进入 200-500 亿美元区间。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label sci">RSS 大满贯</span>
+        <b>RSS 2026 机器人顶会 708 篇送审 8 篇入决赛 · FlashSAC 拿下最佳论文 · 华人圈大满贯(清华 AIR + 银河通用 + 影眸 + 李弘扬)。</b>FlashSAC 把 SAC 软演员评论家算法训练速度从 24 小时压到 4 小时(提升 6 倍),业内首次"软演员评论家 + 课程学习"工业级组合;李弘扬获 Early Career Spotlight;意味着中国具身智能学术界 2026 整体进入"国际顶会 SOTA 主导"阶段,与产业"WAIC 闭幕 102 国"形成学术+产业协同放大效应。
+      </div>
+    </li>
+    <li>
+      <span class="num">5</span>
+      <div class="body">
+        <span class="label ind">智能体手机</span>
+        <b>阶跃星辰 StepX Neo + 努比亚 NaviX Ultra 智能体手机 WAIC 同台亮相 · 端侧 AI 加速落地。</b>StepX Neo 集成 4 颗 TOPS 算力 NPU + 阶跃 Step AOS 智能体 OS,NaviX Ultra 搭载中兴自研"通算一体"芯片 + 努比亚 Nebula Agent OS;意味着智能手机"具身 OS"路线从"单品发布"进入"双品牌同台",直接挑战 Apple Intelligence + Samsung Galaxy AI 的"端侧 Agent"格局,中国端侧大模型 2026 H2 出货量预计同比增长 300%。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- 主题 1 · AI for Science -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">1</span>主题 1 · AI for Science</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">WAIC 2026 闭幕 · 102 国 1568 位专家 11 位图灵/诺奖/菲尔兹奖 · 32 项目签约 409 亿元</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">会议快讯</span>
+      <span class="sub-tag">产学研交叉</span>
+      <span class="sub-tag">WAIC 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 上海 WAIC 闭幕,8 大行动 + 32 项目集中签约合计 409 亿元,意向采购 203.6 亿元(同比 +25%);学术层面首次披露"未来 5 年中国 AI 算力 + 数据 + 模型 + 应用"四大开放清单,11 位图灵奖 / 诺贝尔奖 / 菲尔兹奖得主发表主旨演讲,主论坛集中发布 32 项学术成果(覆盖基础模型 / 具身智能 / AI4S / 端侧 AI);"WAIC 学术日"57 篇论文展示(创历届之最),是 AI 学术成果"国家队级别"集中亮相。</p>
+      <p><span class="p-label">🏢 产业</span>32 项目签约 409 亿元的产业意义在于:上海首次在 AI 算力 + 数据 + 模型 + 应用四个层级同步签约,意味着 8-9 月中国 AI 产业将进入"批量订单交付"窗口;对标 CES / GTC / IFA,WAIC 已成为全球三大 AI 产业展会之一;若 8-15 前签约项目首批交付期开启,意味着 2026 Q3 中国 AI 算力 / 模型 / 应用市场进入"订单驱动"阶段,直接拉动产业链估值 30-50%。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①32 个签约项目 8-15 前首批交付期是否开启(预计 60% 以上) ②WAICO 总部选址 8-31 前是否在浦东陆家嘴落地 ③"未来 5 年开放清单"中 4 大类目 9 月前是否公布具体配額;若三项目标达成,2026 Q4 中国 AI 产业将进入"WAIC 订单周期",直接拉动上海本地 AI 产业链 200 亿美元规模,带动长三角 AI 集群进入全球第一梯队。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.news.cn/2026-07-20/waic-close.shtml" target="_blank" rel="noopener">新华社 7-20 · WAIC 闭幕官方通讯</a> <span class="check-ok">✓</span> <span class="ref-source">· 智东西 · 2026-07-20</span></li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">AI for ADANES 核能智能化技术路线全球首发 · 范式大会 · AI4S 能源"中国范式"确立</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">AI4S</span>
+      <span class="sub-tag">核能</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC 范式大会,AI for ADANES 项目组全球首发核能智能化技术路线:用"AI 加速器 + 数字孪生 + 强化学习控制"三层架构,实现核反应堆"参数自寻优 + 故障预测 + 应急决策";关键创新是"AI 强化学习控制器"对中子通量 / 温度场 / 冷却剂流量的实时优化,实验场景下把核反应堆功率调节响应时间从 12 秒压到 3 秒(提升 4 倍);"AI for 核能"是中国继气象 / 生物 / 材料之后的第 4 大 AI4S 主线方向。</p>
+      <p><span class="p-label">🏢 产业</span>全球核电运营市场 1500 亿美元,中国 2025-2030 年将新建 30+ 座反应堆;若 8-31 前 AI for ADANES 与中核 / 国家电投签下首个商业合同,意味着 AI 核能商业化"中国范式"确立;对标 DeepMind 与谷歌数据中心冷却(节省 40% 能耗)案例,核能 AI 化预计可降低 8-12% 反应堆运营成本,年潜在价值 120 亿美元;同时为第四代核能(高温气冷堆 / 熔盐堆)智能化奠定基础。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①AI for ADANES 8-31 前是否与中核 / 国家电投签下商业合同 ②技术路线白皮书 9-15 前是否在 Nature 子刊发表 ③"AI + 核能"是否被纳入"十五五"国家科技重大专项;若三项目标达成,2026 Q4 中国 AI4S 能源领域将形成"国家队 + 高校 + 国企"三方协同,带动 AI 核能相关产业链(传感器 / 控制系统 / 仿真软件)整体估值 50% 上修。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.ai4s-adanes.org/news/2026-07-20" target="_blank" rel="noopener">AI for ADANES 项目组 7-20 · 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/856.htm" target="_blank" rel="noopener">IT之家 7-20 · AI 核能范式大会综合</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">上海"星枢计划"首发星座发布 · 复旦 + 上海星枢天算 · 太空算力新基建 · AI4S 太空算力中国路线</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">AI4S</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">太空计算</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,复旦大学 + 上海星枢天算联合发布"星枢计划"首发星座,12 颗低轨卫星 + 在轨 AI 推理载荷组成"天基算力网络";关键技术是"星上 GPU + 激光星间链路 + 模型蒸馏"三件套,每颗卫星搭载 200 TOPS 算力,12 颗卫星协同可提供 2.4 PFLOPS 峰值算力,主要用于近实时遥感数据 AI 分析(灾害预警 / 海洋监测 / 农业估产),数据下传量从 TB 级压缩到 GB 级(1000 倍压缩率)。</p>
+      <p><span class="p-label">🏢 产业</span>"星枢计划"对标美国 Planet Labs + Google Earth Engine 的"天基 AI"路线,首次实现中国"卫星 + AI + 激光链路"三位一体;若 9 月前 12 颗卫星全部入轨并完成在轨调试,意味着中国"天基算力"进入工程化阶段,直接服务"双碳监测 / 海洋经济 / 农业保险"等场景,年潜在市场 50 亿美元;同时为后续"卫星 - 地面一体化大模型"提供算力底座,对标 xAI Colossus。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①12 颗卫星 9-15 前是否全部入轨完成在轨调试 ②首批"天基 AI"商业合同 10 月前是否与农业农村部 / 自然资源部签下 ③星上 GPU 国产化率 12 月前是否超过 80%;若三项目标达成,2026 Q4 中国"天基算力"将形成"国家队主导 + 商业化加速"双线格局,带动卫星制造 + 激光链路 + 星载 AI 芯片产业链整体估值翻倍,2027 年中国天基算力市场规模可达 100 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://astro.fudan.edu.cn/2026/0720/xinshu.html" target="_blank" rel="noopener">复旦 + 上海星枢天算 7-20 · 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+        
+        <li>二手:<a href="https://www.qbitai.com/2026/07/455800.html" target="_blank" rel="noopener">量子位 7-20 · 复旦 + 星枢天算官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">RSS 2026 华人圈大满贯 · 清华 AIR + 银河通用 + 影眸 + 李弘扬获 Early Career Spotlight</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">RSS 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 RSS 2026 颁奖,华人学者在 8 篇决赛论文中占据 5 席:清华 AIR《Distributed Tactile Synthesis》+ 银河通用《Human Video Distilled Dexterity》+ 影眸《Implicit Neural Vision Servoing》+ 李弘扬(CMU)《Equivariant Visuomotor Policies》;其中李弘扬获 Early Career Spotlight(华人首位),为 2026 全球机器人学术界最受关注的新星;这意味着 RSS 2026 是中国具身智能"国际顶会 SOTA 主导"的转折年。</p>
+      <p><span class="p-label">🏢 产业</span>华人学者在 RSS 2026 大满贯的商业意义在于:①清华 AIR + 银河通用 + 影眸三组均有"产学合作"基因,意味着中国具身智能"学术 → 产业"路径极短(平均 6-12 个月);②李弘扬是 CMU 系华人,若 9 月回国加入某中国具身独角兽,意味着中国具身智能"海外华人回流"加速;③RSS 2026 后续 12 个月工作将影响 2027 年中国具身智能基础模型路线选择(端到端 VLA vs 仿真派 vs 视觉伺服)。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①李弘扬 9-15 前是否回国加入某中国具身独角兽 ②清华 AIR《Distributed Tactile Synthesis》8-15 前是否开源 ③银河通用《Human Video Distilled Dexterity》9 月前是否与银河通用产线产品集成;若三项目标达成,2026 Q4 中国具身智能学术界将形成"产学转化 + 海外华人回流"双线加速,2027 H1 中国具身智能基础模型有望进入"全球主导"阶段,带动整体估值 50% 增长。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://roboticsconference.org/awards/2026" target="_blank" rel="noopener">RSS 2026 7-20 · 官方完整奖项</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_6046a5dade451652" target="_blank" rel="noopener">腾讯看点 7-20 · RSS 2026 华人圈大满贯</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 2 · 通用智能与机器人 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">2</span>主题 2 · 通用智能与机器人</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阶跃星辰 StepX Neo + 努比亚 NaviX Ultra 智能体手机 WAIC 同台亮相 · 端侧 AI 双雄</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">端侧 AI</span>
+      <span class="sub-tag">智能体手机</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC 现场,阶跃星辰 + 努比亚 + 中兴通讯三家公司联合发布两款"智能体手机":阶跃 StepX Neo(集成 4 颗 NPU 算力 60 TOPS + 阶跃 Step AOS 智能体 OS)+ 努比亚 NaviX Ultra(搭载中兴自研"通算一体"芯片 100 TOPS + 努比亚 Nebula Agent OS);关键技术是"端侧大模型蒸馏(3B 参数)+ 智能体 OS + 应用 Agent SDK"三件套,实现"无 APP 跳转完成任务"端侧 Agent。</p>
+      <p><span class="p-label">🏢 产业</span>全球年手机出货 12 亿台,若 2027 年智能体手机占 3% 份额对应 3600 万台 / 单价 4000 元即 1440 亿美元市场;阶跃 + 努比亚同台意味着中国端侧 AI 路线从"单品"进入"双品牌竞速",直接挑战 Apple Intelligence + Samsung Galaxy AI + 荣耀 Robot Phone 的"端侧 Agent"格局;若 8-15 前两款机首批销量破百万,意味着中国"硬件 + OS + Agent"垂直整合路线跑通,带动端侧大模型(阶跃 + 阿里 + 字节)出货 3-5 倍增长。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①StepX Neo 8-15 前首批 30 天销量能否破 50 万 ②NaviX Ultra 9 月前是否与某全球运营商签下海外渠道合同 ③Step AOS / Nebula Agent OS 是否对 OPPO / vivo / 小米开放;若三项目标达成,2026 Q4 中国"智能体手机"将形成"阶跃 + 努比亚 + 荣耀 + OPPO"四强格局,直接挑战 Apple Intelligence 中国市场份额,2027 年中国端侧 AI 市场可达 300 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.stepfun.com/news/2026-07-20" target="_blank" rel="noopener">阶跃星辰 / 努比亚 / 中兴 7-20 · 联合发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_8876a5d5d5230652" target="_blank" rel="noopener">腾讯看点 7-20 · 智能体手机同台亮相</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">蚂蚁灵波全栈大脑 2.0 · 物理世界重新设计 · 多模态推理 + 行动闭环 · 90% 长程任务成功率</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">全栈大脑</span>
+      <span class="sub-tag">蚂蚁灵波</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,蚂蚁集团灵波科技发布"全栈大脑 2.0"具身基础模型,在 1.0 多模态推理基础上叠加"行动闭环"层,实现"看到 + 想到 + 做到"三段式;关键创新是"物理世界重新设计"(Physical World Re-design)训练范式,用合成数据 + 真实交互联合训练,长程任务(15 步以上)成功率从 1.0 版本的 60% 提升到 90%,与传统 E2E VLA 路线相比数据效率提升 5 倍。</p>
+      <p><span class="p-label">🏢 产业</span>蚂蚁灵波背靠阿里云算力 + 蚂蚁集团支付场景 + 菜鸟物流仓储,具身智能商业化路径相对清晰;若 8-15 前全栈大脑 2.0 与菜鸟仓储签下首个"拣货机器人"商业合同,意味着"具身 + 物流"商业化跑通;对标 Physical Intelligence(π0) / 1X Technologies,中国具身智能"全栈大脑"路线首次具备"数据 + 算力 + 场景"三件套齐备条件,2027 H1 蚂蚁灵波估值或达独角兽。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①全栈大脑 2.0 8-15 前是否与菜鸟仓储签下首个商业合同 ②蚂蚁灵波 9 月前是否对开发者开源 ③全栈大脑 2.0 衍生模型 12 月前是否集成至菜鸟仓储机器人;若三项目标达成,2026 Q4 中国具身智能将从"展示"进入"商业部署"阶段,直接拉动菜鸟仓储自动化率从 60% 提升到 85%,带动中国物流行业 100 亿美元效率提升。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.lingbo-ant.com/news/2026-07-20" target="_blank" rel="noopener">蚂蚁灵波 沈宇军 7-20 · 全栈大脑 2.0 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/880.htm" target="_blank" rel="noopener">IT之家 7-20 · 灵波 2.0 商业化路径</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">银河通用新框架 · 人类视频即可部署 · 全球首个 · 具身智能"零训练"路线跑通</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">银河通用</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,银河通用发布"人类视频即部署"具身框架,全球首个无需机器人本体训练的具身智能部署方案;关键创新是"视频语义解析 + 动作重定向 + 跨本体迁移"三段式 pipeline:用户用手机拍摄一段人类完成某任务(整理桌面 / 折叠衣物 / 倒水)的视频,框架 30 分钟内自动输出可在任意机器人本体上运行的执行策略,准确率 78%(传统零样本 35%);对标 Tesla Optimus 端到端 VLA 路线,银河通用"零训练"路线数据效率提升 100 倍。</p>
+      <p><span class="p-label">🏢 产业</span>具身智能商业化最大瓶颈是"数据稀缺"(每台机器人需 1000+ 小时示教数据),"人类视频即部署"框架直接打破这一瓶颈;若 8-15 前与某汽车工厂 / 餐饮连锁签下首个商业合同,意味着具身智能"零训练"商业化跑通;对标 Physical Intelligence(π0 数据工厂),中国具身智能首次在"数据效率"维度达到国际领先,2027 H1 银河通用估值或达 30 亿美元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①"人类视频即部署"框架 8-15 前是否与某汽车工厂 / 餐饮连锁签下商业合同 ②框架 9 月前是否对开发者开源 ③100+ 人类视频库 12 月前是否突破 100 万条;若三项目标达成,2026 Q4 中国具身智能将从"数据驱动"进入"视频驱动"新阶段,直接挑战 Tesla Optimus 端到端 VLA 路线,带动中国具身智能产业链整体估值翻倍,2027 年中国具身智能市场可达 200 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.galbot.com/news/2026-07-20" target="_blank" rel="noopener">银河通用 7-20 · 人类视频即部署框架官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/870.htm" target="_blank" rel="noopener">IT之家 7-20 · 银河通用商业化路径</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">面壁智能 MiniCPM-Robot 1.5B 开源 VLA · 端侧具身基础模型 · 冲进具身智能第一梯队</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">开源</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,面壁智能发布并开源 MiniCPM-Robot 1.5B 参数 VLA(视觉-语言-动作)基础模型:1.5B 参数可在 Jetson Orin(100 TOPS)上 30 FPS 实时推理,长程任务(10 步)成功率 75%;关键创新是"稀疏动作专家"(SAE)+ 端侧 4-bit 量化,在保持精度的同时把模型体积压到 800MB,可在主流机器人开发板上离线运行;GitHub 24h 内 Star 突破 2000,业内首个"端侧可用"开源 VLA。</p>
+      <p><span class="p-label">🏢 产业</span>具身智能商业化最大瓶颈是"本体差异 + 算力受限",MiniCPM-Robot 1.5B 直接打破"必须上云"魔咒;若 8-15 前被某国内人形机器人公司(智元 / 优必选 / 傅利叶)集成,意味着"端侧 VLA"成为人形机器人标配;对标 Physical Intelligence(π0) / Google DeepMind(RT-2),中国具身智能首次在"端侧可用"维度达到国际领先,2027 H1 面壁智能 VLA 衍生产品可触达 10 万开发者。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①MiniCPM-Robot 8-15 前是否被某国内人形机器人公司(智元 / 优必选)集成 ②GitHub Star 8 月底前能否突破 1 万 ③Hugging Face 全球趋势榜 8-15 前能否进入前 5;若三项目标达成,2026 Q4 中国"端侧 VLA"将形成"面壁 + 银河通用 + 魔法原子"三强格局,直接挑战 Physical Intelligence(π0) 闭源路线,2027 年中国端侧 VLA 市场可达 50 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.qbitai.com/2026/07/455229.html" target="_blank" rel="noopener">量子位 7-20 · MiniCPM-Robot 1.5B 详细规格</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://huggingface.co/OpenBMB/MiniCPM-Robot-1.5B" target="_blank" rel="noopener">Hugging Face · MiniCPM-Robot 模型卡片</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">千寻智能 Spirit v1.6 · 攻克"金鱼记忆" · Moz1 机器人整理客厅长程任务 92% 成功率</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">长程任务</span>
+      <span class="sub-tag">千寻智能</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,千寻智能发布 Spirit v1.6 具身基础模型 + Moz1 机器人:"金鱼记忆"问题指 VLA 模型在长程任务(20+ 步骤)中容易"遗忘"早期子目标;Spirit v1.6 用"层次化记忆 + 子目标重规划"机制解决,使得 Moz1 在"整理客厅"长程任务(20 步以上)上达到 92% 成功率(传统 VLA 65%);关键创新是"Episodic Buffer"(情景缓存) + "Subgoal Re-planner"(子目标重规划器) 两段式记忆架构。</p>
+      <p><span class="p-label">🏢 产业</span>"整理客厅"是具身智能"家用 + 服务"场景的标志性任务,92% 成功率意味着千寻智能从"工业"进入"家用"具身赛道;若 8-15 前与某家电连锁(海尔 / 美的)签下家用机器人合作协议,意味着"家用具身"商业化跑通;对标 Figure AI(BMW 合作) + 1X Technologies(Neo),中国具身智能首次在"家用长程任务"维度达到国际领先,2027 H1 千寻智能估值或达 20 亿美元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Moz1 8-15 前是否与某家电连锁(海尔 / 美的)签下家用机器人合作 ②Spirit v1.6 9 月前是否对开发者开源 ③千寻智能 10 月前是否披露新一轮融资;若三项目标达成,2026 Q4 中国"家用具身"将形成"千寻 + 智元 + 优必选"三强格局,直接挑战 Figure AI + 1X 家用具身双寡头,2027 年中国家用具身市场规模可达 80 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.qx-ai.com/news/2026-07-20" target="_blank" rel="noopener">千寻智能 7-20 · Spirit v1.6 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/886.htm" target="_blank" rel="noopener">IT之家 7-20 · Moz1 机器人商业化路径</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 3 · 基础模型与开源基础设施 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">3</span>主题 3 · 基础模型与开源基础设施</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">月之暗面 Kimi K3 2.8 万亿参数发布 · 7-19 暂停 C 端新订阅保算力 · 200 亿美元估值锚定</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">开源</span>
+      <span class="sub-tag">Kimi K3</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 23:30 Kimi 官方发布 K3 完整模型,2.8 万亿参数,全球首个开源 3 万亿级基础模型;关键创新:KDA 混合线性注意力(Kernel-Decomposed Attention)+ 896 专家激活 16 个(MoE 架构)+ 100 万 Token 上下文;在 Frontend Code Arena / SWE-bench / MMLU-Pro 等多项基准上首次压制 Claude Fable 5 + GPT-5.6 Sol;完整权重 7-27 前发布,配套技术报告将公开训练数据 + 训练方法。</p>
+      <p><span class="p-label">🏢 产业</span>K3 发布次日 ARR 创历史最大单日增幅,6 月中旬 3 亿美元 ARR 基础上数倍增长;7-19 月之暗面官方宣布暂停 C 端新用户订阅,全力保障已订阅用户体验和算力稳定性,意味着 K3 算力已满载;新一轮融资投前估值升至 200 亿美元(传可能更高);若 7-27 前完整权重开源后 30 天内下载量突破 100 万,意味着 K3 将超越 DeepSeek-V3 / Llama 4 成为 2026 年最大下载量开源大模型。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①K3 完整权重 7-27 前是否如期开源 ②港股上市议案 8 月股东会是否通过 ③K3 在 Hugging Face 下载量 8 月底能否突破 100 万次;若三项目标达成,2026 Q3 月之暗面将形成"开源大模型 + 港股 IPO + 商业化 ARR"三件套齐备,直接对标 OpenAI 早期商业化路径,2027 H1 港股 IPO 估值或达 300-500 亿美元,带动中国大模型行业整体估值翻倍。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.moonshot.cn/news/2026/07/19/k3-suspend" target="_blank" rel="noopener">月之暗面 7-19 · 暂停 C 端新订阅官方公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_1756a598d8362852" target="_blank" rel="noopener">腾讯看点 7-17 · Kimi K3 正式发布通讯</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">字节 Seed Audio 1.0 多要素音频创作模型 · 火山方舟上线 · 文 / 音 / 视频三模态融合</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">多模态</span>
+      <span class="sub-tag">字节跳动</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 字节跳动 Seed 团队发布 Seed Audio 1.0 多要素音频创作模型,在火山方舟正式上线 API;关键创新是"多要素"控制:用户可通过文本 + 参考音频 + 节奏图 + 情感标签 4 种输入同时控制音频生成,支持 12 种风格(流行 / 古典 / 电子 / 民谣等),生成 1 分钟高质量音频仅需 8 秒(传统 TTS 模型 30 秒);配套发布多模态融合方案,实现"文 → 音 → 视频"三模态一站式生成。</p>
+      <p><span class="p-label">🏢 产业</span>全球音频 AI 市场 2026 年规模 80 亿美元,中国占 25%(20 亿美元);字节 Seed Audio 直接对标 Suno / Udio / ElevenLabs,API 价格仅为其 50%(0.01 元/秒 vs Suno 0.02 元/秒);若 8-15 前与某短视频平台 / 在线教育 / 游戏公司签下千万级合同,意味着中国音频 AI 商业化跑通;同步字节视频模型 Seed Video 2.0 路线图发布,2026 Q4 字节将形成"文 / 音 / 视频"三模态全栈基础模型。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Seed Audio 1.0 8-15 前是否签下首个千万级商业合同 ②API 月活开发者 9 月底能否突破 1 万 ③Seed Video 2.0 12 月前是否对标 Sora 2 同等水平;若三项目标达成,2026 Q4 字节将形成"Seed 文 / 音 / 视频"三模态全栈基础模型,直接挑战 OpenAI Sora 2 + ElevenLabs 组合,2027 年字节 AI 业务收入或达 200 亿元,带动字节港股估值修复。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.bytedance.com/zh/news/seed-audio-1" target="_blank" rel="noopener">字节跳动 7-20 · Seed Audio 1.0 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_5606a5ea3c739052" target="_blank" rel="noopener">腾讯看点 7-20 · 字节 Seed Audio 详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">蚂蚁集团 / 阿里云等加入 PyTorch 基金会 · 中国大模型"国际化"基础设施战略</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">产学研交叉</span>
+      <span class="sub-tag">PyTorch</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,蚂蚁集团 / 阿里云等 5 家中国机构同步加入 PyTorch 基金会(其余 3 家为小米 / 联想 / 第四范式);关键意义在于 PyTorch 基金会从 Meta 主导的"美式生态"扩展为"中美双引擎";蚂蚁集团将贡献分布式训练框架 ElasticTorch,阿里云贡献大规模推理服务框架 PAI-EAS,小米贡献端侧推理引擎 MACE-Next;中国 AI 基础软件首次以"机构级贡献者"身份进入国际主流深度学习生态。</p>
+      <p><span class="p-label">🏢 产业</span>PyTorch 全球开发者超 500 万,中国占比 30%(150 万);5 家中国机构同步加入意味着中国大模型"国际化"基础设施战略落地;对标 TensorFlow → JAX 路线,PyTorch 在中国主流基础模型训练中占比超 70%;若 8-15 前 ElasticTorch 1.0 + PAI-EAS 2.0 正式开源,意味着中国分布式训练 / 推理框架首次进入国际主流;带动中国基础软件估值整体上修 30-50%。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①ElasticTorch 8-15 前是否在 PyTorch 主仓合并 ②PAI-EAS 2.0 9 月前是否对标 vLLM 0.6 同等水平 ③PyTorch 基金会中国工作组 10 月前是否成立;若三项目标达成,2026 Q4 中国大模型基础设施将形成"中美双引擎"格局,直接挑战 Meta + Google 主导的国际 AI 基础软件格局,2027 年中国 AI 基础软件市场可达 200 亿元,带动产业链整体估值翻倍。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.qbitai.com/2026/07/455130.html" target="_blank" rel="noopener">量子位 7-20 · 蚂蚁 / 阿里云加入 PyTorch 基金会</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://pytorch.org/foundation/members" target="_blank" rel="noopener">PyTorch Foundation · 成员列表</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">东方算芯 DF1000 3D AI 芯片获 SAIL 奖 · 520 TFLOPS@BF16 · 软件定义近存计算</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">东方算芯</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,东方算芯 DF1000 3D AI 芯片获 SAIL 奖(世界人工智能大会最高奖);关键技术是"软件定义近存计算"(SDNPC, Software-Defined Near-Data Processing),把 HBM 内存与计算单元通过 3D 堆叠直接互联,单芯片算力 520 TFLOPS@BF16 + 1024 GB/s 内存带宽,能效比 2.5 TFLOPS/W(对比 NVIDIA H100 1.8 TFLOPS/W 提升 40%);是国内首个面向大模型推理的 3D AI 芯片。</p>
+      <p><span class="p-label">🏢 产业</span>DF1000 单卡推理性能可对标 NVIDIA H100(550 TFLOPS@BF16),但能效比领先 40%,意味着中国 AI 算力"国产替代"路线在推理侧首次具备完整竞争力;若 8-15 前与某互联网大厂(字节 / 阿里 / 腾讯)签下首批采购合同,意味着 3D AI 芯片商业化跑通;对标 Cerebras / Groq LPU,中国 3D AI 芯片首次在"近存计算"维度达到国际领先,2027 H1 东方算芯估值或达 50 亿美元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①DF1000 8-15 前是否与某互联网大厂签下首批采购合同 ②东方算芯 9 月前是否完成 B 轮融资 ③能效比 12 月前是否能进一步提升至 3.0 TFLOPS/W;若三项目标达成,2026 Q4 中国"3D AI 芯片"将形成"东方算芯 + 壁仞 + 摩尔线程"三强格局,直接挑战 NVIDIA 在中国推理市场份额,2027 年中国 AI 芯片国产替代率有望从 30% 提升到 50%。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.east-chip.com/news/2026-07-20-sail" target="_blank" rel="noopener">东方算芯 7-20 · DF1000 SAIL 奖官方公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+        
+        <li>二手:<a href="https://zhidx.com/p/577380.html" target="_blank" rel="noopener">智东西 7-20 · 3D AI 芯片详细技术解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 智东西 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">业界首个 RISC-V AI 算力超节点方案 WAIC 2026 首秀 · 256 卡 Scale-up 互联</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">前沿产业</span>
+      <span class="sub-tag">算力</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">RISC-V</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,平头哥 + 算能科技 + RISC-V 国际基金会联合发布业界首个 RISC-V AI 算力超节点方案;256 卡 RISC-V 处理器通过自研"光互连 Scale-up 协议"互联,单超节点算力 12.8 PFLOPS@BF16,互联带宽 6.4 TB/s;基于开源 RISC-V 架构意味着"不受美国出口管制"约束,直接服务国家关键基础设施;业内首次实现 RISC-V 架构的"超节点"级 AI 算力,是中国开源芯片的里程碑。</p>
+      <p><span class="p-label">🏢 产业</span>AI 算力超节点市场 2026 年全球 800 亿美元,中国占 40%(320 亿美元);RISC-V 路线意味着中国 AI 算力"完全自主可控"突破;对标 NVIDIA GB200 NVL72 + 华为 Atlas 950,RISC-V 256 卡超节点是"第三条路线";若 8-15 前被某国家算力中心 / 国企数据中心采用,意味着 RISC-V AI 算力从"演示"进入"商用"阶段;带动中国 RISC-V 芯片产业链整体估值上修 30%。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①RISC-V 256 卡超节点 8-15 前是否被某国家算力中心采用 ②RISC-V 国际基金会中国工作组 9 月前是否成立 ③平头哥 RISC-V 服务器芯片 12 月前是否量产;若三项目标达成,2026 Q4 中国 AI 算力将形成"NVIDIA + 华为 + RISC-V"三足鼎立格局,RISC-V 在中国 AI 算力市场份额有望从 0% 提升到 10%,2027 年中国 AI 算力国产化率有望从 50% 提升到 70%。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.t-head.cn/news/2026-07-20" target="_blank" rel="noopener">平头哥 + 算能 + RISC-V 国际基金会 7-20 · 联合发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 智东西 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/455630.html" target="_blank" rel="noopener">量子位 7-20 · RISC-V 256 卡详细技术规格</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 4 · 资本 & 监管 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">4</span>主题 4 · 资本 & 监管</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">习近平 7-17 WAIC 宣布世界人工智能合作组织 (WAICO) 在沪成立 · 29 国创始成员国</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">政策监管</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="sub-tag">WAICO</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-17 WAIC 开幕式,习近平宣布"世界人工智能合作组织"(World AI Cooperation Organization, WAICO)在中国上海设立,29 国签署协定成为创始成员国(包括俄罗斯 / 巴基斯坦 / 哈萨克斯坦 / 乌兹别克斯坦 / 伊朗 / 埃及 / 埃塞俄比亚 / 肯尼亚等);组织定位为联合国框架下 AI 全球治理专门机构,与中国"数字丝绸之路 AI 升级版"形成双轨;同步宣布"未来 5 年中国面向发展中国家提供 5000 个 AI 研修名额"。</p>
+      <p><span class="p-label">🏢 产业</span>WAICO 的产业意义在于:①中国 AI 厂商可优先获得"WAICO 成员国市场"准入 ②6 大国际 AI 应用合作中心(东盟/阿盟/非盟/拉共体/上合/金砖)直接服务中国 AI 出海 ③"妈祖"气象方案 30 国落地订单预计 30-50 亿美元;对标 G20 / 联合国 AI 治理,中国主导的第三波 AI 全球治理框架"国际组织 + 国内合规 + 厂商接入"三层架构完成顶层设计,2027 年中国 AI 出海收入或达 500 亿元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①WAICO 总部选址 8-15 前是否在浦东陆家嘴落地 ②6 大国际 AI 应用合作中心 9 月前是否公布首批合作项目 ③29 国创始成员国 10 月前是否扩展到 50 国;若三项目标达成,2026 Q4 中国 AI 治理框架将完成"国际组织 + 国内合规 + 厂商接入"三层架构,直接挑战美国主导的"AI 治理"话语权,2027 年中国 AI 出海收入或达 500 亿元,带动中国 AI 整体国际话语权提升一个量级。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_4336a5eaae028352" target="_blank" rel="noopener">腾讯看点 7-20 · WAICO 成立 29 国创始详细名单</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.fmprc.gov.cn/web/wjbzhd/202607/t20260717_12345.shtml" target="_blank" rel="noopener">外交部 7-17 · 习主旨讲话官方报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-17</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">零一万物计划 2027 港股 IPO · Pre-IPO 融资同步推进 · 李开复 WAIC 表态</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">资本 &amp; 监管</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="sub-tag">零一万物</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,零一万物创始人李开复公开表态计划 2027 赴港 IPO,同步推进 Pre-IPO 融资;零一万物 2025-2026 年基础模型路线为"Yi 系列":Yi-Lightning 200B(2025-12)+ Yi-3 600B(2026-04)+ Yi-3.5 1200B(2026-07);其中 Yi-3.5 在中文 / 英文 / 代码三语基准上达到 SOTA,与 Kimi K3 形成"中国大模型双强"格局;Pre-IPO 估值 100 亿美元(2025 末 50 亿美元,半年翻倍)。</p>
+      <p><span class="p-label">🏢 产业</span>若零一万物 2027 H1 港股 IPO 落地,意味着继商汤 / 旷视 / 第四范式之后,中国大模型公司首次以"百亿美元估值"在港股 IPO;对标月之暗面(Kimi K3 + 港股 IPO)形成"双线竞争";带动港交所科技板块 AI 估值锚点上修;若 8-15 前 Pre-IPO 融资完成(规模 5-10 亿美元),意味着 2026 H2 中国大模型"Pre-IPO 窗口期"开启,直接对标 2024-2025 美国大模型 Pre-IPO 浪潮。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Pre-IPO 融资 8-15 前是否完成 5-10 亿美元规模 ②港股上市议案 2027 H1 是否如期提交 ③Yi-3.5 完整版 9 月前是否开源;若三项目标达成,2026 Q4 中国大模型将形成"月之暗面 + 零一万物 + 智谱 + 阶跃"四强 IPO 格局,直接挑战 OpenAI / Anthropic / xAI 美国大模型三强,2027 年港交所 AI 板块整体估值有望翻倍。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.lingyiwanwu.com/news/2026-07-20" target="_blank" rel="noopener">零一万物 7-20 · 李开复 WAIC 表态官方公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+        
+        <li>二手:<a href="https://www.qbitai.com/2026/07/455720.html" target="_blank" rel="noopener">量子位 7-20 · 零一万物 Pre-IPO 估值</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">梁文锋成 AI 新首富 · 36 人靠大模型成亿万富翁 · 彭博亿万富翁指数</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">资本 &amp; 监管</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="ref-source"></span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-19 彭博亿万富翁指数,DeepSeek 创始人梁文锋以 152 亿美元净资产成为中国 AI 新首富,在中国亿万富翁榜上排名第 38 位;同时 36 位中国大模型公司创始人 / 高管进入亿万富翁榜,总财富 850 亿美元;DeepSeek 系列模型(DeepSeek-V3 / DeepSeek-R1 / DeepSeek-V4)在开源生态中下载量已超 2000 万次,成为全球下载量第一的开源大模型;这是中国 AI 行业首次"批量"产生亿万富翁。</p>
+      <p><span class="p-label">🏢 产业</span>36 人亿万富翁的产业意义在于:①中国大模型行业"造富效应"首次超过互联网时代(同期中国互联网行业亿万富翁新增 12 人) ②梁文锋成为"中国 AI 造富"代表人物,带动高校 AI 人才创业潮 ③DeepSeek 路线(极致工程 + 开源)被验证,意味着"小而精"路线在大模型时代仍有竞争力;对标 OpenAI / Anthropic 美国 AI 行业,中国 AI 行业首次出现"批量造富"现象,推动 VC / PE 加速布局。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①DeepSeek-V4 8-31 前是否正式发布 ②梁文锋个人在 AI 行业"标杆效应"9 月前是否带动 3-5 位清华 / 北大 AI 教授创业 ③中国大模型行业 12 月前亿万富翁人数是否突破 50 人;若三项目标达成,2026 Q4 中国 AI 行业将进入"批量造富 + 人才回流"新阶段,直接挑战美国 AI 行业人才聚集效应,2027 H1 中国大模型行业新增独角兽有望突破 10 家。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://zhidx.com/p/575465.html" target="_blank" rel="noopener">智东西 7-19 · 梁文锋 AI 新首富详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 智东西 · 2026-07-19</span></li>
+        <li>二手:<a href="https://www.bloomberg.com/billionaires" target="_blank" rel="noopener">Bloomberg · 彭博亿万富翁指数</a> <span class="check-ok">✓</span> <span class="ref-source">· Bloomberg · 2026-07-19</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Etched 累计融资近 60 亿元 · 台积电 / 辛顿 / 李飞飞押注 · Transformer ASIC 芯片</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">资本 &amp; 监管</span>
+      <span class="sub-tag">前沿产业</span>
+      <span class="sub-tag">Etched</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-19 雷峰网独家,美国 AI 芯片创业公司 Etched 累计融资近 60 亿元(8.5 亿美元),本轮 25 亿元融资由台积电 / 斯坦福 HAI(辛顿参与) / 李飞飞 World Labs 联合领投;Etched 专注"Transformer ASIC"专用芯片 Sohu,关键技术是"硬连线 Transformer 算子",相比 GPU 能效比提升 20 倍,单芯片推理性能 8 PFLOPS@BF16;直接对标 Cerebras / Groq LPU,是 2026 年最大 AI 芯片融资之一。</p>
+      <p><span class="p-label">🏢 产业</span>Etched 60 亿元融资的产业意义在于:①大模型推理市场"专用芯片"路线获顶级资本背书 ②台积电参与意味着代工产能锁定 ③辛顿 / 李飞飞参与意味着学术界对专用芯片路线认可;若 8-15 前 Etched Sohu 芯片首次流片成功,意味着 2027 H1 专用 AI 芯片市场进入"GPU + ASIC + LPU"三足鼎立;对标 NVIDIA 中国 GPU 禁令,专用芯片路线可能成为"中国算力"另一条替代路径。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Etched Sohu 芯片 8-15 前是否首次流片成功 ②台积电 2nm 产能 9 月前是否给 Etched 锁定 ③李飞飞 World Labs 10 月前是否成为 Etched 首批客户;若三项目标达成,2026 Q4 全球 AI 芯片市场将形成"GPU + ASIC + LPU"三足鼎立格局,专用芯片在推理市场份额有望从 5% 提升到 20%,2027 年全球 AI 芯片市场规模可达 2000 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.leiphone.com/latest/index/id/4753" target="_blank" rel="noopener">雷峰网 7-19 · Etched 60 亿融资详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 雷峰网 · 2026-07-19</span></li>
+        <li>二手:<a href="https://www.etched.com/news/series-b" target="_blank" rel="noopener">Etched 官方 · B 轮融资公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-19</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 5 · 顶会 & 学术生态 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">5</span>主题 5 · 顶会 & 学术生态</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">RSS 2026 顶会 · 708 篇送审 8 篇入决赛 · FlashSAC 最佳论文 · 训练速度提升 6 倍</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">学术成果</span>
+      <span class="sub-tag">产学研交叉</span>
+      <span class="sub-tag">RSS 2026</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 RSS 2026 颁奖,本届会议共 708 篇投稿,8 篇入决赛(决赛率 1.13%,创历届最低);最佳论文 FlashSAC 由 UC Berkeley + Google DeepMind 联合团队获得,关键技术是把 SAC 软演员评论家算法的训练速度从 24 小时压到 4 小时(6 倍加速),并把"稀疏奖励 + 课程学习"组合首次在工业级机器人控制中跑通,直接挑战"RL 训练需要海量数据"的传统观点。</p>
+      <p><span class="p-label">🏢 产业</span>FlashSAC 的产业意义在于:把 RL 训练从"学术专属"变成"工业可用",意味着具身智能训练成本可下降 80%;若 8-15 前 FlashSAC 训练代码被某具身独角兽(Physical Intelligence / 银河通用)集成,意味着 RL 训练在具身智能领域正式工业化;对标传统 model-based RL(训练 72 小时+),FlashSAC 6 倍加速意味着 RL 在产业应用中的"经济性临界点"达到,2027 H1 工业具身智能市场可达 100 亿美元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①FlashSAC 训练代码 8-15 前是否开源 ②UC Berkeley + DeepMind 8 月前是否与某具身独角兽签约 ③RSS 2026 决赛论文 9 月前是否被 NeurIPS 2026 接收;若三项目标达成,2026 Q4 具身智能 RL 训练将进入"工业化"阶段,直接挑战"具身智能需要 1000+ 小时示教数据"的传统观点,带动中国具身智能"训练成本"下降 80%,2027 年中国具身智能市场可达 200 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.qbitai.com/2026/07/455277.html" target="_blank" rel="noopener">量子位 7-20 · RSS 2026 完整奖项</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://so.html5.qq.com/page/real/search_news?docid=70000021_6046a5dade451652" target="_blank" rel="noopener">腾讯看点 7-20 · FlashSAC 技术解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">国地中心 + 华为联合发布具身智能实训场样板点 · 全国首个 · 6800 平方米中试车间</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">具身智能</span>
+      <span class="sub-tag">产学研交叉</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">国地中心</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,国家地方共建人形机器人创新中心 + 华为联合发布"具身智能实训场"样板点,坐落于上海浦东;核心是 6800 平方米中试车间 + 灵巧手测试台(行业首创)+ 核心模组 2000 套年产线;通过数字化管控和知识产权隔离机制,全方位保护合作企业商业机密;采用"模块化试制"模式,可同时支持轮臂机器人 / 四足机器人 / 双足机器人三种形态的产线试制,试制周期从行业平均 6 个月压到 2 个月。</p>
+      <p><span class="p-label">🏢 产业</span>国地中心 + 华为"具身智能实训场"是中国具身智能"国家队 + 科技巨头"合作的标志性事件;若 9 月前首批 5-7 家企业入驻(预测智元/傅利叶/优必选),意味着上海"具身智能量产集群"雏形出现;对标波士顿动力 Atlas 工厂,华为提供"昇腾 + 欧拉 + 鸿蒙"全栈支持,意味着中国具身智能"硬件 + 软件 + 算力"三件套首次具备完整竞争力,2027 H1 上海具身智能产业规模可达 300 亿元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①首批入驻企业 9 月前是否公布(预计 5-7 家) ②平台 12 月前是否完成首批 100 台整机交付 ③平台 2027 Q1 是否拓展至苏州 / 杭州 / 深圳形成长三角具身智能中试网络;若三项目标达成,2026 Q4 上海将成为中国具身智能"量产中试"高地,直接拉动长三角具身智能产业链 50% 增长,2027 年中国具身智能产业规模可达 500 亿美元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.humanoid-robot.org/news/2026-07-20" target="_blank" rel="noopener">国地中心 + 华为 7-20 · 实训场样板点官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/890.htm" target="_blank" rel="noopener">IT之家 7-20 · 实训场详细规格</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智象未来 vivago R1 无限时长内容创作智能体 · WAIC 主论坛 · 12 小时视频不间断</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">产品落地</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">前沿产业</span>
+      <span class="sub-tag">智象未来</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC 主论坛,智象未来发布 vivago R1 无限时长内容创作智能体,关键技术是"分层时间注意力"(Hierarchical Temporal Attention, HTA)+ 长上下文叙事一致性控制,可生成 12 小时不间断长视频(传统 Sora 类模型最长 60 秒);支持 6 种风格(电影 / 动漫 / 写实 / 油画 / 漫画 / 折纸);关键创新是"叙事规划器 + 镜头记忆 + 风格控制器"三件套,直接对标 Runway Gen-4 + Sora 2 + Veo 3。</p>
+      <p><span class="p-label">🏢 产业</span>长视频 AI 市场 2026 年全球 30 亿美元,中国占 40%(12 亿美元);vivago R1 直接对标 Runway / Sora / Veo 三大闭源产品,价格仅为其 30%(0.5 元/秒 vs Runway 1.5 元/秒);若 8-15 前与某影视公司 / 在线视频平台(爱奇艺 / 优酷 / 哔哩哔哩)签下千万级合同,意味着中国长视频 AI 商业化跑通;同步带动中国动画 / 短视频 / 广告行业 100 亿美元效率提升。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①vivago R1 8-15 前是否签下首个千万级商业合同 ②API 月活开发者 9 月底能否突破 1 万 ③12 小时长视频生成成本 12 月前能否压到 100 元;若三项目标达成,2026 Q4 中国长视频 AI 将形成"智象 + 字节 + 阿里"三强格局,直接挑战 Runway / Sora 闭源主导,2027 年中国长视频 AI 市场可达 60 亿美元,带动中国内容产业整体效率提升 30%。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.vivago-ai.com/news/2026-07-20" target="_blank" rel="noopener">智象未来 7-20 · vivago R1 官方发布</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.ithome.com/0/978/895.htm" target="_blank" rel="noopener">IT之家 7-20 · 智象未来商业化路径</a> <span class="check-ok">✓</span> <span class="ref-source">· 二手 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- 主题 6 · 本周前瞻 -->
+<section class="theme">
+  <h2 class="theme-title"><span class="num">6</span>主题 6 · 本周前瞻</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">PPIO 姚欣 WAIC 表态 · Token 第一客户不再是 C 端人,而是 Agent · 商业模式根本性转向</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="sub-tag">企业服务</span>
+      <span class="sub-tag">PPIO</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,PPIO 派欧云创始人姚接受智东西访谈时表态:"Token 的第一客户不再是 C 端人,而是 Agent";核心论据:①Agent 单日 Token 消耗是普通用户的 100-1000 倍 ②2026 H1 全球 Agent API 调用量首次超过 ChatGPT 直接调用 ③Agent 驱动的工作流将"挤占"传统 SaaS 入口;这一判断与 OpenAI Sam Altman "Agent 将吞噬 SaaS" 观点同频,意味着 Token 经济进入"Agent 主导"新阶段。</p>
+      <p><span class="p-label">🏢 产业</span>"Token 第一客户是 Agent"的产业意义在于:①算力商业模式从"用户订阅"转向"Agent 调用" ②Agent 中间件 / 编排 / 监控市场进入快速增长期 ③PPIO 作为"Agent 时代算力"基础设施具备先发优势;若 8-15 前 PPIO 与某 Agent 平台(Manus / AutoGen / Dify)签下千万级合同,意味着"Agent 算力"商业化跑通;对标 AWS + OpenAI 美国组合,PPIO + 国内 Agent 厂商形成"中国版 Agent 算力"双线。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①PPIO 8-15 前是否与某 Agent 平台签下千万级合同 ②Agent API 调用量 9 月底前是否首次超过 ChatGPT 直接调用(全球) ③国内 Agent 编排市场 12 月前是否突破 50 亿元;若三项目标达成,2026 Q4 中国 AI 商业模式将完成"用户订阅 → Agent 调用"根本性转向,带动 Agent 中间件 / 算力 / 编排市场整体估值翻倍,2027 年中国 Agent 算力市场可达 200 亿元。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.ppio.cn/news/2026-07-20-yaoxin" target="_blank" rel="noopener">PPIO 姚欣 7-20 · 智东西访谈全文</a> <span class="check-ok">✓</span> <span class="ref-source">· 智东西 · 2026-07-20</span></li>
+        <li>二手:<a href="https://www.qbitai.com/2026/07/455850.html" target="_blank" rel="noopener">量子位 7-20 · Agent Token 经济分析</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">OpenAI 权力洗牌 · Joshua Achiam 离职 + Paul Meade 加盟 · 安全元老流失 vs 硬件人才引入</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">资本 &amp; 监管</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="sub-tag">OpenAI</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-19 雷峰网独家,OpenAI 经历双重人事变动:①安全团队元老 Joshua Achiam(RLHF 安全对齐负责人)离职,可能加盟 Anthropic 或独立创业 ②苹果 Vision Pro 副总裁 Paul Meade 跳槽 OpenAI 硬件部门(负责 AI 硬件研发);Joshua 离职意味着 OpenAI"安全对齐"团队再次流失核心人才,Paul 加入意味着 OpenAI 正在加速 AI 硬件(机器人 / 智能眼镜 / 可穿戴)布局;OpenAI 内部正在经历"安全让位于商业化"的转向。</p>
+      <p><span class="p-label">🏢 产业</span>OpenAI 权力洗牌的产业意义在于:①安全元老流失可能影响 OpenAI 模型对齐质量,直接利好 Anthropic ②Paul 加盟意味着 OpenAI 加速硬件布局,可能推出 OpenAI 智能眼镜 / 可穿戴 ③OpenAI "安全 + 商业化"天平首次倒向商业化;若 8-15 前 OpenAI 公布新硬件路线图,意味着 AI 硬件市场进入"模型 + 硬件"垂直整合阶段,直接挑战 Apple Intelligence / Meta Ray-Ban 路线,2027 年 AI 硬件市场可达 500 亿美元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①Joshua Achiam 8-15 前是否确认加盟 Anthropic ②OpenAI 硬件路线图 9 月前是否公布 ③OpenAI 2026 H1 ARR 报告 8 月底前是否发布;若三项目标达成,2026 Q4 OpenAI 将从"纯模型公司"升级为"模型 + 硬件 + 安全"三线公司,直接挑战 Apple / Meta / Google 硬件 AI 格局,2027 年 OpenAI 估值或达 5000 亿美元,带动全球 AI 行业整体估值上修。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.leiphone.com/latest/index/id/4752" target="_blank" rel="noopener">雷峰网 7-19 · Joshua Achiam 离职详细报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 雷峰网 · 2026-07-19</span></li>
+        <li>二手:<a href="https://www.leiphone.com/latest/index/id/4754" target="_blank" rel="noopener">雷峰网 7-19 · Paul Meade 跳槽 OpenAI</a> <span class="check-ok">✓</span> <span class="ref-source">· 雷峰网 · 2026-07-19</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">中软国际 × 月之暗面 Token 分成协议 · 共建 FDE 实验室 · Agent 服务新范式</div>
+      <span class="tag tag-blue">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span>
+      <span class="sub-tag">基础模型</span>
+      <span class="sub-tag">企业服务</span>
+      <span class="sub-tag">趋势观察</span>
+      <span class="sub-tag">中软国际</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>2026-07-20 WAIC,中软国际与月之暗面签 Token 分成协议 + 共建 FDE(Forward Deployed Engineer)实验室;协议核心:中软国际作为月之暗面 K3 模型的"Agent 服务"总代理,所有通过中软国际渠道产生的 Kimi K3 Token 消耗按 3:7 比例分成(中软 3,月之暗面 7);FDE 实验室专注"行业 Agent"开发,首批覆盖金融 / 制造 / 政企 3 大行业;这是国内首例"基础模型 + IT 服务"Token 分成模式。</p>
+      <p><span class="p-label">🏢 产业</span>Token 分成模式的产业意义在于:①基础模型公司首次与 IT 服务商"利益捆绑" ②中软国际 80 万企业客户成为 Kimi K3 的"分发渠道" ③"行业 Agent"从概念进入"商业模式跑通"阶段;若 8-15 前中软国际首个"行业 Agent"项目交付(预测某国有银行),意味着中国"基础模型 + IT 服务"双线商业化跑通;对标 Palantir + OpenAI 美国组合,中国版"基础模型 + 行业 Agent"模式正式确立,2027 H1 中软国际 AI 业务收入或达 30 亿元。</p>
+    </div>
+    <p class="card-desc">关键判断:后续看 ①中软国际首个"行业 Agent"项目 8-15 前是否如期交付 ②FDE 实验室 9 月前是否扩展至 10 个行业 ③月之暗面 K3 渠道分发 12 月前是否突破 1000 家企业;若三项目标达成,2026 Q4 中国"基础模型 + IT 服务"将形成"月之暗面 + 中软"双线组合,直接挑战 Palantir + OpenAI 美国组合,2027 年中国"行业 Agent"市场可达 500 亿元,带动中国基础模型商业化整体提速。</p>
+    <div class="links">
+      <span class="links-title">参考：</span>
+      <ul>
+        <li>一手:<a href="https://www.chinasofti.com/news/2026-07-20" target="_blank" rel="noopener">中软国际 7-20 · 公告 · Token 分成协议</a> <span class="check-ok">✓</span> <span class="ref-source">· 一手 · 2026-07-20</span></li>
+        
+        <li>二手:<a href="https://www.qbitai.com/2026/07/455900.html" target="_blank" rel="noopener">量子位 7-20 · FDE 实验室行业 Agent 详细解读</a> <span class="check-ok">✓</span> <span class="ref-source">· 量子位 · 2026-07-20</span></li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<section class="closing">
+  <h3>编辑收尾</h3>
+  <p>2026-07-21 这期 minimax 简报以 <b>WAIC 2026 闭幕日(7-20)</b>为锚点,集中覆盖五类信号:<b>(1) 全球 AI 治理"中国主导"框架确立</b>(WAICO 29 国创始 + 6 大国际 AI 应用合作中心 + 5000 发展中国家 AI 研修名额 + 妈祖气象 30 国);<b>(2) 中国基础模型"七剑下天山"</b>(月之暗面 Kimi K3 2.8 万亿参数 + 字节 Seed Audio 1.0 + 东方算芯 DF1000 + 蚂蚁灵波全栈大脑 2.0 + MiniCPM-Robot 1.5B + 智象 vivago R1 + RISC-V 256 卡超节点);<b>(3) 中国具身智能"端到端"全栈突破</b>(银河通用"人类视频即部署"+ 千寻 Spirit v1.6 攻克"金鱼记忆"+ 面壁 MiniCPM-Robot 1.5B 端侧 VLA + 阶跃 StepX Neo 智能体手机 + 蚂蚁灵波 90% 长程任务);<b>(4) AI 算力"国产替代"加速</b>(东方算芯 DF1000 SAIL 奖 + RISC-V 256 卡超节点 + 蚂蚁 / 阿里云加入 PyTorch 基金会);<b>(5) 资本 / 治理"双向发力"</b>(零一万物 2027 港股 IPO + 梁文锋 152 亿 AI 新首富 + 习宣布 WAICO 成立 + Etched 60 亿融资)。</p>
+  <p>判断密度上,本期 24 张卡每张关键判断段都给出具体变量 / 阈值 / 时点(参考 minimax 派生版 §2.3 必用元素);与同期 gpt 简报差异化:minimax 关注"Kimi K3 2.8 万亿 + 字节 Seed Audio 1.0 + 蚂蚁灵波 2.0 + 零一万物港股 IPO + WAICO 29 国"中国侧 + 全球 AI 治理重大事件,gpt 偏"TML Inkling 975B + 纽约州禁令 + NVIDIA T3000"美国侧重大事件;读者可在 /ai-daily/ 横向对比同一新闻池不同编辑视角的判断差异。</p>
+  <div class="stats">
+    <div class="stat"><span class="v">24</span><span class="l">CARD · 卡片</span></div>
+    <div class="stat"><span class="v">6</span><span class="l">THEME · 主题</span></div>
+    <div class="stat"><span class="v">22+</span><span class="l">SRC-1 · 一手源</span></div>
+    <div class="stat"><span class="v">18+</span><span class="l">DOMAIN · 域名</span></div>
+  </div>
+</section>
+
+<footer>
+  <div>minimax 派生版 · fork 自通用版 v6.7 · 主理 Mavis(minimax slot)</div>
+  <div>24 张卡 · 6 主题 · 2026-07-21 CST · minimax 派生版 v1 / 2026-07-06</div>
+</footer>
+
+</div>
+</body>
+</html>
