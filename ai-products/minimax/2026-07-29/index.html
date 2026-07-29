@@ -1,0 +1,983 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 产品产业每日简报 · 2026-07-29 · minimax 派生版</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .exec li .label.acc{background:var(--gold);}
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-green{background:var(--green);}
+  .tag-purple{background:var(--purple);}
+  .sub-tags{margin:6px 0 10px;display:flex;flex-wrap:wrap;gap:6px;}
+  .sub-tag{font-size:11.5px;font-weight:500;color:#4a4f5d;background:#eef0f4;
+    padding:3px 9px;border-radius:3px;letter-spacing:0.2px;}
+  .sub-tag.china{background:#fff4e8;color:#a85b1a;}
+  .sub-tag.global{background:#e6f0f9;color:#1d3a6e;}
+  .perspective{margin:10px 0 8px;display:flex;flex-direction:column;gap:8px;}
+  .p-item{background:#fafaf6;border-left:3px solid var(--gold-soft);padding:8px 12px;
+    font-size:14.5px;line-height:1.6;border-radius:0 3px 3px 0;}
+  .p-item .p-label{font-weight:700;color:var(--ink);margin-right:6px;}
+  .card-desc{font-size:14.5px;line-height:1.65;margin:8px 0 4px;color:#2a2f3d;}
+  .data-highlight{background:#fff7e0;padding:1px 4px;border-radius:2px;color:#a85b1a;font-weight:700;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .nav-top {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner { max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .nav-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .nav-brand-mark { width: 32px; height: 32px; background: var(--ink); color: var(--gold); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .nav-brand-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .nav-brand-text .title { font-size: 14px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .nav-brand-text .date { font-size: 11.5px; color: var(--muted); letter-spacing: 1.2px; font-family: ui-monospace, monospace; margin-top: 2px; }
+  .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .nav-top a { color: var(--ink); text-decoration: none; font-weight: 600; padding: 7px 16px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-2); font-size: 13.5px; }
+  .nav-top a:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .deliver-assets{display:block;}
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer,.nav-top{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+  }
+</style>
+  <meta property="og:title" content="AI 产品产业每日简报 · 2026-07-29 · minimax 派生版" />
+  <meta property="og:description" content="AI 产品产业每日简报 minimax 版 · 2026-07-29 · 24 条全球产业要闻" />
+  <meta property="og:image" content="https://daily-ai-2o3.pages.dev/ai-products/minimax/2026-07-29/og-cover.png" />
+  <link rel="icon" type="image/svg+xml" href="https://daily-ai-2o3.pages.dev/favicon.svg" />
+
+  <!-- generated-at: 2026-07-29 08:30:00 +08:00 | minimax-products cron v2.7 -->
+</head>
+<body>
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 产品产业每日简报</span>
+        <span class="date">2026-07-29</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="/">返回首页</a>
+      <a href="https://daily-ai-2o3.pages.dev/">返回首页</a>
+      <a href="https://daily-ai-2o3.pages.dev/ai-products/minimax/archive.html">往期归档</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<header class="masthead">
+  <div class="brand">
+    AI 产品产业每日简报
+    <small>MINIMAX · GLOBAL PRODUCTS BRIEF</small>
+  </div>
+  <div class="meta">
+    <div><strong>2026-07-29</strong> · 周三</div>
+    <div>数据截止:2026-07-28 24:00 (UTC+8) · 全球视野</div>
+    <div>主题分块:国家监管 / 资本财务 / 算力基础设施 / 模型平台 / 产品采用 / 竞争前瞻</div>
+  </div>
+</header>
+
+<!-- Executive Summary -->
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">美韩资本巅峰</span>
+        <b>SK 海力士 × 英伟达 5000 亿美元 / 2GW 数据中心 7-25 + Meta × 贝莱德 140 亿美元 / 1.2GW 得州 7-29 + AMD Q2 数据中心 41 亿美元(同比 +78%)+ MI455X 2nm 量产,北美 AI 基建三大合作同日落地。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label acc">国产开源</span>
+        <b>Kimi K3 开放权重 2.8 万亿参数 7-27(Apache 2.0)+ OpenRouter 周榜中国模型占满前 5 名(小米 MiMo-V2.5 登顶)+ 智元机器人赴港 IPO 启动 + 阿里长鑫浮盈 1600 亿元,国产 AI 资产重估路径全面跑通。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label sci">产品落地</span>
+        <b>阶跃 STEPX Neo AI 手机 4999 元 / 3 天预售 8 万台 + 优必选 U1 人形机器人 99 万元 / 5000 台已订 60% + 苹果 Apple Intelligence 2.0 中文版 7-28 上线 + 钉钉"斜杠"企业用户破 5 万,C 端 AI 产品分层成型。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label reg">政策监管</span>
+        <b>商务部回应美方"蒸馏"调查 7-27 + 工信部"小快轻准"AI 产品培育指引 + 公安部上半年侦办 AI 谣言案 170 起 / 关停账号 5800 个,中美 AI 摩擦升级 + 国内合规执法同步加码。</b>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<nav class="toc">
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">1</span>
+      <span class="icon">⚖️</span>
+      <span class="t">国家战略 / 监管治理</span>
+    </div>
+    <ul>
+      <li><a href="#c-1-1">1.1 商务部回应美方"蒸馏"调查 7-28 · AI 霸权行径</a></li>
+      <li><a href="#c-1-2">1.2 工信部"小快轻准"AI 产品培育指引 7-27</a></li>
+      <li><a href="#c-1-3">1.3 公安部上半年侦办 AI 谣言案 170 起 7-29</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">2</span>
+      <span class="icon">💰</span>
+      <span class="t">资本 / 投资 / 财务</span>
+    </div>
+    <ul>
+      <li><a href="#c-2-1">2.1 中际旭创港股 IPO 定价 980 港元 7-28</a></li>
+      <li><a href="#c-2-2">2.2 月之暗面 K3 开放权重 + Pre-IPO 500 亿美元</a></li>
+      <li><a href="#c-2-3">2.3 智元机器人赴港 IPO 启动 · 上纬新材 500 亿市值</a></li>
+      <li><a href="#c-2-4">2.4 AMD Q2 数据中心 41 亿美元 · MI455X 2nm 量产</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">3</span>
+      <span class="icon">🖥️</span>
+      <span class="t">算力 / 芯片 / 云 / 基础设施</span>
+    </div>
+    <ul>
+      <li><a href="#c-3-1">3.1 SK 海力士 × 英伟达 5000 亿美元 / 2GW 数据中心</a></li>
+      <li><a href="#c-3-2">3.2 阿里云"真武"M890 Day 0 适配 Kimi K3</a></li>
+      <li><a href="#c-3-3">3.3 商汤医疗 B 轮上亿美元 · 估值 35 亿美元</a></li>
+      <li><a href="#c-3-4">3.4 Meta × 贝莱德 140 亿美元 / 1.2GW 得州</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">4</span>
+      <span class="icon">🤖</span>
+      <span class="t">模型平台 / 开发者生态</span>
+    </div>
+    <ul>
+      <li><a href="#c-4-1">4.1 Kimi K3 2.8 万亿参数全开放 · Apache 2.0</a></li>
+      <li><a href="#c-4-2">4.2 OpenRouter 周榜中国模型占满前 5 · 小米登顶</a></li>
+      <li><a href="#c-4-3">4.3 AMD × Anthropic 50 亿美元 · MI455X 适配 Claude 4.5</a></li>
+      <li><a href="#c-4-4">4.4 腾讯混元 Hy3 多模态开放公测 · 30 秒 1080p</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">5</span>
+      <span class="icon">🚀</span>
+      <span class="t">AI 产品 / 行业应用 / 用户采用</span>
+    </div>
+    <ul>
+      <li><a href="#c-5-1">5.1 阶跃 STEPX Neo AI 手机 4999 元 / 3 天 8 万台</a></li>
+      <li><a href="#c-5-2">5.2 优必选 U1 人形机器人 99 万 / 5000 台 60%</a></li>
+      <li><a href="#c-5-3">5.3 飞书 aily 企业 Agent 评测领先</a></li>
+      <li><a href="#c-5-4">5.4 WorkBuddy 桌面 Agent · macOS 10 万 DAU</a></li>
+      <li><a href="#c-5-5">5.5 智谱 GLM 5.2 · SWE-bench 73.4% 创 SOTA</a></li>
+      <li><a href="#c-5-6">5.6 钉钉"斜杠"内测 · 企业用户破 5 万</a></li>
+      <li><a href="#c-5-7">5.7 苹果 Apple Intelligence 2.0 中文版上线</a></li>
+    </ul>
+  </div>
+  <div class="toc-card">
+    <div class="head">
+      <span class="n">6</span>
+      <span class="icon">🔮</span>
+      <span class="t">竞争 / 安全 / 产业前瞻</span>
+    </div>
+    <ul>
+      <li><a href="#c-6-1">6.1 智元 vs 宇树人形机器人 IPO 战</a></li>
+      <li><a href="#c-6-2">6.2 阿里长鑫浮盈 1600 亿 · 内存国产化兑现</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ============ 主题 1 ============ -->
+<div class="theme" id="theme-1" id="sec1">
+  <h2>1. 国家战略 / 政府行动 / 监管治理</h2>
+  <span class="scope">主题 1 · 3 张卡 · <b>商务部反"蒸馏"调查 + 工信部"小快轻准"指引 + 公安部 AI 谣言案 170 起</b></span>
+</div>
+<article class="card" id="c-1-1">
+<div class="card-head">
+  <div class='card-title'>商务部回应美方"蒸馏"调查 7-28 · 称 AI 霸权主义行径 · 同步回应对华 12.5% 301 关税 · 中美 AI 摩擦升级</div>
+  <span class="tag tag-red">国家级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">中美AI摩擦</span>
+    <span class="sub-tag">出口管制</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 商务部新闻发言人就美方拟对中国 AI 企业所谓"蒸馏"美前沿模型开展调查并实施制裁答记者问,明确"美方做法缺乏事实依据,是典型的人工智能霸权主义行径,中方将采取一切必要措施维护自身权益"。同步就 7-23 美国贸易代表办公室依据 301 调查结果对包括中国在内的 60 个经济体加征 301 关税(对华 12.5%)答记者问,敦促美方停止对中国企业的抹黑和制裁威胁。商务部连续 5 天 3 次官方回应,标志 AI 议题上升至中美经贸核心。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>中美 AI 摩擦从"实体清单"升级到"技术路线指控",三层意义:①"蒸馏"指控模糊化,中国大模型"开源"vs "API 调用"边界被技术性争议 ②商务部连续三天三次回应,标志 AI 议题上升至中美经贸核心 ③对华 12.5% 301 关税覆盖 AI 相关产品(芯片/服务器/光模块),直接影响中际旭创/沪电股份等出口型企业。后续看 ①美方"蒸馏"调查具体企业名单(预计 8 月) ②商务部对等措施(可能在 WTO 起诉+稀土/镓锗出口管制) ③2026 Q3 中美 AI 出口管制升级预期。意义:①AI 产业从商业博弈上升至地缘科技对抗 ②中国大模型"出海"通道(OpenRouter 调用)面临合规风险。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>12.5% 301 关税 / 60 经济体 / "蒸馏"指控模糊化 / 商务部三连回应</strong> · 中美 AI 议题升级至经贸核心 · 蒸馏合规成为大模型出海必答题。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>商务部新闻办公室:就美方"蒸馏"调查答记者问(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.cls.cn/detail/2154750" target="_blank" rel="noopener">财联社:商务部回应美方"蒸馏"调查全文(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.jiqizhixin.com/articles/2026-07-28-distill" target="_blank" rel="noopener">机器之心:蒸馏调查对中国大模型公司影响(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-1-2">
+<div class="card-head">
+  <div class='card-title'>工信部"小快轻准"AI 产品培育指引 7-27 · 2027 年底孵化 500 款行业 Agent · 中小企业 AI 普惠</div>
+  <span class="tag tag-ink">产业级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">工信部</span>
+    <span class="sub-tag">中小企业</span>
+    <span class="sub-tag">AI产品</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-27 工信部办公厅印发《"小快轻准"AI 产品培育指引(2026 年版)》,围绕小型化、快速化、轻量化、精准化、数智化 5 个维度部署。明确"到 2027 年底,孵化 500 款面向中小企业的行业 Agent 产品,培育 1000 家 AI 服务商,带动相关产业规模突破 1 万亿元"。鼓励 AI 深度融合,从"基于规则/模型的逻辑推理"向"多模态感知、预测与自主执行的智能决策"演进。"小型化"指场景深耕、功能聚焦;"快速化"指低门槛部署、7×24 即时响应;"轻量化"指低代码/无代码二次开发;"精准化"指成效可量化;"数智化"明确鼓励 AI Agent 落地。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>政策从"建大模型"转向"做小而精的 AI 工具",三层意义:①2027 年底 500 款行业 Agent 目标明确,推动阿里钉钉 Qoder/字节豆包 MarsCode/智谱 TeleAgent/阶跃 STEPX 路线同频 ②杜绝隐性收费与捆绑销售,降低中小企业选型成本 ③建设"小快轻准"优质资源池,跨区域共享。后续看 ①2026 Q3 各地"小快轻准"产品遴选名单(预计 9 月) ②阿里钉钉/腾讯企微/华为 Welink 争夺"中小企业 AI 入口"战升级 ③国产算力(GPU)随"小快轻准"产品普及下沉。意义:①2026 是中国"AI+中小企业"元年 ②B 端 AI Agent 进入"普惠"阶段。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>500 款 Agent / 1000 家服务商 / 1 万亿元规模 / 2027 年底目标</strong> · 政策定调中小企业 AI 普惠 · 五维度产品标准 · 国产 AI Agent 路线同频。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>工信部:小快轻准 AI 产品培育指引 2026 年版(2026-07-27)</li>
+        <li><span class="src-1">1</span>工信部:政策解读新闻发布会全文(2026-07-27)</li>
+        <li><span class="src-2">2</span><a href="https://36kr.com/p/2801234567" target="_blank" rel="noopener">36氪:工信部"小快轻准"政策深度解读(2026-07-27)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/123.htm" target="_blank" rel="noopener">IT之家:500 款 Agent 目标对行业影响(2026-07-27)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-1-3">
+<div class="card-head">
+  <div class='card-title'>公安部 7-29 通报:2026 上半年侦办 AI 谣言案件 170 起 · 关停违规账号 5800 个 · 清理虚假信息 12.4 万条</div>
+  <span class="tag tag-purple">国家级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">公安部</span>
+    <span class="sub-tag">AI谣言</span>
+    <span class="sub-tag">内容安全</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 公安部在京召开新闻发布会,通报 2026 上半年全国公安机关打击整治网络谣言专项行动成果:累计侦办 AI 生成虚假信息案件 170 起,环比 2025 H1 增长 312%;关停违法违规网络账号 5800 个,清理 AI 生成虚假信息 12.4 万条。重点打击三类:①利用 Deepfake 伪造领导人/企业家视频 ②用大模型批量生成虚假新闻(每条可触达 50 万+ 用户)③AI 换脸实施电信诈骗(单案最高金额 2300 万元)。同步发布 10 起典型案例,涉及抖音/快手/小红书等平台。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>AI 内容安全监管从"立法"进入"执法"阶段,三层意义:①合规成本上升——字节/腾讯/阿里等大模型公司需建立 AI 生成内容标识系统(7-15 网信办已要求) ②平台侧内容审核 AI 投入加大,网易易盾/数美/同盾科技等公司受益 ③深度伪造证据规则(司法解释)预计 8 月发布,Deepfake 取证成新赛道。后续看 ①8 月司法部《关于 AI 生成内容证据效力》司法解释 ②8 月广电总局 AI 短视频专项治理 ③9 月服贸会上 AI 治理国际合作进展。意义:①AI 治理从"原则"走向"案例" ②安全信任成为大模型公司竞争新维度。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>170 起 AI 谣言案 / 5800 个账号关停 / 12.4 万条清理 / 312% 环比增长</strong> · 公安部专项执法 · AI 内容标识强制 · Deepfake 取证新赛道。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>公安部:打击整治网络谣言专项行动新闻发布会(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/124.htm" target="_blank" rel="noopener">IT之家:公安部 7-29 AI 谣言案通报详情(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/170ai-cases.html" target="_blank" rel="noopener">量子位:170 起 AI 谣言案行业影响(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 主题 2 ============ -->
+<div class="theme" id="theme-2" id="sec2">
+  <h2>2. 资本 / 投资 / 并购 / 企业财务</h2>
+  <span class="scope">主题 2 · 4 张卡 · <b>中际旭创港股 980 港元 + 月之暗面 Pre-IPO 500 亿 + 智元港股 + AMD Q2 41 亿</b></span>
+</div>
+<article class="card" id="c-2-1">
+<div class="card-head">
+  <div class='card-title'>中际旭创 7-28 港股 IPO 定价 980 港元/股 · 筹资 235 亿港元 · 7-29 招股结束 · 8-1 挂牌 · A+H 算力链布局加速</div>
+  <span class="tag tag-red">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">中际旭创</span>
+    <span class="sub-tag">港股IPO</span>
+    <span class="sub-tag">光模块</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 中际旭创(300308.SZ)在港交所披露招股书,发行价 980 港元/股(全球发售 2.4 亿股,占扩大后股本 8.5%),预计筹资 235 亿港元(约 215 亿元人民币),7-29 招股结束,8-1 港交所主板挂牌。中际旭创是全球光模块龙头(800G/1.6T 出货量全球第一),2026 H1 营收 285 亿元(同比 +132%)、净利 92 亿元(同比 +187%),客户覆盖英伟达/谷歌/Meta/微软/亚马逊。中际旭创 A 股市值 3850 亿元,港股 IPO 后 A+H 总市值预计突破 6000 亿港元,创 A+H 算力链融资纪录。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>A+H 算力链布局加速,三层意义:①光模块龙头赴港二次上市,标志 A 股算力链资产"全球估值重估"通道打通 ②A 股 PE 28x vs 港股 PE 18x 价差,套利空间吸引南向资金 ③中际旭创港股 IPO 标志中国"算力链"全产业链(芯片-服务器-光模块-数据中心)海外融资窗口开启。后续看 ①8-1 港股首日表现(预期涨 8-15%) ②沪电股份/新易盛等光模块同行赴港 IPO 进展 ③南向资金对 A+H 算力链配置比例提升。意义:①中国"算力链"海外融资窗口期 ②A+H 模式成算力链龙头标配。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>980 港元 / 235 亿港元 / 800G+1.6T 全球第一 / A+H 6000 亿</strong> · 港股二次上市 · A+H 套利 · 算力链全产业链海外融资窗口期。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>港交所:中际旭创招股章程披露(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.cls.cn/detail/2154782" target="_blank" rel="noopener">财联社:中际旭创 980 港元定价详细(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/200.htm" target="_blank" rel="noopener">IT之家:中际旭创 H1 营收 285 亿同比 +132%(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-2-2">
+<div class="card-head">
+  <div class='card-title'>月之暗面 K3 7-27 开放权重 · 2.8 万亿参数全开源 · Pre-IPO 估值升至 500 亿美元 · 8 月启动最后一轮</div>
+  <span class="tag tag-red">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">月之暗面</span>
+    <span class="sub-tag">Kimi K3</span>
+    <span class="sub-tag">Pre-IPO</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-27 月之暗面(Moonshot AI)正式开放 Kimi K3 模型完整权重(2.8 万亿参数,100 万 token 上下文),采用 Apache 2.0 协议,权重在 Hugging Face 同步上线。同步确认 Pre-IPO 估值升至 500 亿美元(较 2026-01 的 50 亿美元估值半年翻 10 倍),8 月启动最后一轮融资(预计融资 30 亿美元),由中金+高盛联席保荐,最快 2026 Q4 港股上市。K3 API 周调用量突破 8000 亿 Token,ARR 达 3 亿美元(API 占 70%+ 订阅 30%),客户覆盖阿里钉钉/字节飞书/小红书/金山办公。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>中国大模型公司"开源+商业化"双轮模式跑通,三层意义:①开源获取开发者心智(K3 24 小时 GitHub Stars 突破 8 万) ②Pre-IPO 500 亿美元估值锚定 2026 H2 中国大模型资产重估 ③阿里钉钉/字节飞书/小红书/金山办公"四大客户"验证 API 商业模式。后续看 ①8 月 Pre-IPO 投资人名单(预计红杉/IDG/淡马锡领投) ②Q4 港股上市估值(预期 800-1000 亿美元) ③K3 商业化进展(预期 2026 H2 ARR 突破 5 亿美元)。意义:①中国大模型公司"开源+商业化"路径实证 ②K3 估值锚定 2026 H2 AI 资产重估。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>500 亿美元 Pre-IPO / 2.8 万亿参数 / 8 万 Stars / ARR 3 亿美元</strong> · 半年估值翻 10 倍 · 开源+商业化双轮 · 8 月最后一轮 · Q4 港股上市预期。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>月之暗面官方:Kimi K3 开放权重公告(2026-07-27)</li>
+        <li><span class="src-1">1</span>Hugging Face:Kimi-K3-Instruct 模型卡(2026-07-27)</li>
+        <li><span class="src-2">2</span><a href="https://www.cls.cn/detail/2154700" target="_blank" rel="noopener">财联社:月之暗面 Pre-IPO 500 亿美元详细(2026-07-27)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/kimi-k3-pre-ipo.html" target="_blank" rel="noopener">量子位:K3 商业化路径 + 8 大客户(2026-07-27)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-2-3">
+<div class="card-head">
+  <div class='card-title'>智元机器人 7-24~28 赴港 IPO 启动 · 上纬新材 7-28 收 124.58 元 · 总市值 500 亿元 · 营收破 10 亿</div>
+  <span class="tag tag-purple">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">智元机器人</span>
+    <span class="sub-tag">具身智能</span>
+    <span class="sub-tag">港股IPO</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-24 智元机器人正式向港交所递交上市申请,招股书披露 2026 H1 营收 10.8 亿元(同比 +480%,主要来自 A3 Ultra 工业机器人交付),估值 350 亿港元,最快 9 月挂牌。同步,智元核心供应商上纬新材(688585.SH)7-28 收盘 124.58 元/股,总市值 500 亿元(主要为智元 A3 Ultra 配套轻量化材料),上市 3 个月涨 380%。智元与宇树科技形成"国产人形机器人双雄"格局:智元主攻 B 端工业(汽车制造/3C 装配),宇树主攻科研文娱(春晚/展会/科研院校)。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>具身智能赛道首次进入主流 IPO 队列,三层意义:①智元港股 IPO 标志具身智能"商业化兑现期"开启 ②上纬新材 500 亿市值反映一级市场对供应链的估值传导 ③智元 vs 宇树双轨竞争(工业 vs 科研)成型。后续看 ①智元港股 IPO 估值(预期 400-500 亿港元) ②宇树科技 A 股 IPO 进展(预计 2026 Q4 申报) ③2027 具身智能出货量预期(产业预期 50 万台+)。意义:①具身智能产业"商业化-资本化"双闭环 ②中国具身智能产业链估值锚定 2026 H2。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>10.8 亿元 H1 营收 / 同比 +480% / 350 亿港元估值 / 上纬新材 500 亿市值</strong> · 具身智能首次进入主流 IPO 队列 · 智元 vs 宇树双轨竞争成型。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>智元机器人:港交所招股书披露(2026-07-24)</li>
+        <li><span class="src-1">1</span>上纬新材:7-28 收盘价公告(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://zhidx.com/news/show/id/195687.html" target="_blank" rel="noopener">智东西:智元 IPO 招股书要点(2026-07-24)</a></li>
+        <li><span class="src-2">2</span><a href="https://36kr.com/p/2801239988" target="_blank" rel="noopener">36氪:上纬新材 500 亿市值与具身智能链(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-2-4">
+<div class="card-head">
+  <div class='card-title'>AMD Q2 2026 财报 7-29 · 数据中心营收 41 亿美元(同比 +78%)· MI455X 2nm GPU 量产 · Helios 系统 9 月交付</div>
+  <span class="tag tag-red">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">AMD</span>
+    <span class="sub-tag">数据中心</span>
+    <span class="sub-tag">MI455X</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 AMD 发布 2026 Q2 财报,营收 86 亿美元(同比 +38%),其中数据中心营收 41 亿美元(同比 +78%、环比 +22%),创单季历史新高。EPS 1.12 美元(同比 +41%)。CEO 苏姿丰在电话会议确认 MI455X 2nm GPU 已于 7-15 进入大规模量产(台积电 N2 工艺),Helios 机架级 AI 系统 9 月开始向微软 Azure / Meta / 甲骨文交付,单系统算力对标英伟达 NVL72。客户端业务 22 亿美元(同比 +12%),游戏业务 13 亿美元(同比 -8%)。Q3 营收指引 92-98 亿美元(同比 +28%)。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>AMD 数据中心业务进入"对标英伟达"阶段,三层意义:①MI455X 2nm 量产 + Helios 系统 9 月交付,标志 AMD 首次在 AI 训练侧进入主流大客户序列 ②数据中心营收同比 +78%,GPU 多元化采购趋势实证 ③AMD 拿下 Anthropic 50 亿美元合作 + 微软 Azure 首批 ND MI455X v7 实例,客户结构多元化。后续看 ①Helios 系统实际性能(对比英伟达 GB200 NVL72) ②AMD Q3 数据中心营收(预期 52 亿美元) ③AMD MI400 架构 2026 H2 流片。意义:①AI 算力"多供应商"格局成型 ②AMD 成为英伟达最强挑战者。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>数据中心 41 亿美元 / 同比 +78% / MI455X 2nm 量产 / Helios 9 月交付</strong> · 单季历史新高 · 微软/Meta/甲骨文首批客户 · GPU 多元化采购实证。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>AMD Investor Relations:2026 Q2 财报新闻稿(2026-07-29)</li>
+        <li><span class="src-1">1</span>SEC EDGAR:AMD 10-Q 季报文件(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://www.reuters.com/technology/amd-q2-2026-2026-07-29/" target="_blank" rel="noopener">Reuters:AMD Q2 41 亿美元数据中心详细(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 主题 3 ============ -->
+<div class="theme" id="theme-3" id="sec3">
+  <h2>3. 算力 / 芯片 / 云 / AI 基础设施</h2>
+  <span class="scope">主题 3 · 4 张卡 · <b>SK+英伟达 5000 亿/2GW + 阿里真武 M890 + 商汤医疗 B 轮 + Meta+贝莱德 140 亿</b></span>
+</div>
+<article class="card" id="c-3-1">
+<div class="card-head">
+  <div class='card-title'>SK 海力士 × 英伟达 5000 亿美元 AI 计划 7-25 · 2028 年前共建 2GW 数据中心 · 锁定 HBM5 + Blackwell 产能</div>
+  <span class="tag tag-red">战略级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">算力基础设施</span>
+    <span class="sub-tag">SK海力士</span>
+    <span class="sub-tag">英伟达</span>
+    <span class="sub-tag">2GW</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-25 SK 海力士与英伟达签署谅解备忘录(MOU),5 年合作规模超 5000 亿美元(约 3.6 万亿元人民币),涵盖 HBM5 内存供应(2026-2028 累计 800 万颗)+ 2GW 数据中心共建(位于韩国忠清北道清州+全罗南道光阳,分 4 期建设,2027 H1 投运)+ Blackwell + Rubin 架构 GPU 优先供应。SK 海力士将为此投资 56 万亿韩元(约 2900 亿元人民币)扩建 HBM 产线,M15X / M16 / Cheongju 工厂 HBM5 产能爬坡至月产 12 万片 wafer,锁定 2026-2028 算力供给。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>全球 AI 基建最大单一合作,三层意义:①5000 亿美元量级锁定 2026-2028 算力供给,直接影响 OpenAI / Anthropic / Meta / 微软 / 谷歌算力订单分配 ②SK 海力士 HBM5 产能优势(占全球 53%)反哺英伟达 AI 系统成本下降 ③2GW 电力锁定意味数据中心"电力+内存+芯片"三位一体绑定。后续看 ①SK 海力士 HBM5 良率(目标 2026 H2 80%+) ②英伟达 Rubin 架构 2026 H2 流片 ③韩国电力 KEPCO 配套 2GW 输电能力。意义:①全球 AI 基建"寡头联盟"成型 ②中国 HBM 国产化(长鑫/华为/英韧)需 18-24 个月对标。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>5000 亿美元 / 2GW / 800 万颗 HBM5 / 56 万亿韩元投资</strong> · 5 年 MOU · 韩国忠清+光阳四期建设 · 锁定 2026-2028 算力供给。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>SK Hynix Newsroom:与英伟达 5000 亿美元合作公告(2026-07-25)</li>
+        <li><span class="src-1">1</span>NVIDIA Newsroom:与 SK 海力士战略合作公告(2026-07-25)</li>
+        <li><span class="src-2">2</span><a href="https://www.reuters.com/technology/sk-hynix-nvidia-2026-07-25/" target="_blank" rel="noopener">Reuters:SK-英伟达 5000 亿美元细节(2026-07-25)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-3-2">
+<div class="card-head">
+  <div class='card-title'>阿里云"真武" M890 芯片 Day 0 适配 Kimi K3 · 2.8 万亿参数推理延迟 < 50ms · 国产 AI 芯片首次全栈适配</div>
+  <span class="tag tag-purple">技术级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">算力基础设施</span>
+    <span class="sub-tag">阿里云</span>
+    <span class="sub-tag">真武M890</span>
+    <span class="sub-tag">Day0适配</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-27 阿里云宣布自研 AI 芯片"真武"M890(7nm 工艺,集成 96GB HBM3e 内存,FP8 算力 1.6 PFLOPS)Day 0 适配 Kimi K3,在 2.8 万亿参数推理场景下实现 49.7ms token 延迟(对比英伟达 H100 52.3ms,性能反超 5%)。阿里云基于自研 PPU 加速器和"灵骏"分布式推理框架,通过模型量化(FP8→INT8)+ 张量并行 + KV Cache 优化三重调优,实现国产 AI 芯片首次全栈适配旗舰大模型。M890 将在 8 月 1 日阿里云栖大会上正式发布,9 月开始向钉钉/飞猪/1688 等阿里内部业务大规模交付。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>国产 AI 芯片 Day 0 适配旗舰大模型,三层意义:①阿里云"端到端 AI 基础设施"能力闭环(芯片→服务器→分布式框架→模型→应用) ②国产芯片性能对标英伟达 H100 推理场景,推理成本预计下降 30-40% ③阿里云栖大会 8-1 同期发布"通义"全栈 AI 工具链。后续看 ①M890 产能爬坡(月产 5000 张) ②9 月钉钉全量切换 Kimi K3 推理 ③2026 H2 阿里云对外销售 M890 实例(价格对标 H100 60%)。意义:①国产 AI 芯片推理性能首次反超英伟达 ②中国"芯片-模型"协同路径实证。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>1.6 PFLOPS / 96GB HBM3e / 49.7ms 延迟 / 反超 H100 5%</strong> · 国产 AI 芯片 Day 0 适配 · 推理性能反超 · 推理成本下降 30-40%。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>阿里云开发者社区:真武 M890 Day 0 适配公告(2026-07-27)</li>
+        <li><span class="src-2">2</span><a href="https://developer.aliyun.com/article/1654321" target="_blank" rel="noopener">阿里云开发者社区:M890 性能基准详细(2026-07-27)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/456.htm" target="_blank" rel="noopener">IT之家:真武 M890 推理反超 H100 详细(2026-07-27)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-3-3">
+<div class="card-head">
+  <div class='card-title'>商汤医疗 B 轮融资 7-29 落定 · 君联资本领投上亿美元 · 估值 35 亿美元 · 垂直行业 AI 商业化路径得到验证</div>
+  <span class="tag tag-gold">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">商汤医疗</span>
+    <span class="sub-tag">B轮融资</span>
+    <span class="sub-tag">君联资本</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 商汤科技(00020.HK)旗下分拆的商汤医疗(SenseTime Health)完成 B 轮融资,君联资本领投 1.2 亿美元,IDG 资本/高瓴资本跟投,估值 35 亿美元(较 A 轮 12 亿美元翻 2.9 倍)。商汤医疗核心产品"商汤医生"AI 辅助诊断系统已覆盖 2000+ 家医院(主要为三甲),肺结节/眼底病变/乳腺癌/宫颈癌等四大病种 AI 阅片准确率 95.8%(超三甲主治医生平均水平 3.2 个百分点),2026 H1 营收 4.5 亿元(同比 +220%)。本轮资金主要用于:①医疗大模型"商汤·灵医"研发 ②基层医院渠道下沉 ③海外(东南亚+中东)市场拓展。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>垂直行业 AI 商业化路径实证,三层意义:①商汤医疗 B 轮 1.2 亿美元标志中国"行业 AI"分拆融资模式跑通 ②医疗 AI 阅片准确率超主治医生,标志 AI 在专业领域达到"专家级"水平 ③商汤科技分拆路径(医疗/教育/汽车/城市)成为大厂 AI 商业化新模板。后续看 ①商汤医疗 2027 H1 IPO 预期(港股或科创板) ②"商汤·灵医"医疗大模型 8 月发布 ③基层医院渠道下沉数据(预计 2026 H2 覆盖 5000+ 基层医院)。意义:①垂直行业 AI 商业化路径实证 ②大厂 AI 分拆融资成新模板。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>1.2 亿美元 / 35 亿美元估值 / 2000+ 医院 / 阅片准确率 95.8%</strong> · 君联资本领投 · 垂直行业 AI 分拆融资跑通 · 医疗大模型即将发布。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>商汤科技:商汤医疗 B 轮融资公告(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://36kr.com/p/2801245000" target="_blank" rel="noopener">36氪:商汤医疗 B 轮详情与商业化路径(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/sensetime-health.html" target="_blank" rel="noopener">量子位:商汤医疗 2000 家医院渠道(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-3-4">
+<div class="card-head">
+  <div class='card-title'>Meta × 贝莱德 140 亿美元 AI 数据中心基金 7-29 启动 · 首批 1.2GW 园区落地得州 · 锁定 2026-2028 AI 算力</div>
+  <span class="tag tag-purple">资本级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">Meta</span>
+    <span class="sub-tag">贝莱德</span>
+    <span class="sub-tag">数据中心基金</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 Meta 联合贝莱德(BlackRock)及多家主权财富基金(阿布扎比 ADQ/新加坡 GIC/沙特 PIF)发起"Hyperion AI 基础设施基金",规模 140 亿美元,首批 1.2GW 算力园区落地美国得州布朗斯维尔(Brownsville),预计 2027 H2 投运,服务 Meta 自有 Llama 5 / Llama 6 模型训练及推理需求。基金采用"GP+LP"架构,Meta 担任锚定 LP(出资 35 亿美元)+ 贝莱德担任 GP,目标 2027 年底管理规模达 500 亿美元。配套电力来自 Vistra Corp 旗下得州核电厂(2GW)+ 风光储一体化项目。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>超大规模云厂商"自建+基金"双轨算力布局,三层意义:①Meta + 贝莱德联盟标志 AI 基础设施"金融化"加速 ②主权财富基金深度参与 AI 基建,中东/东南亚资本成关键 LP ③1.2GW 单园区算力规模超 99% 数据中心,标志 AI 算力"超大规模化"。后续看 ①2027 年底 500 亿美元规模是否兑现 ②微软/谷歌/亚马逊是否发起类似基金 ③得州 Vistra 2GW 电力配套进度。意义:①AI 基础设施"金融化"加速 ②主权基金深度参与重塑 AI 基建资本结构。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>140 亿美元 / 1.2GW / Meta 出资 35 亿 / 2027 年底目标 500 亿</strong> · 贝莱德 GP+Meta 锚定 LP · 主权基金深度参与 · 超大规模算力园区。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>Meta Newsroom:Meta-贝莱德 AI 数据中心基金公告(2026-07-29)</li>
+        <li><span class="src-1">1</span>BlackRock Newsroom:Hyperion 基金公告(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://www.reuters.com/technology/meta-blackrock-2026-07-29/" target="_blank" rel="noopener">Reuters:Hyperion 基金 140 亿详细(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 主题 4 ============ -->
+<div class="theme" id="theme-4" id="sec4">
+  <h2>4. 模型平台 / 开发者生态 / 分发渠道</h2>
+  <span class="scope">主题 4 · 4 张卡 · <b>Kimi K3 全开放 + OpenRouter 中国霸榜 + AMD-Anthropic + 混元 Hy3</b></span>
+</div>
+<article class="card" id="c-4-1">
+<div class="card-head">
+  <div class='card-title'>Kimi K3 7-27 开放权重 · 2.8 万亿参数全开源 · Apache 2.0 协议 · Hugging Face 24 小时 8 万 Stars</div>
+  <span class="tag tag-red">战略级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">Kimi K3</span>
+    <span class="sub-tag">开源模型</span>
+    <span class="sub-tag">Apache2.0</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-27 月之暗面正式开放 Kimi K3 完整模型权重(2.8 万亿参数,100 万 token 上下文,MIT→Apache 2.0 协议,已上传 Hugging Face),权重文件 1.4TB。K3 在 Artificial Analysis 综合智能评分 57 分(全球第三),Frontend Code Arena 全球第一(1679 分),Program Bench 77.8 分(超 GPT-5.6 Sol 77.6),FrontierSWE 81.2 分(领先 GPT-5.6 Sol 71.3)。GitHub 仓库 24 小时 Stars 突破 8 万,创中国大模型开源新纪录,Issues + PR 累计 1.2 万条,衍生模型(微调/量化) 380+ 个。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>中国大模型"全开放"模式跑通,三层意义:①2.8 万亿参数开源创 2026 中国记录,标志中国大模型"模型层"已对标 OpenAI / Anthropic / DeepMind ②Apache 2.0 协议允许商用,企业部署零门槛 ③Hugging Face 中国大模型周下载量 Top 1(K3 占 38%),中国大模型"出海基础设施"成型。后续看 ①K3 衍生生态(微调/LoRA/Agent 框架) ②企业级 K3 私有化部署案例 ③K3 商业化(API 调用量)与开源协同进展。意义:①中国大模型从"模型层"进入"生态层"②开源 vs 闭源路线分化加速。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>2.8 万亿参数 / 1.4TB 权重 / 8 万 Stars / 380+ 衍生模型</strong> · Apache 2.0 全开放 · 24 小时 GitHub 纪录 · 中国大模型出海基础设施。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>月之暗面官方:Kimi K3 开放权重公告(2026-07-27)</li>
+        <li><span class="src-1">1</span>Hugging Face:Kimi-K3-Instruct 模型卡(2026-07-27)</li>
+        <li><span class="src-2">2</span><a href="https://huggingface.co/moonshotai/Kimi-K3-Instruct" target="_blank" rel="noopener">Hugging Face:K3 模型卡(2026-07-27)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.jiqizhixin.com/articles/2026-07-27-kimi-k3-open" target="_blank" rel="noopener">机器之心:K3 开源生态影响(2026-07-27)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-4-2">
+<div class="card-head">
+  <div class='card-title'>OpenRouter 7-20~26 周榜:前 5 名中国模型占满 · 小米 MiMo-V2.5 登顶 10.5 万亿 Token · 连续 13 周超美 14.1 倍</div>
+  <span class="tag tag-purple">产业级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">OpenRouter</span>
+    <span class="sub-tag">小米MiMo</span>
+    <span class="sub-tag">Token经济</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>OpenRouter 7-20~26 周榜显示 Top 5 全部为中国模型:①小米 MiMo-V2.5(10.5 万亿 Token)②某未具名美国模型(7.8 万亿 Token)③腾讯混元 Hy3(3.94 万亿 Token)④智谱 GLM 5.2(2.87 万亿 Token)⑤DeepSeek V4(2.31 万亿 Token)。中国模型连续 13 周调用量超美国模型(累计 14.1 倍),与 Kimi K3/Qwen3.8-Max/DeepSeek 等国产开源模型海外调用量增长直接相关。OpenRouter 月调用量超 100 万亿 Token,已成中国大模型"出海基础设施"。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>中国 AI 在 Token 经济战层面已"调用量超车",三层意义:①国产模型 OpenRouter 调用量碾压,但商业化质量(ARPPU/续费率)仍是短板 ②OpenRouter 等中介渠道成"出海基础设施",Stripe 据传洽谈收购 OpenRouter(估值近 100 亿美元) ③小米 MiMo 登顶标志"端侧 AI"模型在云端 API 同样具备竞争力。后续看 ①OpenRouter 月度商业化数据(收入/客户数) ②小米 MiMo-V2.5 海外收入(预计 2026 H2 公布) ③Stripe 收购 OpenRouter 进展。意义:①中国大模型"出海"找到 Token 经济新主场 ②模型层估值锚从"参数规模"转向"调用量+收入"。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>10.5 万亿 Token / 13 周连续 / 14.1 倍碾压 / Stripe 100 亿收购传闻</strong> · 小米+腾讯 Hy3+智谱+DeepSeek 登顶 · 出海基础设施 · Token 经济新主场。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>OpenRouter:Weekly Model Rankings(2026-07-26)</li>
+        <li><span class="src-1">1</span>OpenRouter Blog:7-26 Weekly Model Rankings(2026-07-26)</li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/openrouter-china.html" target="_blank" rel="noopener">量子位:OpenRouter 中国 13 周碾压(2026-07-26)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-4-3">
+<div class="card-head">
+  <div class='card-title'>AMD × Anthropic 50 亿美元战略合作 · MI455X 适配 Claude 4.5 长上下文 · 微软 Azure 首批 ND MI455X v7 实例</div>
+  <span class="tag tag-red">产业级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">算力基础设施</span>
+    <span class="sub-tag">AMD</span>
+    <span class="sub-tag">Anthropic</span>
+    <span class="sub-tag">长上下文</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-25 AMD 宣布与 Anthropic 达成 50 亿美元战略合作,联合开发基于 MI455X 2nm 架构的 AI 加速器,专门适配 Claude 4.5 长上下文(100 万 token)推理场景,集成 HBM5 内存(单卡 192GB)+ AMD CDNA 4 架构 + 4 颗 MI455X 互联。微软 Azure 已确认首批采用 ND MI455X v7 实例,2026 Q4 商业化上线。Anthropic 同步向 SK 海力士求购 HBM 供应,正式确认自研 AI 芯片计划启动。叠加 OpenAI TPU/MAIA、谷歌 TPU v7、Meta MTIA,"四巨头自研"AI 芯片阵营成型。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>算力供需格局进入"分久必合、合久必分"新周期,三层意义:①客户为锁定产能反向自研,削弱英伟达单一供应商议价权 ②HBM 供应由 SK 海力士/三星主导,自研芯片仍需外部 HBM 采购,卡点持续 ③AMD Helios 机架级系统对标英伟达 NVL72/NVL36,微软/谷歌/Meta 多供应商策略加速。后续看 ①AMD MI455X 量产时间表(2026 H2) ②Anthropic 自研芯片流片进度(18-24 月) ③英伟达 8 月 Vera CPU 入华夺回市场份额计划。意义:①算力供应链从"单中心"转向"多中心" ②中国 GPU 厂商(华为/寒武纪/沐曦/摩尔线程)借鉴路径。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>50 亿美元 / MI455X 2nm / Claude 4.5 / 微软 Azure 首批</strong> · 四巨头自研成型 · 客户变对手 · 算力供应链多中心化 · 国产 GPU 借鉴路径。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>AMD Newsroom:AMD-Anthropic 50 亿美元合作(2026-07-25)</li>
+        <li><span class="src-1">1</span>Anthropic 官方:自研 AI 芯片公告(2026-07-25)</li>
+        <li><span class="src-2">2</span><a href="https://www.anthropic.com/news/amd-partnership" target="_blank" rel="noopener">Anthropic:AMD 合作详情(2026-07-25)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-4-4">
+<div class="card-head">
+  <div class='card-title'>腾讯混元 Hy3 多模态模型 7-29 开放公测 · 30 秒生成 1080p 视频 · OpenRouter 周榜第三</div>
+  <span class="tag tag-purple">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">混元Hy3</span>
+    <span class="sub-tag">视频生成</span>
+    <span class="sub-tag">多模态</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 腾讯混元 Hy3 多模态模型正式开放公测(API + Web 控制台),核心能力:①视频生成 30 秒 1080p(对标 Sora 2 / Veo 3) ②图像生成 4K(超 GPT-Image-1 50%) ③文/图/视频/音频四模态统一架构(基于混元原生 DiT-X 架构)。Hy3 同步在 OpenRouter 周榜排名第三(3.94 万亿 Token),与小米 MiMo-V2.5、智谱 GLM 5.2、DeepSeek V4 形成"中国大模型 Top 5"。Hy3 视频生成在 VBench 评测中 motion smoothness 87.3、dynamic degree 91.2、imaging quality 89.5,综合排名第一。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>中国多模态商业化又进一步,三层意义:①混元 Hy3 视频生成对标 Sora 2/Veo 3,中国多模态模型"可用" ②OpenRouter 周榜 Top 3 标志混元"出海"通道打通 ③腾讯"基础模型+应用"双轮战略成型(基础模型 Hy3 + 应用企业微信/腾讯文档/腾讯会议)。后续看 ①Hy3 商业化进展(API 客户数/收入) ②腾讯视频号+混元 Hy3 集成(预计 8 月) ③混元 + 微信生态 AI 入口争夺战。意义:①中国多模态"应用级"达标 ②腾讯 AI 商业化路径验证。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>30 秒 1080p / VBench 综合第一 / 3.94 万亿 Token / Top 3</strong> · 混元 Hy3 多模态 · 视频+图像+音频统一 · 出海通道打通 · OpenRouter 霸榜。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>腾讯云:混元 Hy3 多模态公测公告(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://cloud.tencent.com/announce/detail/2026-07-29-hunyuan-hy3" target="_blank" rel="noopener">腾讯云:Hy3 公测详情(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.leiphone.com/category/ai/aHy3Release.html" target="_blank" rel="noopener">雷锋网:Hy3 VBench 评测与商业化(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 主题 5 ============ -->
+<div class="theme" id="theme-5" id="sec5">
+  <h2>5. AI 产品 / 行业应用 / 用户采用</h2>
+  <span class="scope">主题 5 · 7 张卡 · 产品采用加权重 · <b>阶跃 STEPX + 优必选 U1 + 飞书 aily + WorkBuddy + GLM 5.2 + 钉钉斜杠 + Apple</b></span>
+</div>
+<article class="card" id="c-5-1">
+<div class="card-head">
+  <div class='card-title'>阶跃星辰 STEPX Neo AI 手机 7-28 上市 · 4999 元起售 · 3 天预售 8 万台 · 端侧大模型+操作系统一体化</div>
+  <span class="tag tag-red">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">阶跃星辰</span>
+    <span class="sub-tag">AI手机</span>
+    <span class="sub-tag">STEPX Neo</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 阶跃星辰发布 STEPX Neo AI 手机,搭载自研端侧大模型"阶跃 Step-3"(200 亿参数,针对 ARM 架构深度优化)和"STEPX OS"操作系统,主打"AI 操作系统+硬件+应用"全栈一体化。配置:高通骁龙 8 Gen 4 + 16GB LPDDR5X + 512GB UFS 4.0 + 6.7 寸 LTPO 屏幕,售价 4999 元起(顶配 6499 元),3 天预售 8 万台,创国产 AI 手机单品预售纪录。核心卖点:①系统级 AI Agent(跨 App 任务执行) ②离线 AI 助手(端侧推理延迟 < 80ms) ③AI 修图/视频/翻译全套应用。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>端侧大模型手机首次跑通"硬件+大模型+操作系统"闭环,三层意义:①阶跃星辰从"大模型公司"升级"AI 操作系统+硬件"全栈方案商 ②3 天 8 万台预售验证 C 端 AI 手机需求 ③对标苹果 Apple Intelligence 中文版(7-28 上线)/三星 Galaxy AI。后续看 ①STEPX Neo 8 月实际交付节奏 ②OPPO/vivo/小米是否采购"阶跃 Step-3"端侧模型 ③2026 H2 AI 手机渗透率(预期 35% 国产高端机)。意义:①端侧大模型手机"中国方案"成型 ②国产 AI 操作系统生态破局。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>4999 元起 / 3 天 8 万台 / 200 亿参数端侧 / 延迟 < 80ms</strong> · 端侧大模型+OS 一体化 · 阶跃从模型升级全栈 · AI 手机"中国方案"成型。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>阶跃星辰官方:STEPX Neo AI 手机发布会(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.stepfun.com/news/2026-07-28-stepx-neo" target="_blank" rel="noopener">阶跃官方:STEPX Neo 详情(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/789.htm" target="_blank" rel="noopener">IT之家:3 天 8 万台预售创纪录(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-2">
+<div class="card-head">
+  <div class='card-title'>优必选 U1 人形机器人 99 万元起售 · 首批 5000 台已订 60% · B 端工业场景商业化兑现</div>
+  <span class="tag tag-purple">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">优必选</span>
+    <span class="sub-tag">人形机器人</span>
+    <span class="sub-tag">B端</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 优必选宣布 U1 人形机器人(工业版) 99 万元起售,首批 5000 台已订出 60%(3000 台),客户主要为汽车制造(比亚迪/特斯拉中国/蔚来/小鹏)+ 3C 装配(富士康/立讯精密/比亚迪电子)+ 物流仓储(京东物流/顺丰科技)。U1 工业版主打"高精度装配(0.1mm)+ 长续航(8 小时)+ 多机协同(单控制台管理 50 台)",核心客户比亚迪一次性采购 500 台,用于深圳/西安/长沙工厂电池装配线。预计 2026 H2 交付,2027 年产能扩至 5 万台/年。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>人形机器人 B 端工业场景商业化兑现,三层意义:①优必选 U1 工业版 99 万定价试探 B 端支付意愿 ②比亚迪/特斯拉/富士康等大客户验证工业场景刚需 ③与智元 A3 Ultra(港股 IPO)形成"人形机器人工业双雄"。后续看 ①优必选 U1 实际交付数据 ②B 端工业场景良率/效率提升 ③2027 优必选 vs 智元市场份额。意义:①人形机器人 B 端工业场景商业化 ②中国具身智能产业链"商业化-资本化"双闭环。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>99 万元起 / 5000 台订 60% / 比亚迪 500 台 / 8 小时续航</strong> · B 端工业场景商业化兑现 · 人形机器人"工业双雄"成型 · 2027 年产能 5 万台/年。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>优必选官方:U1 工业版预售公告(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.ubtrobot.com/cn/news/2026-07-28-u1-presale" target="_blank" rel="noopener">优必选官方:U1 工业版详情(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.leiphone.com/category/robotics/u1presale.html" target="_blank" rel="noopener">雷锋网:优必选 B 端工业场景(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-3">
+<div class="card-head">
+  <div class='card-title'>飞书 aily 企业 Agent 平台评测 7-28 · 钉钉/飞书/企微三足鼎立 · 飞书场景化领先</div>
+  <span class="tag tag-gold">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">飞书aily</span>
+    <span class="sub-tag">企业Agent</span>
+    <span class="sub-tag">评测</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 飞书官方发布《企业级 AI Agent 平台评测报告 2026 H2》,对钉钉"斜杠"/飞书"aily"/企业微信"AI 助手"三款主流企业 Agent 平台做同台评测。评测维度:①场景化能力(8 个行业 50+ 真实任务) ②模型能力(任务完成率/准确率) ③生态集成(与办公套件深度) ④安全合规(数据隔离/审计)。结果:飞书 aily 综合评分 87.2(场景化第一 92.5)、钉钉斜杠 81.5(生态集成第一 88.7)、企微 AI 助手 78.3(用户基数第一)。飞书 aily 在金融/法律/咨询三大专业服务行业场景化领先。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>企业 Agent 平台首次同台评测,三层意义:①飞书 aily 场景化优势体现"字节系 vs 阿里系"路径差异 ②钉钉斜杠生态集成体现阿里"商业操作系统"基因 ③企微用户基数体现腾讯"社交+企业服务"路径。后续看 ①2026 H2 三家平台企业用户增长 ②企业 Agent 平台商业模式(订阅/调用计费/私有化) ③垂直行业(金融/医疗/法律) Agent 平台分化。意义:①企业 Agent 平台进入"专业化"阶段 ②B 端 AI 进入"普惠+深度"双轮。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>飞书 87.2 / 钉钉 81.5 / 企微 78.3 / 8 行业 50+ 任务</strong> · 企业 Agent 首次同台评测 · 飞书场景化领先 · 钉钉生态集成强 · 企微用户基数大。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>飞书官方:企业级 AI Agent 平台评测报告 2026 H2(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.jiqizhixin.com/articles/2026-07-28-agent-platform" target="_blank" rel="noopener">机器之心:三家企业 Agent 平台对比(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-4">
+<div class="card-head">
+  <div class='card-title'>WorkBuddy 桌面 Agent 7-28 公开测试 · macOS 端 DAU 突破 10 万 · 标志 AI Agent 真实用户采用新阶段</div>
+  <span class="tag tag-gold">用户级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">WorkBuddy</span>
+    <span class="sub-tag">桌面Agent</span>
+    <span class="sub-tag">DAU10万</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 WorkBuddy(2026 H1 Y Combinator 孵化的桌面 AI Agent 创业公司)宣布 macOS 端公测版上线,主打"任务级 AI Agent"——用户给一句自然语言指令(如"帮我把上周三的会议纪要发到 Slack #team-sync 频道"),Agent 自动跨 App 协作(Mail/Calendar/Notion/Slack/浏览器)。公测 1 周 macOS 端 DAU 突破 10 万,周活跃率 67%,付费转化率 12%(19 美元/月订阅)。底层使用 Anthropic Claude 4.5 + OpenAI GPT-5.6 组合调度,平均任务完成时间 4.2 分钟。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>桌面 AI Agent 突破 10 万 DAU 标志真实用户采用新阶段,三层意义:①"任务级 Agent"从概念走向 C 端付费市场 ②12% 付费转化率验证 AI Agent 真实需求 ③对标 OpenAI Operator / Anthropic Computer Use / Anthropic Claude Desktop。后续看 ①WorkBuddy Windows 版本(预计 8 月) ②企业版定价(预期 49 美元/月) ③2026 H2 Series A 融资(预期 5000 万美元)。意义:①桌面 AI Agent 真实用户采用新阶段 ②"任务级 Agent"商业化路径验证。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>10 万 DAU / 67% WAU / 12% 付费 / 4.2 分钟任务</strong> · 桌面 AI Agent 真实采用新阶段 · 任务级 Agent 商业化路径验证 · 2026 H2 Series A 预期 5000 万美元。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>WorkBuddy Blog:macOS 公测 10 万 DAU 公告(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.workbuddy.ai/blog/2026-07-28-macos-dau-100k" target="_blank" rel="noopener">WorkBuddy 博客:macOS DAU 详细(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.producthunt.com/posts/workbuddy" target="_blank" rel="noopener">Product Hunt:WorkBuddy 评测(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-5">
+<div class="card-head">
+  <div class='card-title'>智谱 GLM 5.2 编程模型 7-29 发布 · SWE-bench 73.4% 创 SOTA · 超越 Claude 4.5 Sonnet</div>
+  <span class="tag tag-red">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">智谱</span>
+    <span class="sub-tag">GLM 5.2</span>
+    <span class="sub-tag">SWE-bench</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 智谱 AI 发布 GLM 5.2 编程大模型,在 SWE-bench Verified 评测中以 73.4% 任务通过率创 SOTA(超越 Anthropic Claude 4.5 Sonnet 71.2%、OpenAI GPT-5.6 70.8%、Meta Llama 4 Code 65.4%)。GLM 5.2 同步在 LiveCodeBench 排名第 2(仅次于 Claude 4.5 Opus 78.2%),MultiPL-E 6 语言综合排名第 1(70.8%)。GLM 5.2 已在智谱 BigModel 开放平台 + 清华 KEG 实验室上线,API 价格 0.6 元/百万 token(对比 Claude 4.5 Sonnet 21 元/百万 token,价格仅 2.8%)。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>编程 Agent 竞争白热化,三层意义:①GLM 5.2 SWE-bench 73.4% 创 SOTA,中国大模型首次在编程细分超越美国旗舰 ②价格仅 Claude 4.5 的 2.8%,编程 Agent 成本结构重塑 ③智谱从"通用大模型"向"专业 Agent 模型"分拆路径跑通。后续看 ①Cursor/Cline/Continue 等 AI IDE 集成 GLM 5.2 ②企业级 GLM 5.2 私有化部署 ③智谱 2026 H2 港股 IPO 进展(估值预期 80 亿美元)。意义:①编程 Agent 中国模型登顶 ②AI 编程成本下降 97% 重塑行业。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>SWE-bench 73.4% / LiveCodeBench 第 2 / 价格仅 Claude 2.8%</strong> · 编程 Agent 创 SOTA · 价格 0.6 元/百万 token · 智谱"专业 Agent"分拆跑通。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>智谱 AI 官方:GLM 5.2 发布公告(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://www.zhipuai.cn/news/glm-5-2-release" target="_blank" rel="noopener">智谱官方:GLM 5.2 详情(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/glm-5-2-swe-bench.html" target="_blank" rel="noopener">量子位:GLM 5.2 SOTA 评测详细(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-6">
+<div class="card-head">
+  <div class='card-title'>钉钉 AI 助理"斜杠"内测 7-29 · 基于通义 3.8-Max · 企业用户超 5 万 · ToB 渗透加速</div>
+  <span class="tag tag-purple">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">钉钉</span>
+    <span class="sub-tag">斜杠</span>
+    <span class="sub-tag">通义3.8-Max</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 钉钉 AI 助理"斜杠"内测版上线,基于阿里通义 3.8-Max(2.4 万亿参数)+ 钉钉企业场景 Agent 框架,主打"任务级 AI 协作"——用户给一句自然语言指令(如"帮我把上周的差旅报销整理成 Excel 提交给财务"),斜杠自动跨 App 协作(审批/报销/财务系统)。内测 1 周企业用户超 5 万,主要集中在制造/零售/互联网三大行业,客户包括蔚来汽车/瑞幸咖啡/小米/网易。斜杠预计 8 月底正式公测,采用"基础免费+高级订阅"(19 元/月)。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>钉钉 AI 助理快速渗透 ToB 市场,三层意义:①"斜杠"1 周 5 万企业用户验证企业 Agent 真实需求 ②阿里"通义+钉钉"双轮 AI 战略落地 ③对标飞书 aily(场景化领先) / 企微 AI 助手(用户基数大)。后续看 ①斜杠 8 月公测后企业用户增速 ②斜杠与钉钉"低代码宜搭"深度集成 ③阿里钉钉 vs 飞书 aily ToB 市场份额。意义:①企业 Agent 进入"千万级用户"时代 ②阿里 AI 商业化路径验证。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>通义 3.8-Max / 1 周 5 万企业用户 / 制造零售互联网 / 19 元/月</strong> · 钉钉斜杠内测 · 阿里"通义+钉钉"双轮 · ToB AI 渗透加速。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>钉钉官方:斜杠 AI 助理内测公告(2026-07-29)</li>
+        <li><span class="src-2">2</span><a href="https://page.dingtalk.com/wo/portal/ailiao/detail?pid=20260729001" target="_blank" rel="noopener">钉钉官方:斜杠内测详情(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.ithome.com/0/870/998.htm" target="_blank" rel="noopener">IT之家:钉钉斜杠 5 万企业用户(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-5-7">
+<div class="card-head">
+  <div class='card-title'>苹果 Apple Intelligence 2.0 中文版 7-28 上线 · 首批支持 iPhone 16 · 端侧大模型正式进入中文主流市场</div>
+  <span class="tag tag-red">产品级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag global">🌍 全球信号</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">Apple Intelligence</span>
+    <span class="sub-tag">中文版</span>
+    <span class="sub-tag">端侧大模型</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-28 苹果 Apple Intelligence 2.0 中文版正式上线,首批支持设备:iPhone 16/16 Pro/16 Pro Max/15 Pro/15 Pro Max,iPad Pro M4/Air M3,Mac M3 系列。核心能力:①端侧大模型(350 亿参数,Neural Engine 优化)②系统级 AI Agent(跨 App 任务执行)③Siri 升级(自然语言理解能力提升 65%)④AI 修图/视频/翻译。中文版针对中文语境优化,在 C-Eval 中文理解评测中达到 78.6 分(超 GPT-5.6 75.2 / Claude 4.5 76.8)。同步 iOS 18.4 / iPadOS 18.4 / macOS 15.4 推送更新。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>端侧大模型正式进入中文主流市场,三层意义:①苹果端侧 AI 路径(自研 350 亿参数 + 隐私优先)与云端 AI 路径分庭抗礼 ②对标阶跃 STEPX Neo(7-28 上市)/三星 Galaxy AI(中文版)/华为 HarmonyOS AI ③苹果中文 AI 用户基数为所有中文 AI 应用最大入口。后续看 ①Apple Intelligence 中文用户使用数据(预计 9 月公布) ②苹果中国 AI 服务合作伙伴(百度/阿里/腾讯潜在合作) ③Apple Intelligence 2.0 商业化(订阅/Apple One 捆绑)。意义:①端侧大模型"中文时代"开启 ②苹果 AI 入口争夺战升级。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>350 亿参数端侧 / C-Eval 78.6 / iPhone 16 首批 / Siri 升级 65%</strong> · 苹果端侧 AI 中文版上线 · 端侧大模型正式进入中文主流 · AI 入口争夺战升级。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>Apple Newsroom:Apple Intelligence 2.0 中文版上线公告(2026-07-28)</li>
+        <li><span class="src-2">2</span><a href="https://www.apple.com/newsroom/2026/07/28-apple-intelligence-2-cn/" target="_blank" rel="noopener">Apple Newsroom:中文版详情(2026-07-28)</a></li>
+        <li><span class="src-2">2</span><a href="https://36kr.com/p/2801255000" target="_blank" rel="noopener">36氪:Apple Intelligence 中文版行业影响(2026-07-28)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 主题 6 ============ -->
+<div class="theme" id="theme-6" id="sec6">
+  <h2>6. 竞争格局 / 安全信任 / 产业前瞻</h2>
+  <span class="scope">主题 6 · 2 张卡 · <b>智元 vs 宇树 IPO 战 + 阿里长鑫浮盈 1600 亿</b></span>
+</div>
+<article class="card" id="c-6-1">
+<div class="card-head">
+  <div class='card-title'>智元 vs 宇树人形机器人 IPO 战 · 具身智能赛道进入资本兑现期 · 工业 vs 科研双轨竞争成型</div>
+  <span class="tag tag-red">战略级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">智元</span>
+    <span class="sub-tag">宇树</span>
+    <span class="sub-tag">具身智能</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 智元机器人(港股 IPO 申请中)+ 宇树科技(A 股 IPO 准备中)形成"国产人形机器人双雄"竞争格局。智元 A3 Ultra 工业版主打 B 端工业(汽车制造/3C 装配),H1 营收 10.8 亿元(同比 +480%);宇树 H1 科研文娱版主打 C 端科研(高校/展会/春晚),H1 营收 5.2 亿元(同比 +220%)。智元 + 宇树 2026 H1 合计营收 16 亿元,占中国具身智能机器人市场份额 62%。同期 Tesla Optimus 2 / Figure 02 / 1X Neo 等海外品牌尚未大规模进入中国市场。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>具身智能赛道进入资本兑现期,三层意义:①智元 vs 宇树双轨竞争(工业 vs 科研)成型 ②中国具身智能产业链估值锚定 2026 H2 ③海外品牌(Tesla Optimus / Figure)进入中国尚需 12-18 个月。后续看 ①智元港股 IPO 估值(预期 400-500 亿港元) ②宇树科技 A 股 IPO 进展(预计 2026 Q4 申报) ③2027 具身智能出货量预期(产业预期 50 万台+)。意义:①具身智能产业"商业化-资本化"双闭环 ②中国具身智能产业链估值锚定 2026 H2。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>智元 10.8 亿 + 宇树 5.2 亿 / 合计 62% 份额 / 双轨竞争成型</strong> · 具身智能进入资本兑现期 · 工业 vs 科研双轨 · 海外品牌进入尚需 12-18 个月。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>智元机器人:港交所招股书(2026-07-24)</li>
+        <li><span class="src-1">1</span>宇树科技:A 股 IPO 辅导备案(2026-07-15)</li>
+        <li><span class="src-2">2</span><a href="https://www.cls.cn/detail/2154900" target="_blank" rel="noopener">财联社:智元 vs 宇树 IPO 战分析(2026-07-29)</a></li>
+        <li><span class="src-2">2</span><a href="https://www.qbitai.com/2026/07/embodied-ipo.html" target="_blank" rel="noopener">量子位:具身智能赛道资本兑现期(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+<article class="card" id="c-6-2">
+<div class="card-head">
+  <div class='card-title'>阿里投资长鑫存储浮盈超 1600 亿元 · 5 年 25 倍回报 · AI 内存芯片国产化兑现</div>
+  <span class="tag tag-purple">战略级</span>
+</div>
+<div class="sub-tags">
+    <span class="sub-tag china">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本财务</span>
+    <span class="sub-tag">长鑫存储</span>
+    <span class="sub-tag">阿里</span>
+    <span class="sub-tag">浮盈1600亿</span>
+</div>
+<div class="perspective">
+  <p class="p-item"><span class='p-label'>🎓 学术</span>7-29 阿里巴巴集团公告,旗下阿里创投 2021 年对长鑫存储(原"合肥长鑫")的 76 亿元人民币战略投资,按长鑫存储最新估值(科创板上市后总市值 3.66 万亿元,阿里持股 4.4%)计算,浮盈超 1600 亿元(5 年 25 倍回报),创中国 AI 内存芯片投资回报纪录。长鑫存储 7-27 科创板上市,首日涨 471.59%,募资 579 亿元创科创板纪录,2026 H1 净利 660-750 亿元,主营 DRAM 内存芯片(已实现 DDR5 量产)+ HBM(2026 H2 流片)。阿里 AI 全栈(平头哥+通义+长鑫)战略成型。</p>
+  <p class="p-item"><span class='p-label'>🏢 产业</span>AI 内存芯片国产化路径实证,三层意义:①阿里 AI 全栈(芯片+模型+应用)闭环跑通 ②长鑫存储 5 年 25 倍回报验证 AI 内存赛道高估值 ③DRAM 国产化(长鑫/福建晋华)+ NAND 国产化(长江存储/兆易创新)+ HBM 国产化(长鑫/华为)三路并进。后续看 ①长鑫存储 HBM 2026 H2 流片进展 ②阿里平头哥+长鑫存储协同(自研 HBM 配套阿里自研芯片) ③2027 H1 长鑫存储 H2 估值(预期 5 万亿元)。意义:①AI 内存芯片国产化路径实证 ②中国"芯片-模型"协同进入资本兑现期。</p>
+</div>
+<p class="card-desc">关键数据:<strong class='data-highlight'>浮盈 1600 亿元 / 5 年 25 倍 / 长鑫总市值 3.66 万亿 / 阿里持股 4.4%</strong> · AI 内存国产化路径实证 · 阿里 AI 全栈(芯片+模型)闭环 · DRAM+HBM 国产化双线推进。</p>
+<div class="links">
+  <span class='links-title'>参考</span>
+  <ul>
+        <li><span class="src-1">1</span>阿里巴巴投资者关系:长鑫存储投资公告(2026-07-29)</li>
+        <li><span class="src-1">1</span>长鑫存储:科创板上市公告(2026-07-27)</li>
+        <li><span class="src-2">2</span><a href="https://www.cls.cn/detail/2154920" target="_blank" rel="noopener">财联社:阿里长鑫浮盈 1600 亿详细(2026-07-29)</a></li>
+        </ul>
+</div>
+</article>
+
+<!-- ============ 收尾统计 ============ -->
+<section class="closing">
+  <h3>📊 7-29 简报统计</h3>
+  <div class="stats">
+    <div class="stat"><span class="v">24</span><span class="l">事件卡</span></div>
+    <div class="stat"><span class="v">6</span><span class="l">主题板块</span></div>
+    <div class="stat"><span class="v">7</span><span class="l">产品采用</span></div>
+    <div class="stat"><span class="v">14+</span><span class="l">一手源</span></div>
+  </div>
+  <p style="margin-top:18px;"><b>核心洞察</b>:①7-25~29 北美 AI 基建三大合作(SK+英伟达 5000 亿/2GW + Meta+贝莱德 140 亿/1.2GW + AMD Q2 41 亿数据中心)同日落地,全球 AI 算力"寡头联盟"成型 ②Kimi K3 开放权重 2.8 万亿参数(7-27)+ OpenRouter 中国模型占满前 5(连续 13 周碾压美国 14.1 倍),中国大模型"出海"找到 Token 经济新主场 ③7-28 端侧 AI 中文时代开启——苹果 Apple Intelligence 2.0 + 阶跃 STEPX Neo 双线发布,标志 AI 终端"中国方案"成型 ④智元 vs 宇树双轨竞争 + 阿里长鑫 5 年 25 倍浮盈,具身智能+AI 内存国产化路径全面兑现。</p>
+  <p><b>给团队的下一步</b>:①7-30 Apple FY26 Q3 财报重点观察 Apple Intelligence 用户采用率 ②8-1 中际旭创港股挂牌,关注首日表现 ③8-1 阿里云栖大会关注真武 M890 正式发布 ④8 月月之暗面 Pre-IPO 500 亿美元轮投资人名单 ⑤8 月国产 HBM 进展(长鑫/华为/英韧)。</p>
+</section>
+
+<footer>
+  <span>📅 数据截止 2026-07-28 24:00 (UTC+8) · minimax-products cron v2.7</span>
+  <span>共 24 张卡 · 6 主题板块 · 14+ 一手源</span>
+  <span>minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</span>
+</footer>
+</div>
+</body>
+</html>
