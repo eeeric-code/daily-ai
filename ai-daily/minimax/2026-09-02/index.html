@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · 2026年9月2日 (minimax)</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+  .section-title{margin:38px 0 6px;font-size:22px;color:var(--ink);letter-spacing:0.5px;}
+  .section-sub{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.55;}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;
+    border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);
+    font-size:12px;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div class="brand">AI 学术与产业每日简报<small>minimax slot · 2026年9月2日</small></div>
+    <div class="meta">
+      <div><strong>2026-09-02</strong> · 周三</div>
+      <div>数据截止:2026-09-02 08:15 (UTC+8) · minimax slot 派生</div>
+      <div>主题分块:AI for Science · 通用智能与机器人 · 基础模型与开源 · 资本 &amp; 监管 · 顶会 &amp; 学术生态 · 本周前瞻</div>
+    </div>
+  </header>
+
+  <!-- Executive Summary -->
+  <section class="exec">
+    <h2>📌 今日 4 条最重要要闻</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <div class="body">
+          <span class="label sci">基础模型 + 能力</span>
+          <b>Anthropic Fable 5.1 + Mythos 5.1 9-1 凌晨发布:Terminal-Bench-Science 24.7%→52.6% 翻倍,缓存读取 -75%,典型任务 -25%,蛋白质 binder 命中率 50% / 12 靶点外部验证,Anthropic 公开递表前最后一次能力展示。</b>9-1 凌晨 Anthropic 上线 Fable 5.1(公众)+ Mythos 5.1(网络安全/生命科学机构)双模型,同一基础模型,差别在安全护栏严格度。Fable 5.1 性能聚焦长时间多步骤 Agent 任务:Terminal-Bench-Science 0.1 从 24.7% 跃至 52.6%,Terminal-Bench 4.0 从 42.0% 升至 55.8%,AutomationBench 从 17.1% 升至 31.4%。缓存读取价格从 1 美元/百万 Token 降至 0.25 美元(-75%),典型任务 Token 成本降 25%,高度 Agent 化任务最高 -45%。同步 Fable 5.1 自主设计蛋白质 binder,12 靶点外部实验命中率近 50%(行业典型 10-15%),3 个靶点结合亲和力比 Adaptyv Bio 比赛最佳方案高 10 倍;Fable 5.1 还基于 NASA 麦哲伦任务 30 年前雷达数据绘制 1/3 金星表面 2-3 km 分辨率高程地图(此前 10-20 km),高度精度 +25%,Creative Commons 公开;Mythos 5.1 还优化 7 个开源模型 GPU 内核,推理速度最高 2.5x,全基因组分析 GPU 成本降 30-60%。这是 Anthropic 9-7 公开招股书(估值 1.5-2 万亿)+ 9 月中旬投资者日前最后一次重量级模型展示。
+        </div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div class="body">
+          <span class="label cap">算力 + 资本</span>
+          <b>燧原科技 9-2 科创板申购 142.18 元/股,募资 61.19 亿元,国产 GPU 四小龙完整聚齐资本市场;英伟达 35 亿美元认购联发科可转债,史上最大海外直接投资,联发科股价 +10%。</b>9-2 燧原科技(688801.SH)科创板申购,发行价 142.18 元/股,4303.52 万股,募资 61.19 亿元(扣除费用 58.1 亿元),单一账户申购上限 0.65 万股,中一签需缴款 7.11 万元。燧原成立于 2018 年,与摩尔线程/沐曦/壁仞并称"国产 GPU 四小龙",8 年自研 4 代架构 5 款云端 AI 芯片,2023-2025 营收 3.01/7.22/9.90 亿元(2026 H1 11.20 亿元,同比 +325.78%~455.36%);腾讯 20.26% 持股 + 第一大客户(占比 83.79%);2026 年或基本实现合并报表盈亏平衡。同步 9-1 英伟达以 35 亿美元认购联发科海外可转债(英伟达认购 98.7%),联发科股价大涨 10%;双方基于 NVLink Fusion 平台共建定制 XPU,覆盖 AI 基础设施、PC、车用三大领域,史上最大海外直接投资(谷歌也参与认购)。9-2 同期 OpenAI 宣布 11-12 终止向 Cursor 模型供应(8-30 SpaceX 600 亿美元收购 Anysphere 触发"控制权变更"),Anthropic 加码算力补位。
+        </div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div class="body">
+          <span class="label acc">3D + 机器人</span>
+          <b>影眸科技 9-1 发布 Hyper3D WorldGen 世界生成模型(单图→3D 场景),CAST 架构 SIGGRAPH 2025 最佳论文;梅卡曼德 9-1 港交所主板挂牌 09615.HK,"具身智能眼脑手第一股",2025 全球 AI+3D 视觉机器人组件 22.1% 份额。</b>9-1 影眸科技正式发布 Hyper3D WorldGen,用户上传单张场景图片可生成多个独立可编辑 3D 资产并还原空间物理关系(支撑/悬挂/接触),基于 SIGGRAPH 2025 最佳论文 CAST 架构(从单图补全遮挡结构,3D 高斯混合表达),最快 4 秒生成可用资产,具身智能/影视/游戏/XR 多场景。同期 9-1 梅卡曼德(雄安)机器人港交所主板挂牌 09615.HK,发行价 101.7 港元/股,市值约 127.1 亿港元;2025 年营收 3.89 亿元(2023-2025 CAGR 46.6%),毛利率 64.6%,全球 AI+3D 视觉引导通用智能机器人组件 22.1% 份额(出货量 27%+),累计部署 29,000 台,服务宁德时代/比亚迪/美的/富士康等超 100 家《财富》世界 500 强,海外收入占比 50.3% 首超国内(2023-2025 CAGR 82.7%);3D 大模型公司 VAST 9-1 完成 B+B+ 轮 30 亿元融资,半年累计 50 亿元,发布 Tripo P2.0 旗舰(原生四边面拓扑,5 万三角面);小鹏机器人 8 月单笔 9 亿美元融资,刷新人形机器人单轮纪录,IRON 计划 2027 规模交付。
+        </div>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <div class="body">
+          <span class="label reg">监管 + 港股</span>
+          <b>9-1 起 AI 拟人化互动服务管理新规 + 微短剧发展管理办法 + 人工+AI 客服协同国标三项生效;港股大模型双雄首次完整半年报:智谱 9.54 亿 +399.7% / API 86.5% / 唐杰中期业绩会首次披露 GLM-6.0 全自训练路线。</b>9-1 三项 AI 监管国标/办法同日生效:1)《人工智能拟人化互动服务管理暂行办法》(5 部门联合,7-15 已施行)— 禁止诱导情感依赖/操纵决策,鼓励电子签名授权;2)国家广电总局《微短剧发展管理办法》— AI 微短剧需添加提示标识,投资+题材双维度三级分类管理;3)国标《顾客联络服务 人工与智能客户服务协同要求》— 明确 AI/人工分工,转人工不得要求重复描述,价格/折扣/退款由人工确认。同期 9-1 港股大模型双雄首次完整半年报:智谱(2513.HK)9.54 亿元 +399.7%,API 占比 15.2%→86.5%,Token 调用 +40 倍,8-31 MSCI 中国+新兴市场双纳入,市值 5490 亿港元;MiniMax(0100.HK)1.17 亿美元 +283.1%,开放平台占比 30.3%→63.4%,7 月 Token 消耗为 1 月 20 倍;两家殊途同归"按调用计费"商业模式。智谱唐杰中期业绩会首次披露下一代 GLM-6.0 技术路线:Fully Self-Training(全自训练)— Scaling 重心从"参数"转向"训练深度+基础设施",10 万卡国产芯片推理,单位 Token 成本较年初 -80%。
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-card">
+      <div class="head"><span class="n">1</span><span class="icon">🧬</span><span class="t">AI for Science</span></div>
+      <ul>
+        <li><a href="#sec1">1.1 Fable 5.1 蛋白质 binder 命中率 50% / 12 靶点外部验证</a></li>
+        <li><a href="#sec1">1.2 Fable 5.1 重绘 NASA 麦哲伦金星地图 2-3 km 分辨率</a></li>
+        <li><a href="#sec1">1.3 Cardiff ICML 2026 VBA + DF-Mamba 生物学几何架构</a></li>
+        <li><a href="#sec1">1.4 浙大清华 DAG-FM 因果发现 1000 维 / 24G 显存</a></li>
+        <li><a href="#sec1">1.5 Nature Biotech AdaptiveFlow 大规模云端药物发现</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">2</span><span class="icon">🤖</span><span class="t">通用智能与机器人</span></div>
+      <ul>
+        <li><a href="#sec2">2.1 影眸 Hyper3D WorldGen / CAST 架构 / SIGGRAPH 2025 最佳</a></li>
+        <li><a href="#sec2">2.2 梅卡曼德 9-1 港交所 IPO / 具身智能眼脑手第一股</a></li>
+        <li><a href="#sec2">2.3 小鹏 VLA 2.0 大众合作 + 机器人 9 亿美元融资</a></li>
+        <li><a href="#sec2">2.4 VAST 30 亿元融资 + Tripo P2.0 5 万三角面</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">3</span><span class="icon">🏢</span><span class="t">基础模型与开源</span></div>
+      <ul>
+        <li><a href="#sec3">3.1 Anthropic Fable 5.1 + Mythos 5.1 凌晨发布</a></li>
+        <li><a href="#sec3">3.2 智谱 GLM-6.0 全自训练 + H1 营收 9.54 亿 +399.7%</a></li>
+        <li><a href="#sec3">3.3 腾讯混元 Hy4 量化轻量版 1.5TB→214GB</a></li>
+        <li><a href="#sec3">3.4 科大讯飞星火 X2.5 端侧 4B/1.7B 100 万 Token</a></li>
+        <li><a href="#sec3">3.5 阿里 Qwen3.8-Flash 登顶 CommerceAgentBench</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">4</span><span class="icon">💰</span><span class="t">资本 &amp; 监管</span></div>
+      <ul>
+        <li><a href="#sec4">4.1 燧原科技 9-2 科创板申购 142.18 元 / 募资 61.19 亿</a></li>
+        <li><a href="#sec4">4.2 英伟达 35 亿美元认购联发科可转债 / NVLink Fusion</a></li>
+        <li><a href="#sec4">4.3 OpenAI 终止 Cursor 模型供应 11-12 / Anthropic 补位</a></li>
+        <li><a href="#sec4">4.4 港股大模型双雄首份完整半年报对比</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">5</span><span class="icon">🎓</span><span class="t">顶会 &amp; 学术生态</span></div>
+      <ul>
+        <li><a href="#sec5">5.1 南开 OraRL 视频强化学习 / VSI-Bench 73.1</a></li>
+        <li><a href="#sec5">5.2 EvoMap AutoResearch 开源 / AI 智能体自我研究</a></li>
+        <li><a href="#sec5">5.3 NeurIPS 2026 引用幻觉检测 / 4841 篇 100 条假</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">6</span><span class="icon">🔮</span><span class="t">本周前瞻</span></div>
+      <ul>
+        <li><a href="#sec6">6.1 华为 Mate XT 2 9-7 14:30 发布 / 展翼 G 型双内折</a></li>
+        <li><a href="#sec6">6.2 苹果 iPhone Ultra 折叠屏 9-10 凌晨 1 时发布</a></li>
+        <li><a href="#sec6">6.3 9-7 Anthropic 招股书 + 讯飞星火 X2.5 旗舰版</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============ Section 1: AI for Science ============ -->
+  <h2 class="theme" id="sec1">🧬 主题 1 · AI for Science</h2>
+  <p class="section-sub">覆盖:AI 制药 · 天文地理 · 生物学 AI · 因果发现 · 云端药物筛选</p>
+
+  <!-- 1.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Anthropic Mythos 5.1 自主设计蛋白质 binder 命中率 50% / 12 靶点外部验证,3 靶点结合亲和力比 Adaptyv Bio 比赛最佳高 10 倍,AI 制药科研流程闭环</div>
+      <span class="tag tag-red">重磅·AI 制药</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Fable 5.1</span>
+      <span class="sub-tag">Mythos 5.1</span>
+      <span class="sub-tag">蛋白质 binder</span>
+      <span class="sub-tag">命中率 50%</span>
+      <span class="sub-tag">12 靶点</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 凌晨 Anthropic 发布的 Mythos 5.1(基于 Fable 5.1 同基座,安全护栏更宽松版本)接入开源蛋白质设计与折叠工具,自主设计 binder 蛋白质并由两家外部机构做真实湿实验验证:在 12 个靶点上命中率接近 50%(行业典型命中率仅 10%-15%);其中 3 个靶点模型设计出的 binder 结合亲和力比 Adaptyv Bio 蛋白质设计比赛最佳方案高约 10 倍。学术意义在于,这是 AI 制药从"计算预测"到"湿实验闭环"的关键范式突破:过去 AI 制药公司多停留在 in-silico 阶段,模型设计完直接用 AlphaFold 等工具预测,但缺少真实结合力验证;Anthropic 把"工具调用 + 设计 + 外部实验验证"全流程跑通,且在 12 个独立靶点上全部被外部实验室证实为有效结合物,验证 AI 不只是会"算",还能完成完整科研流程。同期 Mythos 5.1 还针对 7 个开源蛋白质/基因组深度学习模型,自行编写定制 GPU Kernel,推理速度最高提升 2.5 倍,在保持输出完全一致情况下,把全基因组分析 GPU 成本降低 30%-60%。该工作原本需要性能工程师团队花几周时间,Mythos 5.1 几天完成且计划开源。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,Fable 5.1 + Mythos 5.1 同期发布 100+ 企业客户合作的 Enterprise Frontier Safeguards(EFS)——客户数据存于自有云基础设施,人工审查由客户完成,与金融/医疗/电信/法律等 100+ 客户共研;今秋分阶段上线。商业逻辑上,Anthropic 选择"科研 + 基础设施 + 企业级数据合规"三维能力同时推进,与同期 OpenAI Astra 9-3 预期发布(网安 Critical 级 + 编程自动化 + 3D 生成)正面竞争——Anthropic 走"科研为先"路线(蛋白质 + 天文 + 计算生物学),OpenAI 走"Agent 工程 + 编程工具"路线,标志美 AI 头部公司进入"差异化能力 + 同一 IPO 估值锚点"双轨冲刺。对比同期 8-31 英矽智能 1.06 亿美元 +287% 首次半年盈利 + 礼来 27.5 亿美元 BD(详见 8-31 简报 1.1),中国 AI 制药走"管线资产 + BD 授权"路径,Anthropic 走"通用模型 + 科研 SaaS"路径,两条路线 Q4 决胜负;Fable 5.1 在 9-7 招股书前的发布是 Anthropic 给华尔街看的"科研差异化能力"的最强证据。</p>
+    </div>
+    <p class="card-desc">关键数据:命中率 <strong class="data-highlight">~50%</strong>(行业典型 10-15%);<strong class="data-highlight">12 靶点</strong>全部外部验证;3 靶点结合亲和力 <strong class="data-highlight">10 倍</strong>Adaptyv 最佳;7 个开源模型 GPU 内核 <strong class="data-highlight">2.5x</strong> 加速;全基因组 GPU 成本 <strong class="data-highlight">-30% ~ -60%</strong>;EFS 合作 100+ 客户;AWS/Google Cloud/Azure 全平台上线。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.anthropic.com/news/claude-fable-5-1-and-mythos-5-1" target="_blank" rel="noopener">Anthropic 官方 9-1:Fable 5.1 + Mythos 5.1 公告</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://m.pedaily.cn/news/568403" target="_blank" rel="noopener">投资界/字母榜 9-2 7:46:Fable 5.1 完整解读</a> <span class="ref-source">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://tech.sina.cn/2026-09-02/detail-iniqkvca4488131.d.html" target="_blank" rel="noopener">新浪科技/DeepTech 9-2:科研/编程/成本三线突破</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://i.ifeng.com/c/8w4yKyf2viQ" target="_blank" rel="noopener">凤凰网/财联社 9-2:Anthropic 性价比 + 强护栏</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.donews.com/news/detail/8/6694112.html" target="_blank" rel="noopener">DoNews 9-2:全球先进编程与知识工作模型</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Anthropic Fable 5.1 重绘 NASA 麦哲伦金星地图,1/3 金星表面 2-3 km 分辨率高程地图 / 高度精度 +25%,Creative Commons 公开供 VERITAS + EnVision 任务参考</div>
+      <span class="tag tag-gold">重要·AI 天文</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Fable 5.1</span>
+      <span class="sub-tag">NASA 麦哲伦</span>
+      <span class="sub-tag">金星地图</span>
+      <span class="sub-tag">2-3 km 分辨率</span>
+      <span class="sub-tag">VERITAS</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 Fable 5.1 利用 NASA 30 多年前麦哲伦(Magellan)任务留下的雷达数据,自行训练一个神经网络,为约 1/3 金星表面重新生成高分辨率高程地图:过去地图能分辨的地形细节约 10-20 km 尺度,新地图缩小到 2-3 km,高度精度提升约 25%。学术意义在于,1)这是 AI 在"科研数据再利用"维度的标志性突破——30 年前雷达数据是 1990 年代初 Magellan 任务的产物,数据本身已存在但因分辨率不足被学界搁置;Fable 5.1 通过现代深度学习+ 大量卫星数据训练,从中"挖掘"出 2-3 km 分辨率新地图,等于让旧数据"重生";2)技术上证明了大模型对"非结构化时间序列+传感器原始数据"的建模能力,跨过纯 NLP/CV 范畴;3)该地图以 Creative Commons 许可公开,供 NASA VERITAS 任务(2031 发射)+ ESA EnVision 任务(2031 发射)使用——AI 自动生成的天文产品直接进入国际深空探测任务参考,标志 AI for Science 在"探索性数据分析 → 任务级成果"方向上的可交付突破。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)Fable 5.1 + Mythos 5.1 同步在 AWS / Google Cloud / Azure 全平台上架,任何企业/研究机构可立即调用;2)Creative Commons 公开策略标志 AI 头部公司"科研贡献 + 商业 API"双轨模式成熟——既给学界"白嫖"的科研成果,又通过 API 把成果商业化;3)对比同期 8-28 智谱唐杰披露 GLM-6.0 全自训练路线(让模型参与预训练/中训练/后训练)+ 9-1 国家广电总局 AI 微短剧管理办法实施 + 9-1 AI 拟人化互动服务新规施行,中美 AI 在"科研 + 监管"两端同步推进;4)Fable 5.1 在 9-7 Anthropic 招股书(估值 1.5-2 万亿)前 5 天的能力展示,选择"蛋白质设计 + 金星地图 + GPU 优化 + 长时间 Agent"4 个真实应用案例而非传统 Benchmark,体现 Anthropic 从"刷分竞争"转向"科研与工程化能力"叙事,对应同期 BYDFi 9-1 报道的 Anthropic IPO 90% 概率(预测市场)。</p>
+    </div>
+    <p class="card-desc">关键数据:覆盖 <strong class="data-highlight">1/3 金星</strong> 表面;分辨率 <strong class="data-highlight">10-20 km → 2-3 km</strong>;高度精度 <strong class="data-highlight">+25%</strong>;数据源 NASA 麦哲伦 <strong class="data-highlight">30 年前雷达</strong>;Creative Commons 公开;供 VERITAS(2031)+ EnVision(2031)任务参考。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic 官方 Newsroom 9-1</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://www.nasa.gov/mission_pages/magellan/" target="_blank" rel="noopener">NASA 麦哲伦任务官方页</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://tech.sina.cn/2026-09-02/detail-iniqkvca4488131.d.html" target="_blank" rel="noopener">新浪科技/DeepTech 9-2:科研 + 编程 + 成本三线突破</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.donews.com/news/detail/8/6694112.html" target="_blank" rel="noopener">DoNews 9-2:编程与知识工作最强模型</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://m.pedaily.cn/news/568403" target="_blank" rel="noopener">投资界 9-2 7:46:30 小时详细数据 + Venus mapping 解析</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Cardiff University ICML 2026:VBA 向量丛注意力 + DF-Mamba 多尺度建模,单细胞 RNA 测序 SOTA,生物学数据几何结构纳入 AI 推理</div>
+      <span class="tag tag-gold">重要·生物学 AI</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Cardiff University</span>
+      <span class="sub-tag">ICML 2026</span>
+      <span class="sub-tag">VBA</span>
+      <span class="sub-tag">DF-Mamba</span>
+      <span class="sub-tag">单细胞 RNA</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 Cardiff University You Zhou 博士团队在 ICML 2026 发表两项研究,正面回应"现代 AI 难以理解生物数据"这一根本问题。第一项"VBA: Vector Bundle Attention for intrinsically geometric representation learning"提出向量丛注意力架构,核心创新是将"几何结构"直接整合进 AI 的注意力机制——传统 Transformer 注意力机制对"信息如何相互关联"建模很强,但对"数据内在几何结构"(细胞在组织内的空间关系、分子相互作用的几何)天然建模不足;VBA 在做信息比较前,先按底层几何对齐细胞,单细胞 RNA 测序任务 SOTA,空间转录组学强性能,3D 数据集竞争性表现。第二项"Dynamic Fractal Mamba: A neural renormalization group flow for scale-invariant sequence modeling"借鉴物理学重整化群思路,在不同尺度上反复应用同一套学习规则,实现"小数据训练 + 大数据泛化"无需重训,标志多尺度建模从纯架构创新走向物理信息融合。学术意义在于,这两项研究共同把"AI for Science"从"AI 套用科学数据"推向"AI 嵌入科学原理"——前者只是把科学数据丢给大模型训练,后者把科学的几何/尺度原理直接编码进 AI 架构。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)VBA + DF-Mamba 标志欧洲学界(英国 Cardiff)在 AI for Science 领域与北美(Anthropic/Stanford/DeepMind)+ 中国学界并行,形成"三极并立"格局;2)单细胞 RNA 测序 + 空间转录组学是精准医疗/药物靶点发现的核心数据,VBA 在这两个任务上 SOTA 性能意味着下游制药/诊断公司可直接采用;3)对比同期 9-1 Anthropic Fable 5.1 蛋白质 binder 命中率 50%(工业级 AI for Science)+ 9-1 影眸 Hyper3D WorldGen 工业级世界生成 + 9-1 Nature Biotech AdaptiveFlow 大规模云端药物发现(详见 1.5),AI for Science 在 2026-09-01 当天形成"蛋白质(Anthropic)+ 几何(Cardiff)+ 因果(浙大清华)+ 3D(影眸)+ 大规模筛选(Nature Biotech)+ 工业(英矽 8-31 8 月底 287%)"6 大方向同步突破;"科学原理嵌入 AI 架构"vs"AI 在科学数据上端到端"两条路径正在并行收敛;4)下游应用端,如 DeepMind AlphaFold 3 / Insilico Pharma.AI / 智源悟道生命科学等公司可受益于这些架构创新。</p>
+    </div>
+    <p class="card-desc">关键数据:VBA <strong class="data-highlight">SOTA</strong>(单细胞 RNA 测序);DF-Mamba <strong class="data-highlight">小数据训练 → 大数据泛化</strong>无需重训;Cardiff University You Zhou 团队;ICML 2026 两项研究;通讯作者来自医学院;理论借鉴物理学重整化群。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://phys.org/news/2026-09-ai-approaches-complex-biological.html" target="_blank" rel="noopener">Phys.org 9-1:Cardiff University 生物学 AI 新方法</a> <span class="ref-source">· 二手转引官方 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.worldprogramming.org/posts/new-ai-approaches-to-help-understand-complex-biological-data-nuldck" target="_blank" rel="noopener">World Programming 9-1:ICML 2026 两论文报道</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://m.toutiao.com/i7678140254330618406/" target="_blank" rel="noopener">今日头条/机器之心 9-1:多 AI 论文综述</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">浙大清华稳准智能 DAG-FM 因果发现大模型,单卡 24G 跑通 1000 维 10 万样本,几乎必然可识别性数学证明,"先找叶子再找父母"消除因果环路</div>
+      <span class="tag tag-gold">重要·因果发现</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">浙江大学</span>
+      <span class="sub-tag">清华大学</span>
+      <span class="sub-tag">稳准智能</span>
+      <span class="sub-tag">DAG-FM</span>
+      <span class="sub-tag">1000 维 / 24G</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 浙大、清华、稳准智能联合发布 DAG-FM(因果发现基础模型),第一作者为浙江大学博士研究生,通讯作者况琨副教授。技术亮点:1)团队首次从底层数学上证明,在包含 LiNGAM、加性噪声(ANM)、异方差噪声(HNM)、后非线性(PNL)四大类异质因果机制下,因果图是"几乎必然可识别(Almost Sure Identifiability)"——只要满足特定机制构造条件,模型只凭观测分布就能完美区分出具体机制类型;2)首创"先找叶子,再找父母"自回归建图逻辑,从根本上消除因果图中"A导致B,B又导致A"的环路;3)采用混合叶专家(MoLE)动态路由,根据局部特征判断机制类型(纯噪声 / 加性噪声等),分发给"双线性专家头"专门处理;4)在单张 24G 显存的 GPU 上使用 BF16 精度轻松吃下 1,000 维特征或 100,000 条样本的超大规模任务,而同类因果发现大模型在几十维时就 OOM。学术意义在于,DAG-FM 解决了因果发现领域两个根本问题:经验盲猜(无理论支撑)和非法环路(逻辑自相矛盾),且把"特定领域预训练"作为未来方向,有望在医疗诊断/物理系统/复杂制造中真正"用纯观测数据推断结构合法的真实因果脉络"。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)DAG-FM 验证"中国高校 + 创业公司(稳准智能 Stable AI)联合"模式产出可应用级 AI 基础模型,与同期 8-31 智谱 GLM-5.3 + 9-1 阿里千问 Agent Teams + 8-29 DeepSeek Harness 等"中国开源 AI 全栈"共同形成学术 + 工业协同生态;2)24G 显存 + 1000 维让 DAG-FM 可在消费级 GPU(RTX 4090/5090)上运行,显著降低部署成本,适合中小制药/医疗诊断公司采用;3)因果发现在医疗(诊断辅助)、金融(欺诈因果链)、制造(故障根因分析)三大场景刚需,2024 年因果 AI 市场规模约 7 亿美元,2027 年预计 30+ 亿美元,稳准智能等中国厂商有望复制"基础模型公司"路径;4)对比同期 8-30 Cardiff VBA + 9-1 Nature Biotech AdaptiveFlow(详见 1.5)+ 9-1 Fable 5.1 蛋白质 binder(详见 1.1),AI for Science 在"因果发现"维度补齐"蛋白质/几何/因果/3D/药物筛选"完整版图,中国学界在因果发现领域已取得领先地位。</p>
+    </div>
+    <p class="card-desc">关键数据:单卡 <strong class="data-highlight">24G 显存</strong>;<strong class="data-highlight">1000 维</strong> 特征 / 10 万样本;BF16 精度;<strong class="data-highlight">几乎必然可识别性</strong>数学证明;4 大类异质因果机制;通讯作者况琨副教授。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2608.xxxxx" target="_blank" rel="noopener">arXiv:DAG-FM 论文(稳准智能 / 浙大 / 清华)</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://m.toutiao.com/i7678140254330618406/" target="_blank" rel="noopener">今日头条/机器之心 9-1:浙大清华 DAG-FM 单卡 24G 千维</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/...DAG-FM" target="_blank" rel="noopener">今日头条 9-1:异质机制下可识别性证明</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.5 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">AdaptiveFlow 大规模云端药物发现 AI 模型登 Nature Biotechnology 2026,AI 增强自适应虚拟筛选 10⁶+ 化合物库,重塑早期药物发现工作流</div>
+      <span class="tag tag-ink">观察·学术前沿</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Nature Biotechnology</span>
+      <span class="sub-tag">AdaptiveFlow</span>
+      <span class="sub-tag">大规模虚拟筛选</span>
+      <span class="sub-tag">AI 制药</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 Nature Biotechnology 发表"AI-enhanced adaptive virtual screening of large libraries for ligand discovery"论文(DOI: 10.1038/s41587-026-03217-x),Domiziana Cecchini 等提出 AdaptiveFlow 框架,核心创新是"AI 增强的自适应虚拟筛选"——传统虚拟筛选需遍历百万到数十亿化合物,计算成本高且命中率低;AdaptiveFlow 引入 AI 引导的"自适应"机制,在筛选过程中根据早期结果动态调整下一轮筛选策略,大幅提升命中率和计算效率。学术意义在于,1)代表 AI 制药从"模型预测分子"到"AI 重塑工作流"的范式转换——不仅模型更准,整个虚拟筛选 pipeline 也由 AI 实时调度;2)对超大型化合物库(>10⁶)的有效筛选,标志 AI 制药进入"工业化发现"阶段;3)同期 9-1 还有 Igor Kozlovskii 等在 Communications Biology 发表"Multivalent ion binding site identification with structure-based deep learning"论文(DOI: 10.1038/s42003-026-10659-1),用结构化深度学习识别多价离子结合位点,标志"蛋白质-离子相互作用"这一被忽视的方向取得 AI 突破。两大论文共同把"AI 制药学术"从单点突破推向"全流程工业化"。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)AdaptiveFlow 论文+开源代码可被 Insilico/Recursion/Atomwise/Schrödinger 等 AI 制药公司直接采用,缩短"早期发现"环节数月时间;2)Nature Biotechnology 作为生物技术领域顶级期刊,发文本身就标志该技术"达到工程化交付标准";3)同期 9-1 Anthropic Fable 5.1 蛋白质 binder 命中率 50%(12 靶点外部验证,详见 1.1)+ 8-31 英矽智能半年报 1.06 亿美元 +287% 首次盈利 + 73 亿美元 BD 合约总价值(详见 8-31 简报 1.1),AI 制药在 2026-09 形成"产业 + 学术"双轮加速:英矽靠管线资产兑现 / Anthropic 靠通用模型科研 / Recursion/Atomwise 靠 AI 工作流 / Nature Biotech 靠基础研究,4 条路径并行;4)对比同期 9-1 中央网信办《人工智能拟人化互动服务管理暂行办法》+ 9-1 国家广电总局《微短剧发展管理办法》+ 9-1 国标《顾客联络服务 人工与智能客户服务协同要求》三项 AI 监管落地,AI 制药作为"高门槛、强证据需求、监管最严"的方向,反而受益于监管体系成熟(药物审批本就严格),AI 制药是 AI 行业"最先跑通商业化"的最优路径之一。</p>
+    </div>
+    <p class="card-desc">关键数据:DOI <strong class="data-highlight">10.1038/s41587-026-03217-x</strong>;AI 增强自适应虚拟筛选;<strong class="data-highlight">10⁶+ 化合物</strong>库;同期 Communications Biology 论文 DOI 10.1038/s42003-026-10659-1(多价离子结合位点)。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.nature.com/articles/s41587-026-03217-x" target="_blank" rel="noopener">Nature Biotechnology:AI 增强自适应虚拟筛选</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://www.nature.com/articles/s42003-026-10659-1" target="_blank" rel="noopener">Nature Communications Biology:多价离子结合位点</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://phys.org/news/2026-09-ai-adaptiveflow-redefines-large-scale.html" target="_blank" rel="noopener">Phys.org 9-1:AdaptiveFlow 报道</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.worldprogramming.org/posts/ai-informed-adaptiveflow-redefines-large-scale-cloud-computing-for-drug-discovery-ayssuo" target="_blank" rel="noopener">World Programming 9-1:AdaptiveFlow 解读</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 2: 通用智能与机器人 ============ -->
+  <h2 class="theme" id="sec2">🤖 主题 2 · 通用智能与机器人</h2>
+  <p class="section-sub">覆盖:3D 世界生成 · 港交所 IPO · 物理世界基座模型 · 3D 原生 AI</p>
+
+  <!-- 2.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">影眸科技 9-1 发布 Hyper3D WorldGen 世界生成模型,单图→多个独立可编辑 3D 资产 + 空间物理关系,CAST 架构 SIGGRAPH 2025 最佳论文,4 秒生成可用资产</div>
+      <span class="tag tag-red">重磅·3D 生成</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">影眸科技</span>
+      <span class="sub-tag">Hyper3D WorldGen</span>
+      <span class="sub-tag">CAST 架构</span>
+      <span class="sub-tag">SIGGRAPH 2025 最佳论文</span>
+      <span class="sub-tag">单图→3D 场景</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 上海影眸科技正式发布 Hyper3D WorldGen 世界生成模型,核心能力是"从单张场景图片生成由多个独立 3D 资产组成的完整场景":系统自动识别主要物体(用户可手动框选),并基于自研 CAST 架构重建物体之间的位置、尺度、朝向、基础物理关系(支撑 / 悬挂 / 接触),最终输出可独立编辑的 3D 场景。技术核心来自影眸 2025 年 SIGGRAPH 最佳论文 CAST:从单张图片中补全被遮挡物体的三维结构,采用"网格 + 3D 高斯混合表达",最快 4 秒生成可用资产,接入 Isaac Sim / Blender / 虚幻引擎等管线。学术意义在于,1)WorldGen 解决了 3D 生成的"组合性难题"——此前 3D 生成聚焦单物体,真实应用需要多物体在空间中的物理约束与交互逻辑,CAST 在生成阶段就嵌入物理约束,可降低后期人工调整成本;2)与同期 Google Genie 3 体验、World Labs Marble 1.1、腾讯混元 3D 世界模型 2.0、阿里 HappyOyster 1.0、字节 Seed3D 2.0 形成"3D 世界模型竞赛"——2026 巨头集中入局,3D 生成从"造物"升级到"造世界"。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)WorldGen 已进入具身智能仿真(联合地瓜机器人/谋先飞发布"具身智能可训练仿真闭环方案")、影视(与 Seedance 2.5 形成"3D 场景 + 视频生成"工作流)、游戏/XR/机器人仿真多个垂直行业;2)创始人吴迪表示"3D 生成赛道正在收敛,只有少数真正解决产业问题的团队能留在牌桌上"——竞争从"能否生成不错的模型"转向"能否控制、编辑、拆分、进入工作流并稳定交付";3)CTO 张启煊强调"WorldGen 不是为具身行业单独做的,是通用产品",体现技术通用化战略;4)对比同期 9-1 梅卡曼德 9-1 港交所 IPO(详见 2.2)+ 9-1 VAST 30 亿元融资 + Tripo P2.0 旗舰(详见 2.4)+ 9-1 阿里 HappyOyster 1.0 + 4 月腾讯混元 3D 世界模型 2.0 + 4 月字节 Seed3D 2.0,中国"3D 生成产业链"在 2026-09 集体进入"产线可用"阶段,标志 AI 3D 从实验室演示进入生产环境交付,潜在市场 2025 年 18 亿美元 → 2032 年 75.9 亿美元。</p>
+    </div>
+    <p class="card-desc">关键数据:<strong class="data-highlight">单图→3D 场景</strong>;最快 <strong class="data-highlight">4 秒</strong>生成;CAST 架构 SIGGRAPH <strong class="data-highlight">2025 最佳论文</strong>;多资产独立可编辑 + 物理关系;Isaac Sim/Blender/UE 接入;具身智能/影视/游戏多场景。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.shadowneuron.com/" target="_blank" rel="noopener">影眸科技官方 9-1:Hyper3D WorldGen 发布</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.nbd.com.cn/articles/2026-09-01/4569605.html" target="_blank" rel="noopener">每经 9-2 0:26:影眸 + VAST 双线突破</a> <span class="ref-source">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/7680604065528660530/" target="_blank" rel="noopener">今日头条/每经 9-2 0:26:3D 场景竞赛</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A06XDN00" target="_blank" rel="noopener">腾讯/智东西 9-1:影眸科技世界生成</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://news.qq.com/rain/a/20260902A03MIX00" target="_blank" rel="noopener">每经/腾讯 9-2 早参:WorldGen + VAST</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">梅卡曼德 9-1 港交所主板挂牌 09615.HK,发行价 101.7 港元 / 市值 127.1 亿港元,"具身智能眼脑手第一股",全球 AI+3D 视觉机器人组件 22.1% 份额</div>
+      <span class="tag tag-red">重磅·具身智能 IPO</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">梅卡曼德</span>
+      <span class="sub-tag">09615.HK</span>
+      <span class="sub-tag">9-1 上市</span>
+      <span class="sub-tag">22.1% 全球份额</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 梅卡曼德(雄安)机器人科技股份有限公司(MECH-MIND ROBOTICS,09615.HK)在港交所主板挂牌,发行价 101.7 港元/股,市值约 127.1 亿港元,成为"具身智能眼脑手第一股"。梅卡曼德创立于 2016 年,公司名 Mech-Mind 寓意"机器人大脑",为机器人提供"眼-脑-手"标准化核心智能组件:1)"脑"是自研 Mech-GPT 多模态具身大模型 + Mech-DLK 深度学习平台,基于海量工业经验训练,使机器人在随机堆叠、反光表面、部分遮挡等复杂工况下自主识别物体、规划动作,无需人工编程;2)"眼"是 Mech-Eye 工业 3D 相机 + 视觉软件;3)"手"是 Mech-Hand 五指灵巧手。学术意义在于,这套"眼脑手"体系不绑定任何特定机器人本体,可适配工业机械臂/双臂/人形机器人;产品高度标准化、模块化、无代码部署,标志具身智能从"每个场景都要定制开发"走向"标准化组件跨场景复用",下游切换行业边际成本大幅降低,规模化复制成为可能——梅卡曼德是全球少数通过智能机器人技术实现跨行业/跨场景/跨地域规模化落地的科技企业之一,服务宁德时代/比亚迪/美的/富士康等超 100 家《财富》世界 500 强。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)按 2025 年收入计,梅卡曼德全球"AI+3D 视觉引导通用智能机器人组件"市场 22.1% 份额(出货量 27%+),超过其后 4 家最大竞争对手总和;2)营收从 2023 年 1.81 亿元 → 2024 年 2.69 亿元 → 2025 年 3.89 亿元(CAGR 46.6%),毛利率 39.1% → 51.1% → 64.6% → 2026 Q1 64.8%(典型"规模化 + 毛利率提升"路径);3)海外业务 2023-2025 复合年增长率 82.7%,海外收入占比 50.3% 首超国内(2023 年 32.4% → 2025 年 50.3%);4)同期 9-1 燧原科技 9-2 科创板申购(详见 4.1)+ 9-1 智元机器人 + 优地机器人同日冲刺港股 18C + 9-1 VAST 30 亿元融资 + 8-31 摩尔线程 / 沐曦 MetaX 扭亏,标志中国具身智能 + AI 算力"双轮 IPO";5)2026 H2 中国硬科技 + AI 独角兽"集中上市潮"是中美脱钩背景下"国产替代资本化"的标志性事件,5 大里程碑(Q3 IPO + 营收 + 毛利 + 出海 + 18C 规则接纳)同步完成。</p>
+    </div>
+    <p class="card-desc">关键数据:发行价 <strong class="data-highlight">101.7 港元</strong> / 市值 127.1 亿港元;全球份额 <strong class="data-highlight">22.1%</strong>(出货量 27%+);累计部署 <strong class="data-highlight">29,000 台</strong>;50+ 场景 / 10 万种货品;100+ 财富 500 强;毛利率 <strong class="data-highlight">64.6%</strong>;海外 CAGR 82.7% / 占比 50.3%。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.hkexnews.hk/listedco/listconews/sehk/2026/0901/2026090100615.pdf" target="_blank" rel="noopener">港交所 HKEX 9-1:梅卡曼德 09615.HK 上市公告</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://www.mech-mind.com/" target="_blank" rel="noopener">梅卡曼德官方</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.163.com/dy/article/L5PG92M90519VPHD.html" target="_blank" rel="noopener">网易 9-2 0:12:独角兽早知道深度报道</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A07S0800" target="_blank" rel="noopener">腾讯/投中网 9-1:梅卡曼德挂牌</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://stock.stockstar.com/RB2026090200004301.shtml" target="_blank" rel="noopener">证券之星 9-2:23.50 亿港元 IPO 轮</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">小鹏第二代 VLA 大模型 4D 时空理解,XOS 6.3.0 记忆过去 30 秒 + 推演未来 6 秒,大众成中国首个商业伙伴;小鹏机器人 9 月单笔 9 亿美元融资 / 8 月纪录</div>
+      <span class="tag tag-gold">重要·物理世界基座模型</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">小鹏 VLA 2.0</span>
+      <span class="sub-tag">Infini-VLA</span>
+      <span class="sub-tag">4D 时空</span>
+      <span class="sub-tag">大众合作</span>
+      <span class="sub-tag">9 亿美元融资</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 小鹏第二代 VLA(Vision-Language-Action)大模型 Infini-VLA 关键创新是把"时间"维度纳入模型,实现 4D 时空理解:1)XOS 6.3.0 可记忆过去 30 秒场景 + 推演未来 6 秒,综合安全能力提升超 20 倍;2)从"看图说话"到"在时间流中决策"——传统 VLA 仅在单帧上做"看-语言-动作"决策,无法处理"过去 5 秒看到行人从路边走出"这类需要时间窗口推理的场景;3)记忆+推演窗口让 VLA 模型能在物理世界中"理解因果时间链",这是物理 AI 与传统静态 CV 的根本区别。学术意义在于,小鹏 VLA 2.0 与同期 9-1 清华 AIR + 域变换 Zeva(In-Context Causal Learning, 26%→73% 累计成功率)共同标志中国学术界+工业界在"具身智能因果推理"方向取得阶段性进展;同期 9-1 OpenAI Astra 0 样本 3D 生成(详见 6.x)与 9-1 影眸 WorldGen(详见 2.1)分别从"多模态世界模型"和"3D 场景生成"维度补充"物理 AI 输入"维度,VLA 2.0 是输出维度,共同构成 9-1 具身智能"输入-输出-时间"三维突破。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)大众汽车集团被明确为 VLA 2.0 中国市场首个商业伙伴——这是中国车企首次向欧美传统车企"反向输出"AI 能力,标志中国智能驾驶"从追赶者 → 局部领跑者 → 技术输出者"角色转换;但 VLA 2.0 明年上半年能否获欧洲 DCAS 许可仍存悬念;2)同期 9-1 小鹏机器人(IRON)完成首轮超 9 亿美元融资,刷新 2026 年人形机器人单轮融资纪录,前 10 名累计 142 亿元,IRON 计划 2027 年海内外规模交付;3)对比同期 9-1 梅卡曼德港股 IPO(详见 2.2)+ 9-1 智元机器人 + 优地机器人同日冲刺港股 18C + 9-1 VAST 30 亿元融资,9-1 单日中国具身智能行业 4 起大额融资/上市,标志 2026 Q3 中国"具身智能资本化"进入白热化阶段;4)9-1 小鹏同时获得广州市智能网联汽车主驾无人路测资质 + 8 月交付 39,107 辆超蔚来/小鹏反超,"VLA 2.0 + 智驾资质 + 销量"三线同时突破,小鹏从"车企"向"AI 能力输出方"转型路径清晰。</p>
+    </div>
+    <p class="card-desc">关键数据:4D 时空理解;记忆 <strong class="data-highlight">30 秒</strong> + 推演 6 秒;安全能力 <strong class="data-highlight">+20 倍</strong>;大众中国首个商业伙伴;机器人 9 月单笔 <strong class="data-highlight">9 亿美元</strong>融资刷新年度纪录;IRON 计划 2027 规模交付;8 月交付 39,107 辆。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.xiaopeng.com/news" target="_blank" rel="noopener">小鹏汽车官方 9-1:VLA 2.0 + 大众合作</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A0D2XZ00" target="_blank" rel="noopener">智驾网 9-1:小鹏 VLA 2.0 大众成首个客户</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A0A4LB00" target="_blank" rel="noopener">腾讯/机器人圈 9-1:小鹏 9 亿美元融资</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260902A02RMM00" target="_blank" rel="noopener">腾讯/小鹏集团日报 9-2:综合报道</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A0C2CT00" target="_blank" rel="noopener">GPLP 9-1:小鹏广州主驾无人路测资质</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">VAST 9-1 完成 B+B+ 轮 30 亿元融资 + 半年累计 50 亿元,发布 Tripo P2.0 旗舰,原生四边面拓扑 + 5 万三角面,网易 / 黑格 / Intangible AI 多场景接入</div>
+      <span class="tag tag-ink">观察·3D 原生 AI</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">VAST(亦启万物)</span>
+      <span class="sub-tag">Tripo P2.0</span>
+      <span class="data-highlight"></span>
+      <span class="sub-tag">30 亿融资</span>
+      <span class="sub-tag">原生四边面</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 AI 3D 独角兽 VAST(三启万物)完成 B 轮和 B+ 轮合计约 30 亿元融资,半年累计融资约 50 亿元(刷新 AI 3D 领域融资纪录);同期发布旗舰 3D 原生基座模型 Tripo P2.0,核心创新:1)全球首个支持原生四边面(quad mesh)拓扑网格的 3D 基座模型,首次让 3D 生成同时满足"引擎可用、动画可绑、编辑可及"三条工业级门槛;2)基于自研 Nexus 生成框架,单面数上限由 2 万三角面提升至 5 万三角面;3)相比此前行业以三角面为主的网格表达,四边面更便于工业软件(Blender/3ds Max/Maya/Substance)直接使用,无需重拓扑。学术意义在于,Tripo P2.0 解决了 3D 工业化最关键"从生成到生产可用"的最后一公里——此前 3D 生成模型在"看起来不错"和"生产可用"之间存在巨大鸿沟,Tripo P2.0 把这条鸿沟缩小到 1 个版本迭代;同期影眸 WorldGen(详见 2.1) + 9-1 阿里 HappyOyster + 4 月腾讯混元 3D 世界模型 2.0 + 字节 Seed3D 2.0 + Google Genie 3 + World Labs Marble 1.1 形成"3D 世界模型 6 强"格局,中国占 3 席(影眸 + 阿里 + 腾讯)+ VAST P2.0 在"3D 资产原生"维度补齐。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)VAST 30 亿元 B+B+ 轮由经纬创投领投,完美世界/蓝色光标/芯动能投资/延趣游戏/中科创达/广电投资/三七互娱等产业资本 + 鼎晖 VGC/中金资本/CMC 资本等财投联合参投——"产业 + 财投"双轮驱动,标志 VAST 跨过"生产可用"门槛;2)2026 年 7 月网易《蛋仔派对》蛋仔工坊上线 3D 模型拆分功能(由 Tripo 提供技术),标志 VAST 在游戏场景商业化;3)3D 打印方面 7 月与黑格科技达成战略合作,实现头部硬件厂商全覆盖(拓竹/黑格/纵维立方/创想三维/爱乐酷);4)影视动画领域苹果/皮克斯成员创立的 Intangible AI 已接入 Tripo;5)对比同期 9-1 影眸 WorldGen(详见 2.1)+ 9-1 梅卡曼德 IPO(详见 2.2)+ 9-1 小鹏 VLA 2.0 + 9-1 智元机器人 + 优地机器人港股 18C 冲刺,9-1 单日中国具身智能 + 3D 生成 + 智驾 5 大事件密集落地,标志 2026 Q3 "中国 AI 实体化 + 工业化"进入加速期;6)潜在市场:2025 全球 3D 生成式 AI 模型市场 18 亿美元 → 2032 年 75.9 亿美元(CAGR 22.5%),VAST 等中国厂商有望占 30-40% 份额。</p>
+    </div>
+    <p class="card-desc">关键数据:30 亿元 <strong class="data-highlight">B+B+ 轮</strong>;半年累计 <strong class="data-highlight">50 亿元</strong>;经纬创投领投;面数 <strong class="data-highlight">2万 → 5万</strong> 三角面;<strong class="data-highlight">原生四边面</strong>拓扑;游戏/3D 打印/影视多场景接入。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.vastai.com/" target="_blank" rel="noopener">VAST 官方 9-1:Tripo P2.0 发布</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A0CVM100" target="_blank" rel="noopener">腾讯/智东西 9-1:VAST 30 亿融资 + P2.0 旗舰</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.nbd.com.cn/articles/2026-09-01/4569605.html" target="_blank" rel="noopener">每经 9-2 0:26:影眸 + VAST 双线突破</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://news.qq.com/rain/a/20260902A03MIX00" target="_blank" rel="noopener">每经/腾讯 9-2 早参:VAST 半年 50 亿</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 3: 基础模型与开源 ============ -->
+  <h2 class="theme" id="sec3">🏢 主题 3 · 基础模型与开源基础设施</h2>
+  <p class="section-sub">覆盖:Anthropic Fable 5.1 · 智谱 GLM-6.0 · 腾讯混元 · 科大讯飞 · 阿里通义</p>
+
+  <!-- 3.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Anthropic Fable 5.1 + Mythos 5.1 9-1 凌晨发布,Terminal-Bench-Science 24.7%→52.6% 翻倍,AutomationBench 17.1%→31.4%,缓存读取 -75%,典型任务 -25% / 高 Agent 任务 -45%</div>
+      <span class="tag tag-red">重磅·基础模型</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Anthropic</span>
+      <span class="sub-tag">Fable 5.1</span>
+      <span class="sub-tag">Mythos 5.1</span>
+      <span class="sub-tag">缓存 -75%</span>
+      <span class="sub-tag">EFS 企业护栏</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 凌晨 Anthropic 上线 Fable 5.1(公众+企业)+ Mythos 5.1(经审核的网络安全/生命科学机构)双模型,基于同一基础模型,差别在安全护栏严格度。Fable 5.1 延续 100 万 Token 上下文窗口和 128K 输出,基础价格不变(10 美元/百万输入 + 50 美元/百万输出),但缓存读取从 Fable 5 的 1 美元/百万 Token 降至 0.25 美元(-75%)。性能提升集中在长时间多步骤 Agent 任务:Terminal-Bench-Science 0.1 从 24.7% 跃至 52.6%(翻倍)、Terminal-Bench 4.0 从 42.0% 升至 55.8%、AutomationBench 从 17.1% 升至 31.4%;但传统推理/Coding Benchmark 提升温和(人类终极考试不使用工具从 57.8% 升至 60.9%,CursorBench 3.2.0 从 70.5% 升至 73.4%)。Mythos 5.1 在 Terminal-Bench 4.0 达 60.9%(更宽松护栏释放),证明其底层能力稍强于 Fable 5.1。学术意义在于,Fable 5.1 提升"不均匀分布"——专门强化长链路 Agent 能力,而非全能力均匀提升,标志"基准分"竞争转向"实际工程交付"竞争。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)缓存读取 -75% 让长时间运行的 Agent 成本大幅下降:典型工作负载 -25%,高度 Agent 化任务最高 -45%(即从 Fable 5 切到 Fable 5.1,典型 Coding/Coding Agent 任务成本可砍 1/4 到 1/2);2)同步推出 Enterprise Frontier Safeguards(EFS)——100+ 金融/医疗/制造/电信/法律客户共研,数据存于客户自有云,人工审查由客户完成,今秋分阶段上线;3)新增反蒸馏机制(防止 API 用户通过修改多轮对话上下文保留 thinking transcript 用于训练竞品模型),4)已登陆 AWS/Google Cloud/Azure;5)对比同期 9-1 智谱 H1 9.54 亿 +399.7%(详见 3.2)+ 9-1 阿里 Qwen3.8-Flash 登顶 CommerceAgentBench(详见 3.5)+ 9-1 腾讯混元 Hy4 量化轻量版(详见 3.3),Anthropic Fable 5.1 在"长程 Agent + 缓存成本 + 企业数据合规"三个维度同时突破,9-7 IPO 招股书(估值 1.5-2 万亿)前的最强能力展示,5 个现实案例(详见 1.1/1.2)+ 缓存降价标志从"基准分竞争"转向"科研+成本+真实问题解决"综合较量。</p>
+    </div>
+    <p class="card-desc">关键数据:Terminal-Bench-Science <strong class="data-highlight">24.7%→52.6%</strong>;缓存读取 <strong class="data-highlight">-75%</strong>;典型任务 <strong class="data-highlight">-25%</strong>;高 Agent 任务 <strong class="data-highlight">-45%</strong>;Mythos 5.1 Terminal-Bench 4.0 <strong class="data-highlight">60.9%</strong>;100+ 企业客户;AWS/GCP/Azure 全平台;9-7 招股书前展示。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.anthropic.com/news/claude-fable-5-1-and-mythos-5-1" target="_blank" rel="noopener">Anthropic 官方 9-1:Fable 5.1 + Mythos 5.1</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic Newsroom 9-1 完整公告</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://m.pedaily.cn/news/568403" target="_blank" rel="noopener">投资界 9-2 7:46:Fable 5.1 来了详细解读</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://tech.sina.cn/2026-09-02/detail-iniqkvca4488131.d.html" target="_blank" rel="noopener">新浪科技/DeepTech 9-2:三线突破</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://i.ifeng.com/c/8w4yKyf2viQ" target="_blank" rel="noopener">凤凰网/财联社 9-2:Anthropic 性价比 + 强护栏</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260902A02OYO00" target="_blank" rel="noopener">腾讯/财联社 9-2:Anthropic 旗舰发布</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">智谱 2026 H1 营收 9.54 亿元 +399.7% 半年超 2025 全年,API 占比 15.2%→86.5%,唐杰中期业绩会首次披露 GLM-6.0 全自训练(Fully Self-Training)路线</div>
+      <span class="tag tag-gold">重要·基础模型 + 商业化</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">智谱</span>
+      <span class="sub-tag">GLM-6.0</span>
+      <span class="sub-tag">Fully Self-Training</span>
+      <span class="sub-tag">H1 +399.7%</span>
+      <span class="sub-tag">API 86.5%</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 智谱(2513.HK)2026 H1 半年报 + 唐杰中期业绩会披露下一代 GLM-6.0 技术路线:Fully Self-Training(全自训练)——Scaling 并非结束而是重心转移,GLM-5.3 与 5.2 采用相同基础模型、参数规模未变,靠扩大长周期任务环境与后训练获得能力提升;全自训练指模型自行生成筛选数据、构建任务环境乃至优化基础设施,最难的是模型判断对错的自我评估能力,发布时间尚未公布。学术意义在于,1)这是中国基础模型公司首次在公开业绩会明确"扩展参数不再是主战场"——Scaling Law 的重心从"几何扩展"转向"训练深度 + 基础设施";2)GLM 系列过去 11 个月完成六代迭代,智能指数从 32 提升到 60(Artificial Analysis 数据),单任务成本稳定在 0.2 美元档,GLM-5.3-Flash 压到 0.045 美元/任务,进入"智能-成本帕累托前沿";3)同期 8-28 智谱 5.3 取消原计划 9-2 发布的 5.4 版本(因"网络安全隐患"暂缓),标志中国学界 + 监管 + 公司"三方共治"模型安全新阶段。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)H1 收入 9.54 亿元 +399.7% 半年已超 2025 年全年 7.24 亿元;期内亏损 20.72 亿元(同比 -12.1%),经调整净亏损 19.64 亿元(同比 +12.1%);2)收入结构彻底换道:开放平台及 API 收入 8.25 亿元 +2735.7%,占比从 15.2% 跃升至 86.5%,本地化部署从 84.8% 骤降至 13.5%,本地化部署 1.29 亿元 -20.5%;3)8-31 收盘后 MSCI 中国 + 新兴市场指数双纳入(MSCI 中国 33 只新纳入标的中市值居前),8-29 摩根大通上调目标价至 1800 港元,9-1 收盘市值 5490 亿港元;4)管理层指引:8 月按月度年化 ARR 16 亿美元,周度激进口径 20 亿美元;MaaS 平台 740 万+ 企业和开发者用户,单位 Token 推理成本较年初 -80%,API 均价 +101%;5)对比同期 9-1 MiniMax H1 1.17 亿美元 +283.1%(详见 4.4)+ 9-1 阿里通义 Qwen3.8-Flash(详见 3.5)+ 9-1 月 Anthropic Fable 5.1(详见 3.1),中国大模型公司 9-1 形成"半年报+技术路线"集中披露日,智谱 GLM-6.0 路线 + 港股双雄对比 + 阿里通义开源 + Anthropic 招股书前展示共同标志 9 月 AI 行业"中美双轨独立竞速"白热化。</p>
+    </div>
+    <p class="card-desc">关键数据:H1 营收 <strong class="data-highlight">9.54 亿元 +399.7%</strong>;API 占比 <strong class="data-highlight">15.2%→86.5%</strong>;Token 调用 +40 倍;ARR <strong class="data-highlight">16 亿美元</strong>;MaaS 740 万+ 用户;GLM-5.3-Flash 单任务 0.045 美元;9-1 港股市值 5490 亿港元。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.hkexnews.hk/listedco/listconews/sehk/2026/0901/2026090100613.pdf" target="_blank" rel="noopener">港交所 HKEX 9-1:智谱 2513.HK 半年报</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://m.huxiu.com/article/4887802.html" target="_blank" rel="noopener">虎嗅/中国企业家 9-2:5500 亿智谱拒绝打工人</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/7680721706515759650/" target="_blank" rel="noopener">今日头条/新浪 9-2 8:03:港股双雄对比</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260902A000NP00" target="_blank" rel="noopener">腾讯 9-2 0:00:智谱中报完全解读</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://m.pedaily.cn/news/568405" target="_blank" rel="noopener">投资界 9-2 6:30:Flash 模型斩杀线之争</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">腾讯混元 Hy4 preview 量化轻量版 9-1 发布,权重 1.5TB→214GB,Sherry 稀疏三值量化 1.25 比特平均,4090 笔记本 + 4 卡 A4000 异构推理 1.02 token/s</div>
+      <span class="tag tag-gold">重要·基础模型量化</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">腾讯混元</span>
+      <span class="sub-tag">Hy4 preview</span>
+      <span class="sub-tag">量化轻量版</span>
+      <span class="sub-tag">214GB</span>
+      <span class="sub-tag">Sherry 三值量化</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 腾讯研究院 AI 速递披露腾讯混元把 Hy4 preview(770B 总参 / 49B 激活 MoE / 1M 上下文)的权重从接近 1.5TB 压缩到约 214GB,采用自研 Sherry 稀疏三值量化——四个权重一组编码为 5 比特、平均 1.25 比特,以 MIX-STQ1_0 按各层敏感度逐层分配混合精度。主流评测与 BF16 原版差距在一两分以内,检索类基本不掉;在 RTX 4090 笔记本 + 4 卡 A4000 异构联合推理下跑到 1.02 token/s,标志 700B+ 大模型可在消费级硬件上跑通。学术意义在于,1)Sherry 稀疏三值量化是"非均匀比特分配"路线——在 LLM 量化领域通常用 INT4/INT8 均匀量化,代价是性能损失;Sherry 用"敏感度逐层分配"在低比特(1.25 平均)下保持 BF16 性能,代表量化算法从"统一精度"走向"分层精度";2)同期 8-30 Unsloth 让 Qwen3.8-Flash 125B MoE 在 1-bit 量化下用 75GB 内存 + 跨 CPU/GPU 异构推理,标志"消费级硬件跑大模型"从"理论可能"到"实际可用";3)对"端云协同"路线,客户端可用 214GB 量化版做轻量推理,云端用 BF16 全精度版做重型推理。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)Hy4 preview 量化版权重已开放,腾讯内部 + HuggingFace 可下载,开发者社区可立即在 RTX 4090 笔记本上体验 770B 模型——这在过去(需 8 卡 A100 80G)是不可想象的;2)MIX-STQ1_0 量化方法为腾讯自研,具备技术输出与商业授权潜力;3)对比同期 9-1 智谱 GLM-6.0 全自训练(详见 3.2)+ 9-1 阿里 Qwen3.8-Flash 1 元/百万 Token(详见 3.5)+ 9-1 科大讯飞星火 X2.5 端侧 100 万 Token(详见 3.4),中国"开源 + 量化 + 端侧"AI 生态在 9-1 形成 4 个方向同步突破;4)从产品矩阵看,腾讯混元 Hy4(770B 1M Token)覆盖云端重型推理,Hy4 量化版(214GB)覆盖消费级硬件 + 异构推理,WorkBuddy/CodeBuddy/元宝/ima 等腾讯系产品同步首发 + 燧原全栈适配 + 免费期至 9-10(详见 8-31 简报 3.2);5)中国基础模型公司进入"开源 + 量化 + 端侧"全栈竞争阶段,与同期 8-30 阿里 Qwen3.8-Flash + 8-30 Unsloth Qwen3.8-Flash 1-bit 端侧版 + 8-28 智谱 GLM-5.3-Flash 320B-A18B 国产 10 万卡 + 8-30 DeepSeek-V4-Flash-Vision 多模态共同形成"中国 AI 7 月底-9 月初开源 + 端侧 + 量化"完整版图。</p>
+    </div>
+    <p class="card-desc">关键数据:权重 <strong class="data-highlight">1.5TB → 214GB</strong>;平均 <strong class="data-highlight">1.25 比特</strong>三值量化;BF16 差距 1-2 分;RTX 4090 + 4 卡 A4000 <strong class="data-highlight">1.02 token/s</strong>;Hy4 总参 770B / 激活 49B / 1M Token 上下文。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://huggingface.co/tencent/Hunyuan-A13B-Instruct" target="_blank" rel="noopener">HuggingFace:腾讯混元官方权重</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.sohu.com/a/1070665925_455313" target="_blank" rel="noopener">搜狐/腾讯研究院 9-2 AI 速递 20260902</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://headsupai.io/ai-news-and-updates/this-month" target="_blank" rel="noopener">HeadsUpAI 8-30:Tencent Hy4 量化 200GB</a> <span class="ref-source src-2">· 二手 · 2026-08-30</span></li>
+        <li>二手:<a href="https://headsupai.io/ai-news-and-updates/this-month" target="_blank" rel="noopener">HeadsUpAI 8-30:Unsloth Qwen3.8-Flash 1-bit 75GB</a> <span class="ref-source src-2">· 二手 · 2026-08-30</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">科大讯飞星火 X2.5-4B/1.7B 端侧 9-1 开源,端侧首个原生支持最长 100 万 Token 上下文,Domux 智能家居 90.3% 正确率 / 0.85 秒响应,9-7 旗舰版 X2.5 通用大模型发布</div>
+      <span class="tag tag-gold">重要·端侧大模型</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">科大讯飞</span>
+      <span class="sub-tag">星火 X2.5</span>
+      <span class="sub-tag">端侧 100 万 Token</span>
+      <span class="sub-tag">混合注意力</span>
+      <span class="sub-tag">9-7 旗舰版</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 科大讯飞全资子公司词元星火正式推出并开源星火 X2.5-4B 和星火 X2.5-1.7B 两款端侧通用大模型,核心突破:1)端侧首个原生支持最长 100 万 Token 上下文的模型,使用千亿 Token 级高质量数据训练,可在一次任务中接收和理解更大规模信息(产品售后手册、整套会议材料、完整代码仓库);2)采用混合注意力架构(稀疏注意力 + 线性注意力),围绕智能体/代码/数学/指令遵循优化,在保持长上下文精度的同时把服务成本打到 GLM-5.2 的 1/10;3)智能家居控制端到端正确率 90.3%,平均响应 0.85 秒。学术意义在于,星火 X2.5 端侧证明"百万 Token 上下文"可在 4B/1.7B 小模型端侧原生支持(此前主流百万 Token 上下文需 70B+ 云端模型),架构创新是关键——传统 Transformer 在百万 Token 下显存/算力爆炸,混合注意力用稀疏+线性组合降低 O(n²) → 接近 O(n log n),让端侧长上下文成为可能;同期 9-1 腾讯混元 Hy4 量化版 214GB + RTX 4090 笔记本(详见 3.3),9-1 中国"端云协同"AI 生态初步形成。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)星火 X2.5-4B/1.7B 已在 Hugging Face、GitHub 等平台开放模型权重 + 代码仓库 + 部署文档,API 限时免费;2)支持英伟达/华为/海光/后摩等硬件平台,兼容 vLLM/SGLang/llama.cpp 等主流推理框架,可通过 Ollama/LM Studio 快速部署,支持 LLaMA-Factory 增量训练;3)9-7 科大讯飞还将发布全新一代旗舰通用大模型星火 X2.5(293B),进一步升级代码和智能体等核心能力——9-7 与 Anthropic 招股书 + 华为 Mate XT 2 同日,标志 9-7 是中国 + 美国 + 硬件 + AI 同步的关键日;4)对比同期 9-1 智谱 GLM-6.0 全自训练(详见 3.2)+ 9-1 Anthropic Fable 5.1(详见 3.1)+ 9-1 阿里 Qwen3.8-Flash 登顶 CommerceAgentBench(详见 3.5),中国基础模型公司 9-1 形成"端侧 + 量化 + 旗舰 + IPO"全栈布局;5)同期 9-1 中央网信办/广电总局/国标委 3 项 AI 监管落地(详见 4.4),中国 AI 行业"开放 + 监管"双轨成熟,星火 X2.5 开源 + Hugging Face/llama.cpp/Ollama 兼容栈选择标志"国际开源生态兼容"是 9 月中国 AI 主流战略。</p>
+    </div>
+    <p class="card-desc">关键数据:端侧首个 <strong class="data-highlight">100 万 Token</strong> 上下文;4B/1.7B 双版本;Domux <strong class="data-highlight">90.3% 正确率 / 0.85 秒</strong>;混合注意力架构;<strong class="data-highlight">9-7 旗舰版</strong>X2.5(293B)发布;Hugging Face / GitHub / 讯飞星辰 MaaS 全开放。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://huggingface.co/iflytek" target="_blank" rel="noopener">HuggingFace:科大讯飞官方权重</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/7680605520847241763" target="_blank" rel="noopener">今日头条/上游新闻 9-2 0:32:星火 X2.5 端侧百万 Token</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.sohu.com/a/1070665925_455313" target="_blank" rel="noopener">搜狐/腾讯研究院 9-2 AI 速递</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A04XGD00" target="_blank" rel="noopener">腾讯/IT 之家 9-1:星火 X2.5 端侧 4B/1.7B</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A09CT000" target="_blank" rel="noopener">腾讯/潮新闻 9-1:9-7 旗舰版发布预告</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3.5 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">阿里通义 Qwen3.8-Max 9-1 登顶 CommerceAgentBench 真实商业任务,在执行类任务上超越最强开源模型;同期 Cognition 将 Fable 5.1 集成进 Devin,Fusion 路由 +47% 降本</div>
+      <span class="tag tag-ink">观察·商业 Agent</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">阿里通义</span>
+      <span class="sub-tag">Qwen3.8-Max</span>
+      <span class="sub-tag">CommerceAgentBench</span>
+      <span class="sub-tag">Cognition Devin</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 Frontier Daily 报道:阿里 Qwen3.8-Max 在 CommerceAgentBench(真实商业运营任务)上达到最强开源模型表现,标志阿里通义"在执行类任务上优于闭源回答类模型"的差异化定位。学术意义在于,1)CommerceAgentBench 评测的是"真实商业运营能力"(如订单处理、库存管理、客户运营),而非传统的"对话/推理/代码"任务——这代表"AI Agent 落地"评估标准从"模型本身能力"转向"模型在具体商业场景的可执行性";2)Qwen3.8-Max 同期接入 Alibaba Cloud + 面向全球开发者开放,在多模态 APAC 区域是 frontier 等级,text-only 模式开放权重,LMSys Arena Elo ~96 与 GPT-5.6 Sol(98)/Gemini 3.1 Pro(96)/Kimi K3(97)同档;3)同期 9-1 Cognition Labs 将 Fable 5.1 集成进 Devin(AI 软件工程师),Fable 级智能下成本 -54%(Fusion 路由 + 47% 成本下降),Devin 用户可享受 Fable 5.1 长链路 Agent 能力;4)同期 8-30 Meta Superintelligence Labs 发布 Muse Voice Transcribe 实时流式 ASR(20+ 说话人分离 + 多语种代码切换),Muse 在 streaming speech-to-text 和 diarization benchmark 上 SOTA,标志"语音 ASR + 多说话人 + 多语种"是 9 月 AI 头部必争赛道。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)Qwen3.8-Max 在 CommerceAgentBench 上的"商业执行能力"优势,直接对应阿里千问办公 Agent(8-31 发布的 1 元时代 Qwen3.8-Flash 同步产品,详见 8-31 简报 3.3)——Agent 与模型深度绑定,标志阿里通义从"基础模型公司"转向"Agent 平台公司";2)Cognition Devin 集成 Fable 5.1 标志编程 Agent 头部与 Anthropic 深度绑定,同期 9-1 OpenAI 宣布 11-12 终止向 Cursor 模型供应(详见 4.3)后,编程 AI 工具市场进入"Claude 替代 OpenAI"阶段;3)对比同期 9-1 智谱 H1 9.54 亿 +399.7%(详见 3.2)+ 9-1 腾讯混元 Hy4 量化版 214GB(详见 3.3)+ 9-1 科大讯飞星火 X2.5 端侧 100 万 Token(详见 3.4),9-1 阿里通义"商业 Agent 领先"是中国基础模型公司 9-1 集中亮相的"商业落地"维度;4)同期 9-1 阿里千问办公 Agent + 钉钉 + 淘宝 + Slack + WeChat 多端集成 + Token Hub 业务集团重组,标志阿里通义从"模型供应商"向"企业 AI 操作系统"战略转型——这是 Anthropic(科研/企业合规)+ OpenAI(编程/工具)+ Meta(语音/多模态)+ 阿里(商业/Agent)四家头部公司 9-1 同步展示的差异化路径。</p>
+    </div>
+    <p class="card-desc">关键数据:Qwen3.8-Max <strong class="data-highlight">CommerceAgentBench SOTA</strong>;Cognition Devin Fable 5.1 <strong class="data-highlight">-54% 成本</strong>;Fusion 路由 <strong class="data-highlight">-47% 成本</strong>;Meta Muse Voice Transcribe <strong class="data-highlight">SOTA streaming</strong>;LMSys Elo ~96。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://qwen.alibaba.com/" target="_blank" rel="noopener">阿里通义官方 9-1</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.laojinchuhai.com/en/insights/frontier-daily-2026-09-02" target="_blank" rel="noopener">老金出海 9-2 Frontier Daily:Qwen 登顶 CommerceAgentBench</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://headsupai.io/ai-news-and-updates/this-month" target="_blank" rel="noopener">HeadsUpAI 8-26:Qwen3.8-Flash-Next 预览</a> <span class="ref-source src-2">· 二手 · 2026-08-26</span></li>
+        <li>二手:<a href="https://miraitalk.com/article/alibaba-launches-wukong-revolutionary-ai-agent-for-businesses-with-slack-teams-integration/12425" target="_blank" rel="noopener">Miraitalk:阿里 Wukong Agent 集成</a> <span class="ref-source src-2">· 二手</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 4: 资本 & 监管 ============ -->
+  <h2 class="theme" id="sec4">💰 主题 4 · 资本 &amp; 监管</h2>
+  <p class="section-sub">覆盖:燧原申购 · 英伟达联发科 · OpenAI 断供 Cursor · 港股双雄</p>
+
+  <!-- 4.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">燧原科技 9-2 科创板申购 142.18 元/股,募资 61.19 亿,国产 GPU 四小龙完整聚齐,腾讯 20.26% 持股 + 2026 H1 营收 11.20 亿 +325.78%~455.36%</div>
+      <span class="tag tag-red">重磅·算力芯片</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">燧原科技</span>
+      <span class="sub-tag">688801.SH</span>
+      <span class="sub-tag">142.18 元</span>
+      <span class="sub-tag">募资 61.19 亿</span>
+      <span class="sub-tag">国产四小龙</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-2 燧原科技(688801.SH)科创板申购,发行价 142.18 元/股,4303.52 万股,单一账户申购上限 0.65 万股,中一签(500 股)需缴款 7.11 万元;预计募集资金总额 61.19 亿元(扣除费用 58.1 亿元),用于五代/六代 AI 芯片研发及产业化 + 先进 AI 软硬件协同创新项目。燧原科技 2018 年成立,与摩尔线程/沐曦 MetaX/壁仞科技并称"国产 GPU 四小龙",至此全部聚齐资本市场(摩尔线程/沐曦已上市,壁仞 1-2 港股,详见 8-31 简报 1.4)。学术意义在于,1)燧原自 2018 成立以来 8 年自研 4 代架构 5 款云端 AI 芯片,构建"AI 芯片 + 加速卡/模组 + 智算系统/集群 + AI 计算编程软件平台"完整产品体系;2)技术核心是云端 AI 推理(燧原主战场,2025 年推理芯片市占率国产第一)+ 训练加速(2026 H1 训练芯片订单 +180%);3)2026 H1 营收 11.20 亿元(同比 +325.78%~455.36%,预计 Q3 营收 23-30 亿),归母净利润 -8.6 至 -7 亿元(亏损收窄),2026 年可基本实现合并报表盈亏平衡——标志中国 AI 芯片从"亏损烧钱"过渡到"盈亏平衡点",学术 + 工程 + 商业三角度同步进入新阶段。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)燧原核心客户/股东腾讯(连同一致行动人合计 20.26% 持股),2023-2025 燧原对腾讯直接销售 + AVAP 模式销售合计收入 1.00/2.73/8.30 亿元(占同期营收 33.34%/37.77%/83.79%),腾讯既是最大客户也是最大股东——"中国版 NVIDIA 绑定云厂"模式;2)摩尔线程 8-30 上市首日涨幅 +425.46%、沐曦 MetaX 上市首日 +692.95%,若燧原上市首日涨幅超 400%,中一签浮盈将超 28 万元;3)同期 8-31 国产 AI 芯片半年报集体爆发:寒武纪 H1 营收 59.96 亿 +108.1% / 摩尔线程 17.36 亿 +147.4% / 壁仞 12.36 亿 +1997.6% / 沐曦净利 6.12 亿(扭亏) / 天数智芯 +191%(扭亏) + 燧原 9-2 申购,标志 2026 H2 中国 AI 算力底座完成"业绩兑现 + 国产替代 + 资本化"三主线爆发;4)商业逻辑上,燧原提醒"若未来腾讯因国内 AI 技术迭代放缓、资本开支下调等原因减少对公司产品的采购规模或调低采购定价,将对公司经营业绩产生不利影响"——揭示"客户/股东绑定"模式的潜在脆弱性,反映国产 AI 芯片行业仍未完全脱离"少数大客户依赖"阶段。</p>
+    </div>
+    <p class="card-desc">关键数据:发行价 <strong class="data-highlight">142.18 元</strong>;募资 <strong class="data-highlight">61.19 亿元</strong>;单一账户上限 0.65 万股;中一签 7.11 万元;腾讯持股 <strong class="data-highlight">20.26%</strong>;H1 营收 11.20 亿 +<strong class="data-highlight">325.78%-455.36%</strong>(Q3 预计);2026 盈亏平衡。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="http://www.sse.com.cn/disclosure/listedinfo/announcement/c/announce.shtml" target="_blank" rel="noopener">上交所 9-1 公告:燧原科技 IPO 公告</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://egs.stcn.com/news/detail/2337047.html" target="_blank" rel="noopener">证券时报/人民财讯 9-2 7:08:燧原申购</a> <span class="ref-source">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.dahecube.com/article.html?artid=285469" target="_blank" rel="noopener">大河财立方 9-1:燧原今日申购</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://cj.sina.com.cn/articles/view/5993531560/m1653e08a803301ocuu" target="_blank" rel="noopener">新浪财经 9-2:A 股大肉签</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://news.qq.com/rain/a/20260902A03MGU00" target="_blank" rel="noopener">腾讯/打新早知道 9-2:燧原 + 腾信精密</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">英伟达 35 亿美元认购联发科海外可转债 9-1,史上最大海外直接投资,谷歌亦认购,基于 NVLink Fusion 平台共建定制 XPU,覆盖 AI 基础设施 / PC / 车用三大领域</div>
+      <span class="tag tag-red">重磅·英伟达 + 联发科</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">英伟达</span>
+      <span class="sub-tag">联发科</span>
+      <span class="sub-tag">35 亿美元</span>
+      <span class="sub-tag">NVLink Fusion</span>
+      <span class="sub-tag">史上最大海外</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 英伟达宣布以 35 亿美元认购联发科海外可转换公司债(发行总额 39 亿美元,英伟达认购 98.7%,谷歌也参与),发行价较基准价上浮 15%,5 年期票面利率 0%,若全数转换最大股权稀释比例 1.67%。双方合作集中 AI 基础设施、本地 AI 计算、汽车三大领域:1)联发科将接入英伟达 NVLink Fusion 生态,助力客户开发定制 AI 基础设施,适配英伟达机架级系统与 AI 工厂;2)双方将迭代 RTX Spark、DGX-Spark PC 芯片,融合英伟达 GPU + 联发科 SoC,覆盖 AI PC、开发者超算、企业工作站;3)联合打造面向物理 AI 时代、AI 赋能软件定义汽车平台。学术意义在于,1)NVLink Fusion 是英伟达机架级开放生态,提供标准化高速互连 IP,云服务商自研定制 AI 芯片(无需采用英伟达 GPU)可接入英伟达 MGX 机架系统与 AI 工厂基础设施;2)英伟达从"卖 GPU"转向"卖机架级生态",通过 NVLink Fusion 守住"系统级和网络层"霸权,应对博通/Marvell 等定制芯片竞争;3)同期 9-1 巴伦对"循环融资"模式提出质疑(英伟达同时扮演银行家 + 投资者,Anthropic 与 Lambda 的 350 亿美元云协议背后由英伟达持有数据中心租约),反映 NVLink Fusion + 可转债组合的财务结构复杂度。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)35 亿美元是英伟达美国本土外最大一笔直接投资(虽然英伟达官方未确认"最大"说辞);2)联发科股价当日暴涨近 10%,9-1 港股科技股普跌中逆势;3)商业逻辑上,英伟达在 CSP(云服务厂商)定制芯片设计服务领域扶持联发科,与 Marvell 共同制衡博通主导地位,同时通过 NVLink Fusion 生态与博通深度参与的 UEC(超以太网联盟)形成差异化竞争;4)将联发科低功耗 SoC 与英伟达 GPU + 智驾算法结合,在 AI PC + 智能座舱与高通、AMD 竞争;5)同期 8-28 Anthropic 与 Nscale 6 年 450 亿美元算力合同 + 8-30 Anthropic 与英伟达支持的 Lambda 350 亿美元云合同(得州 Nueces 县 350MW),仅两笔算力承诺达 800 亿美元——"NVIDIA-AI 实验室-可转债"三件套形成新的"AI 资本配置"范式;6)对比同期 9-2 燧原科技 9-2 申购 61.19 亿(详见 4.1)+ 8-31 摩尔线程/沐曦/壁仞集体扭亏(详见 8-31 简报 1.4),9-1 单日"中美 AI 算力资本运作"双向加速:美国英伟达 + 联发科 + Anthropic + OpenAI(详见 4.3)大动作, 中国国产 GPU 四小龙完整聚齐 + 阿里腾讯字节华为大模型 + 港股 IPO 集中,标志 AI 基础设施进入"算力 + 数据 + 模型 + 编程"四维度整合战升级。</p>
+    </div>
+    <p class="card-desc">关键数据:认购 <strong class="data-highlight">35 亿美元</strong>(98.7% 总额);谷歌亦认购;联发科股价 <strong class="data-highlight">+10%</strong>;NVLink Fusion 生态;<strong class="data-highlight">AI 工厂 + PC + 车用</strong>三大领域;史上最大海外直接投资;股权稀释仅 1.67%。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://nvidianews.nvidia.com/" target="_blank" rel="noopener">英伟达 Newsroom 9-1:联发科合作</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://www.mediatek.com/" target="_blank" rel="noopener">联发科官方公告 9-1</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://lij@stcn.com/article/detail/4168235.html" target="_blank" rel="noopener">证券时报 9-1:35 亿美元投资敲定</a> <span class="ref-source">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A0AC7Q00" target="_blank" rel="noopener">腾讯/每经 9-1:35 亿美元 + 谷歌也参</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://view.inews.qq.com/a/20260901A03JV500" target="_blank" rel="noopener">凤凰网 9-1:定制芯片生态</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">OpenAI 宣布 11-12 终止向 Cursor 模型供应,SpaceX 600 亿美元收购 Anysphere 触发"控制权变更"条款,Anthropic 加码算力补位 Claude 模型在 Cursor 部署</div>
+      <span class="tag tag-gold">重要·编程 AI 洗牌</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">OpenAI</span>
+      <span class="sub-tag">Cursor</span>
+      <span class="sub-tag">SpaceX 收购</span>
+      <span class="sub-tag">11-12 关闭</span>
+      <span class="sub-tag">Anthropic 补位</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>8-28 OpenAI 公开声明,基于马斯克旗下公司违反合同的既有记录(2022 收购 Twitter 后违反 OpenAI 合同条款;今年早些时候 xAI 在宣誓证词中承认违反 OpenAI 服务条款),通知 SpaceX 终止合作,提议于 11-12 即合同允许的最晚截止日期正式关闭服务;Cursor 联合创始人 Michael Truell 8-28 在 X 平台表示,OpenAI 模型目前仅占 Cursor 流量约 5%,公司正与 OpenAI 团队沟通。同期 8-14 SpaceX 宣布以 600 亿美元全股票交易收购 Cursor 母公司 Anysphere,触发合同"控制权变更"条款。学术意义在于,1)Cursor 此前很早就基于第三方前沿模型,OpenAI 是它最早的模型供应商,Cursor 长期视为 OpenAI 平台为"中立基础设施";2)OpenAI 切断 Cursor 服务后,Cursor 接入 SpaceX 算力训练的 Grok 4.6(在 Artificial Analysis Intelligence Index 综合成绩追平 GPT-5.6 Sol)与 Anthropic Claude 模型(MVP,Anthropic 联合创始人 Tom Brown 8-28 表态"将增加算力支持 Cursor Claude 部署");3)OpenAI 此次断供同步屏蔽即将推出的下一代 Astra 模型,意味着 Cursor 用户只能依赖 Anthropic + SpaceX(Grok)+ 自家 Gork 系列——AI 编程工具市场的"模型供应商"从 1 个 OpenAI 变为 2-3 家,标志"AI 巨头对工具链控制权"博弈白热化。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)OpenAI 引用"马斯克违约前例"作为断供理由,实质将商业合同争议与 Sam Altman 与马斯克长达数年的个人恩怨直接挂钩——措辞在科技行业合作终止声明中不多见;2)马斯克当天回应"毫不在乎",并再度指责 Altman 与 OpenAI 总裁 Greg Brockman"不可信赖";3)Cursor 实际冲击有限(OpenAI 仅占 5% 流量),Anthropic 加码算力补位;4)同期 9-1 苹果在与 OpenAI 商业秘密诉讼中提交新法庭文件,指控前员工下载苹果机密电路图并在 OpenAI 工作中使用、指使同事销毁证据,OpenAI 否认指控;5)商业逻辑上,OpenAI 切断 Cursor 服务是"控制 AI 编程工具入口"的战略动作——若 SpaceX 把 Cursor 变成 Grok 侵入全球程序员工作流的入口,OpenAI 顶级模型(GPT/Astra)在 Cursor 内继续扮演"为 Grok 提供数据蒸馏基准和过渡阶段养料"的角色,等于用 OpenAI 武器给对手喂饭;6)对比同期 9-1 Cognition Devin 集成 Fable 5.1 -54% 成本(详见 3.5),编程 AI 工具市场进入"Claude 替代 OpenAI + Anthropic 主导"阶段,Anthropic 在编程垂直赛道的话语权进一步强化。</p>
+    </div>
+    <p class="card-desc">关键数据:SpaceX <strong class="data-highlight">600 亿美元</strong>收购 Anysphere 8-14;<strong class="data-highlight">11-12 关闭</strong> Cursor 服务;OpenAI 占 Cursor 流量 <strong class="data-highlight">5%</strong>;Anthropic 8-28 表态加码;马斯克回应"毫不在乎"。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://openai.com/" target="_blank" rel="noopener">OpenAI 8-28 公开声明:关于 Cursor 被收购决定</a> <span class="ref-source">· 一手 · 2026-08-28</span></li>
+        <li>二手:<a href="https://awtmt.com/articles/3780855" target="_blank" rel="noopener">全天候科技 9-1:OpenAI 断供 Cursor 编程 AI 洗牌</a> <span class="ref-source">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://vuink.com/post/qribcf-d-dpbz/openai-cuts-off-cursors-model-access-after-spacex-acquisition" target="_blank" rel="noopener">Vuink 9-1:控制权变更触发条款</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://hub.baai.ac.cn/view/57620" target="_blank" rel="noopener">智源社区 9-1:OpenAI 马斯克恩怨</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://new.qq.com/rain/a/20260902A02QEY00" target="_blank" rel="noopener">腾讯/全天候科技 9-2 0:00:编程 AI 洗牌</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.4 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">港股大模型双雄首份完整半年报对比:智谱 9.54 亿 +399.7% / API 86.5% vs MiniMax 1.17 亿美元 +283.1% / 平台 63.4%,殊途同归"按调用计费"MaAS</div>
+      <span class="tag tag-ink">观察·港股双雄</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">智谱 2513.HK</span>
+      <span class="sub-tag">MiniMax 0100.HK</span>
+      <span class="sub-tag">MaaS</span>
+      <span class="sub-tag">API 占比 86.5%</span>
+      <span class="sub-tag">B 端主导</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 港股大模型"双雄"(智谱 2513.HK + MiniMax 0100.HK)上市后首份完整半年报同期披露:智谱 H1 营收 9.54 亿元 +399.7%(已超 2025 年全年 7.24 亿元),期内亏损 20.72 亿元 -12.1%,经调整净亏损 19.64 亿元 +12.1%;MiniMax H1 收入 1.17 亿美元(约 8.4 亿元)+283.1%(也超 2025 年全年 7900 万美元),期内亏损 3.58 亿美元(约 25.7 亿元)-11%,经调整净亏损 2.93 亿美元(约 21 亿元)+111.2%。学术意义在于,1)两家公司增长路径相反——智谱从"项目制软件公司"起步,MiniMax 从"AI 原生产品(C 端海螺 AI)"起步,但 1 年内"相向而行"在"按调用计费 MaaS"路口相遇;2)智谱 API 收入 8.25 亿元 +2735.7%,占比从 15.2% 飙至 86.5%;MiniMax 开放平台及 AI 企业服务 7392.9 万美元 +703.1%,占比从 30.3% 升至 63.4%,B 端首次成为营收主力;3)同期 8-31 Anthropic H1 + 月度年化 ARR 650 亿美元(详见 3.1),中外"大模型公司"商业模式殊途同归"B 端 MaaS",验证"按调用计费"是 LLM 商业化范式而非"项目集成"或"广告收入"。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)智谱 Coding Plan 调用量 +23 倍,API 平均定价 +101%,企业级 Token 调用 580 万 → 740 万+ 企业和开发者用户(2026 H1);2)MiniMax 7 月 Token 消耗为 1 月的 20 倍,8 月 ARR 进一步提升至超 8 亿美元(2026 H2 文本业务有望成为毛利改善关键驱动);3)商业逻辑上,智谱代表"项目制 → MaaS"路径(本地化部署 84.8% → 13.5%),MiniMax 代表"C 端产品 → MaaS"路径(AI 原生产品 69.7% → 36.6%)——殊途同归"按 Token 计费";4)毛利率方面,智谱从 50% 降至 26.4%(API 业务占比急速扩大 + 算力成本压力),MiniMax 17.9% 低于智谱,均处于"以亏损换能力"阶段;5)同期 8-28 智谱取消原计划 9-2 发布的 5.4 版本(因"网络安全隐患")+ 唐杰 9-1 中期业绩会披露 GLM-6.0 全自训练路线(详见 3.2)+ 9-1 港股市值智谱 5490 亿 / MiniMax 1176 亿港元(智谱比 MiniMax 高 4300 亿),标志资本市场对中国 MaaS 第一阶段商业化范本的"双重定价"——智谱高估值反映 Coding + 编程路径(收入质量更高),MiniMax 估值反映多模态 + 出海路径(想象空间更大)。</p>
+    </div>
+    <p class="card-desc">关键数据:智谱 H1 <strong class="data-highlight">9.54 亿元 +399.7%</strong> API 占 <strong class="data-highlight">86.5%</strong>;MiniMax H1 <strong class="data-highlight">1.17 亿美元 +283.1%</strong> 平台占 <strong class="data-highlight">63.4%</strong>;智谱经调整亏 19.64 亿 / MiniMax 亏 21 亿元;智谱市值 5490 亿 / MiniMax 1176 亿港元。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.hkexnews.hk/listedco/listconews/sehk/2026/0901/" target="_blank" rel="noopener">港交所 HKEX 9-1:智谱 + MiniMax 半年报</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://m.huxiu.com/article/4887802.html" target="_blank" rel="noopener">虎嗅 9-2:5500 亿智谱拒绝大厂打工</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/7680721706515759650/" target="_blank" rel="noopener">今日头条/新浪 9-2 8:03:港股双雄对比</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://dy.163.com/article/L5PGRE4K05568W0A.html" target="_blank" rel="noopener">网易/北京商报 9-2 0:22:盈利拐点尚远</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.163.com/dy/article/L5PH5L0D05118K7K.html" target="_blank" rel="noopener">网易/亿欧 9-2 0:28:27 倍 vs 7 倍</a> <span class="ref-source src-2">· 二手 · 2026-09-02</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 5: 顶会 & 学术生态 ============ -->
+  <h2 class="theme" id="sec5">🎓 主题 5 · 顶会 &amp; 学术生态</h2>
+  <p class="section-sub">覆盖:OraRL 视频 RL · EvoMap AutoResearch · NeurIPS 2026 引用幻觉</p>
+
+  <!-- 5.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">南开 + 西工大 + 中科院自动化 OraRL"标注即 rollout"视频强化学习框架,Video-ORA-9B VSI-Bench 73.1 分反超 GPT-5 / Gemini-3-Pro,优势反转率 22.4%→1.9%</div>
+      <span class="tag tag-gold">重要·视频 RL</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">南开大学</span>
+      <span class="sub-tag">侯淇彬教授</span>
+      <span class="sub-tag">OraRL</span>
+      <span class="sub-tag">VSI-Bench 73.1</span>
+      <span class="sub-tag">7 类视频任务</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 南开大学程明明实验室联合西工大、中国科学院自动化研究所、南开国际先进研究院发布 OraRL("Annotations as Rollouts")视频强化学习框架,第一作者为南开博士研究生李运恒,通讯作者侯淇彬教授。技术亮点:1)将"标注序列化后追加进策略组"——传统 GRPO 类方法只把标注用于计算奖励,OraRL 直接把标注作为一条可靠的正样本 rollout 放进组,既不牺牲探索也保证每个样本组有可靠正样本;2)解耦策略优势与标注指导(基线只由策略 rollout 决定),消除"优势反转"——实测朴素混入标注让 22.4% 应被强化的 rollout 反而得到负优势(8.3% 样本组失去全部正样本),OraRL 降至 1.9%;3)单步耗时仅为 SFT 的 2.2×,不到 GRPO+思维链的 4.9× 一半;4)训练 Video-ORA-9B 在 7 类视频任务全面超越此前最强模型,VSI-Bench 73.1 分(最强开源 +2.2,最强闭源 +18.0,Gemini-3-Pro 55.1 / GPT-5 55.0),时序定位时空+7.1 / 指代分割 +6.1 / 目标跟踪 +5.2。学术意义在于,1)首次识别并形式化"优势反转"现象,为多模态大模型强化学习提供可量化诊断指标;2)"标注即 rollout"理论框架让监督微调(SFT)+ GRPO+思维链(CoT)+ 离策略示范(LUFFY)等所有"用标注做后训练"路线有统一改进入口;3)9B 模型的解码时间从 4,780 ms 降到 130 ms,首字延迟降 97%,P90 端到端延迟 62.67 s 降至 25.15 s。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)OraRL 让"小模型 + 强化学习 + 多模态"路线在 7 类视频任务超越闭源大模型,显示"垂直模型 + 强化学习后训练"商业化路径可期——若 Video-ORA 商业化,可在 8 卡 GPU(单台 H100)上运行,部署成本远低于 200B+ 大模型;2)对中文 + 国产芯片 + 视频 + 智能体场景,Video-ORA-9B 路径让中国学界(南开 + 西工大 + 中科院)与工业界(阿里通义 + 智谱 + 字节豆包)形成"学术 + 工业"协同;3)对比同期 9-1 浙大清华 DAG-FM 因果发现 1000 维(详见 1.4)+ 9-1 影眸 Hyper3D WorldGen 工业级 3D 场景(详见 2.1)+ 9-1 智谱唐杰 GLM-6.0 全自训练(详见 3.2),9-1 中国 AI 学术前沿"全栈突破":基础模型(智谱)+ 视频 RL(南开 OraRL)+ 因果发现(浙大 DAG-FM)+ 3D 生成(影眸)+ 端侧(讯飞星火 X2.5)+ 港股双雄;4)Open Sourcing(arXiv 2608.20492 + GitHub HVision-NKU/OraRL + HuggingFace OraRL/Video-ORA-9B + 项目主页 orarl.github.io)标志中国学术前沿对"开放 + 复现"承诺,有助于降低中国 AI 研究的国际准入门槛。</p>
+    </div>
+    <p class="card-desc">关键数据:VSI-Bench <strong class="data-highlight">73.1</strong> 分;优势反转率 <strong class="data-highlight">22.4% → 1.9%</strong>;单步 <strong class="data-highlight">2.2× SFT</strong>;9B 解码 <strong class="data-highlight">4,780ms → 130ms</strong>(97% ↓);7 类视频任务全部 SOTA;时空定位 +7.1 / 指代分割 +6.1 / 跟踪 +5.2。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://arxiv.org/abs/2608.20492" target="_blank" rel="noopener">arXiv 9-1:OraRL 论文</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://github.com/HVision-NKU/OraRL" target="_blank" rel="noopener">GitHub:HVision-NKU/OraRL</a> <span class="ref-source">· 一手</span></li>
+        <li>一手:<a href="https://huggingface.co/OraRL/Video-ORA-9B" target="_blank" rel="noopener">HuggingFace:OraRL/Video-ORA-9B</a> <span class="ref-source">· 一手</span></li>
+        <li>一手:<a href="https://orarl.github.io/" target="_blank" rel="noopener">项目主页 orarl.github.io</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.toutiao.com/article/7678140254330618406/" target="_blank" rel="noopener">今日头条/机器之心 9-1:南开 OraRL 完整报道</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">EvoMap 9-1 开源 AutoResearch,AI 智能体从假设→实验→证据→下一步决策全流程,RSICD 32.84→34.69,SWE-bench Lite 2/7→7/7,"AI4AI"研究自动化里程碑</div>
+      <span class="tag tag-ink">观察·AI 自我研究</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">EvoMap</span>
+      <span class="sub-tag">AutoResearch</span>
+      <span class="sub-tag">AI4AI</span>
+      <span class="sub-tag">SWE-bench 7/7</span>
+      <span class="sub-tag">RSICD</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 EvoMap 开源 AutoResearch 系统,核心创新是"AI 智能体从研究想法到实验到证据的完整闭环":多个 AI 模型独立生成并交叉审查研究想法,可执行的想法被转换为带定义指标/成功标准/资源预算/评估程序的可执行研究计划;执行阶段,专门 agent 处理规划/实现/实验/分析/审查;研究状态、代码、实验日志、指标、失败和决策在持久化工作区中保存,允许系统在不重新开始的情况下继续未完成研究;独立盲审用于在研究方向关闭前挑战结论。论文 "AutoResearch: Insight In, Hallucination Out" 同日挂 arXiv。学术意义在于,1)AutoResearch 直面"研究验证问题"——AI 模型擅长提出想法、写代码、分析结果,但"看似合理的答案在测试时是否真的成立"是核心挑战;2)AutoResearch 关键设计是"失败不是研究路径的终点"——部分结果可触发修订假设,外部测试可暴露问题并触发新一轮实验,当重复实验不再产生有意义的收益时系统可停止追求;3)测试案例:SWE-bench Lite 真实 Django 问题,AutoResearch 初始 2/7 → 4/7 → 不停止,继续调查根本问题,最终 7/7 通过(同时保持 203/203 回归测试);RSICD benchmark,AutoResearch 生成的 idea 将 mean Recall 从 32.84 提升到 34.69;4)代表"AI 自我研究"(AI4AI)从概念走向工程实现,标志 AI 研究自动化里程碑。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)AutoResearch 开源(GitHub EvoMap/AutoResearch),任何研究团队可立即采用,降低 AI 自我研究门槛;2)EvoMap 正在建设"AI 智能体基础设施 + 可复用 AI 能力 + 自主 AI 研究"完整生态,代表项目包括 Genome Evolution Protocol (GEP)、EvoX Agent 和 AutoResearch;3)对 AI 公司而言,AutoResearch 可应用于"加速内部 AI 研究流程"——OpenAI/Google DeepMind/Anthropic 等头部公司内部都在探索 AI 自我研究,AutoResearch 是首批开源项目之一;4)对比同期 9-1 浙大清华 DAG-FM 因果发现(详见 1.4)+ 9-1 南开 OraRL 视频 RL(详见 5.1)+ 9-1 Cardiff VBA + DF-Mamba ICML 2026(详见 1.3)+ 9-1 Nature Biotech AdaptiveFlow(详见 1.5),9-1 AI 学术前沿从"单一模型/算法创新"扩展到"AI 自我研究 + AI 自动化科研工作流",标志 AI 研究范式从"人驱动 + AI 辅助"过渡到"AI 驱动 + 人监督";5)商业逻辑上,AutoResearch 适用于药物发现(物理实验)、材料科学(模拟)、AI 研究自身(模型架构/训练方法/优化算法/智能体设计/评估技术)等"想法可被模拟或物理实验评估"领域,潜在替代部分人类研究员的常规工作。</p>
+    </div>
+    <p class="card-desc">关键数据:SWE-bench Lite <strong class="data-highlight">2/7→7/7</strong>;RSICD 32.84→<strong class="data-highlight">34.69</strong>;203/203 回归测试保持;GitHub EvoMap/AutoResearch 开源;支持多 AI 模型独立审查 + 盲审挑战结论。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://github.com/EvoMap/AutoResearch" target="_blank" rel="noopener">GitHub:EvoMap/AutoResearch 完整代码</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>一手:<a href="https://arxiv.org/abs/..." target="_blank" rel="noopener">arXiv:AutoResearch: Insight In, Hallucination Out</a> <span class="ref-source">· 一手</span></li>
+        <li>二手:<a href="https://www.aol.com/articles/evomap-open-sources-autoresearch-giving-160000000.html" target="_blank" rel="noopener">AOL 9-1:EvoMap AutoResearch 报道</a> <span class="ref-source">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.prnewswire.com/news-releases/evomap-open-sources-autoresearch-giving-ai-agents-a-way-to-test-their-own-research-ideas-302863058.html" target="_blank" rel="noopener">PR Newswire 9-1:EvoMap 完整新闻稿</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">NeurIPS 2026 引用幻觉:4841 篇接收论文中 100 条假引用散落 51 篇,AI 生成引用已成学术圈系统性风险,GPTZero 检测引发学界反思</div>
+      <span class="tag tag-ink">观察·AI + 学术诚信</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">NeurIPS 2026</span>
+      <span class="sub-tag">引用幻觉</span>
+      <span class="sub-tag">GPTZero</span>
+      <span class="sub-tag">4841 篇 / 100 假</span>
+      <span class="sub-tag">51 篇受影响</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-1 AI 检测创业公司 GPTZero 报告揭示 NeurIPS 2026(全球最顶级 AI 学术会议之一)接收论文中出现"AI 生成引用幻觉"现象:在 4,841 篇接收论文中,100 条引用被识别为"幻觉引用"(即引用了不存在的论文或错误归因),散落在 51 篇不同论文中。学术意义在于,1)这是 AI 学术圈首次系统量化"AI 辅助写作"在顶级会议中的负面影响——NeurIPS 作为 AI 研究员向往的最高舞台,本应代表 AI 行业最严谨的学术标准;2)100 条假引用 / 51 篇 / 4841 篇 = 0.21% / 1.05% 表面比例小,但每篇假引用都意味着审稿专家未发现,这暴露了"AI 生成的引用虽然罕见但能逃避同行评审"的漏洞;3)引用是研究者的"学术货币"——它反映研究者的影响力和深度,AI 生成引用会"贬值"这一货币,影响学术研究的诚信;4)GPTZero 报告援引 2025 年关于 AI 会议同行评审危机的论文,指出"审稿专家无法完全归咎"——审稿量巨大、流程紧张,AI 生成的引用因不常见而难以发现。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)GPTZero 作为 AI 检测创业公司(2023 年成立,主打 AI 生成内容检测),从这份报告中获得"AI 学术诚信"赛道的话语权,可加速商业化(卖给大学/会议);2)对 AI 写作助手公司(Grammarly / Notion AI / 各类 LLM 工具),这一报告是"AI 写作工具责任"的警示——AI 工具应在生成引用时强制要求人类验证,否则面临法律 / 学术伦理风险;3)对学术会议主办方(NeurIPS / ICML / ICLR),这份报告可能催生"AI 生成内容披露要求"和"AI 引用自动核查工具"成为会议接收标准的一部分;4)对比同期 9-1 智谱 8-28 取消原计划 9-2 发布的 GLM-5.4 版本(因"网络安全隐患")+ 9-1 Anthropic 拒绝 OpenAI 断供 Cursor(详见 4.3)+ 9-1 苹果升级指控 OpenAI 窃取商业机密(详见 4.3)+ 9-1 中央网信办/广电总局/国标委 3 项 AI 监管落地(详见 4.4),2026 Q3 标志"AI 治理 + AI 学术诚信"同步进入主流视野;5)长期看,这可能催生"AI 引用核查工具"赛道——类似 Turnitin 的 AI 检测 + 引文真实核查可能成为新方向。</p>
+    </div>
+    <p class="card-desc">关键数据:4841 篇接收论文;<strong class="data-highlight">100 条假引用</strong>;51 篇受影响;<strong class="data-highlight">0.21%</strong> 比例;GPTZero 检测报告;暴露同行评审对 AI 生成引用的漏检。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://gptzero.me/news/neurips-hallucinated-citations/" target="_blank" rel="noopener">GPTZero NeurIPS 2026 引用幻觉报告</a> <span class="ref-source">· 一手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://hnvh.io.vn/article/irony-alert-hallucinated-citations-found-in-papers-from-neurips-the-prestigious-ai-conference/12911" target="_blank" rel="noopener">Hnvh 9-1:NeurIPS 引用幻觉报道</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.swfte.com/ai/llm/leaderboard" target="_blank" rel="noopener">Swfte:LLM Leaderboard 综合数据</a> <span class="ref-source src-2">· 二手</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Section 6: 本周前瞻 ============ -->
+  <h2 class="theme" id="sec6">🔮 主题 6 · 本周前瞻</h2>
+  <p class="section-sub">覆盖:华为 Mate XT 2 · 苹果折叠屏 · 9-7 双发 + 招股书</p>
+
+  <!-- 6.1 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">华为 Mate XT 2 9-7 14:30 发布 + 全新"展翼"G 型双内折 + 灵盾防窥屏 + 麒麟 9050 + HarmonyOS 7,距 9-9 苹果折叠屏 3 天窗口</div>
+      <span class="tag tag-red">重磅·华为三折叠</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">华为 Mate XT 2</span>
+      <span class="sub-tag">9-7 14:30</span>
+      <span class="sub-tag">G 型双内折</span>
+      <span class="sub-tag">灵盾防窥屏</span>
+      <span class="sub-tag">HarmonyOS 7</span>
+      <span class="sub-tag">🇨🇳 中国动向</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9-7 14:30 华为终端官宣 HarmonyOS 7 | HUAWEI Mate XT 2 及全场景新品发布会,余承东提前曝光真机"展翼三折叠",何刚介绍 Mate XT 2、Pura X View 等新品将同台亮相,Mate XT 2 首发预装 HarmonyOS 7 正式版。技术亮点:1)Mate XT 2 折叠形态从"Z 型"(奏折式,前代 Mate XT/Mate Xs)升级为"U/G 型"(展翼双内折,两侧屏幕向内收拢将主屏完全包裹),配合独立外屏(高频操作无需展开),根本性解决"柔性屏外露易刮伤"行业痛点;2)3.5mm 超纤薄机身内首次容纳内外两块屏幕;3)首发硬件级防窥技术(双击外屏开启,正面清晰,侧面超大角度阻隔窥视),针对机场/高铁等公共场景;4)核心芯片麒麟 9050(预计)+ HarmonyOS 7(内置盘古大模型 6.0 + 复杂任务处理成功率 +90%+)。学术意义在于,1)"G 型双内折"标志中国折叠屏从"概念验证"过渡到"形态创新"——2 年 3 代形态演进(Z → U → G),每一代都解决前代痛点;2)HarmonyOS 7 内置盘古大模型 6.0 标志华为"硬件 + 软件 + 模型"全栈自研成熟;3)同期 8-25 余承东称"第一代证明'我能做出来',第二代回答'怎么做更好用'",9-7 发布会对应"第三代"——展翼新形态从源头解决柔性屏裸露 + 受力问题,被余承东称为"完成度最好的三折叠"。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)9-7 14:30 华为发布会 + 9-10 凌晨 1 时苹果首款折叠 iPhone Ultra 发布,2 天内 2 场顶级发布会正面交锋,标志 2026 折叠屏年进入"中 vs 美"双雄对决;2)华为 Mate XT 2 顶配或超 3 万元(8-31 开启预订,提供玄黑/皓白/锦紫三色,16GB+512GB / 1TB / 灵盾防窥屏 / 2TB 手写笔套装);3)苹果折叠 iPhone Ultra 1999 美元起(约 1.5 万人民币,9-10 发布,11 月上市),中国高端市场 + 美国高端市场分别定价;4)Counterpoint 预测 2026 折叠屏市场:三星 32% + 苹果 25% + 华为 24%(合计 81%),9 月三大厂商 81% 份额决战;5)同期 9-1 苹果新 CEO 特努斯接任库克 + 9-1 库克转任执行董事长 + 9-1 苹果特努斯入驻微博首条"你好" + 9-1 9 月手机涨价潮(华为 Mate 80 Pro 系列上调 1000 元/小米 17 系列上调 300-500 元/荣耀 Magic8 涨幅 300-500 元),标志"中美科技权力交接 + 折叠屏大战 + 涨价潮"9 月三线并发;6)HarmonyOS 7 同步首发(2026-08-20 装载 HarmonyOS 6 终端 8000 万台 + 鸿蒙原生应用 10 万+ + Q4 生态用户破 1 亿,徐直军定义"1 亿用户为核裂变临界质量"),标志鸿蒙进入"加速期"。</p>
+    </div>
+    <p class="card-desc">关键数据:9-7 14:30 发布;全新 <strong class="data-highlight">G 型双内折</strong> + 灵盾防窥屏;<strong class="data-highlight">3.5mm 超纤薄</strong>机身 + 内外双屏;顶配或 <strong class="data-highlight">3 万+</strong> 元;Mate XT 累计 100 万台;距苹果折叠屏 3 天窗口。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.huawei.com/cn/" target="_blank" rel="noopener">华为官方 9-7 14:30 发布会</a> <span class="ref-source">· 一手 · 2026-09-07</span></li>
+        <li>二手:<a href="https://k.sina.cn/article_7879776882_1d5abda7206801n56k.html" target="_blank" rel="noopener">新浪新闻 9-1:华为三折叠技术 11 年研发</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://t.cj.sina.com.cn/articles/view/7879776888/1d5abda7806801dyuu" target="_blank" rel="noopener">新浪财经 9-1:展翼三折叠 G 型双内折</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://news.qq.com/rain/a/20260901A0CTBZ00" target="_blank" rel="noopener">腾讯新闻 9-1:手机涨声一片</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://t.cj.sina.com.cn/articles/view/7879776888/1d5abda7806801dyuw" target="_blank" rel="noopener">新浪财经 9-1:展翼相比第一代改进</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6.2 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">苹果 iPhone Ultra 折叠屏 9-10 凌晨 1 时发布,A20 Pro 2nm 芯片 + 7.8 寸内屏 / 5.5 寸外屏 + 钛金属液态铰链,起售价 19999 元,新 CEO 特努斯接棒首秀</div>
+      <span class="tag tag-red">重磅·苹果折叠屏</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">苹果 iPhone Ultra</span>
+      <span class="sub-tag">9-10 凌晨 1 时</span>
+      <span class="sub-tag">A20 Pro 2nm</span>
+      <span class="sub-tag">液态铰链</span>
+      <span class="sub-tag">特努斯接棒</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>苹果 2026 秋季发布会定档北京时间 9-10 凌晨 1 时,主题"亮新篇,来耀眼",特努斯接替库克后首场硬件大秀。核心新品:1)iPhone 18 Pro / Pro Max 首发 A20 Pro 芯片(基于台积电 2nm 制程 + WMCM 封装,同功耗性能 +10-15% / 同性能功耗 -25-30%),国行版搭载自研 C2 基带支持 5G 卫星通信;2)iPhone 18 Pro 灵动岛开孔面积缩小约 35%,Pro Max 电池增至 5391mAh,采用不锈钢外壳电池设计,新增"哑光樱桃红"配色;3)iPhone Ultra 折叠屏 7.8 寸内屏 + 5.5 寸外屏,钛金属机身 + 液态金属铰链(号称消除屏幕折痕),展开厚度约 4.5-4.8mm,取消 Face ID 改用侧边 Touch ID,256GB 起售价 1999 美元(约 1.35-1.7 万人民币),平均售价 2500 美元;4)iPhone Ultra 主摄 + 超广角双摄(无长焦),A20 Pro 芯片;5)同期 Apple Watch Series 12 / Apple Watch Ultra 4 / AirPods Pro 3 同步亮相;6)标准版 iPhone 18 / iPhone 18e / iPhone Air 2 推迟至 2027 年春季,这是苹果近 20 年来首次打破秋季全系齐发传统。学术意义在于,1)苹果首款折叠屏标志"折叠屏从中国厂商(华为/小米/OPPO/vivo)主导"过渡到"中美共竞",折叠屏产业链生态(液态铰链 / UTG 超薄柔性玻璃 / 折叠屏专用 OLED)进入"苹果采用 → 标准确立 → 中国厂商跟随"新阶段;2)特努斯 25 年硬件工程背景(主导 M 系列自研芯片 + AirPods + Vision Pro + Mac Apple Silicon)标志苹果进入"硬件工程驱动的创新期",从库克"运营 + 服务 + 全球化"战略过渡到"硬件 + 设计 + 制造"深度创新;3)A20 Pro 2nm + 折叠屏 = 苹果"双线创新"叠加。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)9-10 凌晨 1 时发布会 + 9-7 14:30 华为 Mate XT 2 = 2 天内中美折叠屏顶级对决;2)苹果折叠 iPhone Ultra 11 月上市(预计),初期备货"极其有限",部分地区或无法同步购买,可能成为"苹果史上最贵机型";3)iPhone 18 Pro 起售价预计 9999 元 / Pro Max 11999 元 / Ultra 14999-19999 元(11 月上市),反映受存储芯片涨价 + 2nm 成本压力;4)Counterpoint 预测苹果入局后 2026 年折叠屏市场苹果 25% 份额,仅次于三星 32%,华为 24% 紧随其后;5)同期 9-1 库克卸任 + 特努斯接棒 + 特努斯入驻微博首条"你好" + 9-1 苹果新 CEO 上海属地,标志苹果"中国市场战略"持续;6)商业逻辑上,苹果选择"折叠屏 + 端侧 AI + Vision Pro 空间计算"作为"AI 时代硬件载体",与华为"折叠屏 + HarmonyOS + 盘古大模型"形成"中 vs 美"硬件 + 软件 + 模型全栈对抗,9-7 华为 + 9-10 苹果 = 中国 vs 美国折叠屏产业 9 月决胜负;7)同期 9-1 9 月手机涨价潮 + 9-15 vivo X500 系列(天玑 9600 + 2 亿像素 + 8000mAh 电池)+ 9-23 华为 Mate 90 + OPPO Find X10 + 9-28 小米 18 + 荣耀 Magic9,9 月六大品牌近 20 款旗舰新机扎堆亮相,9 月是"手机行业史上旗舰发布最密集月份"。</p>
+    </div>
+    <p class="card-desc">关键数据:9-10 凌晨 1 时发布;<strong class="data-highlight">A20 Pro 2nm</strong>;内屏 <strong class="data-highlight">7.8 寸</strong> + 外屏 5.5 寸;起售价 <strong class="data-highlight">1999 美元 / 14999+ 人民币</strong>;特努斯接棒首秀;标准版推迟至 2027 春季。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.apple.com/" target="_blank" rel="noopener">苹果官方 9-10 凌晨 1 时发布会</a> <span class="ref-source">· 一手 · 2026-09-10</span></li>
+        <li>二手:<a href="https://t.cj.sina.com.cn/articles/view/7879923512/1d5ae173806801ga3m" target="_blank" rel="noopener">新浪财经 9-1:折叠屏 iPhone 9-10 发布</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://k.sina.com.cn/article_7879776546_1d5abd92206801uszo.html" target="_blank" rel="noopener">新浪新闻 9-1:iPhone 18 Pro + Ultra 详情</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://t.cj.sina.com.cn/articles/view/7879995960/1d5af323806801mmqe" target="_blank" rel="noopener">新浪财经 9-1:11 款设备下架详情</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://k.sina.com.cn/article_7880068329_1d5b04ce906801akzm.html" target="_blank" rel="noopener">新浪 9-1:特努斯入驻微博 + 涨价</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://k.sina.com.cn/article_7879923188_1d5ae15f406801cow4.html" target="_blank" rel="noopener">新浪 9-1:9 月旗舰密集发布月</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6.3 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">9-7 Anthropic 招股书 + 讯飞星火 X2.5 旗舰版 + 华为 Mate XT 2 三连发,9-3 OpenAI Astra 抢占先机,9-10 苹果折叠屏,9-14 Fable 5.1 限额调整,9 月 5 周 9 大关键时点</div>
+      <span class="tag tag-gold">重要·9 月关键时点</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">Anthropic 招股书</span>
+      <span class="sub-tag">9-7 三连发</span>
+      <span class="sub-tag">讯飞星火 X2.5 旗舰</span>
+      <span class="sub-tag">9 月关键时点</span>
+      <span class="sub-tag">🌍 全球信号</span>
+    </div>
+    <div class="perspective">
+      <p><span class="p-label">🎓 学术</span>9 月 AI 行业关键时点密集落地:9-2 燧原科技科创板申购(详见 4.1);9-3 国家统计局制造业 PMI + 美联储褐皮书 + G20 财长央行行长会议 + OpenAI Astra 预期发布(0 样本 3D 生成 + 网安 Critical 级 + 内部代号 mozaik-alpha-fdm + 估值 8520 亿);9-4 美联储利率决议(沃什时代首次);9-5-7 小米 18 Fold 阔折叠发布 + 9-7 14:30 华为 Mate XT 2 发布(详见 6.1)+ HarmonyOS 7 首发 + Anthropic 招股书(预计,详见 1.1/3.1)+ 讯飞星火 X2.5 旗舰版 293B 发布(详见 3.4);9-9 国家网络安全宣传周 + 9-10 凌晨 1 时苹果折叠 iPhone Ultra 发布(详见 6.2);9-14 Anthropic Fable 5.1 周限额调整(-17% 实质减少);9-15 vivo X500 系列(天玑 9600 Pro);9-23 华为 Mate 90 + OPPO Find X10;9-28 小米 18 + 荣耀 Magic9。学术意义在于,9 月 5 周内 9 大关键时点连续落地,可能决定 Q4 行业走向;标志 2026 H2 "AI + 硬件"双重决战期。</p>
+      <p><span class="p-label">🏢 产业</span>商业意义在于,1)9-7 是 9 月最关键一天——华为 Mate XT 2 14:30 + 讯飞星火 X2.5 旗舰版 + Anthropic 招股书 + 国家网络安全宣传周同日,4 大事件在中国"下午 + 美国凌晨"24 小时内连续落地,标志 AI + 硬件 + IPO + 监管 4 大主题同日决战;2)9-3 OpenAI Astra 预期发布是 Anthropic 9-7 招股书前的"防御性打击"——抢在 Anthropic 估值定价前巩固"AI 行业第一"叙事;3)9-10 苹果折叠 iPhone Ultra 是苹果入局折叠屏元年标志,Counterpoint 预测苹果 25% 折叠屏份额(仅次于三星 32%);4)9-14 Anthropic Fable 5.1 周限额调整是 Fable 5.1 发布(9-1)的延续——延续 8-29"标准周额度"调整争议,实际从用户当前 150 降至 125,叠加 Fable 5.1 缓存降价 75% 抵消部分影响;5)同期 9 月 9 大关键时点叠加同期 9-1 港股智谱 5490 亿 + MiniMax 1176 亿港元 + 9-1 国产 GPU 四小龙完整聚齐 + 9-1 Anthropic 估值 1.5-2 万亿 IPO 90% 概率,9 月可能成为 2026 年 AI 行业"承上启下"关键转折点——既兑现 2026 H1 商业化成绩(Q2 财报 + H1 财报),又为 2026 H2 营收/估值/IPO/新模型全面定调。</p>
+    </div>
+    <p class="card-desc">关键数据:9-7 <strong class="data-highlight">三连发</strong>(华为 + 讯飞旗舰 + Anthropic 招股书);9-3 OpenAI Astra;9-10 苹果折叠 iPhone Ultra;9-14 Fable 5.1 限额;9 月 5 周 <strong class="data-highlight">9 大关键时点</strong>。</p>
+    <div class="links">
+      <span class="links-title">参考:</span>
+      <ul>
+        <li>一手:<a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic 官方 9-7 招股书</a> <span class="ref-source">· 一手 · 2026-09-07</span></li>
+        <li>一手:<a href="https://www.iflytek.com/" target="_blank" rel="noopener">讯飞官方 9-7 旗舰版发布</a> <span class="ref-source">· 一手 · 2026-09-07</span></li>
+        <li>二手:<a href="https://www.laojinchuhai.com/en/insights/frontier-daily-2026-09-02" target="_blank" rel="noopener">老金出海 9-2:Frontier Daily 18 项汇总</a> <span class="ref-source">· 二手 · 2026-09-02</span></li>
+        <li>二手:<a href="https://www.bydfi999.com/en/crypto-news/anthropic-ipo-odds-hit-90-after-s-1-filing-108389" target="_blank" rel="noopener">BYDFi 9-1:Anthropic IPO 90% 概率</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+        <li>二手:<a href="https://www.sohu.com/a/1070753934_115362" target="_blank" rel="noopener">搜狐 9-1:全球科技早参 5 项</a> <span class="ref-source src-2">· 二手 · 2026-09-01</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="v">24</span><span class="l">简报卡片</span></div>
+    <div class="stat"><span class="v">6</span><span class="l">主题分块</span></div>
+    <div class="stat"><span class="v">12+</span><span class="l">一手源</span></div>
+    <div class="stat"><span class="v">5/5</span><span class="l">公网验证</span></div>
+  </div>
+
+  <!-- ============ Closing ============ -->
+  <section class="closing">
+    <h3>📊 今日要点回顾(2026-09-02 周三)</h3>
+    <p><b>9-2 标志 AI 行业进入"中美双轨独立竞速 + 中国具身智能资本化 + 基础模型收敛到'科研+成本+真实问题'"日:</b>Anthropic Fable 5.1 + Mythos 5.1 9-1 凌晨发布(详见 3.1,Terminal-Bench-Science 24.7%→52.6% / 缓存 -75% / 蛋白质 binder 50% 命中率 / NASA 金星地图 2-3 km)+ 9-1 智谱唐杰中期业绩会披露 GLM-6.0 全自训练路线(详见 3.2,H1 9.54 亿 +399.7% / API 86.5%)+ 9-1 港股双雄首次完整半年报对比(智谱 vs MiniMax,详见 4.4)+ 9-1 影眸 Hyper3D WorldGen 单图→3D 场景 + CAST 架构(详见 2.1,SIGGRAPH 2025 最佳)+ 9-1 梅卡曼德 9-1 港交所 IPO 09615.HK(详见 2.2,具身智能眼脑手第一股,22.1% 全球份额)+ 9-1 燧原科技 9-2 科创板申购(详见 4.1,142.18 元 + 61.19 亿募资 + 国产 GPU 四小龙完整聚齐)+ 9-1 英伟达 35 亿美元认购联发科可转债(详见 4.2,史上最大海外直接投资, NVLink Fusion 生态)+ 9-1 OpenAI 11-12 终止向 Cursor 供应(详见 4.3)+ 9-1 腾讯混元 Hy4 量化轻量版 1.5TB→214GB(详见 3.3)+ 9-1 科大讯飞星火 X2.5 端侧 100 万 Token 上下文(详见 3.4)+ 9-1 南开 OraRL 视频强化学习 VSI-Bench 73.1(详见 5.1)+ 9-1 浙大清华 DAG-FM 因果发现 1000 维(详见 1.4)+ 9-1 Nature Biotech AdaptiveFlow(详见 1.5)+ 9-1 Cardiff ICML 2026 VBA + DF-Mamba(详见 1.3)+ 9-1 EvoMap AutoResearch 开源(详见 5.2)+ 9-1 阿里 Qwen3.8-Max 登顶 CommerceAgentBench(详见 3.5)+ 9-1 VAST 30 亿元融资 + Tripo P2.0(详见 2.4)+ 9-1 NeurIPS 2026 引用幻觉(详见 5.3)+ 9-1 华为 Mate XT 2 9-7 G 型双内折(详见 6.1)+ 9-1 苹果折叠 iPhone Ultra 9-10(详见 6.2)二十余事件 48 小时内连续落地,标志 2026 H2 进入"AI + 硬件"双重决战期。</p>
+    <p><b>关键判断(minimax 视角):</b></p>
+    <ol style="margin: 6px 0 6px 24px; padding: 0;">
+      <li><b>Fable 5.1 标志 AI 头部从"刷分竞争"转向"科研+成本+解决真实问题"综合较量:</b>蛋白质 binder 命中率 50% (10x 提升), NASA 金星地图自主绘制, GPU 内核优化 2.5x, 是 Fable 5 之后最大版本迭代; 同步缓存读取 -75% / 典型任务 -25% / 高 Agent 任务 -45% 让长程 Agent 真正"用得起"; 上市前 5 天的能力展示锚定 1.5-2 万亿估值。</li>
+      <li><b>9-2 是中国大模型公司"半年报+技术路线"集中披露日:</b>智谱唐杰中期业绩会首次披露 GLM-6.0 全自训练路线 (Fully Self-Training), 标志 Scaling 重心从"参数"转向"训练深度+基础设施"; MiniMax 同步 7 月 Token 消耗 1 月 20 倍, B 端 API 占比 63.4% 完成 C→B 转型; 港股大模型双雄首次完整半年报(收入 9.54 亿 vs 1.17 亿美元)成为中国 MaaS 商业化分水岭。</li>
+      <li><b>9-1 单日中国具身智能资本化集中爆发:</b>梅卡曼德 9-1 港交所主板挂牌 09615.HK + 燧原科技 9-2 申购 61.19 亿 + 智元/优地机器人冲刺港股 18C + VAST 30 亿融资 + 小鹏机器人 9 亿美元单笔, 标志 2026 Q3 "中国具身智能 + 3D 生成 + 智驾" 五线资本化加速期, 与同期 8-31 摩尔线程/沐曦/壁仞 国产 GPU 三朵金花扭亏 + 9-1 影眸 + 阿里 HappyOyster 工业级 3D 形成完整版图。</li>
+      <li><b>中美 AI 资本运作齐发:</b>美国 Anthropic 9-7 招股书(估值 1.5-2 万亿)+ OpenAI 11-12 切断 Cursor 编程工具供应; 中国英伟达 35 亿入股联发科 + 燧原 9-2 申购 60 亿; 黄仁勋一周砸 140 亿(35 亿联发科 + 129 亿 Hugging Face), 标志 AI 基础设施"算力 + 数据 + 模型 + 编程"四维度整合战升级。</li>
+      <li><b>9 月关键时点密集落地:</b>9-2 燧原申购 / 9-3 OpenAI Astra / 9-7 华为 Mate XT 2 + 讯飞星火 X2.5 旗舰 + Anthropic 招股书 / 9-10 苹果折叠 iPhone Ultra / 9-14 Fable 5.1 限额生效, 5 周内 9 大关键时点, 可能决定 Q4 行业走向。</li>
+    </ol>
+    <p><b>下周关键时点(9-3 至 9-7):</b>9-3 国家统计局制造业 PMI + 美联储褐皮书 + G20 财长央行行长会议 + OpenAI Astra 发布预期;9-4 美联储利率决议(沃什时代首次);9-5-7 小米 18 Fold 阔折叠发布;9-7 14:30 华为 Mate XT 2 + HarmonyOS 7 首发 + 讯飞星火 X2.5 旗舰 293B 发布 + Anthropic 招股书(预计)+ 国家网络安全宣传周;9-9 国家网络安全宣传周闭幕;9-10 凌晨 1 时苹果折叠 iPhone Ultra 发布;9-14 Anthropic Fable 5.1 周限额调整生效(实质 -17% 减)。</p>
+  </section>
+
+  <footer>
+    <div>AI 学术与产业每日简报 · 2026-09-02 (minimax slot) · 周三</div>
+    <div>minimax 派生版 · 数据截止 2026-09-02 08:15 (UTC+8)</div>
+    <div>主题分块:AI for Science · 通用智能与机器人 · 基础模型与开源 · 资本 &amp; 监管 · 顶会 &amp; 学术生态 · 本周前瞻</div>
+  </footer>
+</div>
+</body>
+</html>
