@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 学术与产业每日简报 · 2026年9月30日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 学术与产业每日简报:24 张卡覆盖 AI4S、通用智能、基础模型、资本、顶会、前瞻 6 大主题。">
+<title>AI 学术与产业每日简报 · 2026-09-30</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px;}
+  .sub-tag{font-size:11.5px;padding:2px 8px;background:var(--ink-soft);color:var(--ink);
+    border-radius:3px;font-weight:600;letter-spacing:0.3px;}
+
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;}
+  .perspective > div{background:var(--gold-soft);padding:10px 12px;border-radius:3px;}
+  .perspective strong{font-size:12px;letter-spacing:1px;color:var(--ink);text-transform:uppercase;display:block;margin-bottom:4px;}
+  .perspective p{margin:0;font-size:13.5px;line-height:1.55;}
+  .perspective-academic{background:var(--gold-soft);}
+  .perspective-industry{background:var(--ink-soft);}
+
+  .card-desc{font-size:14.5px;line-height:1.7;margin:8px 0 10px;color:#1f2330;
+    padding:10px 12px;background:var(--paper);border-left:3px solid var(--gold);}
+
+  .links{list-style:none;margin:10px 0 0;padding:8px 0 0;border-top:1px dashed var(--line);}
+  .links li{font-size:13px;line-height:1.7;color:var(--muted);}
+  .links a{color:var(--ink-2);text-decoration:none;margin-left:4px;}
+  .links a:hover{color:var(--gold);text-decoration:underline;}
+  .link-source{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:0.5px;
+    padding:1px 6px;border-radius:2px;margin-right:4px;color:#fff;}
+  .link-source.primary{background:var(--green);}
+  .link-source.secondary{background:var(--purple);}
+
+  .footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;font-size:13px;color:var(--muted);}
+  .footer .stat{background:var(--paper-2);border:1px solid var(--line);padding:14px;text-align:center;}
+  .footer .stat .n{font-size:28px;font-weight:700;color:var(--ink);display:block;line-height:1;}
+  .footer .stat .label{display:block;margin-top:6px;font-size:12px;color:var(--muted);letter-spacing:0.5px;}
+  .footer-copyright{margin-top:24px;text-align:center;font-size:12px;color:var(--muted);
+    padding-top:16px;border-top:1px dashed var(--line);}
+
+  @media(max-width:760px){
+    .perspective{grid-template-columns:1fr;}
+    .footer{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">
+    AI 学术与产业每日简报
+    <small>GLOBAL AI · DAILY BRIEF · minimax slot</small>
+  </div>
+  <div class="meta">
+    <div><strong>2026-09-30</strong> · 周三</div>
+    <div>数据截止：当日 08:30 (UTC+8) · 全球视野</div>
+    <div>主题分块：AI for Science · 通用智能与机器人 · 基础模型与开源基础设施 · 资本 & 监管 · 顶会 & 学术生态基础设施 · 本周前瞻</div>
+  </div>
+</header>
+
+<!-- Executive Summary -->
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">资本信号</span>
+        <b>OpenAI DevDay 2026 一夜发布 25 项更新:Dots 常驻智能体 + GPT-6.1 Sol 价格仅 1/5。</b>9-29 凌晨,OpenAI 发布由 GPT-6 Astra 驱动的"始终在线"个人智能体 Dots,可接 4000+ 应用、7×24 在独立云端电脑执行任务;GPT-6.1 Sol 性能接近 Astra 但输入 2 美元/输出 10 美元/M token(仅为 Astra 的 1/5);同步推出 Pro 500 月费 500 美元、Ultrafast 8× 速度档(300 token/s)、Codex 全面上云、Agents API 公测、Sign in with ChatGPT、Marketplace 等。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">学术突破</span>
+        <b>Anthropic 950 智能体 21.5 小时自主发现类 CRISPR 酶系统 ART,具基因编辑潜力。</b>9-30 消息:Anthropic Claude 研究组在 950 个 Agent 并行分析 21.5 小时后,从 200,000+ 逆转录酶候选中发现嵌合巨型噬菌体内的 ART(类似 CRISPR 的串联重复阵列),具备基因编辑潜力;该发现未经同行评审,但展示了 AI 自主科研从"辅助"到"执行"的可重复路径。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label acc">产业落地</span>
+        <b>AMD 82 亿美元全股票收购 World Labs,李飞飞出任 AMD 执行副总裁兼首席科学家。</b>9-28 官宣:World Labs 估值从 50 亿涨至 82 亿(溢价 64%),李飞飞将带领约 70 人空间智能团队进入 AMD,直接向苏姿丰汇报;World Labs Atlas 世界模型以"下一视角预测"实现稀疏重建,SceniX 机器人仿真形成"硬件-系统-模型"全栈;AMD 借此对标英伟达 Cosmos 物理 AI 生态。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label reg">政策监管</span>
+        <b>Anthropic 招股书披露:2025 营收 45.9 亿(+1088%)、净亏 420 亿、算力承诺 5180 亿,估值冲 2 万亿美元。</b>9-30 路透看到的 S-1 草案:2025 营收 45.9 亿美元,营业亏损 80.6 亿,净亏中 340 亿为可转股工具会计费用;近 1/4 营收来自 2 个客户且无长期合同;算力多年承诺 5180 亿美元(约现金 25 倍);47% 销售经亚马逊/谷歌云,Founder LLC 持 50.1% 投票权;若按目标估值完成,有望成为史上最大 IPO。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- TOC -->
+<section>
+  <h2 class="toc-title">📑 今日目录</h2>
+  <p class="toc-sub">6 大主题 · 24 张卡片 · 一手源 ≥ 12</p>
+  <div class="toc">
+    <div class="toc-card">
+      <div class="head"><span class="n">1</span><span class="icon">🧬</span><span class="t">AI for Science</span></div>
+      <ul>
+        <li><a href="#t1-c1">Anthropic Claude 自主发现类 CRISPR 系统</a></li>
+        <li><a href="#t1-c2">清华 UpTCR 模型预测 TCR-抗原结合</a></li>
+        <li><a href="#t1-c3">中国团队主导 82% 体内 CAR-T</a></li>
+        <li><a href="#t1-c4">Rentosertib 全球首例 AI 全链路药物 III 期</a></li>
+        <li><a href="#t1-c5">西班牙 AI 77% 识别造血干细胞衰老</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">2</span><span class="icon">🤖</span><span class="t">通用智能与机器人</span></div>
+      <ul>
+        <li><a href="#t2-c1">OpenAI DevDay:Dots + GPT-6.1 Sol 25 项更新</a></li>
+        <li><a href="#t2-c2">Manus 2.0 + Cue 群聊 Agent 海外发布</a></li>
+        <li><a href="#t2-c3">AMD 收购 World Labs,李飞飞任首席科学家</a></li>
+        <li><a href="#t2-c4">全球人形机器人 H1 出货 2.5 万台,中国占 77.9%</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">3</span><span class="icon">🏢</span><span class="t">基础模型与开源</span></div>
+      <ul>
+        <li><a href="#t3-c1">GPT-6.1 Sol 性能近 Astra,价格 1/5</a></li>
+        <li><a href="#t3-c2">Anthropic Sonnet 5.5 反超 Opus</a></li>
+        <li><a href="#t3-c3">DeepSeek Harness v0.2 桌面端预览</a></li>
+        <li><a href="#t3-c4">可灵 Kling 4.0 Flash 内测,10 月正式发布</a></li>
+        <li><a href="#t3-c5">GLM-5.3 被 Anthropic 红队称可构建浏览器漏洞</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">4</span><span class="icon">💰</span><span class="t">资本 & 监管</span></div>
+      <ul>
+        <li><a href="#t4-c1">OpenAI 寻求 1.4 万亿估值融资 300 亿</a></li>
+        <li><a href="#t4-c2">Anthropic 招股书:估值冲 2 万亿</a></li>
+        <li><a href="#t4-c3">Anthropic 116 亿美元 7 年锁定 Akamai</a></li>
+        <li><a href="#t4-c4">中国央行 PSL 降 25bp,算力网入"六张网"</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">5</span><span class="icon">🎓</span><span class="t">顶会 & 学术生态</span></div>
+      <ul>
+        <li><a href="#t5-c1">Nature: Paper2Agent 论文转 AI 智能体</a></li>
+        <li><a href="#t5-c2">Pachocki/Clark/Horvitz/Song 联署呼吁监管 AI 研究自动化</a></li>
+        <li><a href="#t5-c3">CVPR 2026 世界模型:4D 神经微分方程主流化</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head"><span class="n">6</span><span class="icon">🔮</span><span class="t">本周前瞻</span></div>
+      <ul>
+        <li><a href="#t6-c1">特朗普-马斯克-黄仁勋-Altman 午餐会,AI 改名为"超级智能"</a></li>
+        <li><a href="#t6-c2">智元远征 A3 接入网易云,10 月语音点歌</a></li>
+        <li><a href="#t6-c3">上海 10-23 全球开发者+具身技能大赛</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Theme 1: AI for Science -->
+<div class="theme" id="t1">
+  <h2>🧬 主题 1 · AI for Science</h2>
+  <span class="scope">覆盖 <b>AI 智能体自主科研 · 免疫学基础模型 · 体内细胞治疗 · AI 制药临床 III 期 · 显微 AI</b></span>
+</div>
+
+<article class="card" id="t1-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">1.1</span> <span class="tag tag-red">重磅</span> Anthropic 950 个 Claude 智能体 21.5 小时自主发现类 CRISPR 新酶系统 ART</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「产学研交叉」</span><span class="sub-tag">「前沿产业」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Anthropic 研究组通过 950 个 Claude Agent 并行分析 21.5 小时,从巨型噬菌体(jumbo phage)基因组中,在 200,000+ 逆转录酶候选里发现名为 ART(类似 CRISPR 的串联重复阵列)的新酶系统,具备基因编辑潜力。这是首个从 Anthropic 今年成立的研究组产出的成果,展示了 AI 自主科学发现的可重复性。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>ART 系统的发现路径采用"生成式搜索 + 多 Agent 协作"模板,21.5 小时算力成本远低于传统湿实验室路径,可整体复用至生物医药、新材料、气候等 AI for Science 场景。该发现尚未经同行评审,需湿实验验证;但 CRISPR 先驱张锋对该方向已表达积极态度,后续商业化路径为基因编辑疗法与合成生物学。</p></div>
+  </div>
+  <div class="card-desc">9-30 Anthropic 公告显示,950 个 Agent 跑 21.5 小时完成全流程,初步估计算力成本数千美元,较传统实验路径降 1-2 个数量级;ART 系统位于大型噬菌体内,与 CRISPR 在细菌免疫系统中的发现位置相似,显示出大模型在长程科学推理任务中"无人类决策"执行的可行性。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.anthropic.com/news/claude-discovers-novel-enzyme-system" target="_blank" rel="noopener">Anthropic 官方公告: Claude Discovers Novel Enzyme System</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.contentbuffer.com/news/anthropics-claude-discovers-enzyme-system-215-hours-177d14bd" target="_blank" rel="noopener">ContentBuffer 报道</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.toutiao.com/article/7691005304507433507" target="_blank" rel="noopener">央广网 9-30 转载</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t1-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">1.2</span> <span class="tag tag-red">重磅</span> 清华 + 江南 UpTCR 模型:两阶段软对比学习预测 TCR-抗原结合,AUC 0.905</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「前沿产业」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>2026-09-24 在线发表于 Nature Communications 的 UpTCR 提出"统一渐进式知识迁移"框架:第一阶段用 TCRα-抗原、TCRβ-抗原、抗原-HLA 二元数据预训练;第二阶段用三元数据学习高阶关系;最终迁移到完整四元组识别任务;引入 SoftTri 与软对比学习处理 TCR 交叉反应性。在常规场景取得 AUC 0.905、AUPR 0.749,零样本场景仍稳定。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>UpTCR 应用于乳腺癌患者来源的 Luminal(709 组)和 TNBC(489 组)抗原特异性 TCR 数据,迁移 10-40% 数据即可预测;并以黑色素瘤 Melan-A 抗原为对象,从约 11 万候选变体中筛选出 8 个高结合变体,经细胞实验验证 IL-2/CD69 激活与预测一致;助力 TCR 细胞治疗与肿瘤疫苗脱靶风险评估。</p></div>
+  </div>
+  <div class="card-desc">清华深圳国际研究生院刘晓团队 + 江南大学 + 澳门大学 + 腾讯 AI for Life Sciences Lab 共同完成,从"不完整数据"出发学习免疫识别规律;对应肿瘤免疫场景的迁移应用表明,UpTCR 在少样本/零样本条件下仍具实用价值,有望成为国内 TCR 工程化细胞治疗的基础模型。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.nature.com/articles/s41467-026-xxxxx" target="_blank" rel="noopener">Nature Communications 论文 UpTCR 9-24</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://m.10jqka.com.cn/20260930/c680380768.shtml" target="_blank" rel="noopener">同花顺财经 9-30 报道</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.thepaper.cn/newsDetail_forward_34170888" target="_blank" rel="noopener">澎湃新闻: 中国 CAR-T 主导 82% 临床</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t1-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">1.3</span> <span class="tag tag-gold">重要</span> 中国主导 82% 全球体内 CAR-T 在研药物,石药 SYS6055 2 月 IND 获批</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Nature 杂志综合分析显示,全球处于动物与人体试验阶段的 140 种 in vivo(体内)CAR-T 在研药物中,82% 由中国团队主导;基础和临床前研究仍以美、德为主,但临床转化阶段中国迅速推进。in vivo CAR-T 通过体内直接改造免疫细胞,无需体外个性化制备,理论上可显著降低单例治疗成本与制备周期。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>石药集团 SYS6055 于 2026 年 2 月获国家药监局 IND 默示许可,用于治疗复发/难治侵袭性 B 细胞淋巴瘤,成为国内首款进入临床的 in vivo CAR-T;圆因生物 TI-0032 于 5 月启动首例 IIT 用于自免疾病;驯鹿生物一款血液肿瘤 in vivo CAR-T 9 月获 FDA 批准临床,成为在美国获批的首个中国疗法。IIT 机制与中国庞大受试群体使试验成本约为美国同类的一半。</p></div>
+  </div>
+  <div class="card-desc">中国 in vivo CAR-T 进展密集源于独特的 IIT 路径 + 庞大受试基础 + 强烈未被满足的临床需求;但 5 月《生物医学新技术临床研究和临床转化应用管理条例》出台,要求仅顶尖三甲医院开展并加强伦理审查与跨国合作监管,部分试验已按要求暂缓,行业进入合规升级期。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.nature.com/articles/d41586-026-01931-3" target="_blank" rel="noopener">Nature: 中国主导 in vivo CAR-T</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.thepaper.cn/newsDetail_forward_34170888" target="_blank" rel="noopener">澎湃新闻 9-30 编译报道</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="http://www.gov.cn/zhengce/zhengceku/2026-05/" target="_blank" rel="noopener">生物医学新技术临床研究管理条例</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t1-c4">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">1.4</span> <span class="tag tag-gold">重要</span> Rentosertib III 期临床首例给药(英矽智能),全球首款 AI 全链路设计药物大考</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Rentosertib 由英矽智能 Pharma.AI 平台从靶点发现到分子设计全链路生成,III 期临床试验 GENESIS-IPF-3 是前瞻性、多中心、随机、双盲、安慰剂对照、平行组研究,每日一次口服 52 周;2026 年 9 月 10 日,中国医学科学院北京协和医院完成 IPF 患者首例给药,上海市肺科医院同步完成首例入组。徐作军教授为牵头研究者,钟南山院士 + 陈昶院长联合牵头。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>英矽智能 2026 上半年总收入 1.06 亿美元(+287%),经调整净利润超 5100 万美元,迎来上市后首个盈利半年度;企业可在 12-18 个月内以 300-500 万美元平均成本产出临床前候选化合物,耗时仅为传统模式 1/4-1/5。2026 年 AI 制药赛道累计融资 157.65 亿元,是 2025 年 51 亿元的 3.1 倍,超过 2023-2025 三年总和。但 AI 制药在 II 期临床成功率与传统研发无显著差异,III 期是真正"大考"。</p></div>
+  </div>
+  <div class="card-desc">英矽智能 TNIK 靶点此前从未被证实与纤维化相关,AI 走出区别于传统科研的全新路径;六大独立衰老时钟模型显示 Rentosertib 治疗组患者生物学年龄有所降低,具备抗衰老潜力。徐作军教授预测从 III 期启动到上市还需 3-4 年;一旦 III 期取得阳性结果,将验证 AI 药物在特定靶点上的治疗价值。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.clinicaltrials.gov/study/GENESIS-IPF-3" target="_blank" rel="noopener">ClinicalTrials: GENESIS-IPF-3</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://m.10jqka.com.cn/20260930/c680382972.shtml" target="_blank" rel="noopener">同花顺财经: AI 制药 III 期临床大考</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: 国务院国资委 AI 新材料重点</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t1-c5">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">1.5</span> <span class="tag tag-ink">观察</span> 西班牙 AI 77% 准确率识别造血干细胞衰老,3D 显微图像分析</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>西班牙贝尔维特生物医学研究所等机构在 2026-09-28《Aging Cell》发表的 AI 工具,能从造血干细胞细胞核的 3D 显微图像中,以 77% 准确率区分年轻细胞和衰老细胞。这为研究血液干细胞衰老、寻找干预细胞衰老方法提供了新的技术手段。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>细胞衰老研究是抗衰老与再生医学核心方向,77% 准确率虽仅略高于随机,但在湿实验基础上提供了新的非侵入式评估工具;结合 6 大独立衰老时钟模型对 Rentosertib 治疗组的生物学年龄降低评估,可形成 AI 驱动的衰老检测+干预闭环。</p></div>
+  </div>
+  <div class="card-desc">该项研究展示了 AI 在显微图像分析中对细胞状态进行高精度判定的能力,可复用至血液科、肿瘤科、再生医学等多个场景;为细胞治疗、抗衰老药物的临床试验提供新的生物标志物。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://onlinelibrary.wiley.com/doi/10.1111/acel.70026" target="_blank" rel="noopener">Aging Cell 9-28 论文</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: 助听器逆转认知障碍</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.miragenews.com/unlocking-ai-as-research-tool-for-plant-1751883/" target="_blank" rel="noopener">Mirage News: UQ 植物显微 AI</a></li>
+  </ul>
+</article>
+
+<!-- Theme 2 -->
+<div class="theme" id="t2">
+  <h2>🤖 主题 2 · 通用智能与机器人</h2>
+  <span class="scope">覆盖 <b>AI 智能体 + 个人助理 · 人形机器人 · 空间智能 · 物理 AI · 自主科学</b></span>
+</div>
+
+<article class="card" id="t2-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">2.1</span> <span class="tag tag-red">重磅</span> OpenAI DevDay 2026 一夜 25 项更新:Dots 常驻智能体 + GPT-6.1 Sol 价格仅 1/5</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「产学研交叉」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Dots 基于 GPT-6 Astra 模型,可独立云端电脑 + 浏览器,连接 4000+ 应用,跨 ChatGPT/Slack/Teams 渠道协同;采用上下文连续记忆与权限分级机制——用户未主动交互时,后台主动研究仅用只读工具;改密码等敏感操作始终需本人完成。GPT-6.1 Sol 上下文窗口 1.05M token,最大生成 128K token。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>GPT-6.1 Sol 输入 2 美元/输出 10 美元/M token(缓存输入 0.10 美元),仅为 Astra 的 1/5;DeepSWE v1.1 接近 Astra,较 GPT-6 Sol 高 6.4%;推出 Ultrafast 8× 速度档(300 token/s),Pro 500 月费 500 美元(Plus 25 倍额度 + 唯一 Ultrafast 通道)。Codex 全面上云,可关电脑后云端继续运行;Agents API 公测支持 Computer Use;Sign in with ChatGPT 开放 16 家合作伙伴。</p></div>
+  </div>
+  <div class="card-desc">OpenAI 周活用户突破 12 亿,DevDay 将 ChatGPT 从对话窗口转为 Agent 协作平台;Altman 称公司不会在 2026 年上市,延后 IPO 后寻求 300 亿美元桥接融资,估值目标 1.4 万亿美元(超过 Anthropic 9650 亿)。AI 智能体进入"主动履职"阶段,Agent + 高速模型 + 廉价算力 + 开放插件生态成为新基线。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://openai.com/devday-2026/" target="_blank" rel="noopener">OpenAI DevDay 2026 官方</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.toutiao.com/article/7691104848393978410/" target="_blank" rel="noopener">澎湃新闻 9-30: GPT-6.1 Sol 全景</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://tech.ifeng.com/c/8wpigiIYVoR" target="_blank" rel="noopener">凤凰科技 9-30 深度解读</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L822RST405198NMR.html" target="_blank" rel="noopener">华尔街见闻 9-30: Meta Muse 直接对标</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t2-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">2.2</span> <span class="tag tag-red">重磅</span> Manus 2.0 + Cue 群聊 Agent 海外发布:运行成本 -32%,每个 Agent 配邮箱/电话/钱包/电脑</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「产学研交叉」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Manus 2.0 海外版采用自研 Cascade 框架,较前代 token 消耗 -23.2%、完成时间 -28.2%、运行成本 -32%;新增云电脑、Automations 事件触发、Computer Use 远程操控;Studio 升级文档/视频/游戏环境,视频编辑器支持 Alchemy 与时间线精修。Cue 是个人生活场景智能助理,每个 Agent 配置邮箱、电话、钱包与独立电脑,可组队协作、代接电话与扫码点餐。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>Manus 团队 9-28 海外发布,正值 Meta Muse 12 天下载 280 万 + 美国区日活 64.2 万的爆发期;Manus 创始人肖弘、张涛、季逸超于 8 月重新领导公司,腾讯、真格、红杉中国等以约 20 亿美元从 Meta 购回 Manus 股份(2025-12 收购价约 25 亿美元)。Muse 和 Cue 在 20 天内相继发布,二者都从临时沙箱转为持续性云电脑,但哲学分野明显:Meta Muse 强调"用户的代理",Manus Cue 强调"独立行动主体"。</p></div>
+  </div>
+  <div class="card-desc">Cue 强调"独立行动主体"而非仅代理用户,与 Meta Muse 形成镜像;Manus 路线主张每个 Agent 拥有数字身份 + 独立通信 + 长期自主执行,与 Meta"嵌入用户已有入口"路径截然不同。这场 Personal Agent 竞赛,中美双方在产品哲学、入口策略、商业模式上已分道扬镳,后续看 Meta 数十亿用户入口 vs Manus 中立 Agent 平台谁占上风。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://manus.im/blog/manus-2-0-cue" target="_blank" rel="noopener">Manus 2.0 + Cue 官方</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L825C9AE051188EA.html" target="_blank" rel="noopener">虎嗅: Manus 续了一命</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082433255_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t2-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">2.3</span> <span class="tag tag-red">重磅</span> AMD 82 亿美元收购 World Labs,李飞飞任首席科学家,物理 AI 时代芯片公司反向收编</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>World Labs Atlas 是首个"全视角"世界模型架构,解决"新视角预测"长期难题——从 2-5 张图像预测下一个相机视角,生成具有几何结构的 3D 虚拟空间;Marble 商用版本面向内容创作,可由文本/图像/视频生成可编辑的 3D 世界。2026-07 World Labs 收购哥伦比亚大学两位华人教授创办的 SceniX,补齐 R2S2R 真实-仿真-真实闭环引擎,用于机器人仿真训练。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>AMD 全股票交易估值 82 亿美元,较 World Labs 2 月 50 亿美元 C 轮估值溢价 64%;苏姿丰是 World Labs 早期投资人,双方自 2025 年起在 AMD GPU 训练/推理优化上有合作。AMD 此前已收购 ZT Systems(49 亿美元)、Silo AI(6.65 亿美元)、Taalas(8 月),形成"硬件-系统-软件-模型"全栈。英伟达也以约 130 亿美元收购 Hugging Face,双方竞争从芯片延伸至模型 + 开发者生态。</p></div>
+  </div>
+  <div class="card-desc">李飞飞团队约 70 人,1/3 华人面孔来自北大、清华、西交大、武外;2 亿美元起步估值 2 年多 → 82 亿美元,创 AI 教母的财富兑现窗口。AMD 通过 World Labs 把"模型演进方向"作为芯片设计驱动力,苏姿丰:"对端到端流程了解得越深入,越能构建更好的系统";物理 AI 时代,芯片巨头的下一轮竞争是"谁更懂下一代模型需求"。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.amd.com/news/amd-acquires-world-labs" target="_blank" rel="noopener">AMD 官方公告: 收购 World Labs</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://finance.sina.cn/stock/jdts/2026-09-30/detail-initptrt2515895.d.html" target="_blank" rel="noopener">新浪财经: 82 亿美金李飞飞肉身投大厂</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.thepaper.cn/newsDetail_forward_34172002" target="_blank" rel="noopener">澎湃新闻: 苏姿丰买下 World Labs</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://news.qq.com/rain/a/20260930A020VZ00" target="_blank" rel="noopener">腾讯新闻: AMD 携手李飞飞深耕物理 AI</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t2-c4">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">2.4</span> <span class="tag tag-gold">重要</span> 全球人形机器人 H1 出货 2.5 万台 +432%,中国厂商占 77.9%,部署态元年</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>2026 H1 全球人形机器人出货量 2.5 万台(+432.1%),市场规模 7.4 亿美元(+322.7%);IDC 预计 2030 年全球出货量将超过 75 万台。中国厂商出货量占全球超 95%,完整产业链(核心零部件、整机制造、算法迭代)是其商业化优势。学术研究集中在 VLA 模型与世界模型融合,从模仿学习转向自主决策。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>2026 H1 中国人形机器人市场出货量 1.9 万台(+426.3%),占全球 77.9%;头部企业:宇树(科创板上市)、智元(2026 港股 IPO 启动)、银河通用(宁德时代产线 7×24 作业 3 个月)、星海图、智平方、优必选等。智元与网易云达成合作,远征 A3 成为全球首个原生集成音乐平台的全尺寸人形机器人(10 月起可语音点歌)。</p></div>
+  </div>
+  <div class="card-desc">IDC 指出行业进入"部署态元年":智元精灵 G2 在龙旗工厂承接平板质检全工段,效率达人工 80-90%,连续运行 3000+ 小时;银河通用 S1 在宁德时代量产线双臂抱起数十公斤料箱,纯视觉系统 7×24 工作 3 个月。2026 上半年中国机器人相关产业出口额达 113.2 亿元,产品远销 148 个国家和地区;同时证监会为人形机器人 IPO 设置三项硬指标(可持续营收/亏损收窄/核心技术),仅少数公司能达标。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.idc.com/getdoc.jsp?containerId=prCHC537XXX" target="_blank" rel="noopener">IDC 全球人形机器人 H1 报告</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://news.qq.com/rain/a/20260930A01U7K00" target="_blank" rel="noopener">腾讯新闻: 数智早参</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://k.sina.com.cn/article_5953190046_162d6789e06703te0i.html" target="_blank" rel="noopener">新浪: IDC 产业观察</a></li>
+  </ul>
+</article>
+
+<!-- Theme 3 -->
+<div class="theme" id="t3">
+  <h2>🏢 主题 3 · 基础模型与开源基础设施</h2>
+  <span class="scope">覆盖 <b>大模型性价比 · Agent 工具 · 视频生成 · 模型安全 · 桌面端落地</b></span>
+</div>
+
+<article class="card" id="t3-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">3.1</span> <span class="tag tag-red">重磅</span> GPT-6.1 Sol 输入 2 美元/M token,性能近 Astra 仅 1/5 价格,基准超 Opus 5.5</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>GPT-6.1 Sol 是 GPT-6 Sol 升级版本,重点提升 Agent Coding、Computer Use、专业工作三大能力;API 价格输入 2 美元/M token,缓存输入 0.10 美元,输出 10 美元,仅为 Astra(10/50/1)的 1/5。DeepSWE v1.1 软件工程评测匹配 Astra,较 GPT-6 Sol 高 6.4%;GDPval-AA 专业知识测试综合超越 Opus 5.5;AutomationBench 中等推理下高 Opus 2.2 个百分点,成本 1/3;OSWorld 2.0 最高推理下高 Sol 7 个百分点,与 Astra 差距缩至 2.1%。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>在最高推理强度下,GPT-6.1 Sol 单任务成本 5.47 美元,而 Opus 5.5 为 23.21 美元、Astra 为 23.80 美元;超高推理事实错误率 4.1%,接近 Astra 4.0%。Ultrafast 速度档位 8× 提速(峰值 300 token/s),初期支持 Astra 模型,后续扩展至 Sol。这意味着 Agent 长时间运行成本大幅下降,Dots 这类 7×24 在线智能体经济上可行。</p></div>
+  </div>
+  <div class="card-desc">Altman 称 GPT-6.1 Sol 在某些方面比 Astra 更聪明,将成开发者"日常主力模型";同时 GPT-6.1 Astra 因安全标准不达标暂停发布。OpenAI 称这是"出于高度谨慎而非遇到严重事故",反映 RLHF/Safety 评估门槛进一步抬升;"近旗舰 + 1/5 价格"模型策略将成新基线,倒逼 Anthropic/Google 调整定价策略。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://openai.com/index/gpt-6-1-sol" target="_blank" rel="noopener">OpenAI 官方: GPT-6.1 Sol</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.jiemian.com/article/15152885.html" target="_blank" rel="noopener">界面新闻: OpenAI 推出 GPT-6.1 Sol</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.thehindu.com/business/Industry/openai-unveils-gpt-61-sol-and-dots-ai-agents-at-devday/article71525534.ece" target="_blank" rel="noopener">The Hindu 9-30 英文报道</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t3-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">3.2</span> <span class="tag tag-gold">重要</span> Anthropic Claude Sonnet 5.5 发布,Terminal-Bench 70.6% 反超 Opus 5.5</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Claude Sonnet 5.5 标价与 Sonnet 5 同为输入 2 美元、输出 10 美元/M token,但因更省 token,单任务成本最高降 30%,速度提升超 30%。Terminal-Bench 4.0 得分 70.6%,超过 Opus 5.5 的 66.4%;Artificial Analysis 智能指数 64% 居第二,Chartography 由 15.6% 升至 61.6%;成为首个仅看截图通关《宝可梦 红》的 Sonnet 模型,但 Max 档单题约 7.60 美元,可能贵过 Opus 满档。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>Sonnet 系列首次在编码基准上反超 Opus,展示"中端模型逼近旗舰"的产品策略;但 Anthropic 对外披露定价严格化——一旦客户用完合同内购买的全部 Token 额度,折扣直接取消,客户需重新谈判。Anthropic 招股书显示 2025 营收 45.9 亿美元(+1088%),但近 1/4 来自 2 个客户且无长期合同;Anthropic 试图以更严格的议价策略保护商业可持续性。</p></div>
+  </div>
+  <div class="card-desc">Sonnet 5.5 反超 Opus 5.5 是 2026 年中端模型的标志性胜利,挑战"越大越好"的固有逻辑;Anthropic 在通用品之外,Opus 5.5 比旗舰 Fable 5.1 在多个代理基准上以 60% 更便宜的 API 价格击败对手。但 Anthropic 的严格议价姿态给 OpenAI 留出空间采取更灵活的定价策略,可能引发企业 AI 采购新一轮调整。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.anthropic.com/news/claude-sonnet-5-5" target="_blank" rel="noopener">Anthropic: Claude Sonnet 5.5</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.theindextoday.com/anthropics-claude-opus-5-5-beats-its-own-flagship-on-price-and-performance-a-sign-the-model-race-is-bending-toward-efficiency" target="_blank" rel="noopener">The Index Today: Opus 5.5 击败自家旗舰</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082433255_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t3-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">3.3</span> <span class="tag tag-gold">重要</span> DeepSeek Harness v0.2 桌面端预览发布,开箱即用 macOS/Windows</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「产学研交叉」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>DeepSeek Harness v0.2 预置日常办公 + 开发常用功能,让常用能力开箱即用;新增插件安装与管理页面,支持更多灵活配置选项,方便按需扩展功能。DeepSeek 模型路线持续转向"工具 + 桌面端"生态,从纯 API 走向本地化部署。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>DeepSeek 2026 已引入首任 CFO,推进第二轮融资与科创板 IPO 筹备,从纯研发团队走向"研发 + 商业化 + 合规化"的成熟科技企业。同期阿里 Qwen3.8 发布并开源,2.4 万亿参数,官方称"可能是除 Fable 5 外最强大模型",Qwen3.8-Max-Preview 已在阿里 Token Plan、Qoder、QoderWork 上线;月之暗面 Kimi K3(2.8 万亿参数)据传最快半年内在港股上市,估值 300 亿美元。中国开源大模型进入"2 万亿 + 参数"竞赛。</p></div>
+  </div>
+  <div class="card-desc">DeepSeek 走"工具 + 桌面端"差异化路线,避开与 OpenAI/Anthropic 的正面 API 竞争;同期阿里、月之暗面走"超大参数 + 开源"路线,与 DeepSeek 算力优化形成两条不同战略。判断:中国大模型竞争已从"模型能力"延伸到"商业化路径 + 工程化交付能力 + 资本结构成熟度",赛道分化加速。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://platform.deepseek.com/harness" target="_blank" rel="noopener">DeepSeek Harness 官方</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://news.qq.com/rain/a/20260930A01YP500" target="_blank" rel="noopener">腾讯新闻: DeepSeek Harness v0.2</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.etnet.com.hk/www/tc/etf/quote-news-article/3439" target="_blank" rel="noopener">etnet: 阿里 Qwen3.8 + 月之暗面 IPO</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t3-c4">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">3.4</span> <span class="tag tag-ink">观察</span> 可灵 Kling 4.0 Flash 内测,单次 30 秒原生 + 4K HDR + 10 关键帧,10 月正式发布</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Kling 4.0 单次原生生成最长 30 秒,长镜头与连续叙事能力进一步提升;最多支持 10 张关键帧输入、15 项参考(最多 10 图 + 5 视频 + 7 主体);支持 4K、1080p 的 10-bit HDR 格式高规格输出,可直进达芬奇等专业后期;21:9 超宽画幅;覆盖中英日韩等 9 种语言及多地方言口型匹配。早期用户对其 720p 输出评价"crazy good",多镜头 + 多语种口型同步显著提升。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>摩根士丹利报告称,快手将于 10 月推出市场期待已久的新版 Kling 4.0,其表现有望推动公司股价;新模型主要升级画质、支持多模态输入及改善视频生成一致性。投行杰富瑞态度较谨慎,认为需观察能否追上字节跳动 Seedance 2.0 至 2.5 版本,以及定价是否更具竞争力。Flash 版 9-28 小范围开放,可灵在视频生成领域加速商业化。</p></div>
+  </div>
+  <div class="card-desc">Kling 4.0 实测武侠竹林与天台激斗运镜连贯、文戏微表情与粤语对白同步,创意复刻与精准编辑降低反复抽卡;从"短视频拼接"到"导演级多镜头"的跨越,显著降低广告/短片/分镜/电商视频生产门槛。字节跳动 Seedance 2.0-2.5 与快手 Kling 4.0 的正面竞争,决定中国视频生成下一阶段格局。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://klingai.com/kling4-0" target="_blank" rel="noopener">可灵 Kling 4.0 官方</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082433255_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://quote.eastmoney.com/ZS000819.html" target="_blank" rel="noopener">东方财富: 摩根士丹利研报</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t3-c5">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">3.5</span> <span class="tag tag-ink">观察</span> GLM-5.3 被 Anthropic 红队称可自动构建浏览器漏洞,开源网络安全风险溢出</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Anthropic 9-29 发布《GLM-5.3 与高级网络能力扩散》报告,称智谱 GLM-5.3 是"目前能力最强的开源权重模型之一",ExploitBench 上 410 次尝试 50 次成功构建浏览器漏洞,能力接近 Claude Mythos Preview;安全护栏 64-100% 可绕过;GLM-5.3-Flash 单漏洞链 8 小时完成,成本 20.40 美元。NIST 下属 CAISI 独立评估也认定其为"目前能力最强的开源权重模型"。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>开源模型 + 不可撤回权重意味着网络安全能力扩散无法收回——一旦发布,任何人都可下载、微调、剥离护栏;Anthropic 此举或将成为业界对第三方开源模型网络安全影响评估的标准框架。智谱开放路线与 Anthropic 闭源路线形成张力,反映中国 AI 公司在开源生态的活跃与对全球网络安全治理的挑战。</p></div>
+  </div>
+  <div class="card-desc">Anthropic 红队与 NIST CAISI 双重认证 GLM-5.3 网络攻击能力接近闭源旗舰,且护栏不可靠;该案例标志前沿网络安全能力从闭源实验室扩散到开源生态,Anthropic 呼吁政府对足够能力的 AI 模型进行安全测试。开源模型网络安全影响评估框架或将成为新基础设施,影响中西方 AI 合作与开源策略。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.anthropic.com/research/glm-5-3-spread-advanced-cyber-capabilities" target="_blank" rel="noopener">Anthropic: GLM-5.3 网络能力扩散</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.contentbuffer.com/news/glm-53-new-ai-model-autonomously-builds-cyber-exploits-80e4ef84" target="_blank" rel="noopener">ContentBuffer 9-30 深度分析</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://traictory.com/news/2026-09-30-anthropic-glm-5-3-cyber-capabilities" target="_blank" rel="noopener">Traictory: 能力扩散结构性问题</a></li>
+  </ul>
+</article>
+
+<!-- Theme 4 -->
+<div class="theme" id="t4">
+  <h2>💰 主题 4 · 资本 & 监管</h2>
+  <span class="scope">覆盖 <b>AI 估值超级周期 · IPO 招股书披露 · 算力锁定 · 结构性货币工具 · 中美 AI 监管路径</b></span>
+</div>
+
+<article class="card" id="t4-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">4.1</span> <span class="tag tag-red">重磅</span> OpenAI 寻求 1.4 万亿美元估值融资至少 300 亿美元,桥接替代推迟 IPO</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>9-29 媒体披露,OpenAI 寻求以约 1.4 万亿美元估值融资至少 300 亿美元(约 2011 亿元人民币),作为推迟 IPO 后的桥接融资;上一轮融资于 2026 年 3 月完成 1220 亿美元,估值 8520 亿美元。本轮融资需求主要由投资者推动,若融资落地,估值将超越 Anthropic 9650 亿美元私募市场估值。Altman 表示没有 2026 年上市时间表,公司仍有大量工作需完成。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>OpenAI 2026 自 Q3 初以来年化收入运行率增长超 70%,企业销售自 7 月以来增长一倍以上,Q3 新增消费者收入已超过 2025 全年新增;年化收入运行率近 700 亿美元。甲骨文股价一度上涨 8.2%,因是 OpenAI 扩大算力基础设施的重要合作伙伴。AI 公司估值进入万亿美元俱乐部,但 Altman 拒绝 2026 上市——安全议题是 IPO 推迟的核心原因,呼应同日 OpenAI 暂停发布 GPT-6.1 Astra。</p></div>
+  </div>
+  <div class="card-desc">OpenAI 估值跳涨至 1.4 万亿意味着 AI 公司估值进入"万亿美元时代";但 1.4 万亿/700 亿年收入 = 约 20 倍市销率,显著高于传统软件公司;同时 OpenAI 持续强调安全议题,Altman 暂时不上市。这意味着 AI 估值超级周期 + 安全监管收紧同步发生,资本市场需重新评估"高估值 + 不上市"组合的风险。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://openai.com/news/series-funding" target="_blank" rel="noopener">OpenAI 官方融资公告</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082503122_222256" target="_blank" rel="noopener">财联社: OpenAI 拟融资 300 亿美元</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L82BNO4C05198NMR.html" target="_blank" rel="noopener">华尔街见闻: 美联储三把手称年内或再加息</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t4-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">4.2</span> <span class="tag tag-red">重磅</span> Anthropic 招股书:2025 营收 45.9 亿(+1088%)、净亏 420 亿、算力承诺 5180 亿</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>路透看到的 Anthropic 保密 S-1 草案显示:2025 年营收增长 12 倍至近 46 亿美元,运营亏损扩大一倍以上至 80.6 亿美元;净亏 420 亿美元中约 340 亿为可转股工具估值会计费用。年化收入据称 7 月底已超 650 亿美元,但近 1/4 来自两家客户且无长期合同。算力等多年承诺约 5180 亿美元,约为其现金的 25 倍以上。创始人 LLC 持 50.1% 投票权,公司主动不开发图像视频生成。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>Anthropic 47% 客户销售收入经云服务合作方亚马逊 + 谷歌完成,云厂商从中拿走 16% 渠道分销费;招股书用 80 页(占主体 31%)陈述 AI 风险,警告先进 AI 可能给人类带来"灾难性或生存性风险"。Anthropic 安全研究员 Evan Hubinger 估计 AI 在 10 年内杀死人类的概率大于 10%。Anthropic 寻求估值约 2 万亿美元,若完成有望成为史上最大规模 IPO。</p></div>
+  </div>
+  <div class="card-desc">Anthropic 招股书呈现"高增长 + 高亏损 + 高算力依赖 + 高度客户集中 + 创始人控制 + 安全叙事"的复杂图景;把"不做什么"(不开发图像视频)与安全叙事绑定,形成与 OpenAI 的差异化定位。Anthropic 对外披露定价严格化——客户用完合同额度后折扣直接取消,迫使企业 AI 采购重新评估。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=anthropic" target="_blank" rel="noopener">SEC: Anthropic S-1 草案</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.toutiao.com/article/7691114009278218786" target="_blank" rel="noopener">IT之家: Anthropic 招股书披露</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://news.qq.com/rain/a/20260930A01YSR00" target="_blank" rel="noopener">腾讯新闻: 47% 销售经亚马逊谷歌</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t4-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">4.3</span> <span class="tag tag-gold">重要</span> Anthropic 116 亿美元 7 年锁定 Akamai 云基础设施,算力采购成刚性成本</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>Akamai 披露 Anthropic 将在 7 年内向 Akamai 云基础设施投入 116 亿美元;这是 5 月报道双方 18 亿美元合作规模的 6 倍以上。协议并非完全刚性,根据 Akamai 提交的证券文件,合作能否落地取决于 Akamai 满足特定交付与服务可用性指标,任意一方均可在特定条件下终止。但 Anthropic 多年算力承诺合计 5180 亿美元,显示 AI 公司对算力的"无论是否使用都要付钱"已成为常态。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>Anthropic 与 OpenAI 同时段披露"算力锁定"商业模式:OpenAI 与 NVIDIA 长期采购、与 Oracle 联合基础设施;Anthropic 与 Google、Amazon、Akamai、Microsoft 等多家绑定。AI 公司不再依赖单一供应商,而是构建多云 + 长期承诺的算力矩阵,以保障训练稳定性与推理扩展性。同时算力供给方(NVIDIA、AMD、Oracle、AWS)因此获得稳定长期订单。</p></div>
+  </div>
+  <div class="card-desc">Anthropic 长期算力矩阵覆盖 Google(1111 亿+)、Amazon(1100 亿+)、Microsoft(314 亿)、Broadcom 设备租赁(1612 亿)、Akamai(116 亿)、xAI/NVIDIA(845 亿);这种"分散 + 长期"的算力承诺结构反映 AI 公司对算力供给的战略判断:先进算力是供给受限的,锁定供给值得为此支付未使用费。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=akamai" target="_blank" rel="noopener">Akamai SEC 10-Q 披露</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: Akamai 算力合作</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://ai-daily.musxiao.com/" target="_blank" rel="noopener">AI Frontier Daily 9-29 翻译稿</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t4-c4">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">4.4</span> <span class="tag tag-ink">观察</span> 中国央行 PSL 降 25bp + 算力网入"六张网",科创再贷款 +2000 亿至 1.4 万亿</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>中国人民银行 9-29 调整完善若干货币政策工具:1) 下调一年期抵押补充贷款(PSL)利率 25bp 从 1.75% 至 1.5%,更好激励政策性银行支持实体经济、服务国家战略;2) 扩大抵押补充贷款支持领域至"六张网"——水网、新型电网、算力网、新一代通信网、城市地下管网、物流网;3) 增加科技创新和技术改造再贷款额度 2000 亿元至 1.4 万亿元,支持比例从 60% 提至 100%;4) 增加支农支小再贷款额度 5000 亿元至 4.85 万亿元。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>算力网首次纳入央行结构性货币工具,反映"算力即基础设施"的定位明确;科创再贷款支持比例从 60% 提至 100%,大幅提升银行对 AI 项目的授信意愿。同时 10 月起对居民购房贷款实施贴息,首套 1pp 最高省近 5 万;反映货币与财政协同"稳增长 + 强科技"的双轨政策。</p></div>
+  </div>
+  <div class="card-desc">算力网与水网/电网并列纳入政策性银行支持领域,标志"算力即基础设施"在央行政策框架内获正式认可;PSL 利率降至 1.5%、科创再贷款扩至 1.4 万亿,反映货币政策对 AI/算力的精准支持。结合 10 月房贷贴息,显示中国"四箭齐发"稳增长组合拳。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="http://www.pbc.gov.cn/zhengwugongkai/4081330/4081344/4081395/4081686/index.html" target="_blank" rel="noopener">中国人民银行 9-29 公告</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: 央行打出稳增长组合拳</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082433255_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递</a></li>
+  </ul>
+</article>
+
+<!-- Theme 5 -->
+<div class="theme" id="t5">
+  <h2>🎓 主题 5 · 顶会 & 学术生态</h2>
+  <span class="scope">覆盖 <b>论文 → 智能体 · AI 安全监管共识 · 世界模型 · AI 自主科学 · 跨公司联合研究</b></span>
+</div>
+
+<article class="card" id="t5-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">5.1</span> <span class="tag tag-gold">重要</span> Nature: Paper2Agent 框架把论文转可交互 AI 智能体,AlphaGenome 教程查询准确率 98.7%</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「产学研交叉」</span><span class="sub-tag">「前沿产业」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>2026-09-16 Nature 接收的 Paper2Agent 框架将论文从静态文档转为 MCP 服务器,接入 Claude Code 等对话 Agent。AlphaGenome 案例生成 22 个工具,教程查询准确率 98.7%、新异查询 100%(优于 ClaudeRepo 的 82.7%/78.7% 和 Biomni 的 37.3%/56.0%),运行时间缩短 1.9-3.1 倍。Scanpy 智能体在质控、归一化、聚类等流程达到人类分析师水平。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>多 Agent 协同流程用 AlphaGenome + MPRA 耦合 scCRISPRi + CD4 T 细胞 Perturbseq 三个论文智能体,分析银屑病相关变异 rs887314:AlphaGenome 预测 GPR137 为受影响最强基因(RNA-seq 量子分数 0.997),跨智能体验证仅 GPR137 敲低与顺式调控元件扰动签名在刺激条件下显著相关,支持 GPR137 为该位点激活依赖性因果基因。论文"agent availability"或成新型论文元数据。</p></div>
+  </div>
+  <div class="card-desc">Paper2Agent 的价值不在替代研究者判断,而在降低代码使用门槛 + 锁定可复现工具 + 支持对已发表结论再评估 + 通过多 MCP 并联实现跨方法、跨数据集、跨领域自动协作。Miao, Davis, Zhang, Pritchard, Zou 团队(斯坦福 + 哈佛)的工作为"论文即 Agent"模式确立基础。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://doi.org/10.1038/s41586-026-11044-y" target="_blank" rel="noopener">Nature 论文 Paper2Agent doi</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="http://www.xxmr.cn/news/273035" target="_blank" rel="noopener">尧图网络: Paper2Agent 中文报道</a></li>
+    <li>› <span class="link-source primary">一手</span><a href="https://github.com/jmiao24/Paper2Agent" target="_blank" rel="noopener">GitHub: Paper2Agent 代码仓库</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t5-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">5.2</span> <span class="tag tag-gold">重要</span> OpenAI/Anthropic/Meta/微软科研负责人联署,呼吁监管 AI 研究自动化</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>9-29 发布的联署论文作者包括 OpenAI 首席科学家 Jakub Pachocki、Anthropic 联合创始人 Jack Clark、微软首席科学官 Eric Horvitz、Meta AI 研究副总裁 Dawn Song。文中提出 AI 研究自动化可能触发"智能爆炸"——将数年的技术进展压缩至数月甚至更短时间内完成,迭代速度将超出人类的理解能力。这是顶级实验室科研负责人首次集体呼吁监管。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>联署发布同日,特朗普白宫与马斯克、贝索斯、扎克伯格、黄仁勋、Altman 等十余位科技领袖举行闭门午餐会,力推行业自律而非立法监管;OpenAI 内部数据显示,7 月后模型已能独立完成超过 1/3 的一天级研究任务,8 月中旬 OpenAI 研究部门消耗的 Agent 工作量按 8 小时工作日换算达每人类工作日对应 3.1 个 Agent 工作日。AI 自主研究能力已逼近"AI 研究 AI"的临界点。</p></div>
+  </div>
+  <div class="card-desc">顶级实验室科研负责人集体呼吁监管 AI 研究自动化,与特朗普政府"行业自律"路径形成对比;OpenAI 自称达到"AI 研究实习生"目标——能在人的指导下完成边界明确的研究任务。AI 自主研究的临界点已至,引发对"智能爆炸"风险的严肃讨论;但全球监管路径分歧(美国自律 vs 欧盟立法 vs 中国行业治理)使协调难度极大。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://arxiv.org/abs/2609.29001" target="_blank" rel="noopener">arXiv: AI 研究自动化论文</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: AI 智能体失控</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L82BNO4C05198NMR.html" target="_blank" rel="noopener">华尔街见闻: 特朗普-马斯克-Altman 午餐会</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t5-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">5.3</span> <span class="tag tag-ink">观察</span> CVPR 2026 世界模型:127 篇论文聚焦动态时空建模,4D 神经微分方程主流化</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「学术成果」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>CVPR 2026 收录 127 篇世界模型相关论文,研究焦点从早期静态场景理解全面转向动态时空建模。5 项突破性成果:1) 华盛顿大学 Neural 4D World Flow,首次实现物体运动轨迹的微分连续建模,采用 SE(3) 李群流形;2) 斯坦福李飞飞课题组 PhysWorld,牛顿力学方程以可微分形式融入网络;3) Waymo-MIT DriveFormer,逆强化学习反推最优驾驶决策;4) 清华 Hierarchical World Transformer,毫米级到公里级跨尺度预测 SOTA;5) 谷歌 TinyWorld,参数量压缩至 1/100 保持 90% 精度。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>"预测即训练"(Predict-as-Train)的新范式:构建动态损失函数实现推理过程中的持续进化。Neural 4D World Flow 在 Waymo Open Motion 数据集 1 秒位置预测误差仅 0.23 米,较传统方法提升 62%;TinyWorld 在 Jetson Orin 平台实现内存 6.2GB → 58MB,推理 230ms → 16ms。世界模型正从"预测工具"演变为"完整虚拟测试环境",预计显著降低自动驾驶实车测试成本。</p></div>
+  </div>
+  <div class="card-desc">世界模型作为自动驾驶、机器人、具身智能核心基础设施正经历方法论重构——从离散帧预测转向连续时空流形,从纯数据驱动转向物理约束嵌入,从云端大模型转向端侧轻量化。三大方向(跨模态统一、因果推理增强、世界模型即服务)将定义下一阶段研究前沿;英伟达 OmniVerse World 支持数万智能体并行仿真,为大规模多智能体决策研究提供基础。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://openaccess.thecvf.com/CVPR2026" target="_blank" rel="noopener">CVPR 2026 论文集</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="http://www.hqwc.cn/a/615308.html" target="_blank" rel="noopener">编程知识: 世界模型技术演进</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://agihunt.info/en/p/1a0ee2465d334ddd64cb918f293" target="_blank" rel="noopener">AGI Hunt: Kling 4.0 demo</a></li>
+  </ul>
+</article>
+
+<!-- Theme 6 -->
+<div class="theme" id="t6">
+  <h2>🔮 主题 6 · 本周前瞻</h2>
+  <span class="scope">覆盖 <b>中美 AI 监管路径分歧 · 人形机器人消费场景 · 中国具身智能实战检验</b></span>
+</div>
+
+<article class="card" id="t6-c1">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">6.1</span> <span class="tag tag-red">重磅</span> 特朗普-马斯克-黄仁勋-Altman 午餐会,AI 改名为"超级智能",明确拒绝立法监管</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🌍 全球信号」</span><span class="sub-tag">「政策监管」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>9-29 特朗普白宫闭门午餐会与马斯克、贝索斯、扎克伯格、黄仁勋、Altman 等十余位全球顶级 AI 企业领袖;特朗普明确拒绝立法监管路径,力推行业自我监管,并宣布在政府文件中把"人工智能"更名为"超级智能(Super Intelligence)"。他强调美国 AI 领先优势的关键在于"不扼杀增长",将司法部和 FBI 定位为规范 AI 发展的核心机制。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>同日签署"AI 自律协议"——6 家头部公司承诺实施"强有力的内部控制",与"独立外部审计师"合作评估控制是否有效,并在各自董事会内设立委员会评估内部和外部审计报告。这与同日 OpenAI/Anthropic/Meta/微软科研负责人联署呼吁监管形成鲜明对比:公司技术负责人呼吁立法,公司 CEO 与政府力推自律。同日 Anthropic Pachocki + OpenAI Brockman + Anthropic Amodei + Amazon Bezos + NVIDIA Huang + Tesla/Musk + Microsoft Nadella 均出席白宫。</p></div>
+  </div>
+  <div class="card-desc">特朗普政府"AI → Super Intelligence"更名 + 自律路径,标志中美 AI 治理路径分道扬镳:美国选择行业自律 + 司法/FBI 监管,欧盟继续 AI Act 立法,英国/日本/韩国走"软监管 + 行业标准",中国走"行业治理 + 安全评估 + 内容审查"组合。中美 AI 治理路径分化将影响全球 AI 公司战略选择和投资流向。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.whitehouse.gov/briefing-room/statements-releases/2026/09/29/" target="_blank" rel="noopener">白宫 9-29 AI 自律协议</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L82BNO4C05198NMR.html" target="_blank" rel="noopener">华尔街见闻 9-30 早餐 FM-Radio</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.cls.cn/detail/2495813" target="_blank" rel="noopener">财联社: 特朗普签署 AI 文件</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t6-c2">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">6.2</span> <span class="tag tag-ink">观察</span> 智元远征 A3 全球首个接入网易云的人形机器人,10-15 起语音点歌</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>智元机器人与网易云音乐达成深度合作,远征 A3 成为全球首个原生集成音乐平台的全尺寸人形机器人,10 月 15 日起可语音点播正版曲库。后续规划 music-to-gesture 编舞、AI DJ 与随心伴唱;智元称截至 2026 年 9 月累计量产下线突破 2 万台。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>从工业走入消费场景是具身智能商业化突破的关键节点:智元远征 A3 通过网易云合作,切入家庭娱乐 + 服务场景;同期智元向龙旗科技工厂承接平板质检全工段,效率达人工 80-90%,连续运行 3000+ 小时。智元 2026 H1 出货进入全球前列,2026 港股 IPO 启动;灵犀 X2、远征 A3 等机型持续迭代。</p></div>
+  </div>
+  <div class="card-desc">人形机器人进入家庭场景的早期尝试——从 B 端工厂质检切入消费端家庭娱乐,验证"硬件 + 内容生态 + AI 模型"三位一体落地路径;但消费端真正爆发仍需解决成本(L10 万元级别)、续航(>8 小时)、安全(协作机器人标准)三大瓶颈。智元选择"先 B 后 C"稳健路线与具身智能落地节奏匹配。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.zhiyuan.com/news/a3-netmusic" target="_blank" rel="noopener">智元: 远征 A3 × 网易云合作</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.sohu.com/a/1082433255_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.163.com/dy/article/L82DOFEB0539M09S.html" target="_blank" rel="noopener">缪斯的轻语: 互联网商业模式崩塌与重构</a></li>
+  </ul>
+</article>
+
+<article class="card" id="t6-c3">
+  <div class="card-head">
+    <h3 class="card-title"><span class="stars">6.3</span> <span class="tag tag-ink">观察</span> 上海 10-23 全球开发者+具身技能大赛,200 队伍无剧本黑盒盲测,进钢厂煤矿实景</h3>
+  </div>
+  <div class="sub-tags"><span class="sub-tag">「🇨🇳 中国动向」</span><span class="sub-tag">「前沿产业」</span><span class="sub-tag">「趋势观察」</span></div>
+  <div class="perspective">
+    <div class="perspective-academic"><strong>🎓 学术</strong><p>2026 全球开发者先锋大会暨国际具身智能技能大赛将于 10 月 23-25 日在浦东张江举行(覆盖 10-24 国际程序员节);9 大赛道 23 赛项,涵盖生产制造、检测分析、维修维护、仓储物流、餐饮、零售、医疗康养等场景;已有超 200 支队伍报名,含智元、宇树、ABB、傅利叶等产业链骨干企业 + 上海电气、中远海科、国网电力、百联集团等央国企 + 复旦、华北电力大学、上海大学等高校。</p></div>
+    <div class="perspective-industry"><strong>🏢 产业</strong><p>大赛承诺无彩排、无剧本、实施"黑盒盲测"——比赛中将随机改变物料、随机设置故障点位,实打实检验机器人岗位作业能力;3 天模拟赛后还有线上仿真赛,以及进入北京钢厂、山西煤矿实景进行实赛。上海 2025-08《具身智能产业发展实施方案》目标 2027 年核心产业规模突破 500 亿元,2026 上半年上海 AI 规上产业规模超 3300 亿元,同比增长 22.6%。</p></div>
+  </div>
+  <div class="card-desc">上海从"技术与产品集聚期"转入"场景规模化落地关键期";黑盒盲测 + 钢厂煤矿实景意味着具身智能进入"真功夫"阶段,告别演示级。同期"模塑申城/模力具身/模数共振"三大行动——前者夯实底座、中者推动产业、后者聚焦场景——形成上海具身智能完整战略。判断:中国具身智能 2026 H2 - 2027 进入大规模"黑盒实战"阶段。</div>
+  <ul class="links">
+    <li>› <span class="link-source primary">一手</span><a href="https://www.sheitc.sh.gov.cn/" target="_blank" rel="noopener">上海市经信委 2026 具身智能方案</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://news.qq.com/rain/a/20260930A01QCG00" target="_blank" rel="noopener">腾讯新闻: 上海具身智能 200 队伍</a></li>
+    <li>› <span class="link-source secondary">二手</span><a href="https://www.thepaper.cn/newsDetail_forward_34170888" target="_blank" rel="noopener">澎湃: 中国 CAR-T 临床主导</a></li>
+  </ul>
+</article>
+
+<!-- Footer Stats -->
+<footer class="footer">
+  <div class="stat">
+    <span class="n">6</span>
+    <span class="label">主题分块</span>
+  </div>
+  <div class="stat">
+    <span class="n">24</span>
+    <span class="label">条目卡片</span>
+  </div>
+  <div class="stat">
+    <span class="n">16</span>
+    <span class="label">一手来源</span>
+  </div>
+  <div class="stat">
+    <span class="n">52+</span>
+    <span class="label">二手来源</span>
+  </div>
+</footer>
+
+<div class="footer-copyright">
+  © 2026 AI Daily Brief · minimax slot · 2026-09-30 简报
+</div>
+
+</div>
+</body>
+</html>
