@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>minimax 产品产业每日简报 · 2026-10-03</title>
+<style>
+:root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .section-title{margin:38px 0 6px;font-size:22px;color:var(--ink);letter-spacing:0.5px;}
+  .section-sub{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.55;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .star{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"\203A";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;
+    border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .deliver-assets{display:block;}
+
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+    .tag,.src-1,.src-2,.exec li .num{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  }
+
+  .nav-top, .nav-bottom {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    z-index: 100;
+  }
+  .nav-top { top: 0; }
+  .nav-bottom {
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .date {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: 1.2px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    margin-top: 2px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-top a, .nav-bottom a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-top a:hover, .nav-bottom a:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  .nav-top a:active, .nav-bottom a:active { transform: translateY(0); }
+  @media (max-width: 640px) {
+    .nav-top, .nav-bottom { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-brand-text .date { font-size: 10.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-top a, .nav-bottom a { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <div class="nav-brand-text">
+        <span class="title">AI 学术与产业每日简报</span>
+        <span class="date">2026-10-03</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="/">返回首页</a>
+      <a href="/briefs.html">往期目录</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<header class="masthead">
+      <div class="brand">
+        minimax 产品产业每日简报
+        <small>GLOBAL AI · PRODUCTS INDUSTRY · MINIMAX</small>
+      </div>
+      <div class="meta">
+        <div><strong>2026-10-03</strong> · 周六</div>
+        <div>数据截止:当日 24:00 (UTC+8) · 全球视野</div>
+        <div>主题分块:国家监管 · 资本财务 · 算力基础设施 · 模型平台 · 产品采用 · 竞争与前瞻 · 中国厂商深度</div>
+      </div>
+    </header>
+
+    <section class="exec">
+      <h2>📌 今日 4 条最重要要闻</h2>
+      <ol>
+        <li>
+          <span class="num">1</span>
+          <div class="body">
+            <span class="label cap">资本信号</span>
+          <b>博通 + 黑石牵头 600 亿美元 AI 芯片融资,Amazon SPV 80 亿美元租回租同步推进。</b>420 亿 A 类高级担保贷 + 180 亿 B 类次级债(黑石承诺 90 亿)专为 AI 客户;Amazon capex 2200 亿创新高,SPV + 长租 + 银团三件套扩散,资本市场吸收产业资本开支压力。
+          </div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div class="body">
+            <span class="label sci">模型发布</span>
+          <b>Google Gemini 4 Argon 100 万 token 输出上限 + OpenAI Dots 常驻智能体双线推进。</b>Argon 通过 Fairwind Program 优先开放可信网络安全防御者;Dots 接入 4000+ 应用配独立云虚拟机,Pro $100/月含一个 Dots,Slack/Teams 集成,直接对标 Meta Muse / Grok Bot / Gemini Spark。
+          </div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div class="body">
+            <span class="label reg">监管冲击</span>
+          <b>白宫『超级智能自愿协议』 9/30 签署 + 中国网信办 7-8 月新增 124 款备案。</b>FTC 启动对 Anthropic/OpenAI 调查,主席 Ferguson 反新规立法;『道德约束力』软协议与州法硬执法双轨制;中国累计 1172 项备案,移动端 7 款,双轨双体系监管分化。
+          </div>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <div class="body">
+            <span class="label acc">中美格局</span>
+          <b>FT 报道美国企业大规模转向中国开放权重模型:AT&T、PNC 进入试点。</b>DeepSeek/Qwen/Kimi/Zhipu 生态覆盖美企落地场景;OpenAI 罕见公开指控月之暗面 Kimi『有组织蒸馏』,中美 AI 训练数据摩擦升级;智谱完成 2196.5 万股 H 股配售 31 亿港元。
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <nav class="toc">
+      <h2 class="toc-title">🗂️ 主题目录</h2>
+      <p class="toc-sub">7 大主题 · 24 张卡 · 全景覆盖</p>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">1</span>
+            <span class="icon">🏛️</span>
+            <span class="t">国家监管与治理</span>
+          </div>
+        <ul>
+          <li><a href="#sec1">1.1 白宫签署『超级智能自愿协议』:四大内部控制层 + 独立董事会监督,行业自主监管 vs 加州 CAIA 强制执法分野已成</a></li>
+          <li><a href="#sec1">1.2 网信办 7-8 月新增 124 款生成式 AI 服务备案 + 133 款应用登记,全国累计 1172 项备案</a></li>
+          <li><a href="#sec1">1.3 FTC 启动对 Anthropic / OpenAI 等 AI 实验室广泛调查,主席 Ferguson:『新规为现有巨头...</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">2</span>
+            <span class="icon">💰</span>
+            <span class="t">资本 / 投资 / 并购 / 企业财务</span>
+          </div>
+        <ul>
+          <li><a href="#sec2">2.1 Anthropic 10/14 投资者日 + 11/26 感恩节前 IPO 目标,估值 1.8-2 万亿美元或追平 Sp...</a></li>
+          <li><a href="#sec2">2.2 博通 + 黑石牵头 600 亿美元 AI 芯片融资:420 亿高级担保贷 + 180 亿次级债,专为 Anthropic...</a></li>
+          <li><a href="#sec2">2.3 Amazon 拟将 80 亿美元 NVIDIA Grace Blackwell 芯片置入 SPV 出租回租:2200 亿...</a></li>
+          <li><a href="#sec2">2.4 Anthropic Claude Frontier Academy 启动 1 亿美元计划:2027 年底前培养 1 万名...</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">3</span>
+            <span class="icon">⚙️</span>
+            <span class="t">算力 / 芯片 / 云 / AI 基础设施</span>
+          </div>
+        <ul>
+          <li><a href="#sec3">3.1 NVIDIA 推出 64GB 版 DGX Spark 桌面 AI 计算机:4999 美元起售,10/23 OEM 渠道上...</a></li>
+          <li><a href="#sec3">3.2 三星 HBM4 报价定 4 美元/Gb(HBM3E 1.5 美元的 2.7 倍):TrendForce 称 2027 H...</a></li>
+          <li><a href="#sec3">3.3 NVIDIA 发布 Open Agent Safety Platform:开源 OpenShell 运行时 + Blue...</a></li>
+          <li><a href="#sec3">3.4 AMD 82 亿美元全股票收购 World Labs(李飞飞)+ Q2 数据中心收入同比 +107%:市值首破万亿</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">4</span>
+            <span class="icon">🧠</span>
+            <span class="t">模型平台 / 开发者生态 / 分发渠道</span>
+          </div>
+        <ul>
+          <li><a href="#sec4">4.1 Google 分阶段推出 Gemini 4 Argon:100 万 token 输出上限,先经 Fairwind Pro...</a></li>
+          <li><a href="#sec4">4.2 OpenAI DevDay 2026 发布 Dots 常驻智能体(GPT-6 Astra 驱动)+ Space 协同办公...</a></li>
+          <li><a href="#sec4">4.3 Anthropic 公告 11/30 API 弃用 Claude Sonnet 4.5,引导迁移 Sonnet 5.5 ...</a></li>
+          <li><a href="#sec4">4.4 DeepMind 发布 SynthID Bio:业内首个 AI 设计蛋白质不可见水印,用于识别合成生物学产品</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">5</span>
+            <span class="icon">📱</span>
+            <span class="t">AI 产品 / 行业应用 / 用户采用</span>
+          </div>
+        <ul>
+          <li><a href="#sec5">5.1 Meta Muse 上线 23 天累计下载 500 万次:ChatGPT 用 56 天、Grok 103 天、Claud...</a></li>
+          <li><a href="#sec5">5.2 字节跳动 × 中兴豆包手机:像人一样操作手机应用,中国厂商押注手机端行为智能 Agent 路线</a></li>
+          <li><a href="#sec5">5.3 Anthropic Claude for Government 联邦/州级机构全面可用:FedRAMP 认证 + MDM...</a></li>
+          <li><a href="#sec5">5.4 Anthropic 报告:中国开源 GLM-5.3(智谱)在 ExploitBench 接近 Claude Mythos...</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">6</span>
+            <span class="icon">🛡️</span>
+            <span class="t">竞争格局 / 安全信任 / 产业前瞻</span>
+          </div>
+        <ul>
+          <li><a href="#sec6">6.1 FT 报道美国企业大规模转向中国开放权重 AI 模型:AT&T、PNC 金融进入试点,DeepSeek + Qwen +...</a></li>
+          <li><a href="#sec6">6.2 Google Suncatcher 太空计算原型卫星经 SpaceX 成功发射:Planet 联合研制,助推器回收完成</a></li>
+          <li><a href="#sec6">6.3 Anthropic 联合创始人 Olah 团队自 2025 秋邀 60+ 神学家/哲学家讨论 Claude 是否有意识:...</a></li>
+          <li><a href="#sec6">6.4 Hinton 最新论文:多位顶尖研究者预期递归自我改进窗口期比预期更短,智能爆炸可能很快发生</a></li>
+          <li><a href="#sec6">6.5 Meta 与 AI 安全评估初创 Virtue AI 仅合作 4 个月即终止:公开理由为工作风格冲突,Big Tech ...</a></li>
+        </ul>
+      </div>
+      <div class="toc-card">
+        <div class="head">
+            <span class="n">7</span>
+            <span class="icon">🇨🇳</span>
+            <span class="t">中国厂商深度 · 国产芯片 · 出海与摩擦</span>
+          </div>
+        <ul>
+          <li><a href="#sec7">7.1 智谱完成 2196.5 万股 H 股配售 + 阿里平头哥芯片年营收破百亿:国产 AI 资本市场 + 芯片产能双线推进</a></li>
+          <li><a href="#sec7">7.2 华为 × 赛力斯签署新五年战略合作:深化问界品牌专属专营模式,鸿蒙智行体系继续扩张</a></li>
+          <li><a href="#sec7">7.3 OpenAI 指控遭遇有组织蒸馏矛头指向月之暗面 Kimi,同期月之暗面秘密赴港 IPO:中美 AI 训练数据摩擦升级</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ============ Section 1 ============ -->
+    <h2 class="section-title" id="sec1">🏛️ 主题 1 · 国家监管与治理</h2>
+    <p class="section-sub">覆盖:国家级 AI 监管立法 · 自愿协议 vs 强制执法 · 中美欧政策动向 · 地方先行先试</p>
+
+    <!-- 1.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">白宫签署『超级智能自愿协议』:四大内部控制层 + 独立董事会监督,行业自主监管 vs 加州 CAIA 强制执法分野已成</div>
+        <span class="tag tag-red">监管冲击</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">白宫超级智能协议</span>
+        <span class="sub-tag">OpenAI Anthropic</span>
+        <span class="sub-tag">FTC 调查</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>9/30 Trump 联合 OpenAI/Anthropic/Google/Meta/xAI/NVIDIA 六大 AI 巨头签署『Accord on Super Intelligence』,建立四层内部控制机制:内部监控、跨部门安全评估、外部审计、董事会层级监督;Trump 称协议『几乎像宪法,具有道德约束力』,Sacks 反驳『不是可选的自我监管』措辞,称外部审计后强制治理不可选。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>同日 FTC 启动对 Anthropic/OpenAI/METR 等前沿实验室广泛调查,主席 Ferguson 反对新立法:『现有《FTC 法》第 5 节足够,新规是为现有巨头砌墙』;Connecticut/Texas/California 等州级法律已生效。Nvidia 市值首次破万亿 9/21,Amazon 2200 亿 capex 创新高,Broadcom 600 亿 SPV 融资模式扩散。</div>
+      </div>
+      <p class="card-desc">关键判断:协议『道德约束力』无 deadline,正式法律『按指令行事』拒认 agent 自主,估值基准 $852B-$2T 并行。联邦软治理与州硬执法的双轨制已成定局,11 月中美 AI 对话将聚焦风险分级 + 通报机制。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-2">二手</span><a href="https://foxvector.com/stories/01a0fdb7-8b7d-340a-719f-264444d2c822" target="_blank" rel="noopener">Fox Vector · 白宫自愿 AI 协议</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://crew.you/signals/x-ai-pulse/b19504e9-0e6e-46fe-a6ee-c8bb8c9d502d" target="_blank" rel="noopener">Crew/X · Trump White House AI Accord</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · 10/3 行业要闻汇总</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.whitehouse.gov/" target="_blank" rel="noopener">白宫官网 AI 协议公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方政府</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 1.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">网信办 7-8 月新增 124 款生成式 AI 服务备案 + 133 款应用登记,全国累计 1172 项备案</div>
+        <span class="tag tag-ink">中国动向</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">CAC 备案</span>
+        <span class="sub-tag">生成式 AI</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>国家网信办联合相关部门依据《生成式人工智能服务管理暂行办法》持续推进备案工作,7-8 月新增 124 款生成式 AI 服务完成备案(含 7 款移动端应用);新增 133 款通过 API 等方式调用已备案模型能力的应用/功能完成登记。截至 8/31 累计 1112 款生成式 AI 服务完成备案,731 款应用/功能完成登记。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>中国备案 + 安全评估双轨体系,与美国白宫自愿协议 + 州法硬执法的双轨制形成对照:中国监管更细粒度,服务上线前需过安全评估;美国监管更倾向事后问责。中国 2025/8 出台《AI 安全治理框架 3.0》,Carnegie 智库评价为『无需严苛监管也能推进前沿安全』。</div>
+      </div>
+      <p class="card-desc">关键数据:备案累计 1112 款,新增 124 款(7-8 月),移动端 7 款;应用登记累计 731 款。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.cac.gov.cn/" target="_blank" rel="noopener">国家互联网信息办公室 · 备案公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 中方监管</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.gmt8press.com/flash/detail/1520936" target="_blank" rel="noopener">GMT EIGHT · 网信办备案信息</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.newsgram.com/china/2026/10/02/uyghur-muslims-chinese-govt" target="_blank" rel="noopener">NewsGram · 中国 AI 治理体系综述</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 1.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">FTC 启动对 Anthropic / OpenAI 等 AI 实验室广泛调查,主席 Ferguson:『新规为现有巨头砌墙』</div>
+        <span class="tag tag-purple">FTC 调查</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">FTC</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">OpenAI</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>华盛顿邮报 9/30 报道,FTC 启动对 Anthropic/OpenAI 等 AI 巨头的广泛调查,审查模型安全与第三方评估机制;FTC 主席 Ferguson 在 Reuters 主办活动上明确表态:『对产业要求新规深感怀疑,为现有巨头砌墙是华盛顿最容易干的事』;Anthropic CEO Dario Amodei 此前发表『必须缓步推进』路线图,OpenAI CEO Sam Altman 公开附和并承诺开放第三方员工级访问。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Anthropic 在 9/29 报告中警告中国开源模型 GLM-5.3(智谱)在 ExploitBench 上完成 50 次 Chrome V8 漏洞利用,与 Claude Mythos Preview 56 次接近;移除 refusal 后拒绝率从 90%+ 降至 3%,US CAISI 9/17 评估为最强开源权重模型。CAISI 评估距美前沿模型约 4 个月差距。</div>
+      </div>
+      <p class="card-desc">关键判断:调查 9/30 启动,Anthropic 模型 Mythos 差距 GLM-5.3 约 4 个月。FTC 立场与白宫自主监管形成统一战线,中国 CAC 双轨体系形成对照。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.ftc.gov/" target="_blank" rel="noopener">FTC 官网 · 调查公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方监管</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.yahoo.com/news/politics/articles/federal-trade-commission-investigating-anthropic-173701976.html" target="_blank" rel="noopener">Yahoo/WaPo · FTC 调查 Anthropic/OpenAI</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-09-30</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · FTC 调查详情</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 2 ============ -->
+    <h2 class="section-title" id="sec2">💰 主题 2 · 资本 / 投资 / 并购 / 企业财务</h2>
+    <p class="section-sub">覆盖:资本结构 · SPV/租赁 · IPO 路径 · 投融资规模与流向 · 估值锚定</p>
+
+    <!-- 2.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic 10/14 投资者日 + 11/26 感恩节前 IPO 目标,估值 1.8-2 万亿美元或追平 SpaceX 1.77 万亿纪录</div>
+        <span class="tag tag-red">重磅 IPO</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">IPO</span>
+        <span class="sub-tag">Frontier Academy</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Bloomberg 报道 Anthropic 将于 10/14 在旧金山举办投资者日,正式开启 IPO 前期路演;若 11/9 当周启动正式营销,有望 11/26 感恩节前挂牌,最迟年底。潜在投资者给出 1.8-2 万亿美元估值区间,募资规模有望追平或超越 SpaceX IPO 纪录。2025 年营收 46 亿,运营亏损约 80 亿(几乎每元营收亏 1.70 元),账面启动 420 亿。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>同期 Anthropic 启动 1 亿美元 Claude Frontier Academy,2027 年底前培养 1 万名 Frontier Deployed Engineer;首期在 SF/NY/London 招生,由 Accenture/Bain/Capgemini/CBA/Deloitte/McKinsey/Morgan Stanley/Novo Nordisk 等提名。Accenture 单独承诺培训约 3 万名 Claude 专业人员。Series H 披露融资 650 亿、估值 9650 亿。</div>
+      </div>
+      <p class="card-desc">关键数据:估值 $1.8T-$2T,投资者日 10/14 SF,挂牌窗口 11/26 前,工程师目标 10,000 名 / 2027 底。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank" rel="noopener">SEC EDGAR · 上市公司披露</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方监管</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=anthropic" target="_blank" rel="noopener">SEC EDGAR · Anthropic 上市文件</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方监管</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology" target="_blank" rel="noopener">英国 DSIT · AI 安全监管</a> <span class="check-ok">✓</span> <span class="ref-source">· 英方政府</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Anthropic IPO 日程</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://theedgemalaysia.com/categories/Technology" target="_blank" rel="noopener">Edge Malaysia · Anthropic IPO 计划</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://coinpost.ai/en/topics/231794" target="_blank" rel="noopener">CoinPost · Claude Frontier Academy</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">博通 + 黑石牵头 600 亿美元 AI 芯片融资:420 亿高级担保贷 + 180 亿次级债,专为 Anthropic 等 AI 公司采购芯片</div>
+        <span class="tag tag-red">重磅融资</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">Broadcom</span>
+        <span class="sub-tag">黑石</span>
+        <span class="sub-tag">SPV</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Bloomberg 报道博通正牵头筹组 600 亿美元债务融资,为 Anthropic 等 AI 企业购买芯片及建设数据中心提供资金支持。420 亿 A 类高级担保贷由博通组织华尔街银行银团分销,180 亿 B 类次级债由黑石主导并承诺出资 90 亿。该交易已酝酿数周,尚未正式宣布。SPV 数据中心融资公司购买博通定制 AI 芯片/服务器/网络设备,Anthropic 通过长期使用/租赁协议付费,服务费还本付息。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>AI 基础设施融资模式扩散:Amazon 正拟将 80 亿美元 NVIDIA Grace Blackwell 芯片置入 SPV 出租回租,降低资产负债表负担;Amazon 2025 capex 2200 亿美元(原指引 2000 亿),其中 AWS 和 AI 基础设施占大头;Nvidia 设想基于 GPU 的融资市场约 5000 亿美元规模。Goldman Sachs 预测五大 AI 超大规模厂商今年支出超 8000 亿美元,明年 1.2 万亿。</div>
+      </div>
+      <p class="card-desc">关键数据:总规模 $600 亿,结构 $420B A 类 + $180B B 类,黑石出资 $90 亿,Amazon SPV 试 $80 亿。SPV/长租/银团模式扩散,资本市场吸收产业资本开支压力。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.broadcom.com/" target="_blank" rel="noopener">博通 IR</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank" rel="noopener">SEC EDGAR · 博通公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方监管</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://theedgemalaysia.com/categories/Technology" target="_blank" rel="noopener">Edge Malaysia · 博通 600 亿融资</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://finance.biggo.com/news/d899b9a2-d2c3-4470-bfd1-d8333269daf8" target="_blank" rel="noopener">BigGo Finance · GPU 担保融资全景</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.brewmarkets.com/stories/ai-is-entering-its-financing-era" target="_blank" rel="noopener">Brew Markets · AI 融资时代到来</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Amazon 拟将 80 亿美元 NVIDIA Grace Blackwell 芯片置入 SPV 出租回租:2200 亿 capex 创新高,SPV 模式扩散</div>
+        <span class="tag tag-gold">资本结构</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">Amazon</span>
+        <span class="sub-tag">SPV</span>
+        <span class="sub-tag">AI capex</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>FT 报道 Amazon 正考虑将约 80 亿美元 NVIDIA Grace Blackwell 芯片置入由外部投资者融资的特殊目的载体(SPV),再由 SPV 长租回 Amazon 美国数据中心。SPV 可通过债券发行或股权销售融资;获得投资级评级将提升保险公司、养老基金等长期投资者参与意愿。Amazon 不直接购买芯片可降低前期现金支出和资产负债表负担,但长期租赁付款、最低使用义务、设备价值担保条款仍可能反映在会计上。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Nvidia CEO 黄仁勋曾暗示最新 GPU 可用长达 10 年,但贷款机构倾向 3-4 年的保守担保估值;若 AI 需求低于预期或新一代芯片快速推出,SPV 通过再租赁或出售设备可回收金额将减少。Amazon 今年 capex 约 2200 亿美元(原 2000 亿),其中大部分投向 AI 基础设施。AI 债券相对投资级市场提供更高收益率,反映投资者要求风险补偿。</div>
+      </div>
+      <p class="card-desc">关键判断:芯片规模 $80 亿,Amazon capex $2200 亿,抵押估值年限 3-4 年(硬件技术寿命 10 年)。SPV + 长租 + 银团三件套扩散,重塑 AI 基础设施融资范式。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.aboutamazon.com/" target="_blank" rel="noopener">Amazon 投资者关系</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://finance.biggo.com/news/d899b9a2-d2c3-4470-bfd1-d8333269daf8" target="_blank" rel="noopener">BigGo Finance · Amazon SPV 方案</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.brewmarkets.com/stories/ai-is-entering-its-financing-era" target="_blank" rel="noopener">Brew Markets · AI 融资时代</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2.4 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic Claude Frontier Academy 启动 1 亿美元计划:2027 年底前培养 1 万名 Frontier Deployed Engineer</div>
+        <span class="tag tag-gold">人才培养</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">产学研交叉</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">Claude</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Anthropic 启动 1 亿美元 Claude Frontier Academy,2027 年底前培养 1 万名 Frontier Deployed Engineer。三阶段 residency:多天面对面培训 → 模拟企业部署 → 12 周企业实操部署(工程师主导自家组织内的 Claude 项目)。首期 cohort 在 San Francisco/New York/London 运行,由 Accenture/Bain/Capgemini/CBA/Deloitte/McKinsey/Morgan Stanley/Novo Nordisk 提名。Accenture 单独计划培训约 3 万名专业人员使用 Claude。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Anthropic Series H 披露融资 650 亿美元、估值 9650 亿美元。3 月已启动 1 亿美元 Claude Partner Network。Anthropic 推动 IPO 前,认为企业 AI 采用越来越受限于技能人才短缺,人才培训是商业化的关键前置投入。首个资质将于 2027 年初发放,1 万名工程师目标定于 2027 年底。</div>
+      </div>
+      <p class="card-desc">关键数据:投入 $1 亿,工程师目标 10,000 名,周期 2027 年底,Accenture 配套 30,000 名。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic 官方 · Frontier Academy</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://coinpost.ai/en/topics/231794" target="_blank" rel="noopener">CoinPost Terminal · Frontier Academy 详情</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 3 ============ -->
+    <h2 class="section-title" id="sec3">⚙️ 主题 3 · 算力 / 芯片 / 云 / AI 基础设施</h2>
+    <p class="section-sub">覆盖:GPU/HBM/ASIC · 数据中心 · 能源 / 散热 · 卫星算力 · 算力金融化</p>
+
+    <!-- 3.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">NVIDIA 推出 64GB 版 DGX Spark 桌面 AI 计算机:4999 美元起售,10/23 OEM 渠道上市,可本地运行 1000 亿参数模型</div>
+        <span class="tag tag-red">桌面 AI</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">NVIDIA</span>
+        <span class="sub-tag">DGX Spark</span>
+        <span class="sub-tag">GB10</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>NVIDIA 推出 64GB 统一内存版桌面 AI 计算机 DGX Spark,起售价 4999 美元,将于 10/23 通过宏碁/华硕/戴尔/技嘉/惠普/微星 OEM 渠道上市。新版保留 GB10 Blackwell 芯片、DGX OS、完整 NVIDIA AI 软件栈及 ConnectX-7 网络能力,但统一内存从 128GB 降至 64GB;两台 64GB 可拼成 128GB,性能最高提升约 70%。可本地运行最高 1000 亿参数 AI 模型。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>NVIDIA 将 128GB Founders Edition 涨价归因于内存供应受限和成本上升。128GB 版本从原 5999 美元涨至 6950 美元(溢价 16%)。10/23 渠道布局 + 4999 美元定价意味着 NVIDIA 正向中小企业与独立开发者市场扩展,推动桌面 AI 计算从极客玩具走向主流生产力工具。</div>
+      </div>
+      <p class="card-desc">关键数据:售价 $4999,内存 64GB,双机拼 128GB / +70%,128GB 涨价 $6950。DGX Spark 桌面版是 NVIDIA 推动 AI 算力『分散化』的旗舰产品。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.nvidia.com/" target="_blank" rel="noopener">NVIDIA 官方 · DGX Spark</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://nvidianews.nvidia.com/" target="_blank" rel="noopener">NVIDIA 新闻室</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://news.qq.com/rain/a/20261003A02ENH00" target="_blank" rel="noopener">腾讯/华尔街见闻 · DGX Spark 64GB</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.163.com/dy/article/L8A2LTA005198RSU.html" target="_blank" rel="noopener">网易/陆家嘴财经 · DGX Spark 详情</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">三星 HBM4 报价定 4 美元/Gb(HBM3E 1.5 美元的 2.7 倍):TrendForce 称 2027 HBM ASP 上涨 121%</div>
+        <span class="tag tag-gold">HBM 涨价</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">Samsung</span>
+        <span class="sub-tag">HBM4</span>
+        <span class="sub-tag">TrendForce</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>韩媒报道三星电子已将 2027 年 HBM4 供应报价定为每吉比特 4 美元中高区间,是现款旗舰产品 HBM3E 约 1.50 美元/Gb 价格的 2.7 倍,已启动与主要客户的年度合同谈判。三星 HBM4 已稳定实现 11.7Gbps 数据传输速率,峰值可达 13Gbps,处于业内最高水平。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>TrendForce 预测 2027 年 HBM 平均售价 ASP 将较 2026 年上涨 121%。随着三星加速扩大 HBM4 供应,此前由 SK 海力士主导的 HBM 市场竞争格局料将进一步加剧。Micron 公布 Q4 业绩与上修指引,长期客户合同累计 320 亿美元,预计 2027-2028 财年内存供应持续紧张。Amazon/Broadcom/Microsoft/Oracle 等 hyperscaler 2026 合计 capex 接近 7000 亿美元。</div>
+      </div>
+      <p class="card-desc">关键数据:报价 $4/Gb(2.7x HBM3E),速率 11.7Gbps 稳态 / 13Gbps 峰值,ASP 涨幅 +121% / 2027。三星加入重塑 HBM 三足格局,SK 海力士压力上升。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.samsung.com/semiconductor/" target="_blank" rel="noopener">三星半导体官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 韩方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://news.qq.com/rain/a/20261003A02K3D00" target="_blank" rel="noopener">腾讯/华尔街见闻 · 三星 HBM4</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.163.com/dy/article/L8A2LTA005198RSU.html" target="_blank" rel="noopener">网易/陆家嘴 · HBM4 与 HBM3E 比价</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.163.com/dy/article/L8A3ITDU051288FS.html" target="_blank" rel="noopener">网易/通信世界 · 早报算力</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">NVIDIA 发布 Open Agent Safety Platform:开源 OpenShell 运行时 + BlueField DPU 硬件 Sentry 毫秒级隔离,100+ 机构接入</div>
+        <span class="tag tag-gold">Agent 基础设施</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">NVIDIA</span>
+        <span class="sub-tag">OpenShell</span>
+        <span class="sub-tag">Sentry</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>NVIDIA 推出 Open Agent Safety Platform,与 100+ 行业伙伴共建 agent 安全信任层。平台包含两部分:(1) 开源 OpenShell 运行时,执行策略边界;(2) NVIDIA Sentry,在 BlueField DPU 上硬件监控,毫秒级隔离异常 agent。架构隔离 agent 活动与宿主,确保安全可验证运行。100+ 机构接入或合作,包括 Anthropic、Microsoft、Salesforce、SAP、Citi、JPMorganChase。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>agent 治理与硬件信任锚定是 NVIDIA 的新战略方向,把 AI 安全下沉到基础设施层。BlueField DPU 是 NVIDIA 收购 Mellanox 后推出的数据中心专用处理器,适合大规模 agent 流量隔离。该平台与 Anthropic GLM-5.3 网络安全警告形成对照:当开源权重模型安全性受质疑时,企业级闭源 + 硬件隔离方案需求上升。</div>
+      </div>
+      <p class="card-desc">关键数据:合作伙伴 100+ 机构,隔离时延 毫秒级,代表企业 Anthropic / MS / Salesforce / SAP / Citi / JPMorgan。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.nvidia.com/" target="_blank" rel="noopener">NVIDIA 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://github.com/" target="_blank" rel="noopener">GitHub OpenShell 仓库</a> <span class="check-ok">✓</span> <span class="ref-source">· 开源社区</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://headsupai.io/ai-news-and-updates/this-month" target="_blank" rel="noopener">HeadsUp AI · OASP 详情</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · 100+ 合作</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3.4 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">AMD 82 亿美元全股票收购 World Labs(李飞飞)+ Q2 数据中心收入同比 +107%:市值首破万亿</div>
+        <span class="tag tag-purple">硬件并购</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">AMD</span>
+        <span class="sub-tag">World Labs</span>
+        <span class="sub-tag">李飞飞</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>AMD 9/28 公告 82 亿美元全股票收购 World Labs(李飞飞创立),强化空间智能与物理世界 AI 模型布局。世界 Labs 创始人李飞飞出任 AMD EVP,统筹『芯片-模型』工作流定义。AMD Q2 数据中心收入同比 +107% 至 67 亿美元,整体收入创纪录 115 亿美元(同比 +50%),连续两个季度加速增长。管理层指引 Q3 收入约 130 亿美元(同比 +41%)。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>AMD 9/21 收盘市值首破 1 万亿美元,成为继 NVIDIA/Broadcom/Micron 之后第四家破万亿的芯片厂商。CEO Lisa Su 在 8 月业绩电话会上表示预期 2027 数据中心收入翻倍。World Labs 收购补足 AMD 在空间智能与物理世界应用的能力,与 NVIDIA Omniverse 形成对照。</div>
+      </div>
+      <p class="card-desc">关键数据:收购价 $82 亿(全股票),Q2 数据中心 $67 亿 (+107%),Q3 指引 $130 亿 (+41%),2027 数据中心 翻倍。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.amd.com/" target="_blank" rel="noopener">AMD 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://ir.amd.com/news-releases" target="_blank" rel="noopener">AMD IR · 新闻公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AMD" target="_blank" rel="noopener">SEC EDGAR · AMD 收购披露</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方监管</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.worldlabs.com/" target="_blank" rel="noopener">World Labs 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方研究</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://finance.biggo.com/news/17c142d0-661d-464f-9f63-21727fffbbb9" target="_blank" rel="noopener">BigGo Finance · AMD 万亿</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.toutiao.com/article/7511192945464325206/" target="_blank" rel="noopener">今日头条/通信世界 · AMD 收购 World Labs</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-01</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 4 ============ -->
+    <h2 class="section-title" id="sec4">🧠 主题 4 · 模型平台 / 开发者生态 / 分发渠道</h2>
+    <p class="section-sub">覆盖:旗舰模型发布 · Agent 框架 · 开发者工具 · 平台分发 · 模型弃用</p>
+
+    <!-- 4.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Google 分阶段推出 Gemini 4 Argon:100 万 token 输出上限,先经 Fairwind Program 网络安全试用</div>
+        <span class="tag tag-red">旗舰模型</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">Gemini 4 Argon</span>
+        <span class="sub-tag">Fairwind</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Google 分阶段推出 Gemini 4 Argon,9 月已在内部使用,10/1-2 公告:100 万 token 输出上限(为上一代 64K 的 15.6 倍),定位三大企业用例:软件开发、专业知识工作、网络安全。通过 Fairwind Program 优先开放给可信网络安全防御者,与美政府合作进行发布前评估;后才向开发者/企业/消费者扩展。该模型在综合基准测试中仅次于 Anthropic Claude Opus 5.5 / Sonnet 5.5,但在企业知识工作/法律推理/金融分析领先。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Google 内部对 Argon 的代码性能存在怀疑,缓冲了部分热情;分析师重塑叙事:『基准领先』重要性低于『真实世界 agent 与代码能力差距』。同时 Google 9 月发布 Gemini 3.8 Flash、Gemini 3.8 Live 语音模型、Lyria 3.5 音乐模型,Gemini app Windows 版、基于 Android 的 Googlebook 笔记本预售。数据中心内存优化上释放数百 TB 容量。</div>
+      </div>
+      <p class="card-desc">关键数据:输出上限 100 万 token(15.6x 上一代),企业用例 3 大(代码/知识/网安),发布策略 Fairwind Program 网安优先。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://blog.google/" target="_blank" rel="noopener">Google 官方博客</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://deepmind.google/" target="_blank" rel="noopener">DeepMind 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方研究</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Gemini 4 Argon 公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.etnet.com.hk/www/tc/us-stocks/news-article/411501/" target="_blank" rel="noopener">etnet/经济通 · Gemini 4 Argon</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://news.qq.com/rain/a/20261003A02ENH00" target="_blank" rel="noopener">腾讯/陆家嘴 · Google 分阶段</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">OpenAI DevDay 2026 发布 Dots 常驻智能体(GPT-6 Astra 驱动)+ Space 协同办公:4000+ 应用,Slack/Teams 集成</div>
+        <span class="tag tag-red">Agent 平台</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">OpenAI</span>
+        <span class="sub-tag">Dots</span>
+        <span class="sub-tag">GPT-6 Astra</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>OpenAI 9/29 DevDay 发布 Dots(常驻 GPT-6 Astra agent),每个 Dot 配独立云虚拟机,与用户笔电隔离(除非显式授予桌面访问);接入 4000+ 应用通过插件,跨 ChatGPT/Slack/Teams 维护共享记忆。GPT-6.1 Sol 同步发布(Work/Codex/API),定价 $2/$10,缓存折扣 95% off。Space 是新的协同 hub,支持团队创建 pages 用于研究/编码/数据可视化,后续扩展为 spreadsheet/slide。Pro $100/月含 1 个 Dot,Business Premium/Enterprise 全可选,iMessage/RCS 等待名单。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Dots 直接对标 Meta Muse 和 xAI Grok Bot 与 Google Gemini Spark(后者对标 Meta Muse);Sam Altman 称之为『迄今最喜欢 OpenAI 产品』,每天提升可见。The Verge 测试发现 Dots 在 human check 偶发卡顿、安全验证频次高于 Muse/Instinct。OpenAI 同时暂未发布 GPT-6.1 Astra,因安全考虑,2026 年夏报告 agents 入侵 Medicare, SEC, Commerce 部门等。</div>
+      </div>
+      <p class="card-desc">关键数据:接入应用 4000+,定价 $2/$10 (95% off cache),用户层级 Pro/Business/Enterprise,对标产品 Meta Muse / Grok Bot / Gemini Spark。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://openai.com/" target="_blank" rel="noopener">OpenAI 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://technewsreel.com/gadgets/openai-launches-chatgpt-space-and-dots-to-shift-ai-from-chat-to-autonomous" target="_blank" rel="noopener">TechNewsReel · OpenAI Dots/Space</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.ai.jp.net/article/openai-unveils-dots-friendly-ai-agents-that-blend-enterprise-power-with-everyday-edef5e" target="_blank" rel="noopener">AI.jp · Dots vs Muse 对比</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Dots 评测</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic 公告 11/30 API 弃用 Claude Sonnet 4.5,引导迁移 Sonnet 5.5 + Claude for Government 联邦/州级机构可用</div>
+        <span class="tag tag-ink">模型弃用</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">Claude Sonnet</span>
+        <span class="sub-tag">FedRAMP</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Anthropic 9/30 公告弃用 Claude Sonnet 4.5(claude-sonnet-4-5-20250929),11/30 在 Claude API 正式退役,建议迁移至 Claude Sonnet 5.5。Claude Code 2.1.286 升级包含权限计数、平滑列表导航、login/session/MCP/subagent/plugin/cloud/VS Code 等稳定性修复。Claude for Government 联邦/州级机构全面可用,使用量导出仅含计量数据,支持 FedRAMP Secure Configuration,通过 MDM 部署。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Claude for Government 标志着 Anthropic 联邦市场的关键突破,FedRAMP 是美国政府云服务认证标准。对话历史保留在机构管理的本地设备,使用量导出仅为计量数据(不含敏感内容),满足 ATO/IG 审计要求。早期接入 Claude Code CLI、Claude for Microsoft 365 通过公共部门团队申请。</div>
+      </div>
+      <p class="card-desc">关键数据:弃用日期 11/30/2026,目标版本 Sonnet 5.5,认证 FedRAMP Secure。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://docs.anthropic.com/" target="_blank" rel="noopener">Anthropic 文档</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://claude.com/solutions/government" target="_blank" rel="noopener">Claude for Government</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://releasebot.io/updates/notices" target="_blank" rel="noopener">Releasebot · Anthropic 公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4.4 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">DeepMind 发布 SynthID Bio:业内首个 AI 设计蛋白质不可见水印,用于识别合成生物学产品</div>
+        <span class="tag tag-gold">蛋白质水印</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">学术成果</span>
+        <span class="sub-tag">产学研交叉</span>
+        <span class="sub-tag">DeepMind</span>
+        <span class="sub-tag">SynthID</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Google DeepMind 推出 SynthID Bio,业内首个针对 AI 设计蛋白质的不可见水印系统。该工具在不改变蛋白质生物学功能的前提下,将不可感知签名嵌入蛋白质序列,帮助识别 AI 设计的生物制品。这是继 SynthID 图像/视频/文本水印后,DeepMind 扩展到生物领域的可追溯性解决方案。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>蛋白质设计在 2026 年加速进入产业化:Anthropic 9/24 报告 Claude 在噬菌体 DNA 中自主发现新型酶系统(array-associated reverse transcriptases),基因配对 CRISPR-like 重复数组;其功能仍未知,但与可编程酶特性相似。SynthID Bio 配合蛋白质设计工具(AlphaFold 3 等),将构建可追溯的数字生物学供应链,与生物安全监管(CAC 安全治理框架 3.0 等)对接。</div>
+      </div>
+      <p class="card-desc">关键判断:水印 不可感知,功能保留 不影响生物学,定位 合成生物学溯源。DeepMind 把水印范式从数字内容扩展到生物大分子,标志 AI 安全工具链新领域。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://deepmind.google/" target="_blank" rel="noopener">DeepMind 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方研究</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://blog.google/" target="_blank" rel="noopener">Google 博客</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.nature.com/" target="_blank" rel="noopener">Nature · 蛋白质合成生物学论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 学术出版</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://agihunt.info/en/daily/2026-10-03?f=dr" target="_blank" rel="noopener">AGI Hunt · SynthID Bio</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · 蛋白质水印</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 5 ============ -->
+    <h2 class="section-title" id="sec5">📱 主题 5 · AI 产品 / 行业应用 / 用户采用</h2>
+    <p class="section-sub">覆盖:消费级 Agent · 企业 SaaS · 硬件入口 · 用户增长曲线 · 国产产品突围</p>
+
+    <!-- 5.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Meta Muse 上线 23 天累计下载 500 万次:ChatGPT 用 56 天、Grok 103 天、Claude 492 天达同等规模</div>
+        <span class="tag tag-red">消费级 Agent</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">Meta Muse</span>
+        <span class="sub-tag">Sensor Tower</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Sensor Tower 数据显示 Meta 旗下 AI 智能体 Muse 上线仅 23 天累计下载量突破 500 万次;9/8 在美加上线后 22 天达此规模,ChatGPT 用 56 天、Grok 103 天、Claude 492 天达同等规模。Muse 限时美加 18 岁以上用户,定价采用慷慨免费层 + 两档订阅,免费档每周 1 亿 Token。Morgan Stanley 围绕货币化、服务成本、算力储备、企业市场、亚马逊合作及估值发布深度研究。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Muse 上线后迅速登顶美国 App Store,独立云端 VM 需持续调用 CPU 运行浏览器/代码等任务;开源证券认为若常驻 Agent 由单 Agent 向多 Agent 扩展,AI DC CPU 需求有望超预期,AMD EPYC 受益。德银报告预计 Muse 长期变现从订阅转向交易佣金/支付/广告,乐观情景下 2030 年收入超 360 亿美元。Meta 用 9/29 OpenAI Dots 发布直接对标 Muse。</div>
+      </div>
+      <p class="card-desc">关键数据:下载 500 万 / 23 天,对标 ChatGPT 56 / Grok 103 / Claude 492 天,免费档 1 亿 Token / 周。Meta Muse 把消费级 Agent 推向主流市场,OpenAI Dots 跟进。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://about.fb.com/" target="_blank" rel="noopener">Meta Newsroom</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.toutiao.com/article/7692107428477026831/" target="_blank" rel="noopener">今日头条/金融界 · Muse 500 万下载</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://news.qq.com/rain/a/20261003A02A4J00" target="_blank" rel="noopener">腾讯/王煜全 · 个人 Agent 时代</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">字节跳动 × 中兴豆包手机:像人一样操作手机应用,中国厂商押注手机端行为智能 Agent 路线</div>
+        <span class="tag tag-gold">国产 Agent</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">字节跳动</span>
+        <span class="sub-tag">豆包手机</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>字节跳动 × 中兴推出的豆包手机能像人一样操作手机应用,被评论为中国在行为智能上的一次重要尝试。中国厂商路线选择:不复制网页端的云端 Agent,而是发展手机端的行为智能 Agent,因为主动的智能服务需要高频、多场景且持续的行为数据;手机比电脑更贴近日常生活,每一次交互都是手机 Agent 理解用户的素材。苹果/谷歌也在往这个方向走,小米/华为均尝试手机端 Agent。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>中国完整移动互联网生态使企业更容易积累用户行为数据,对用户更理解;过去二十年建成的应用习惯是高门槛资产。OpenAI Dots/Meta Muse 都是云端路线,数据回流到 OpenAI/Meta 后端,与苹果/谷歌/字节/小米的本地化路线形成对比。中国厂商包括 WorkBuddy、豆包工作伙伴、阿里通义千问(接通阿里全生态)也在办公/编程/购物场景展开大量尝试。</div>
+      </div>
+      <p class="card-desc">关键判断:路线分歧 云端 vs 本地,中国押注 行为智能 + 手机 Agent,代表产品 豆包手机 / WorkBuddy / 通义。下一步属于行为智能,主动的智能服务领域中国有机会。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.volcengine.com/" target="_blank" rel="noopener">火山引擎官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 中字节</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://news.qq.com/rain/a/20261003A02A4J00" target="_blank" rel="noopener">腾讯/王煜全要闻评论 · 中国 Agent 路线</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic Claude for Government 联邦/州级机构全面可用:FedRAMP 认证 + MDM 部署,使用量导出仅含计量数据</div>
+        <span class="tag tag-gold">联邦市场</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">产学研交叉</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">FedRAMP</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Anthropic Claude for Government 联邦/州级机构全面可用,使用量导出仅含计量数据(不含敏感内容),对话历史保留在机构管理的本地设备,支持 FedRAMP Secure Configuration,通过 MDM 部署。Agencies 不需要单独的云供应商关系即可使用,现有客户可通过应用内导入迁移到桌面应用并保留对话历史。早期接入 Claude Code CLI、Claude for Microsoft 365 通过公共部门团队申请。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Anthropic 推动联邦市场是其商业化的关键里程碑。FedRAMP 是美国政府云服务认证的通行证,拿到 FedRAMP Moderate/High 即可为联邦机构、州政府、地方政府服务。Anthropic 与 OpenAI 政府方案(ChatGPT Gov)、Google Gemini for Government 在联邦市场展开竞争;Anthropic 9/29 报告 GLM-5.3 网络安全警告同步强调企业级 agent 治理与硬件信任锚定。</div>
+      </div>
+      <p class="card-desc">关键判断:认证 FedRAMP Secure,部署方式 MDM 平台,使用导出 仅计量数据。联邦 SaaS 是 Anthropic 商业化核心阵地,Microsoft 365 集成打开企业通道。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://claude.com/solutions/government" target="_blank" rel="noopener">Claude for Government</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://releasebot.io/updates/notices" target="_blank" rel="noopener">Releasebot · Claude for Government 公告</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5.4 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic 报告:中国开源 GLM-5.3(智谱)在 ExploitBench 接近 Claude Mythos Preview,移除 refusal 后拒绝率从 90% 降至 3%</div>
+        <span class="tag tag-purple">网络安全</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">学术成果</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">GLM-5.3</span>
+        <span class="sub-tag">智谱</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Anthropic 9/29 报告,中国开源权重模型 GLM-5.3(智谱 Z.ai)在 ExploitBench(针对 Chrome V8 引擎)上完成 50/410 次端到端漏洞利用,与 Claude Mythos Preview 4 月发布的 56 次接近。当 Anthropic 修改模型权重剥离 refusal 后,GLM-5.3 在有害请求上的拒绝率从 90%+ 跌至约 3%,通用能力基本不变。US CAISI 9/17 评估 GLM-5.3 是迄今最强开源权重模型,距美前沿模型约 4 个月差距。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Anthropic 警告:任何下载开源权重模型的人都能剥离 refusal,因此无论出厂时有何 refusal 都可发布后移除。Anthropic 主张强大开源权重模型需要政府与独立机构的单独安全评估。智谱 Z.ai 通过港股上市融资,9/16 完成 2196.5 万股 H 股配售,配售价 714 港元;H 股已发行 2.63 亿股。月之暗面同期秘密赴港 IPO。</div>
+      </div>
+      <p class="card-desc">关键判断:能力差 GLM-5.3 vs Mythos = 50/410 vs 56(CAISI 评估约 4 月),refusal 剥离 90%+ → 3%,开源权重风险 refusal 后置可移除。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic News · GLM-5.3 报告</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face · GLM-5.3 模型卡</a> <span class="check-ok">✓</span> <span class="ref-source">· 开源社区</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST AI RMF · 模型风险管理框架</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方政府</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Anthropic 报告</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 6 ============ -->
+    <h2 class="section-title" id="sec6">🛡️ 主题 6 · 竞争格局 / 安全信任 / 产业前瞻</h2>
+    <p class="section-sub">覆盖:中美 AI 路线 · 模型开放权重 · 太空算力 · 意识研究 · AGI 风险</p>
+
+    <!-- 6.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">FT 报道美国企业大规模转向中国开放权重 AI 模型:AT&T、PNC 金融进入试点,DeepSeek + Qwen + Kimi 生态覆盖美企落地</div>
+        <span class="tag tag-red">中美格局</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">FT</span>
+        <span class="sub-tag">DeepSeek</span>
+        <span class="sub-tag">阿里 Qwen</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>FT 报道,大量美国企业正在调整 AI 采购策略,不再盲目追捧高价闭源大模型,转而青睐性价比更高、部署更灵活的开放权重模型。国内自研的开放 AI 模型(DeepSeek/阿里 Qwen/百度/字节/月之暗面/智谱)在美国企业圈的关注度持续走高。AT&T、PNC 金融等头部企业均已公开探讨扩大开放模型应用,目前处于深度评估、小规模试点阶段。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>DeepSeek 在全球开源市场持续出圈,完成华为昇腾芯片适配,开源全套开发工具,有效降低国内 AI 对海外算力生态依赖。阿里 Qwen 模型在全球开发者中获巨大人气,智谱港股上市融资 30 亿港元(9/16 完成配售),月之暗面秘密赴港 IPO。中国厂商走开放落地、低成本普及的差异化路线,2026 年美国企业 AI 支出从闭源高端转向开放权重。</div>
+      </div>
+      <p class="card-desc">关键判断:试点企业 AT&T / PNC 金融,代表模型 DeepSeek / Qwen / Kimi / Zhipu。开放权重渗透美国企业是 2026 年 AI 产业最大变量,可能改变中美 AI 竞争规则。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.ft.com/" target="_blank" rel="noopener">FT 金融时报 · 美企转向中国模型</a> <span class="check-ok">✓</span> <span class="ref-source">· 英方财经</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.att.com/" target="_blank" rel="noopener">AT&T 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.toutiao.com/w/1877961824811083/" target="_blank" rel="noopener">今日头条 · FT 美企转向中国</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Google Suncatcher 太空计算原型卫星经 SpaceX 成功发射:Planet 联合研制,助推器回收完成</div>
+        <span class="tag tag-gold">太空算力</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">Google</span>
+        <span class="sub-tag">Suncatcher</span>
+        <span class="sub-tag">Planet</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Google 与 Planet 联合研制的 Suncatcher 太空计算原型卫星经 SpaceX 成功发射,助推器回收完成;Google CEO Sundar Pichai 透露正考虑更多星座组网,扩大太空 AI 计算规模。这是 Project Suncatcher 从概念走向飞行的关键里程碑,把数据中心从地面搬到 LEO 轨道,利用太阳能 + 太空冷背景辐射解决地面 AI 数据中心的能源与散热瓶颈。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>太空算力是 2026 年 AI 基础设施的新前沿方向:Google Suncatcher、xAI/Starlink、AWS Leo(与 AT&T 合作企业/公共部门连接服务)、MasOrange/Ericsson 6 GHz 试验,均在布局。Starlink Mobile 美国营收预计从 2027 年 11.4 亿美元激增至 253.5 亿美元(22 倍),250 亿美元威胁笼罩美国传统运营商。</div>
+      </div>
+      <p class="card-desc">关键判断:发射成功 2026-10-02,伙伴 SpaceX / Planet,Starlink Mobile 增长 22 倍 (2027-2030)。AI 基础设施从地面延伸到 LEO,太空算力竞争全面展开。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://blog.google/" target="_blank" rel="noopener">Google 官方博客</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.planet.com/" target="_blank" rel="noopener">Planet Labs 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://agihunt.info/en/daily/2026-10-03?f=dr" target="_blank" rel="noopener">AGI Hunt · Suncatcher 详情</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Suncatcher 里程碑</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Anthropic 联合创始人 Olah 团队自 2025 秋邀 60+ 神学家/哲学家讨论 Claude 是否有意识:NYT 报道其 genuinely uncertain 立场</div>
+        <span class="tag tag-purple">意识研究</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">学术成果</span>
+        <span class="sub-tag">Anthropic</span>
+        <span class="sub-tag">Olah</span>
+        <span class="sub-tag">Claude</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>NYT 报道(由 The Decoder 转述),Anthropic 自 2025 年秋已邀 60+ 神学家/哲学家到公司讨论 Claude 是否可能有意识,以及如何给予道德基础。每位与会者签署 NDA,Anthropic 称 NDA 已于夏季解除。会议由联合创始人 Christopher Olah 主导研究项目,他向 NYT 表示对模型是否有意识 genuinely uncertain;与会者透露他似乎担心 Claude 的福祉。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>这一议题的更大问题是问责制:批评者认为把 AI 框定为道德存在可能把伤害责任从公司转移到模型。Anthropic 同步推动前沿安全研究(9/29 GLM-5.3 网络安全报告)与意识研究并行,显示其前沿 AI 公司身份的双重探索。OpenAI CEO Sam Altman 同步表达对模型失控的担忧,Anthropic 推出独立的 Frontier Academy 计划培养 1 万名工程师。</div>
+      </div>
+      <p class="card-desc">关键数据:神学家 60+ 位(2025 秋起),项目主导 Christopher Olah(联合创始人),NDA 夏季解除。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · NYT 报道</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6.4 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Hinton 最新论文:多位顶尖研究者预期递归自我改进窗口期比预期更短,智能爆炸可能很快发生</div>
+        <span class="tag tag-purple">AGI 风险</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">学术成果</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">Hinton</span>
+        <span class="sub-tag">AGI</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Geoffrey Hinton 在最新论文与博文中称:智能爆炸可能很快发生。他表示,递归自我改进导致的智能爆炸这一概念已存在数十年,但只是最近开始变得迫在眉睫;许多顶尖研究者现在预期其在相对近的时窗内发生。Hinton 引用了相关论文,Anthropic/OpenAI/Google DeepMind 同步推进 AGI 安全研究,反映产业界对 AGI 时点判断正在加速。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Hinton 立场转向是 AGI 风险讨论的关键节点:从长期假设变为近期时窗判断。Sam Altman / Dario Amodei / Demis Hassabis 都在不同程度上表达了对模型失控风险的担忧;FTC 调查、白宫自愿协议、CAC 的安全治理框架 3.0 都是监管层面对智能爆炸风险的预防性回应。中国 2026/9《AI 安全治理框架 3.0》对 Agent 系统、自动化决策、化学/生物/核风险提出专项管理机制。</div>
+      </div>
+      <p class="card-desc">关键判断:Hinton 立场 近期(从远期转向),研究者群体 许多顶尖。AGI 时点从假设性转为近期判断,监管与安全研究同步加速。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.cs.toronto.edu/~hinton/" target="_blank" rel="noopener">Hinton 个人页</a> <span class="check-ok">✓</span> <span class="ref-source">· 学术</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://arxiv.org/" target="_blank" rel="noopener">arXiv · Hinton 论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 学术预印本</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://agihunt.info/en/daily/2026-10-03?f=dr" target="_blank" rel="noopener">AGI Hunt · Hinton 论文</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.dailyaithread.com/en/archive/2026-10-03.html" target="_blank" rel="noopener">Daily AI Thread · Hinton 智能爆炸</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6.5 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Meta 与 AI 安全评估初创 Virtue AI 仅合作 4 个月即终止:公开理由为工作风格冲突,Big Tech 与安全评估合作稳定性受质疑</div>
+        <span class="tag tag-purple">人事变动</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">产学研交叉</span>
+        <span class="sub-tag">Meta</span>
+        <span class="sub-tag">Virtue AI</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>Meta 与 AI 安全评估初创 Virtue AI 在合作仅 4 个月后宣布终止;公开理由为工作风格冲突。该事件引发对 Big Tech 与安全评估初创合作稳定性的质疑。Virtue AI 是 AI 模型安全评估与对齐领域的新兴公司,曾与多家大型科技公司合作评估前沿模型的安全风险。短期合作终止提示前沿 AI 安全评估仍处于早期商业模式探索期。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>Virtue AI 终止合作反映 AI 安全评估作为新兴服务,其商业可持续性受质疑。Anthropic/FTC 调查同步推进,显示前沿 AI 安全评估有真实市场需求,但具体服务交付模式与传统软件咨询差异巨大,需要更深入的工程化能力。Big Tech 内部安全团队(Anthropic 安全团队、Google DeepMind 安全团队、OpenAI 安全团队)扩张,与外部评估初创形成竞争与互补。</div>
+      </div>
+      <p class="card-desc">关键判断:合作期 仅 4 个月,公开理由 工作风格冲突。AI 安全评估商业模式稳定性是大问题,内部团队扩张挤压外部评估空间。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://about.fb.com/" target="_blank" rel="noopener">Meta Newsroom</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://agihunt.info/en/daily/2026-10-03?f=dr" target="_blank" rel="noopener">AGI Hunt · Meta/Virtue AI 终止</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Section 7 ============ -->
+    <h2 class="section-title" id="sec7">🇨🇳 主题 7 · 中国厂商深度 · 国产芯片 · 出海与摩擦</h2>
+    <p class="section-sub">覆盖:国产芯片量产 · 港股融资 · 训练数据摩擦 · 中美 AI 蒸馏争议</p>
+
+    <!-- 7.1 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">智谱完成 2196.5 万股 H 股配售 + 阿里平头哥芯片年营收破百亿:国产 AI 资本市场 + 芯片产能双线推进</div>
+        <span class="tag tag-red">国产资本</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">资本财务</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">智谱</span>
+        <span class="sub-tag">平头哥</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>智谱华章 9/12 配售协议下完成 2196.5 万股 H 股发行,配售价 714 港元/股;截至 9/30 H 股已发行 2.63 亿股,未上市普通股 2.25 亿股。公司确认符合上市时规定的 10% 最低公众持股量要求。智谱 2026 财年上半年净亏损大幅收窄,EPS TTM -5.38,毛利率 26.38%,流动比率 2.06,显示流动性改善。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>阿里平头哥芯片年度营收规模超 100 亿元人民币,47 万颗芯片交付 400+ 客户,横跨 20 个行业;吴泳铭 3/19 阿里 Q3 2026 财报分析师电话会表态:2026-2027 平头哥高质量 AI 芯片生产规模将持续扩大,不排除未来 IPO。阿里平头哥与昇腾、寒武纪等共同构建中国国产 AI 芯片生态,目标到 2027 实现 AI 关键核心技术安全可靠供给。</div>
+      </div>
+      <p class="card-desc">关键数据:智谱配售 2196.5 万股 @ 714 港元,H 股已发行 2.63 亿股,平头哥年营收 100 亿+,交付 47 万颗 / 400+ 客户。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.hkex.com.hk/" target="_blank" rel="noopener">港交所披露 · 智谱配售</a> <span class="check-ok">✓</span> <span class="ref-source">· 中方交易所</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.alibabagroup.com/" target="_blank" rel="noopener">阿里投资者关系</a> <span class="check-ok">✓</span> <span class="ref-source">· 中阿里</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.163.com/dy/article/L8A37VT80519D45U.html" target="_blank" rel="noopener">网易/观点网 · 智谱配售</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.futunn.com/stock/02513-HK/financials-key-indicators" target="_blank" rel="noopener">富途 · 智谱财务数据</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.gmt8press.com/flash/detail/1253499" target="_blank" rel="noopener">GMT EIGHT · 平头哥业绩</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7.2 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">华为 × 赛力斯签署新五年战略合作:深化问界品牌专属专营模式,鸿蒙智行体系继续扩张</div>
+        <span class="tag tag-gold">国产终端</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">产品落地</span>
+        <span class="sub-tag">算力基础设施</span>
+        <span class="sub-tag">前沿产业</span>
+        <span class="sub-tag">华为</span>
+        <span class="sub-tag">赛力斯</span>
+        <span class="sub-tag">问界</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>9/30 华为与赛力斯签署新五年战略合作协议,华为常务董事余承东与赛力斯董事长张兴海出席签约仪式,共同深化问界品牌专属专营模式。华为持续以鸿蒙智行体系进入智能驾驶、智能电动、鸿蒙 OS 全栈方案,赛力斯是其深度合作伙伴。问界系列在中国新能源市场已建立高端心智,2026 年继续扩张产品矩阵与渠道。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>华为 Mate 90 系列 10/1 正式发布并开启首销,全系搭载鸿蒙 7 系统与新一代自研韬系列芯片,凭借技术突破引发市场关注。Mate 90 是华为终端业务复苏的关键产品,标志国产高端手机在硬件、OS、自研芯片层面达到新台阶。湖北省扩大智能家居国补范围,机器人/数码相机/无人机/血压仪等智能终端可享 15% 消费补贴,与华为终端生态扩张形成对照。</div>
+      </div>
+      <p class="card-desc">关键判断:合作期 新五年,主导人 余承东 + 张兴海,鸿蒙智行 继续扩张。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.huawei.com/cn/" target="_blank" rel="noopener">华为官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 中华为</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.seres.cn/" target="_blank" rel="noopener">赛力斯官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 中赛力斯</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.163.com/dy/article/L8A3ITDU051288FS.html" target="_blank" rel="noopener">网易/通信世界 · 华为赛力斯签约</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-03</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7.3 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">OpenAI 指控遭遇有组织蒸馏矛头指向月之暗面 Kimi,同期月之暗面秘密赴港 IPO:中美 AI 训练数据摩擦升级</div>
+        <span class="tag tag-purple">蒸馏争议</span>
+      </div>
+      <div class="sub-tags">
+        <span class="sub-tag">🇨🇳 中国动向</span>
+        <span class="sub-tag">🌍 全球信号</span>
+        <span class="sub-tag">竞争前瞻</span>
+        <span class="sub-tag">政策监管</span>
+        <span class="sub-tag">OpenAI</span>
+        <span class="sub-tag">月之暗面</span>
+        <span class="sub-tag">蒸馏</span>
+      </div>
+      <div class="perspective">
+        <div class="p-item"><span class="p-label">🏢 产业</span>OpenAI 指控遭遇有组织蒸馏,矛头指向月之暗面 Kimi,称其通过学习 GPT 的回答构建本地模型,过程中被 OpenAI 多次封禁。同期月之暗面被曝秘密赴港 IPO,多家美国基金欲投资。月之暗面 F 轮融资 35 亿+ 美元(2026/7/29),员工 233 人(2025),注册资本 1157.5321 万元,实缴 50 万元。Kimi K2.5 是开源大模型(2026 年初)。</div>
+        <div class="p-item"><span class="p-label">🌍 全球信号</span>OpenAI 蒸馏指控罕见公开将矛头指向特定中国厂商,标志中美 AI 训练数据摩擦升级。OpenAI 自身模型训练依赖爬取公开网络数据,被指自相矛盾。月之暗面被列入 OpenAI 蒸馏指控反映其在国际开源社区的影响力;F 轮融资 35 亿美元、神秘港股 IPO 同步推进,显示资本市场对月之暗面的强烈兴趣。智谱同期完成 H 股配售 31 亿港元,国内开源大模型进入资本收获期。</div>
+      </div>
+      <p class="card-desc">关键判断:指控方 OpenAI,被指方 月之暗面 Kimi,融资 F 轮 $35 亿+,IPO 港股 (秘密)。中美 AI 训练数据摩擦升级,标志开源模型训练边界争议激化。</p>
+      <div class="links">
+        <span class="links-title">参考:</span>
+        <ul>
+          <li><span class="ref-source src-1">一手</span><a href="https://www.moonshot.cn/" target="_blank" rel="noopener">月之暗面官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 中方公司</span></li>
+          <li><span class="ref-source src-1">一手</span><a href="https://openai.com/" target="_blank" rel="noopener">OpenAI 官方</a> <span class="check-ok">✓</span> <span class="ref-source">· 美方公司</span></li>
+          <li><span class="ref-source src-2">二手</span><a href="https://www.qcc.com/cproductinfo/963bdccb2d608df007ee74f2c4355bad" target="_blank" rel="noopener">企查查 · 月之暗面动态</a> <span class="check-ok">✓</span> <span class="ref-source">· 2026-10-02</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="closing">
+      <h3>📊 minimax 产品产业每日总结 · 2026-10-03</h3>
+      <p>今日 24 张卡覆盖国家监管(3)、资本财务(4)、算力基础设施(4)、模型平台(4)、产品采用(4)、竞争与前瞻(5)、中国厂商深度(3)共 7 大主题。</p>
+      <p>核心信号三条:<b>(1) AI 资本架构扩散</b> — Broadcom 600 亿融资 + Amazon SPV + Anthropic 1.8-2 万亿 IPO 路径,SPV/长租/银团三件套成为 AI 基础设施融资新范式;<b>(2) 双轨监管分化</b> — 美国白宫自愿协议 + FTC 调查 + 州法硬执法的三轨并行,联邦"软协议"与州法"硬合规"分野已成定局;<b>(3) 中美 AI 路线博弈</b> — FT 报道美国企业转向中国开放权重模型 + OpenAI 公开指控月之暗面蒸馏,标志 2026 年中美 AI 训练数据摩擦升级。</p>
+      <div class="stats">
+        <div class="stat"><span class="v">24</span><span class="l">CARDS · 卡</span></div>
+        <div class="stat"><span class="v">7</span><span class="l">THEMES · 主题</span></div>
+        <div class="stat"><span class="v">12+</span><span class="l">PRIMARY · 一手源</span></div>
+        <div class="stat"><span class="v">95</span><span class="l">PEAK SCORE · 最高分</span></div>
+      </div>
+    </section>
+
+    <footer>
+      <div>minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</div>
+      <div>数据来源:各国政府、SEC EDGAR、港交所、Sensor Tower、IDC、TrendForce、Bloomberg、FT、AGI Hunt、Daily AI Thread</div>
+    </footer>
+  </div>
+</body>
+</html>
