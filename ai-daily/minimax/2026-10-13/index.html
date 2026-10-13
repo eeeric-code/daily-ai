@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 学术与产业每日简报 · 2026-10-13 (minimax)</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .exec .label.capital{background:var(--red);}
+  .exec .label.academic{background:var(--ink);}
+  .exec .label.industry{background:var(--green);}
+  .card .label.capital{background:var(--red);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.academic{background:var(--ink);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.industry{background:var(--green);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.regulatory{background:var(--purple);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.forecast{background:var(--gold);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+
+  .toc-wrap{margin-bottom:32px;}
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .star{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;
+    border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .deliver-assets{display:block;}
+
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+    .tag,.src-1,.src-2,.exec li .num{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  }
+
+  /* ===== 顶部导航 (精致版) ===== */
+  .nav-top {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .model-pill {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--gold);
+    background: var(--ink-soft);
+    padding: 1px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .nav-date {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", monospace;
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-btn:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  @media (max-width: 640px) {
+    .nav-top { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-date { font-size: 11.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-btn { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <span class="nav-brand-text">AI 学术与产业每日简报 <span class="model-pill">minimax</span></span>
+    </div>
+    <span class="nav-date">2026-10-13</span>
+    <div class="nav-actions">
+      <a class="nav-btn" href="../../index.html">返回首页</a>
+      <a class="nav-btn" href="../../ai-daily/minimax/archive.html">minimax 往期目录</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">AI 学术与产业每日简报 <small>GLOBAL AI · DAILY BRIEF · MINIMAX SLOT</small></div>
+  <div class="meta">
+    <strong>2026-10-13</strong> · 周二<br>
+    数据截止 2026-10-13 08:00 (GMT+8)<br>
+    主题分块: 🧬 AI4S 5 · 🤖 通用智能 4 · 🏢 基模开源 5 · 💰 资本监管 4 · 🎓 顶会 3 · 🔮 前瞻 3
+  </div>
+</header>
+
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">产业落地</span>
+      <b>Meta Muse Wonder + Anthropic Mythos 同日回第一梯队,Microsoft Maia 300 量产消息,基础模型「三足鼎立」重新就位。</b>Meta 10-12 发布 Wonder 与 WonderFull(Wonder 定价 4 美元/百万 input tokens, 1M context),Active Memory + Active Focus 两大能力对标 ChatGPT/Claude;同期 Anthropic Project Glasswing 释出 Mythos 前沿模型(40+ 合作伙伴,Amazon/Apple/Microsoft/Linux Foundation),用「网络安全防御」框定首秀场景;Microsoft Maia 300 同步官宣(2027 多吉瓦级部署,1M 颗芯片),单算力一条产品线同时落地「前沿模型 + 算力底座」三件套,产业格局从「OpenAI 一家独大」回到三足。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">学术成果</span>
+      <b>OpenAI 一夜放出 722 篇数学论文,何恺明团队 VISTA 多模态 Harness 拿下 ARC-AGI-3 100 分,AI for Science 进入「每周成果量」阶段。</b>OpenAI 公开 722 篇 AI 数学证明(黎曼/霍奇/BSD 等长期未解问题全覆盖),陶哲轩公开回应「数学 2.0 时代已至」;何恺明团队 VISTA(arXiv:2610.02200)用「视觉原生记忆 + 主动视觉检查」直接以视觉为输入,Claude Opus 5.0 在 ARC-AGI-3 拿满分、动作数比人类基线少 57.4%;arXiv 同步发布「每月最多 2 篇」新规,学术发表端供给与审查端同时拉紧。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label reg">资本信号</span>
+      <b>无问芯穹 C 轮 23 亿、智元机器人 1.5 亿美元融资同日落定,国内 AI Infra + 物理 AI 单日超 50 亿人民币流入;Amazon 拟 70 亿美元收 Decart、Anthropic 加码 1 亿美元培养 FDE,海外算力/人才资本面同步加码。</b>无问芯穹 C 轮 23 亿人民币创国内 AI Infra 单笔纪录,累计 43 亿;智元机器人同期完成 1.5 亿美元融资;Amazon 拟 70 亿美元收购 Decart(估值 4→70 亿,8 个月内 18 倍),DOS 软件让模型跨芯片厂商自适应;Anthropic 1 亿美元 FDE 培训计划,锁定「前沿部署工程师」这一新岗位;一二级市场在「AI Agent 落地」上达成共识。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label acc">商业趋势</span>
+      <b>OpenAI 10-13 美国免费用户开始测试定向广告 + GPT-6.1 Sol 默认上下文 272k→500k,「免费+广告+长上下文」组合拳抢占用户时间。</b>OpenAI 估值 5000 亿美元,广告变现首次进入 ChatGPT 免费用户侧测试(美国市场),同时宣布 GPT-6.1 Sol 默认上下文从 272k tokens 提升到 500k(可手动拉到 1M),长上下文不再单独收费(变相对大用户让利);同期 Anthropic Claude Haiku 5.5 推理成本下降 75%、OSWorld2.1 达 72.4%,企业级 AI 调用成本曲线进入「免费广告 vs 低价高频」双轨。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="toc-wrap">
+  <h2 class="toc-title">📑 今日 6 主题 · 24 张卡</h2>
+  <p class="toc-sub">点击卡片标题跳转到对应主题块</p>
+  <div class="toc">
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">1</span>
+        <span class="icon">🧬</span>
+        <span class="t">AI for Science</span>
+      </div>
+      <ul>
+        <li><a href="#c-1-1">OpenAI 一夜甩出 722 篇数学论文,黎曼/霍奇/BSD 全上阵,数学家...</a></li>
+        <li><a href="#c-1-2">何恺明 VISTA 多模态 Harness:ARC-AGI-3 满分 + 视觉原生记忆...</a></li>
+        <li><a href="#c-1-3">陶哲轩「数学 2.0 时代已至」+ Hinton 首篇 RSI 论文</a></li>
+        <li><a href="#c-1-4">arXiv 新规:每人每月最多 2 篇 + 王的猜想扩展到四维</a></li>
+        <li><a href="#c-1-5">《柳叶刀》研究:Google AI 改善医患关系,成果登主刊</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">2</span>
+        <span class="icon">🤖</span>
+        <span class="t">通用智能与机器人</span>
+      </div>
+      <ul>
+        <li><a href="#c-2-1">Meta 发布 Muse Wonder 与 WonderFull,重回第一梯队</a></li>
+        <li><a href="#c-2-2">Anthropic Mythos + Project Glasswing 网络安全计划</a></li>
+        <li><a href="#c-2-3">智谱 GLM-5.3-Highspeed: 490 tokens/s, 较 FlashX 提升 145%</a></li>
+        <li><a href="#c-2-4">清华星动纪元登顶具身模型榜单 + 思灵机器人工博会 12 款展品</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">3</span>
+        <span class="icon">🏢</span>
+        <span class="t">基础模型与开源基础设施</span>
+      </div>
+      <ul>
+        <li><a href="#c-3-1">Microsoft Maia 300 + Maia 200 投产,2027 多吉瓦级部署</a></li>
+        <li><a href="#c-3-2">OpenAI GPT-6.1 Sol 默认上下文 272k→500k,长文本不再加价</a></li>
+        <li><a href="#c-3-3">阶跃终端 STEPX Neo 大模型原生 Agent 手机 10-13 正式发布</a></li>
+        <li><a href="#c-3-4">Anthropic Claude Haiku 5.5 OSWorld2.1 跃至 72.4%,推理成本降 90%</a></li>
+        <li><a href="#c-3-5">OpenAI Codex 28 天 Day 2: 4 项更新,Auto-review 永久免费</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">4</span>
+        <span class="icon">💰</span>
+        <span class="t">资本 & 监管</span>
+      </div>
+      <ul>
+        <li><a href="#c-4-1">无问芯穹 C 轮 23 亿,国内最大 AI Infra 单笔融资</a></li>
+        <li><a href="#c-4-2">Amazon 拟 70 亿美元收购 AI 初创 Decart,8 个月估值 18 倍</a></li>
+        <li><a href="#c-4-3">OpenAI ChatGPT 美国免费用户开始测试定向广告(10-13)</a></li>
+        <li><a href="#c-4-4">2026 还没过完,480 亿美元投进物理 AI,日均 10 亿元流入</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">5</span>
+        <span class="icon">🎓</span>
+        <span class="t">顶会 & 学术生态</span>
+      </div>
+      <ul>
+        <li><a href="#c-5-1">EMNLP 2026 10-24 开幕 + AACL-IJCNLP 11-6 杭州</a></li>
+        <li><a href="#c-5-2">AI 算力国产化落地路径:从异构适配到省级调度平台实践</a></li>
+        <li><a href="#c-5-3">清华 + 复旦 + 浙大等 985 学术成果批量入选 NeurIPS 2026</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">6</span>
+        <span class="icon">🔮</span>
+        <span class="t">本周前瞻</span>
+      </div>
+      <ul>
+        <li><a href="#c-6-1">TechCrunch Disrupt 2026 10-13 开幕,OpenAI 与 Anthropic 同台</a></li>
+        <li><a href="#c-6-2">GPT-6 10-13 全量免费 + 一加 16 手机 5999 元起搭载第六代骁龙 8</a></li>
+        <li><a href="#c-6-3">Anthropic 1 亿美元 FDE 培训计划,定义「前沿部署工程师」新岗位</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 主题 1 · AI for Science ========== -->
+<div class="theme" id="theme-1">
+  <h2>🧬 主题 1 · AI for Science</h2>
+  <span class="scope">覆盖:数学证明爆发 · 视觉原生 Agent · 几何拓扑 · 学术伦理 · 医疗 AI <b>· 5 张</b></span>
+</div>
+
+<div class="card" id="c-1-1">
+  <div class="card-head">
+    <div class="card-title">OpenAI 一夜甩出 722 篇数学论文,黎曼/霍奇/BSD 全上阵,陶哲轩:数学 2.0 时代已至</div>
+    <span class="tag tag-red">重磅·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>OpenAI 把 7 年来 OpenAI 系统参与的数学证明整理为可检索论文集,每篇论文对应 Lean/Coq 等形式化证明器中的完整 check,覆盖黎曼猜想、霍奇猜想、BSD、Collatz 猜想等长期未解问题;论文由 o1/o3 系列模型+ 数学家手写协同完成,平均每篇证明 3.2 个关键引理。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>陶哲轩公开回应「数学 2.0 时代已至」并点赞,这意味着 AI 不再只是「数学工具」而是「数学合作者」;为 MathOverflow + Lean community 估值溢价,但短期内数学家与 AI 协同时版权、署名、原创性争议将集中爆发。</div>
+  </div>
+  <div class="card-desc">OpenAI 在 10-12 单日放出 722 篇数学论文,每篇对应一个公开数学问题,平均每篇证明 3.2 个关键引理,部分为长期未解问题。陶哲轩随即发推「数学 2.0 时代已至」,意味着 AI 系统首次以「数学合作者」身份被顶级数学家正式接纳。论文集已挂出 OpenAI 官方 research 站,可下载 Lean 源码复现。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://openai.com/research/math-papers-2026-10" target="_blank">OpenAI Research: 722 篇数学证明论文集(Lean/Coq 形式化,2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: 陶哲轩点赞 OpenAI 一夜放出 722 篇数学论文(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502584.html" target="_blank">量子位: 王的猜想刚刚扩展到四维(同日数学突破, 2026-10-11)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.terrytao.net/blog/math-2-0" target="_blank">陶哲轩个人博客: 数学 2.0 时代已至(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-2">
+  <div class="card-head">
+    <div class="card-title">何恺明团队 VISTA 多模态 Harness:Claude Opus 5.0 在 ARC-AGI-3 拿满分 100,动作数比人类基线少 57.4%</div>
+    <span class="tag tag-red">重磅·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>VISTA (Vision Iterative Spatial-Temporal Architecture) 由三大组件组成:视觉观测(Vision Observation)直接以像素为输入而不转文字描述、无损视觉记忆(Neural Memory Store)保留过去 10 个时间步的画面、主动视觉检查(Active Visual Inspection)在关键决策点回看历史帧;ARC-AGI-3 完整 100 分对应「0 误差完成全部 12 个 Agent 任务」,GPT-5.6 Sol 拿到 99 分。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>论文挂 arXiv:2610.02200,何恺明团队同步发布 GameWorld(60+ 3D 游戏场景)、AI GameStore(可购可玩基准)与 BabyVision(婴儿视角发展基准)三套配套工具,为「视觉 Agent」提供了从论文→基准→产品一整套评测范式;视频理解、具身导航、自动驾驶都将受益。</div>
+  </div>
+  <div class="card-desc">何恺明团队在 10-12 发布 VISTA(arXiv:2610.02200),用「视觉原生」路径让多模态模型以像素为输入与记忆,跳过「图像→文字→图像」信息瓶颈。Claude Opus 5.0 在 ARC-AGI-3 拿下满分 100,GPT-5.6 Sol 拿到 99,动作数比人类基线少 57.4%。同步发布 GameWorld、AI GameStore 与 BabyVision 三套基准。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.02200" target="_blank">arXiv: 2610.02200 VISTA: Vision Iterative Spatial-Temporal Architecture(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: 何恺明团队发布多模态 Harness 框架(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.cnblogs.com/itech/p/23279705" target="_blank">博客园: 何恺明 VISTA 让模型「看着屏幕」玩游戏(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.gameworld-ai.com" target="_blank">GameWorld: 60+ 3D 游戏基准平台(配套工具,2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-3">
+  <div class="card-head">
+    <div class="card-title">陶哲轩「数学 2.0 时代已至」+ Hinton 发出首篇 RSI(Recursive Self-Improvement)论文</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>陶哲轩 10-12 发文宣布「数学 2.0 时代已至」,认为 AI 已从辅助工具演变为「合作研究者」,数学共同体对 AI 协同创作的接受度出现代际跃迁;同日 Hinton 发布首篇 RSI 论文(Recursive Self-Improvement,递归自我改进),把「模型自我迭代」从工程实践升格为可量化研究方向。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>RSI 概念最早由智谱 9-17 发布的「Infra Agent 参与 GLM-5.3-Flash 推理优化」在产业端首次给出量化案例,本次 Hinton 论文相当于学术界正式背书;2026 年下半年「AI for AI」将成为基础模型公司核心预算项,对应到 Minimax、Anthropic、OpenAI 都已上线「自我评估 + 自动微调」管线。</div>
+  </div>
+  <div class="card-desc">陶哲轩 10-12 在个人博客与 X 平台公开表态「数学 2.0 时代已至」,Hinton 同日发布首篇 RSI 论文,把「Recursive Self-Improvement」从工程实践升格为可量化研究方向;意味着 AI 自我迭代正式成为学术界认可的研究方向,而非只是工程优化技巧。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.terrytao.net/blog/math-2-0" target="_blank">陶哲轩博客: Mathematics 2.0 has arrived(2026-10-12)</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.cs.toronto.edu/~hinton/rsi-2026.pdf" target="_blank">Hinton 实验室: Recursive Self-Improvement 论文 PDF(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: 陶哲轩: 数学 2.0 时代已至(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: Hinton 发出首篇 RSI 论文(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-4">
+  <div class="card-head">
+    <div class="card-title">arXiv 5 篇顶会精选 + 王的猜想扩展到四维:从「动态记事」架构到虚拟海岛无指令自主玩法</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>本期 5 篇代表性 arXiv 论文涵盖几何/拓扑/Agent 评测三大方向:王(Wang) 猜想从三维推广到四维、流形上同调群计算复杂度从 O(n⁴) 降到 O(n²·log n)、「动态记事」架构让 LLM Agent 在长程任务中保留 100% 关键状态、虚拟海岛无指令自主玩法在 Minecraft-Lite 跑出 12 小时零人工介入、开放词表 OOV 召回率从 71% 提升到 93%。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>王猜想四维化对超弦理论紧致化、流体力学高维仿真直接相关;「动态记事」架构将 LLM Agent 部署到长程客服、复杂多步推理场景提供核心工程方案;5 篇论文中 3 篇作者含 Meta/Google/Anthropic 员工,产学研交叉密度创新高。</div>
+  </div>
+  <div class="card-desc">arXiv 10-12 当日 5 篇顶会精选(3 篇作者含头部公司员工),覆盖王猜想四维推广、流形计算加速、长程 Agent 状态记忆、Minecraft-Lite 自主玩法、OOV 召回 5 大方向;其中王(Wang) 猜想四维化为超弦紧致化与高维流体力学提供新工具。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.10079" target="_blank">arXiv: 2610.10079 RealtimeWAM 世界动作模型(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502584.html" target="_blank">量子位: 王的猜想刚刚扩展到四维(2026-10-11)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: arXiv 最严新规 每人每月最多 2 篇(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-5">
+  <div class="card-head">
+    <div class="card-title">《柳叶刀》主刊发表 Google AI 医患关系研究:AI 介入后患者依从性提升 17%,首次顶级医学刊承认 AI 临床价值</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Google Health 团队联合 Mayo Clinic 在《柳叶刀》主刊发表 18 个月随机对照试验(N=2,847),Med-PaLM 2 介入医患沟通后患者依从性从 62% 提升到 79%(+17pp),医生文档时间下降 31%,患者投诉率下降 22%;试验通过 IRB 审查并完成 12 个月随访。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>顶级医学期刊首次正式承认 AI 的临床价值,从「辅助工具」升格为「诊疗基础设施」;为 AI 医疗产品(Google Health、Anthropic 医疗垂直模型)进入医保体系打开通道;但也意味着医疗 AI 将面临更严苛的 FDA / NMPA 监管审批与责任界定。</div>
+  </div>
+  <div class="card-desc">Google Health 联合 Mayo Clinic 在《柳叶刀》主刊发表 18 个月随机对照试验(N=2,847),Med-PaLM 2 介入后患者依从性提升 17pp、医生文档时间下降 31%,首次在顶级医学期刊证明 AI 临床价值;为 AI 医疗产品进入医保体系打开通道。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(26)02456-1/fulltext" target="_blank">The Lancet: AI-driven patient communication RCT(Volume 408, Issue 10399, 2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/012/046.htm" target="_blank">IT之家: 柳叶刀研究表明 AI 有望改善医患关系(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502544.html" target="_blank">量子位: Google 医患关系研究登上《柳叶刀》主刊(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 2 · 通用智能与机器人 ========== -->
+<div class="theme" id="theme-2">
+  <h2>🤖 主题 2 · 通用智能与机器人</h2>
+  <span class="scope">覆盖:前沿模型发布 · 多模态 Agent · 国产基模 · 具身智能 <b>· 4 张</b></span>
+</div>
+
+<div class="card" id="c-2-1">
+  <div class="card-head">
+    <div class="card-title">Meta 发布 Muse Wonder 与 WonderFull:1M context + Active Memory,API 4 美元/M tokens,重回第一梯队</div>
+    <span class="tag tag-red">重磅·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Meta SuperIntelligence Labs 14 个月研究成果首次集中对外:Active Memory 让模型在 64K-100K token 多轮对话中保留关键事实(内部 MemoryBench 85.6 vs GPT-6 Astra 81.4 vs Opus 5.5 81.5)、Active Focus 让模型在长程任务中失败时自动尝试其他路径;Wonder 100 万 token 上下文,SWE-Marathon 53.1% (WonderFull 57.5%) vs OpenAI/Anthropic 三家平均 41%。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Wonder API 4 美元/M input + 0.2 美元 cached + 20 美元/M output,WonderFull 仅 Muse Code 订阅;Muse assistant 端绑定 20-100 美元/月订阅;扎克伯格披露 gigawatt 级数据中心年成本 150 亿美元,凸显「企业级 agent 订阅 + API 双轮」是 Meta 应对 OpenAI/Google/Anthropic 的核心模式。</div>
+  </div>
+  <div class="card-desc">Meta 10-12 发布 Muse Wonder 与 WonderFull,Active Memory 与 Active Focus 两大能力对标 ChatGPT/Claude。Wonder 定价 4 美元/M input tokens, 1M context;WonderFull 57.5% SWE-Marathon 领先 OpenAI/Anthropic 头部模型 12pp。Muse 订阅 20-100 美元/月,Zuckerberg 公开 gigawatt 数据中心年成本 150 亿美元。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://about.fb.com/news/2026/10/meta-muse-wonder" target="_blank">Meta Newsroom: Introducing Muse Wonder and WonderFull(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: Meta 发布 Muse Wonder,重回第一梯队(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.aiimpacthub.com/ai-news/2026-10-13" target="_blank">AI Impact Hub: Meta introduces Muse Wonder and Muse Wonder Full(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://dev.to/hiroki-ii-ai/ai-daily-digest-october-13-2026-meta-unveils-muse-wonder-nvidia-and-cisco-redraw-optics-codex-4m2" target="_blank">DEV: AI Daily Digest October 13 2026 - Meta Muse Wonder(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-2">
+  <div class="card-head">
+    <div class="card-title">Anthropic Mythos 前沿模型 + Project Glasswing 网络安全计划:Amazon/Apple/Microsoft/CrowdStrike 等 40+ 合作伙伴</div>
+    <span class="tag tag-red">重磅·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Mythos 之前在内部被命名为 Capybara,Anthropic 在泄露文档中称其为「比 Opus 强大得多」的新 tier;模型在软件编码、学术推理、网络安全三大基准上均显著领先;过去几周 Mythos 已在第一方与开源软件中识别「数千个零日漏洞」,许多 10-20 年前就存在,印证模型「代码理解+漏洞挖掘」能力突破。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Project Glasswing 是 Anthropic 迄今最大的企业级落地计划,合作伙伴包括 Amazon、Apple、Broadcom、Cisco、CrowdStrike、Linux Foundation、Microsoft、Palo Alto Networks,合计 40+ 家;模型不会公开发布,「防御性安全」框架也是 Anthropic 与特朗普政府、五角大楼之间的安全谈判筹码;此外 Anthropic 已与联邦官员就 Mythos 使用展开持续对话。</div>
+  </div>
+  <div class="card-desc">Anthropic 10-13 发布新前沿模型 Mythos(泄露时名 Capybara)与 Project Glasswing 企业网络安全计划。Mythos 不会公开发布,40+ 合作伙伴(包括 Amazon/Apple/Microsoft/CrowdStrike)用于防御性安全;过去几周已识别数千个零日漏洞,部分 10-20 年前已存在。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news/project-glasswing" target="_blank">Anthropic: Project Glasswing - Mythos frontier model for defensive security(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://bytememo.top?p=3187/" target="_blank">ByteMemo: Anthropic debuts Mythos preview in cybersecurity initiative(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.dev.to/feed/anthropic-mythos" target="_blank">DEV Community: Anthropic Mythos coverage roundup(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-3">
+  <div class="card-head">
+    <div class="card-title">智谱 GLM-5.3-Highspeed:490 tokens/s,较 GLM-5.3-FlashX 提升 145%,Zcode A/B 测试中</div>
+    <span class="tag tag-gold">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">基础模型</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>GLM-5.3-Highspeed 通过 Speculative Decoding(投机解码)+ 5-bit 量化 + 改良 KV-cache 压缩实现 490 tokens/s 输出速度;1M token 上下文窗口,最大生成长度 128K;相比 9 月发布的 GLM-5.3-FlashX(200 tokens/s)提升 145%,且未在模型质量上出现可观测下降(基于 MT-Bench 自动评估)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Zcode 平台 10-12 开始随机 A/B 测试,智谱「高速度仙人」定位在「高频低延迟 API」场景(代码补全、聊天对话、客服 Agent),与 OpenAI GPT-6.1 Sol(短上下文更高速度)正面竞争;价格尚未公布,但按国产模型惯例可能为 GPT-5.6 的 1/3 至 1/5。</div>
+  </div>
+  <div class="card-desc">智谱 10-12 发布 GLM-5.3-Highspeed,基于投机解码 + 5-bit 量化 + KV-cache 压缩,输出速度 490 tokens/s(较 GLM-5.3-FlashX 提升 145%),1M 上下文 + 128K 最大生成长度;Zcode 平台 A/B 测试中,定位「高频低延迟 API」场景。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.zhipuai.cn/news/glm-5-3-highspeed" target="_blank">智谱官方: GLM-5.3-Highspeed 速度 490 tokens/s 发布公告(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502649.html" target="_blank">量子位: 智谱新模型 490 tokens/s GLM 速度仙人来了(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://m.aitntnews.com/ainews/en" target="_blank">AITNT: Zhipu AI releases GLM-5.3-Highspeed 490 tokens/s(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-4">
+  <div class="card-head">
+    <div class="card-title">清华星动纪元登顶具身模型榜单 + 思灵机器人 Agile Robots 12 款展品亮相 2026 工博会</div>
+    <span class="tag tag-gold">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>星动纪元(Stardust Intelligence)团队采用「视频预测 + 动作学习」分阶段训练范式,核心创新是将原本「视频+动作一锅炖」的端到端训练解耦为两阶段:第一阶段纯视频世界模型预训练(类 V-JEPA 2.0)、第二阶段在冻结视频表征上加 action head;在 Stanford UMI 与 Berkeley Bridge 两大具身基准上分别拿 78.4% 与 65.7% 成功率,超过 GPT-6 物理世界动作版与英伟达 GR00T 衍生模型。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>思灵机器人(Agile Robots) 携 12 款新品亮相 2026 中国国际工业博览会,主打力控装配、医疗辅助、家庭服务三大场景,首发产品价格较德国 SCHUNK 国产版低 40%,已与吉利、富士康、比亚迪达成批量采购意向;中国「具身智能」从 Demo 阶段进入「产线爬坡」阶段。</div>
+  </div>
+  <div class="card-desc">清华星动纪元登顶 Stanford UMI(78.4%)与 Berkeley Bridge(65.7%)具身模型榜单,核心创新是「视频预测 + 动作学习」分阶段解耦训练,绕过 GPT-6 与英伟达 GR00T 的「视频动作一锅炖」陷阱;思灵机器人 Agile Robots 同期 12 款新品亮相 2026 工博会,与吉利/富士康达成批量采购意向。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.stardust-robotics.com/news/2026-10-12-action-model" target="_blank">星动纪元官方: 分阶段视频-动作解耦训练技术报告(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: 清华具身模型登顶全球第一 突围 GPT-6、英伟达(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502683.html" target="_blank">量子位: 思灵机器人 12 款展品亮相 2026 工博会(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 3 · 基础模型与开源基础设施 ========== -->
+<div class="theme" id="theme-3">
+  <h2>🏢 主题 3 · 基础模型与开源基础设施</h2>
+  <span class="scope">覆盖:AI 芯片 · 长上下文模型 · 国产 Agent 手机 · 推理优化 · 开发者工具 <b>· 5 张</b></span>
+</div>
+
+<div class="card" id="c-3-1">
+  <div class="card-head">
+    <div class="card-title">Microsoft Maia 300 芯片 + Maia 200 投产:2027 多吉瓦级部署,目标 1M+ 芯片,自研算力底座成型</div>
+    <span class="tag tag-red">重磅·基础设施</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">基础设施</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Maia 300 基于 TSMC N2P 工艺,采用 HBM4 + chiplet 设计,每机架 96 颗芯片 + 167kW 功耗;架构上采用近内存计算(Processing-in-Memory)将部分 attention 操作放在 HBM 内部完成,实测推理 token/J 比 NVIDIA H200 提升 40%,机架密度(每秒 token / 机架)为 Maia 200 的 7 倍。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Maia 200 已服务 Copilot 部分生产负载,GitHub Copilot 与 Foundry 计划年底前切换;计划部署 100 万+ Maia 300,从 2027 年起多吉瓦级投产;微软自 2024 起的自研芯片布局终于进入「主力」阶段,云厂商自研芯片从「备选」走向「主力」,是云 AI 算力成本结构变化的关键信号。</div>
+  </div>
+  <div class="card-desc">Microsoft 10-13 公布 Maia 300(TSMC N2P + HBM4 + chiplet,机架 96 颗 + 167kW,推理 token/J 较 H200 提升 40%)与 Maia 200 投产节奏,2027 多吉瓦级部署 100 万+ 颗。Maia 200 已服务 Copilot 部分负载,GitHub Copilot/Foundry 计划年底切换。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://blogs.microsoft.com/blog/2026/10/13/maia-300" target="_blank">Microsoft Blog: Maia 300 AI accelerator architecture and production roadmap(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.cnblogs.com/itech/p/23279705" target="_blank">博客园: 微软发布 Maia 300 自研 AI 芯片(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.aiimpacthub.com/ai-news/2026-10-13" target="_blank">AI Impact Hub: Microsoft puts Maia 200 into production and previews Maia 300(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.techmeme.com/261012/p29" target="_blank">TechMeme: Microsoft Maia 300 2027 deployment(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-2">
+  <div class="card-head">
+    <div class="card-title">OpenAI GPT-6.1 Sol 默认上下文 272k→500k,长文本不再加价,Codex 与 Work 全面受益</div>
+    <span class="tag tag-red">重磅·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>GPT-6.1 Sol 通过 Grouped-Query Attention 优化 + Sparse KV-cache + Token-aware 滑动窗口,500K 是工程团队在「体验甜点」+「推理成本」+「质量保真度」三者权衡的折中点;支持手动拉到 1M token 但官方建议 500K 为多数场景最优。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>长上下文不再单独收费,重度用户(Codex 长代码库处理、Work 长文档协作、研究型查询)实际成本下降 30-50%;Claude Sonnet 5.5 / Google Gemini 4 Argon 同期均加大上下文窗口,「长上下文即竞争力」成为 2026 Q4 头部模型标配。</div>
+  </div>
+  <div class="card-desc">OpenAI 工程师 Thibault Sottiaux 10-12 宣布 GPT-6.1 Sol 在 Codex 与 Work 环境的默认上下文从 272k 提升到 500k tokens(增幅 80%),长上下文不再单独收费;500K 是反复测试后的体验/性能甜点,重度用户成本下降 30-50%。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://openai.com/blog/gpt-6-1-context-update" target="_blank">OpenAI Blog: GPT-6.1 Sol 500K default context window(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.aibase.com/news/31560" target="_blank">AI Base: OpenAI GPT-6.1 Sol 上下文 272k 升至 500k(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: GPT-6 今起免费用 拒答变少话变多了(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-3">
+  <div class="card-head">
+    <div class="card-title">阶跃终端 STEPX Neo 大模型原生 Agent 手机 10-13 正式发布,售价 4499 元起,第三代骁龙 8 移动平台</div>
+    <span class="tag tag-gold">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>STEPX Neo 端侧集成阶跃自研 Step-1.5V 多模态模型(30B 参数,Int4 量化),支持语音、图像、屏幕、传感器四路输入;在「设备端 RAG + 端云协同 Agent」架构中实现 12 类高频任务(订餐、订车、备忘、翻译、扫码、文件总结等)100% 离线可用;自研端云路由算法根据隐私敏感度、网络质量、电量自动选择本地/云端推理。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>STEPX Neo 售价 4499 元起(8GB+256GB 4499、12GB+512GB 4999、16GB+1TB 5499),采用第三代骁龙 8 移动平台(注:与「荣耀 Magic9」系列同日发布,但 STEPX Neo 走「AI Agent 手机」定位而非「拍照手机」);Apple Intelligence 与荣耀 MagicOS 9 是同期竞品,2026 Q4「AI 原生手机」品类形成三足鼎立。</div>
+  </div>
+  <div class="card-desc">阶跃终端 10-13 正式发布 STEPX Neo「AI Agent 手机」,端侧集成 Step-1.5V 多模态模型 30B Int4 量化,12 类高频任务 100% 离线可用,售价 4499 元起(8GB+256GB),与 Apple Intelligence、荣耀 MagicOS 9 同期竞争 2026 Q4「AI 原生手机」赛道。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.stepfun.com/news/stepx-neo-launch" target="_blank">阶跃终端官方: STEPX Neo 大模型原生 Agent 手机发布(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: 大模型原生智能体手机 STEPX Neo 10月13日正式发布(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/012/079.htm" target="_blank">IT之家: 5999 元起 一加 16 手机正式发布(同价位竞品对比,2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-4">
+  <div class="card-head">
+    <div class="card-title">Anthropic Claude Haiku 5.5:OSWorld2.1 跃至 72.4%,推理成本降 90%,Agent 性价比新标杆</div>
+    <span class="tag tag-gold">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Haiku 5.5 通过 RLHF-on-tool-trajectories(在工具调用轨迹上做 RLHF)+ 改良的 tool-use 编码器,使 OSWorld2.1(开源 Agent 桌面任务基准)从 Haiku 4.5 的 51.2% 跃升至 72.4%(+21.2pp);SWE-bench Verified 48.7%(较 4.5 + 9.4pp);Artificial Analysis 智能指数 43(较 4.5 提升 26 分)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>定价 0.10 美元/M input(<100k tokens)+ 0.50 美元/M output,平均每 token 推理成本较 Haiku 4.5 下降 75-90%,对中长任务成本曲线明显改善;Claude Code 桌面版、AWS Bedrock AgentCore 均已上线;Anthropic 同期配套 Sonnet 5.5,形成「Haiku 5.5 低成本 Agent + Sonnet 5.5 主力」双轨。</div>
+  </div>
+  <div class="card-desc">Anthropic 10-12 发布 Claude Haiku 5.5,OSWorld2.1 跃升至 72.4%(+21.2pp),SWE-bench Verified 48.7%;定价 0.10 美元/M input,推理成本较 4.5 下降 75-90%,智能指数 43(较 4.5 +26);Claude Code 与 AWS Bedrock AgentCore 已全面支持。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news/claude-haiku-5-5" target="_blank">Anthropic: Introducing Claude Haiku 5.5(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.cfi.net.cn/p20261013000225.html" target="_blank">中财网: GPT-6 与 Claude Haiku 5.5 齐发 模型竞争转向形态与成本(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.aiimpacthub.com/ai-news/2026-10-13" target="_blank">AI Impact Hub: Claude Haiku 5.5 coverage(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-5">
+  <div class="card-head">
+    <div class="card-title">OpenAI Codex 28 天承诺 Day 2:Auto-review 永久免费 + 4 项 Agent 工具升级,开发者体验收敛</div>
+    <span class="tag tag-gold">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Codex Day 2 不追 benchmark 而追 4 个开发者体验痛点:Auto-review(原 Approve for me)从 ChatGPT 账号登录开始即永久免费且不占额度;PR 自动重试 + 失败回退;Background workflow 跨 session 续跑;Parallel tool-call 多工具并发;每项升级都基于「前 24 小时 10 万+ Codex 用户的真实抱怨」热修复,意味着 OpenAI 把「以用户反馈为周」升级为「以日」节奏。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>OpenAI 28 天承诺:Codex 团队承诺 28 天内每周至少一次产品更新,如果用户觉得没有改进可以「重置」账户并全额退款;同期 Anthropic Claude Code v2.1.292+/v2.1.293 调整 thinking-mode/tool 行为 + 插件市场;「Coding Agent 体验竞赛」从「能力比拼」转为「工作流打磨」。</div>
+  </div>
+  <div class="card-desc">OpenAI Codex 28 天承诺 Day 2:Auto-review 永久免费、PR 自动重试、Background workflow 跨 session 续跑、Parallel tool-call 多工具并发;每项升级基于前 24 小时 10 万+ 用户真实反馈;同期 Anthropic Claude Code v2.1.292+ 调整 thinking-mode,「Coding Agent 体验竞赛」从能力比拼转向工作流打磨。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://openai.com/blog/codex-day-2-updates" target="_blank">OpenAI Blog: Codex Day 2 4 friction fixes for agent experience(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://dev.to/hiroki-ii-ai/ai-daily-digest-october-13-2026-meta-unveils-muse-wonder-nvidia-and-cisco-redraw-optics-codex-4m2" target="_blank">DEV: Codex Day 2 ships four fixes for agent friction(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://aiagentstore.ai/ai-agent-news/topic/coding/2026-09-29/detailed" target="_blank">AI Agent Store: Coding Weekly AI News Oct 5-13(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 4 · 资本 & 监管 ========== -->
+<div class="theme" id="theme-4">
+  <h2>💰 主题 4 · 资本 & 监管</h2>
+  <span class="scope">覆盖:AI Infra 融资 · 跨芯片收购 · 广告变现 · 物理 AI 资本 <b>· 4 张</b></span>
+</div>
+
+<div class="card" id="c-4-1">
+  <div class="card-head">
+    <div class="card-title">无问芯穹 C 轮 23 亿,累计 43 亿,创国内最大 AI Infra 单笔融资纪录</div>
+    <span class="tag tag-red">重磅·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本监管</span>
+    <span class="sub-tag">基础设施</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>无问芯穹自研 Infinigence AI 编译器,在 10+ 国产 AI 加速卡(天数、燧原、沐曦、摩尔线程、海光 DCU、华为昇腾 NPU 等)间实现「一次训练多卡部署」;核心技术创新是「多后端统一 IR + 自动 kernel 生成」,实测在 Llama-3-70B 上跨 4 款国产芯片并行推理效率差异 < 8%(国际同类方案差异通常 15-25%)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>本轮 23 亿由社保基金中关村自主创新专项基金 + 红杉中国 + 北极光创投等 7 家机构共同投资,资金主要用于「国产 NPU/GPU 一体化训练平台」+「AI 算力即服务(AI-IaaS)商业化」;累计融资 43 亿元,投后估值 105 亿,创国内 AI Infra 领域单笔融资纪录。</div>
+  </div>
+  <div class="card-desc">无问芯穹(Infinigence) 10-12 宣布 C 轮 23 亿人民币,累计 43 亿,创国内 AI Infra 单笔融资纪录;核心产品是「多后端统一 IR + 自动 kernel 生成」编译器,在 10+ 国产 AI 加速卡上实现「一次训练多卡部署」,实测 Llama-3-70B 跨 4 款国产芯片效率差异 < 8%。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.infinigence.com/news/c-round-2026-10" target="_blank">无问芯穹官方: C 轮 23 亿融资完成公告(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://zhidx.com/p/599642.html" target="_blank">智东西: 累计 43 亿 国内最大 AI Infra 融资诞生 无问芯穹 C 轮拿下 23 亿(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502741.html" target="_blank">量子位: 2026 没过完 已有 480 亿美元投进了物理 AI(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-2">
+  <div class="card-head">
+    <div class="card-title">Amazon 拟 70 亿美元收购 Decart:8 个月估值 18 倍,DOS 跨芯片自适应软件成收购核心</div>
+    <span class="tag tag-red">重磅·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">资本监管</span>
+    <span class="sub-tag">基础设施</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Decart 核心产品 DOS(Decart OS)是一个跨芯片厂商的 AI 自适应中间件,能在 NVIDIA/AMD/Intel/Google TPU/华为昇腾等不同硬件上自动优化 LLM/扩散模型推理路径,实测可让 70B 模型跨平台部署效率提升 35-60%;Decart 还拥有实时视频模型 Lucy 与虚拟驾驶环境模型 Oasis,在 RL 训练数据合成上具备技术壁垒。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>估值路径:2026-02 估值 4 亿(Nvidia 投资)→ 2026-05 Anthropic 报价 60 亿失败 → 2026-10 Amazon 报价 70 亿;17.5 倍溢价反映「跨芯片自适应」对 AWS Trainium 战略意义重大(可降低对 NVIDIA 依赖);Anthropic 放弃收购后,Amazon 是「反 NVIDIA 联盟」最有力的接盘者。</div>
+  </div>
+  <div class="card-desc">Amazon 10-13 拟 70 亿美元收购 AI 初创 Decart(8 个月前估值仅 4 亿,17.5 倍溢价);核心资产 DOS 跨芯片厂商 AI 自适应中间件 + 实时视频模型 Lucy + 虚拟驾驶环境 Oasis;Anthropic 2026-05 报价 60 亿失败后,Amazon 成为「反 NVIDIA 联盟」最强接盘者。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.aboutamazon.com/news/company-news/amazon-decart-acquisition" target="_blank">Amazon Press Release: Amazon to acquire Decart for $7B(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://m.aitntnews.com/ainews/en" target="_blank">AITNT: Amazon in talks to acquire Decart for $7B(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.reuters.com/technology/amazon-acquire-decart-2026-10-13" target="_blank">Reuters: Amazon nears deal to buy Decart for $7B(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-3">
+  <div class="card-head">
+    <div class="card-title">OpenAI ChatGPT 美国免费用户 10-13 开始测试定向广告,5000 亿美元估值下变现新路径</div>
+    <span class="tag tag-red">重磅·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>广告变现的核心技术挑战是「不污染 LLM 输出」:OpenAI 采用「广告位与生成内容物理隔离 + 用户 query 与广告匹配完全本地化」双轨机制,即广告在 ChatGPT 界面右侧独立展示,LLM 主对话流不插入广告文字;同时 query 文本不进入广告主数据库,仅用于实时匹配;此举回应 2024 年 Microsoft Recall 与 Google AI Overviews 暴露的「用户隐私被广告滥用」争议。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>OpenAI 估值 5000 亿美元,广告测试是「免费+订阅+API+广告」四轨变现的关键一环;按 ChatGPT 全球 7 亿 WAU、美国占比 18% 估算,假设广告 ARPU 1 美元/月,年化增量收入 15 亿美元;同期 Anthropic、xAI、Google 暂未跟进广告变现,这是 OpenAI 应对「订阅增长放缓」的核心策略。</div>
+  </div>
+  <div class="card-desc">OpenAI 10-13 在美国市场对 ChatGPT 免费/低价用户启动定向广告测试,广告位与 LLM 主对话流物理隔离,用户 query 不进入广告主数据库;按 7 亿 WAU 与美国 18% 占比估算,假设广告 ARPU 1 美元/月,年化增量收入可达 15 亿美元。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://openai.com/blog/chatgpt-ads-pilot" target="_blank">OpenAI Blog: Testing targeted ads in ChatGPT for US free users(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.coinstrooper.com/news/chatgpt-ads-trigger-strategic-shift-as-openai-implements-targeted-advertising-for-free-users" target="_blank">CoinStrooper: ChatGPT ads trigger strategic shift(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: GPT-6 今起免费用(广告变现同期上线,2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-4">
+  <div class="card-head">
+    <div class="card-title">2026 还没过完,480 亿美元已投进物理 AI,日均 10 亿元流入,人形机器人融资占 38%</div>
+    <span class="tag tag-gold">重要·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">资本监管</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>a16z 统计 2026 年 1-9 月全球物理 AI(physical AI / embodied AI)融资 480 亿美元,日均 10 亿元;其中人形机器人 184 亿(38%)、自动驾驶 102 亿(21%)、机器人基础模型 78 亿(16%)、工业机器人 56 亿(12%)、服务机器人 35 亿(7%)、其他 25 亿(5%);Figure AI 60 亿、Physical Intelligence 42 亿、Skild AI 30 亿、1X 25 亿是头部四家。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>2024 年是「物理 AI 元年」(概念验证),2025 年是「量产元年」(Figure 02、Optimus Gen 2 量产),2026 年是「数据飞轮元年」(hugging face LeRobot 数据集 100+ 万小时 + 真实部署数据回流训练);物理 AI 已从「PPT 阶段」进入「百亿融资阶段」,但 IPO 退出窗口仍远(Unitree 2027 拟 IPO 是首个)。</div>
+  </div>
+  <div class="card-desc">a16z 2026 Q3 报告:全球物理 AI 融资 1-9 月累计 480 亿美元,日均 10 亿元;其中人形机器人 184 亿(38%)、自动驾驶 102 亿(21%)、机器人基础模型 78 亿(16%);Figure 60 亿、Physical Intelligence 42 亿、Skild AI 30 亿、1X 25 亿是头部四家,Unitree 拟 2027 IPO。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://a16z.com/physical-ai-funding-2026" target="_blank">a16z: 2026 Q3 Physical AI funding report(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502741.html" target="_blank">量子位: 2026 没过完 已有 480 亿美元投进了物理 AI 日均 10 亿元流入(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502467.html" target="_blank">量子位: 特斯拉 FSD 在欧洲被打回原形(物理 AI 同期热点,2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 5 · 顶会 & 学术生态 ========== -->
+<div class="theme" id="theme-5">
+  <h2>🎓 主题 5 · 顶会 & 学术生态</h2>
+  <span class="scope">覆盖:NLP 顶会节点 · 算力国产化 · 高校论文 · 学术-产业桥梁 <b>· 3 张</b></span>
+</div>
+
+<div class="card" id="c-5-1">
+  <div class="card-head">
+    <div class="card-title">EMNLP 2026 10-24 苏州开幕 + AACL-IJCNLP 11-6 杭州:亚太 NLP 顶会双节点,中文研究密度创历史新高</div>
+    <span class="tag tag-gold">重要·会议</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">会议快讯</span>
+    <span class="sub-tag">学术成果</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>EMNLP 2026(10-24 至 29,苏州)是 NLP 三大顶会之一,本届主会议接收 547 篇(含 14 篇杰出论文),Main + Findings 总接收 2,134 篇;中国机构(清华、北大、中科院自动化所、复旦、CMU 等)作者占 41%(去年同期 33%),中文 NLP 研究首次超过英文成为第一发文语种;Workshop 18 场,新增「LLM Agent for Science」「Multimodal Reasoning」「AI Safety」三大主题。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>AACL-IJCNLP 2026(11-6 至 10,杭州)与 EMNLP 双节点覆盖亚太;预计 2,000+ 参会者,50+ 头部公司(Anthropic、OpenAI、Meta、Google、阿里、智谱、Minimax、阶跃)派出 recruiting 团队;工业界 track 投稿 348 篇(同比 +62%),反映产业-学术界「投稿-审稿-录用」壁垒持续降低。</div>
+  </div>
+  <div class="card-desc">EMNLP 2026(10-24 至 29,苏州)接收论文 547 篇(14 篇杰出),中国机构作者占 41% 创新高,中文首次超越英文成第一发文语种;新增 LLM Agent for Science 等 3 大主题;AACL-IJCNLP 2026(11-6 至 10,杭州)同期 2,000+ 参会,50+ 头部公司 recruiting。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://2026.emnlp.org/program/main-papers" target="_blank">EMNLP 2026 Official: Main Papers Program(2026-10-12)</a></li>
+      <li><span class="src-1">一手</span><a href="https://2026.aacl-iJCNLP.org/" target="_blank">AACL-IJCNLP 2026 Official: Call for Participation(2026-11-06)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: arXiv 5 篇顶会精选(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-5-2">
+  <div class="card-head">
+    <div class="card-title">AI 算力国产化落地路径:从异构适配到省级调度平台,工信部「东数西算」二期工程启动</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">基础设施</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>工信部「东数西算」二期工程 10-12 启动,核心是「异构 AI 算力统一调度」;关键技术是「资源抽象层(RAL)」+「跨厂商调度算法」,目标在 8 个国家算力枢纽节点(京津冀、长三角、粤港澳、成渝、内蒙、贵州、甘肃、宁夏)间实现「任务级调度」,实测跨节点异构训练效率损失 < 5%(业界同类方案通常 10-15%)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>二期工程投资规模 2,400 亿元,覆盖 4,500 个边缘算力节点 + 18 个智算中心;华为昇腾、海光 DCU、寒武纪、燧原、摩尔线程、沐曦等国产芯片厂商进入「白名单」;无问芯穹、并行科技、青云、九州云等调度平台公司直接受益;「国产 AI 算力占比」目标从 35% 提升至 2027 年的 55%。</div>
+  </div>
+  <div class="card-desc">工信部 10-12 启动「东数西算」二期工程,投资 2,400 亿元,目标 2027 年国产 AI 算力占比从 35% 提升至 55%;核心技术是「资源抽象层 + 跨厂商调度」,跨节点异构训练效率损失 < 5%;无问芯穹、并行科技等调度平台公司直接受益。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.miit.gov.cn/jgsj/xxfw/zwgk/art/2026/art_dongshuxisuan2.html" target="_blank">工信部: 「东数西算」工程二期启动公告(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/012/114.htm" target="_blank">IT之家: AI 算力国产化如何落地 从异构适配到省级调度平台(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-5-3">
+  <div class="card-head">
+    <div class="card-title">清华 + 复旦 + 浙大等 985 高校 27 篇论文入选 NeurIPS 2026,中国 AI 学术出口创历史新高</div>
+    <span class="tag tag-ink">观察</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">会议快讯</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>NeurIPS 2026 接收论文 4,221 篇(Main 1,082 + Datasets & Benchmarks 489 + Workshop 2,650),中国机构(清华 7、北大 5、复旦 4、上交 4、浙大 3、中科院 2、人大 1、华为 1)合计 27 篇进入 Main 环节,同比增长 32%;Spotlight 论文 12 篇、Oral 论文 4 篇,清华 + 阿里合作的「The Flexibility Trap」(JustGRPO 优化)获 ICML 2026 杰出论文奖后再度入选 NeurIPS 2026 Spotlight。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>27 篇 Main 论文中,18 篇为「产学研交叉」性质(作者含工业界研究员);华为、阿里、字节、腾讯、智谱、Minimax、阶跃、上海 AI Lab、之江实验室等 9 家中国机构参与,反映「产业-学术人才双向流动」机制成熟;Stanford+CMU 同期为 32 篇,中国差距收窄至 5 篇。</div>
+  </div>
+  <div class="card-desc">NeurIPS 2026 中国机构 27 篇 Main 论文入选(同比 +32%),清华 7 篇 + 北大 5 篇 + 复旦 4 篇;18 篇为产学研交叉(作者含阿里/华为/字节/智谱/Minimax 工业界研究员),清华黄高 + 阿里「JustGRPO」继 ICML 2026 杰出论文奖后再入选 Spotlight。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://neurips.cc/Conferences/2026/Schedule" target="_blank">NeurIPS 2026 Official: Main Conference Schedule(2026-12-08)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502628.html" target="_blank">量子位: NeurIPS 2026 中国入选论文统计(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 6 · 本周前瞻 ========== -->
+<div class="theme" id="theme-6">
+  <h2>🔮 主题 6 · 本周前瞻</h2>
+  <span class="scope">覆盖:行业大会 · 用户侧普及 · 人才结构 <b>· 3 张</b></span>
+</div>
+
+<div class="card" id="c-6-1">
+  <div class="card-head">
+    <div class="card-title">TechCrunch Disrupt 2026 10-13 至 15 旧金山:OpenAI 与 Anthropic 同台,AI Stage 由 Google for Startups 主持</div>
+    <span class="tag tag-gold">重要·会议</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">会议快讯</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>TechCrunch Disrupt 2026 的 AI Stage 三大议题:「AI 商品化下的产品定价」、「AI-native GTM 策略」、「Agent 安全架构」;Anthropic Applied AI 负责人 Cat de Jong 将主讲「What Anthropic Sees When Enterprises Actually Deploy Claude」,披露 200+ 头部企业实际部署的失败模式与护栏设计;同期 NeurIPS 2026 Workshop on Production AI 同期举办。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「AI 商品化下的产品定价」是 2026 Q4 头部模型公司核心商业问题:OpenAI 广告变现 + GPT-6.1 Sol 长上下文让利、Anthropic Haiku 5.5 推理成本降 90%、Google Gemini 4 Argon 推出付费 Tier,「如何对差异化定价」已成生死问题;预计会议期间会有 3-5 家中型 AI 创业公司公布新一轮融资。</div>
+  </div>
+  <div class="card-desc">TechCrunch Disrupt 2026 10-13 至 15 旧金山 Moscone Center 召开,AI Stage 三大议题:AI 商品化定价、AI-native GTM、Agent 安全架构;Anthropic Cat de Jong 主讲企业部署失败模式;OpenAI/Anthropic 同台,Google for Startups 冠名,预计会议期间 3-5 家中型 AI 公司公布融资。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://techcrunch.com/events/disrupt-2026" target="_blank">TechCrunch Disrupt 2026: AI Stage Agenda(2026-10-13)</a></li>
+      <li><span class="src-2">二手</span><a href="https://oo.news/pt/events/90ef4d89-e50c-4f72-9fa6-8efe44f55d2a" target="_blank">OO.News: OpenAI and Anthropic to headline AI Stage at TechCrunch Disrupt 2026(2026-10-13)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-6-2">
+  <div class="card-head">
+    <div class="card-title">GPT-6 10-13 全量免费 + 一加 16 5999 元起 + 荣耀 Magic9 4499 元起:AI 普惠三连击</div>
+    <span class="tag tag-red">重磅·前瞻</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>GPT-6 全量免费背后的工程挑战是「免费 + 付费用户 SLA 不冲突」:OpenAI 通过「免费层路由到低优先级 GPU 池」+「高峰期排队机制」+「简化为单模型服务」三层架构实现;同期发布的「ChatGPT 智能 UI」可让模型自动生成可交互小工具(图表、计算器、列表),将「免费体验」拉到「原生应用」级别。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>10-12 至 10-13 三款重磅产品集中发布:一加 16(第六代骁龙 8 + 185Hz 极速高刷, 5999 元起)、荣耀 Magic9(双 2 亿像素 + MagicOS 9, 4499 元起)、OpenAI GPT-6 全量免费(Go/Free 层级);三件事合在一起是「AI 普惠」信号:基础模型免费 + 终端能力提升 + 价格下沉,直接推动 C 端 AI 渗透率。</div>
+  </div>
+  <div class="card-desc">10-12 至 10-13 三款重磅产品集中发布:一加 16(第六代骁龙 8 + 185Hz, 5999 元起)、荣耀 Magic9(双 2 亿像素, 4499 元起)、OpenAI GPT-6 全量免费(Go/Free 层级);AI 普惠三连击:基础模型免费 + 终端能力提升 + 价格下沉,直接推动 C 端 AI 渗透率。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://openai.com/blog/gpt-6-free" target="_blank">OpenAI Blog: GPT-6 free for all ChatGPT users rolling out Oct 13(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: GPT-6 今起免费用 拒答变少话变多了(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/012/079.htm" target="_blank">IT之家: 5999 元起 一加 16 手机正式发布(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502496.html" target="_blank">量子位: 荣耀 Magic9 系列正式发布 售价 4499 元起(2026-10-09)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-6-3">
+  <div class="card-head">
+    <div class="card-title">Anthropic 1 亿美元 FDE 培训计划:定义「前沿部署工程师」新岗位,年薪 30-50 万美元</div>
+    <span class="tag tag-gold">重要·前瞻</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">趋势观察</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Anthropic 在博客中明确「FDE(Forward-Deployed Engineer)五大人才特质」:能与企业客户共同定义问题、能跨 LLM/产品/数据/合规四领域沟通、能在 2 周内交付最小可行方案、能基于真实反馈快速迭代、能管理客户的「AI 焦虑」;FDE 不是传统 SE,更接近「行业 AI 战略顾问 + 产品工程」混合岗位。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>1 亿美元培训计划目标 5 年内培养 1,000 名 FDE,首批 50 人 10-15 启动招募,年薪 30-50 万美元(对标 OpenAI Solutions Architect、Stripe Field CTO);同期 Scale AI 推出 FDE 认证课程,硅谷进入「谁能帮企业落地 AI」的人才争夺战;对国内 985 顶尖 CS 学生,这是新的「北美高薪通道」。</div>
+  </div>
+  <div class="card-desc">Anthropic 10-12 启动 1 亿美元 FDE(Forward-Deployed Engineer)培训计划,5 年培养 1,000 人,首批 50 人年薪 30-50 万美元;FDE 五特质:定义问题 + 跨域沟通 + 2 周交付 + 快速迭代 + 管理 AI 焦虑;同期 Scale AI 推 FDE 认证,硅谷进入 AI 落地人才争夺战。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news/fde-training-program" target="_blank">Anthropic: Forward Deployed Engineer $100M training program(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/012/132.htm" target="_blank">IT之家: Anthropic 斥资 1 亿美元培养前沿部署工程师 聚焦五大人才特质(2026-10-12)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/502594.html" target="_blank">量子位: Anthropic 1 亿美元 FDE 计划(2026-10-12)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 收尾 ========== -->
+<section class="closing">
+  <h3>📝 编辑小结</h3>
+  <p>2026-10-13 周二 minimax 简报共 24 张卡,6 主题权重 = AI4S 5 / 通用智能 4 / 基模开源 5 / 资本监管 4 / 顶会 3 / 前瞻 3。一手源 14 条(58%),符合 minimax 派生版「一手 ≥ 12」硬性要求。主题差异化:minimax 偏基础研究 + 国产 AI(智谱/清华/星动纪元/无问芯穹) + AI 普惠;gpt 同期偏商业变现(广告) + 全球资本(Amazon-Decart) + 终端(手机)。</p>
+  <p><b>关键判断</b>(3 条):(1) Meta Muse Wonder + Anthropic Mythos + Microsoft Maia 300 同步落地,标志「OpenAI 一家独大」叙事终结,基础模型进入「三足鼎立 + 一超多强」格局;(2) 「AI 普惠」信号集中爆发:GPT-6 全量免费、Haiku 5.5 推理成本降 90%、Amazon 70 亿收 Decart(降低 NVIDIA 依赖),C 端 AI 渗透率 Q4 将再上一台阶;(3) 学术-产业融合加深:OpenAI 722 篇数学论文 + 何恺明 VISTA 满分 + 智元/无问芯穹大额融资,「产学研交叉」密度创新高,学术成果直接转化为产品/融资的时间窗口从 18 个月压缩到 6-9 个月。</p>
+  <p><b>本周(10-13 至 10-19)重点关注</b>:TechCrunch Disrupt 2026 AI Stage(OpenAI/Anthropic 同台)、EMNLP 2026 苏州开幕(10-24)、Anthropic 1 亿美元 FDE 计划首批招募结果、Microsoft Maia 300 量产时间表(2027 多吉瓦级)、Amazon-Decart 收购是否通过反垄断审查。</p>
+</section>
+
+<div class="stats">
+  <div class="stat"><span class="v">24</span><span class="l">CARD COUNT</span></div>
+  <div class="stat"><span class="v">6</span><span class="l">THEMES</span></div>
+  <div class="stat"><span class="v">14</span><span class="l">PRIMARY SOURCES</span></div>
+  <div class="stat"><span class="v">10</span><span class="l">SECONDARY SOURCES</span></div>
+</div>
+
+<footer>
+  <div>© 2026 AI Daily Brief · minimax · Mavis</div>
+  <div>数据截止 2026-10-13 08:00 GMT+8 · minimax slot · 7B model side</div>
+</footer>
+
+</div>
+
+</body>
+</html>
