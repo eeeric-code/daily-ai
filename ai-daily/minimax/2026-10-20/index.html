@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 学术与产业每日简报 · 2026年10月20日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 学术与产业每日简报:24 张卡覆盖 AI4S、通用智能、基础模型、资本、顶会、前瞻 6 大主题。">
+<title>AI 学术与产业每日简报 · 2026-10-20 (minimax)</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8e;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .exec .label.capital{background:var(--red);}
+  .exec .label.academic{background:var(--ink);}
+  .exec .label.industry{background:var(--green);}
+  .card .label.capital{background:var(--red);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.academic{background:var(--ink);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.industry{background:var(--green);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.regulatory{background:var(--purple);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.forecast{background:var(--gold);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+
+  .toc-wrap{margin-bottom:32px;}
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px;}
+  .sub-tag{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:12px;
+    background:var(--ink-soft);color:var(--ink);border:1px solid rgba(29,58,110,.18);}
+
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:linear-gradient(180deg,var(--gold-soft),#faf6ec);
+    border:1px solid var(--line);border-radius:4px;padding:12px 14px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{font-weight:700;color:var(--ink);margin-right:4px;}
+  .data-highlight{background:#fff7d4;color:#7a4a00;font-weight:700;padding:1px 4px;border-radius:2px;
+    border:1px solid rgba(184,146,74,.4);}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+
+  .card-desc{font-size:14.5px;color:#333;background:#fbfaf6;border:1px dashed var(--line);
+    padding:10px 14px;border-radius:3px;margin:8px 0 12px;line-height:1.65;}
+
+  .links{margin-top:8px;}
+  .links-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px;
+    letter-spacing:0.5px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .links li{font-size:13px;line-height:1.5;}
+  .links li a{color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(29,58,110,.2);}
+  .links li a:hover{border-bottom-color:var(--ink);color:var(--red);}
+  .src-1,.src-2{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 6px;
+    border-radius:3px;margin-right:6px;letter-spacing:0.5px;}
+  .src-1{background:#fff;color:var(--red);border:1px solid var(--red);}
+  .src-2{background:#f0f0ea;color:var(--muted);border:1px solid var(--line);}
+
+  footer.footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12.5px;text-align:center;}
+  .footer-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;
+    max-width:760px;margin-left:auto;margin-right:auto;}
+  .footer-stats div{background:var(--paper-2);border:1px solid var(--line);
+    padding:10px 8px;border-radius:4px;}
+  .footer-stats div b{display:block;font-size:20px;color:var(--ink);font-weight:700;}
+  @media(max-width:640px){.footer-stats{grid-template-columns:repeat(2,1fr);}}
+
+  /* nav-top */
+  .nav-top {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .model-pill {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--gold);
+    background: var(--ink-soft);
+    padding: 1px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .nav-date {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", monospace;
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-btn:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  @media (max-width: 640px) {
+    .nav-top { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-date { font-size: 11.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-btn { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <span class="nav-brand-text"><span class="title">AI 学术与产业每日简报 <span class="model-pill">minimax</span></span></span>
+    </div>
+    <span class="nav-date">2026-10-20</span>
+    <div class="nav-actions">
+      <a class="nav-btn" href="../../index.html">返回首页</a>
+      <a class="nav-btn" href="../../ai-daily/minimax/archive.html">minimax 往期目录</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">AI 学术与产业每日简报 <small>GLOBAL AI · DAILY BRIEF · MINIMAX SLOT</small></div>
+  <div class="meta">
+    <strong>2026-10-20</strong> · 周二<br>
+    数据截止 2026-10-20 13:00 (GMT+8)<br>
+    主题分块: 🧬 AI4S 5 · 🤖 通用智能 4 · 🏢 基模开源 5 · 💰 资本监管 4 · 🎓 顶会 3 · 🔮 前瞻 3
+  </div>
+</header>
+
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">产业落地</span>
+        <b>MiniMax M3.1 Flash 10-19 正式发布:1M Token 上下文、Agentic + Coding 优化,与 10-17 上线的 DeepSeek V4.1 Flash-1017 在「国产 Flash 双强」格局下正面交锋;M3.1 Flash 输入 ¥1/M Token / 输出 ¥4/M Token / 缓存读取 ¥0.1/M Token,Agentic 任务综合使用成本较前代降低 70%,日常输出速度 200+ TPS / P50 170+ TPS。</b>基准显示:M3.1 Flash 在 Agents' Last Exam 跑出 29.6% 通过率 + ¥739 成本(低成本-高通过率前沿区间);Automation-Bench v1.0.6 拿下 62.2 分(反超 DeepSeek V4.1 Flash-1017 的 60.5 与 Opus 5);SWE Refore Bench 23.0 分(DeepSeek 成绩两倍以上);BankerToolBench 76.2 与 Opus 5 并列第一;CyberGym 82.2 分;HLE w/o tools 43.4 分;价格约为 DeepSeek V4.1 Flash-1017 高峰期一半,与空闲时期持平;采用更激进的稀疏注意力架构。
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">学术成果</span>
+        <b>Princeton 杨颖 (Ling Yang) 团队 arXiv:2610.23839 提出 DiscoveryRSI:多 agent 进化搜索 + 递归式自我改进构建「假设树」,27B 模型匹配训练截止后发表研究 6.3%,领先 GPT-6 与 Claude Opus 5。</b>核心机制:在「任务层递归」(单一任务内 Propose / Probe / Compose 候选方案并验证行为有效性,不需 ground-truth)与「Harnessing 层递归」(Reflector 累积经验库指导未来任务)两层递归之间构建可检验的科学假设生成器;同一思路已应用于四个生命科学领域产出配套论文;UC Berkeley / Stanford / Bespoke Labs 同步发表「Scaling Discovery Requires Forgetting」指出「遗忘」让 agent 在自动化发现上最多提升 39%(长历史锚定会拖累后续编辑);Google 同步发表 Harness²(arXiv 配套),不用修改模型权重即可让 AI 代理自我演进,在 WorkBuddy-Bench 提升最多 11.5 分。
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label cap">产业落地</span>
+        <b>Meta 工程博客 10-19 披露 Prometheus 超算第一阶段完工:俄亥俄 New Albany 吉瓦级集群当前连接「数十万枚 GPU」、目标扩展到 ~100 万枚,用于训练 Muse 基础模型(含 10-12 发布的 Muse Wonder 系列)。</b>Catalina(Cleaned GB200 NVL72,两机架)与 Clemente(GB300 NVL72,288GB HBM3e / GPU,1+ EFLOP FP4 / 机架,~135 kW)双平台在产,基于 Vera Rubin NVL72 的 San Miguel 平台「即将部署」(单机架 2.52 EFLOPS FP4 / 170+ kW / 全液冷);报告称 pre-training goodput >85%、RL goodput >90%,wall-clock MTBI 从 ~47k GPU-hours 提至 54k+ GPU-hours(固件修复后),中断率一年内下降 99%;同步披露 Hyperion 路易斯安那 Richland Parish 集群由 Prometheus 经验构建,与 Entergy 签电网接入。
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label sci">学术成果</span>
+        <b>Tenstorrent(Jim Keller)10-19 官宣完成 $1.5B Series E,投后估值 $6.2B(较 2024 年 12 月 Series D 后 $2.6B 翻 2.39 倍),由 Trace Capital 与 Innovation X 领投,ARK Invest / Fidelity / Morgan Stanley / Tether / Sandisk / T. Rowe Price 等 15+ 跟投。</b>资金用途:Galaxy 服务器规模化量产 + 商业化扩张(芯片设计方、主权 AI 玩家、推理平台「自有 AI 算力」三向需求),继续服务开源权重模型(LLM + 视频生成),推进 AI + CPU IP 授权(客户自研芯片);Jim Keller 此前在 Tesla / Apple / AMD 主导 Zen 架构;「从 2024 年 $700M D 轮 / $2.6B 估值 → 2026 年 $1.5B E 轮 / $6.2B 估值」两年估值翻 2.39 倍,在 NVIDIA 主导航片 + AMD MI / Intel Gaudi 之外开辟「RISC-V + 自研 AI」第三条路线。
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="toc-wrap">
+  <h2 class="toc-title">📑 今日 6 主题 · 24 张卡</h2>
+  <p class="toc-sub">点击卡片标题跳转到对应主题块</p>
+  <div class="toc">
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">1</span>
+        <span class="icon">🧬</span>
+        <span class="t">AI for Science</span>
+      </div>
+      <ul>
+        <li><a href="#c-1-1">DiscoveryRSI:Princeton 杨颖 27B 模型匹配训练截止后研究 6.3%</a></li>
+        <li><a href="#c-1-2">Atomwell 800M-9B 实验结果预测基础模型,80M 测量 clean scaling</a></li>
+        <li><a href="#c-1-3">华中师大 CoReFuse-Med:先净化再融合,ACM MM 2026</a></li>
+        <li><a href="#c-1-4">礼来 11 亿美元收购香港 Metis TechBio:AI-LNP 出海大单</a></li>
+        <li><a href="#c-1-5">ProteinGeoBench:前沿蛋白结构 AI 模型「几何盲」评测</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">2</span>
+        <span class="icon">🤖</span>
+        <span class="t">通用智能与机器人</span>
+      </div>
+      <ul>
+        <li><a href="#c-2-1">Dream Labs Dream API:全球首个机器人大脑 API + $9000 万种子</a></li>
+        <li><a href="#c-2-2">MemT 1.0 记忆张量:500+ 轮 6.6 万 token 闭卷测试</a></li>
+        <li><a href="#c-2-3">HIL-UMI:北大董豪让具身后训练摆脱「真机依赖」</a></li>
+        <li><a href="#c-2-4">PhysWord:推理-动作基础模型,LIBERO-Long 99.6%</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">3</span>
+        <span class="icon">🏢</span>
+        <span class="t">基模与开源基础设施</span>
+      </div>
+      <ul>
+        <li><a href="#c-3-1">MiniMax M3.1 Flash:1M 上下文 + 200+ TPS + 价格砍到 1/2</a></li>
+        <li><a href="#c-3-2">Tenstorrent $1.5B E 轮 $6.2B 估值:Jim Keller 自有 AI 算力</a></li>
+        <li><a href="#c-3-3">VAST EdenLive 实时世界模型:单消费级显卡 720P 超 24FPS</a></li>
+        <li><a href="#c-3-4">Meshy Edit:圈选+一句话约一分钟 3D 模型局部编辑</a></li>
+        <li><a href="#c-3-5">中电信 Xing4.0-29B-Intent:意图理解「选择+填空」开源</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">4</span>
+        <span class="icon">💰</span>
+        <span class="t">资本 & 监管</span>
+      </div>
+      <ul>
+        <li><a href="#c-4-1">Meta Prometheus 1M GPU 超算 phase 1 完工:Muse 训练底座</a></li>
+        <li><a href="#c-4-2">Waymo $5B 无追索权债务:8K→20K Robotaxi 计划</a></li>
+        <li><a href="#c-4-3">QuestMobile 2026 Q3 AI App 5.46 亿用户:豆包 4.19 亿</a></li>
+        <li><a href="#c-4-4">Cohere 收购加拿大 AI 资安新创 AISLE:Cohere Cyber 部门</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">5</span>
+        <span class="icon">🎓</span>
+        <span class="t">顶会 & 学术生态</span>
+      </div>
+      <ul>
+        <li><a href="#c-5-1">Microsoft Ignite + GitHub Universe + SC26 三大产业大会同档</a></li>
+        <li><a href="#c-5-2">Frontiers AIS26 Dublin:€1.6M AI in Science Enablers pledge</a></li>
+        <li><a href="#c-5-3">Microsoft + Nvidia 开源权重 AI 模型风险管理指引:5 类 30 种</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">6</span>
+        <span class="icon">🔮</span>
+        <span class="t">本周前瞻</span>
+      </div>
+      <ul>
+        <li><a href="#c-6-1">Google Harness² 开源:不改权重让 AI 代理自我演进</a></li>
+        <li><a href="#c-6-2">NVIDIA + Jülich JUPITER 104-qubit 容错量子模拟</a></li>
+        <li><a href="#c-6-3">Anthropic Frontier Safety Roadmap Updates:World-class 红队完成</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 主题 1 · AI for Science ========== -->
+<div class="theme" id="theme-1">
+  <h2>🧬 主题 1 · AI for Science</h2>
+  <span class="scope">覆盖:科学假设生成 · 实验预测 · 多模态医学 · 蛋白结构评测 · 制药出海 <b>· 5 张</b></span>
+</div>
+
+<div class="card" id="c-1-1">
+  <div class="card-head">
+    <div class="card-title">DiscoveryRSI:Princeton 杨颖团队 arXiv:2610.23839,27B 模型匹配训练截止后研究 6.3%,领先 GPT-6 + Claude Opus 5</div>
+    <span class="tag tag-red">重磅·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Princeton 杨颖(Ling Yang)团队 arXiv:2610.23839 提出 DiscoveryRSI:多 agent 进化搜索 + 递归式自我改进构建「假设树」(hypothesis trees);两层递归——任务层(Propose / Probe / Compose 候选方案、行为有效性验证、不需 ground-truth)+ Harnessing 层(Reflector 累积经验库指导未来任务);27B 模型在训练截止后发表的研究上匹配率 <span class="data-highlight">6.3%</span>,领先 GPT-6 与 Claude Opus 5;同一思路已应用于四个生命科学领域产出配套论文。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>同一日 UC Berkeley / Stanford / Bespoke Labs 论文「Scaling Discovery Requires Forgetting」指出长历史锚定会拖累后续编辑,「让 agent 遗忘」最多可提升自动化发现 <span class="data-highlight">39%</span>;Google 同步开源 Harness²,WorkBuddy-Bench +11.5 分,与 DiscoveryRSI 形成「科学发现 + Agent 自我演进」双向同步推进;意味着 AI 在「提出可验证科学假设」这一过去被认为「需人类 judgment」的环节上首次具备规模化能力。</div>
+  </div>
+  <div class="card-desc">Princeton 杨颖团队 arXiv:2610.23839 提出 DiscoveryRSI:多 agent 进化搜索 + 递归式自我改进构建「假设树」,27B 模型在训练截止后研究匹配率 6.3%,领先 GPT-6 + Claude Opus 5;UC Berkeley / Stanford / Bespoke Labs 同步论文指出「让 agent 遗忘」在自动化发现上最多提升 39%;Google 同步开源 Harness²,WorkBuddy-Bench +11.5 分。AI 在「提出可验证科学假设」这一过去被认为「需人类 judgment」环节上首次具备规模化能力。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.23839" target="_blank" rel="noopener">arXiv: 2610.23839 DiscoveryRSI:Ling Yang 团队假设树 + 多 agent 进化搜索(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://juanli.me/ai4science/en/daily/" target="_blank" rel="noopener">AI for Science Daily (Juan Li): 27B 模型 6.3% 匹配训练截止后研究,DiscoveryRSI 实证</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com.tw/news/179802" target="_blank" rel="noopener">iThome: Google 開源 Harness 2,不改模型權重 AI 代理人可自我演進提升(2026-10-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-2">
+  <div class="card-head">
+    <div class="card-title">Atomwell 实验结果预测基础模型:800M-9B 参数 / 80M 测量,clean scaling,端到端延迟毫秒级</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Atomwell 是预测「实验结果」的实验科学 foundation model,从 <span class="data-highlight">800M 到 9B</span> 参数,在约 <span class="data-highlight">8000 万</span> 次实验测量上训练;论文核心论断:在「预测实验结果」这一「数据稀缺 + 噪声大 + 跨领域」的任务上,基础模型范式依然成立——参数量与数据量同时规模化时性能 clean scaling,未见饱和迹象;与传统物理/化学 ML 模型(需为每个实验类型单独设计特征)不同,Atomwell 用统一架构覆盖多个实验模态,推断端到端延迟毫秒级,适合「在线」湿实验反馈回路。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Atomwell 接入 Google「湿实验闭环」后:agent 设计分子 → 机器人执行实验 → agent 读取结果 → 再设计;VERID 项目用数字孪生连接 agent 指令与真实设备状态,一次闭环跑通产出可结合癌细胞的分子,「AI 提出假设 + 自动化湿实验验证」首次形成可重复工程闭环;降低生物/材料实验室对博士级 research scientist 的依赖,在药物筛选 / 材料发现 / 化学合成优化场景直接降低研发成本;80M 实验规模意味着已具备一定迁移能力(非单实验室单任务的过拟合),对 CRO(合同研究组织)与自动化实验室厂商具采购吸引力。</div>
+  </div>
+  <div class="card-desc">Atomwell 实验结果预测基础模型,800M 到 9B 参数,在 8000 万次实验测量上训练,clean scaling(未见饱和迹象);统一架构覆盖多实验模态,毫秒级延迟,适合「在线」湿实验反馈回路;接入 Google「湿实验闭环」(VERID + agent 设计分子 + 机器人执行),首次形成「AI 提出假设 + 自动化湿实验验证」可重复工程闭环;降低生物 / 材料实验室对博士级 research scientist 依赖,在药物筛选 / 材料发现场景直接降低研发成本。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://juanli.me/ai4science/en/daily/" target="_blank" rel="noopener">AI for Science Daily (Juan Li): Atomwell 800M-9B / 80M measurements / clean scaling</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.nature.com/subjects/technoscience" target="_blank" rel="noopener">Nature Technoscience: AI for Science 专题(2026-10)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-3">
+  <div class="card-head">
+    <div class="card-title">华中师大 CoReFuse-Med:多模态医学图像「先净化再融合」,T1/T2/FLAIR 质量差 3.4 倍,ACM MM 2026</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>华中师大裴雨辰 / 华中科大 / 广州中医药大学 / 北卡教堂山分校联合论文 CoReFuse-Med(arXiv:2609.10261,ACM MM 2026 接收)挑战「多模态融合 = 越多越好」假设;在 IHEPVS 数据集中,高分辨率 T1 单模态 DSC = 0.703,融合 T1+T2+FLAIR 后反而降至 0.695——「空间对齐 ≠ 信息质量对齐」;问题分解为浅层污染(低分辨率序列经重采样带入不可靠信息)与深层模态偏置(T1 占 77.4% 梯度 / FLAIR 13.1%,但遮挡 FLAIR 使 DSC 降 70.2%,与遮挡 T1 影响一样大);用 F-CNR(特征对比噪声比)量化,T1 = 1.0283 / T2 = 0.4301 / FLAIR = 0.2980(差 <span class="data-highlight">3.4 倍</span>)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>CoReFuse 框架从「浅层污染」与「深层模态偏置」两个角度对症下药,先评估每个模态的可信度再加权融合,而不是无差别 concat;对医院 PACS 系统的实际意义:低端 MRI 序列(经济型医院、社区医院)与高端 MRI 序列联合使用时,「多模态融合」不再因低质量模态拉低整体精度;对 AI 医疗器械三类证路径友好——可解释的「模态贡献归因」是 FDA / NMPA 审批常见要求;推动 AI 辅助诊断从「图像分类」向「图像质量感知分类」演进。</div>
+  </div>
+  <div class="card-desc">华中师大 CoReFuse-Med(arXiv:2609.10261, ACM MM 2026 接收)挑战「多模态融合 = 越多越好」假设:高分辨率 T1 单模态 DSC = 0.703,融合 T1+T2+FLAIR 后反降至 0.695;F-CNR 度量显示 T1/T2/FLAIR 质量差 3.4 倍;T1 占 77.4% 梯度但遮挡 FLAIR 使 DSC 降 70.2%;CoReFuse 框架先评估每个模态可信度再加权融合,推动 AI 辅助诊断从「图像分类」向「图像质量感知分类」演进。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2609.10261" target="_blank" rel="noopener">arXiv: 2609.10261 When Fusion Fails: Corruption-Aware Rebalanced Fusion(华中师大, ACM MM 2026)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.leiphone.com/category/private/QgMWStz8hCPsFf68.html" target="_blank" rel="noopener">雷峰网: 华中师大 CoReFuse-Med:先净化再融合,让低质模态不再拖后腿(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://github.com/lrever/CoReFuse" target="_blank" rel="noopener">GitHub: lrever/CoReFuse 代码仓库(2026-10)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-4">
+  <div class="card-head">
+    <div class="card-title">礼来 11 亿美元收购香港 Metis TechBio:中国首单生成式 AI-LNP 平台出海,瞄准 mRNA 递送瓶颈</div>
+    <span class="tag tag-red">重磅·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Metis TechBio(香港)自研生成式 AI-LNP(脂质纳米颗粒)平台,核心定位:用 AI 设计「mRNA / siRNA / 基因编辑」等核酸药物的「递送外壳」——传统 LNP 设计是「试错化学」(每改一个头部基团做一周湿实验),生成式 AI 把筛选周期压缩到「设计-模拟-合成-验证」闭环,核心指标:肝外组织递送效率、组织特异性、生物可降解性;礼来(Eli Lilly)10-20 官宣 11 亿美元收购,瞄准其「肝外递送」技术补强 siRNA / CRISPR / mRNA 疗法管线。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这是「中国生成式 AI 制药平台」首次以 10 亿美元规模被跨国大药企收购;标志中国 AI 制药从「license-out 单管线 / 早期合作」升级到「平台级收购」,礼来「扫货逻辑」从「买管线」转向「买平台」;礼来同周动态:与香港科技园合作扩展 AI 纳米颗粒实验室、对外投资 Avidity Biosciences 罕见病 RNA 平台等;对小核酸 / 基因疗法赛道意义:肝外递送是「CAR-T 之外下一个十年」的瓶颈,Metis 的解决方案若可复制,将决定 mRNA 疫苗后下一个核酸药物浪潮的格局;同步利好国内 CRO(药明康德 / 凯莱英)的 AI 制药订单。</div>
+  </div>
+  <div class="card-desc">礼来(Eli Lilly)10-20 官宣 11 亿美元收购香港 Metis TechBio,瞄准其生成式 AI-LNP 平台(用 AI 设计 mRNA / siRNA / 基因编辑等核酸药物的「递送外壳」);这是中国生成式 AI 制药平台首次以 10 亿美元规模被跨国大药企收购,标志中国 AI 制药从「license-out 单管线」升级到「平台级收购」;礼来「扫货逻辑」从「买管线」转向「买平台」,肝外递送是「CAR-T 之外下一个十年」的瓶颈。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4033587477844870" target="_blank" rel="noopener">36 氪: 11 亿美元,中国首单生成式 AI-LNP 平台出海大单落地,礼来的扫货逻辑变了(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://technode.global/2026/10/20/metis-techbio-lilly-ai-drug-delivery/" target="_blank" rel="noopener">TechNode Global: Metis TechBio × Lilly AI drug delivery $1.1B(2026-10-20, 403 兜底)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-1-5">
+  <div class="card-head">
+    <div class="card-title">ProteinGeoBench:131 蛋白结构任务评测,前沿 AI 模型「元数据检索熟 / 几何计算弱」,提出按任务族报告分数</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>arXiv:2610.26829 提出 ProteinGeoBench:131 个蛋白结构任务的评测套件,共 <span class="data-highlight">4,249</span> 次 rollout(4 个前沿模型)+ 4,486 次额外试验(26 个模型);关键发现——4 个前沿模型中 3 个分数差异 ≤ 0.031(0.785 到 0.816 之间无法分辨),第 4 个 0.707 且差距排除噪声;3/4 模型在「元数据查找」上优于「数值计算」,而数值任务仅 28 个 / 131,却占 12 个「全部 4 模型失败任务」的一半;同一评测在单次 rollout 设定下,23.9% bootstrap replicate 会让不同模型排第一。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>论文核心方法论主张:生物医药 AI 评测应「按任务族报告分数」,同时报告「rollout 次数 / harness 框架 / 访问条件」三个隐藏变量——避免「单数字排行」误导选型;在 26 模型子集上,数值性能随非数值性能一起上升(而非平台化),说明「整体能力」与「几何能力」并非可分离优化;对 AlphaFold 系 / ESMFold 系 / 国产蛋白结构 AI(百度 Paddle Helix / 阿里 ESM-Portrait 等)的下一轮研发方向:从「提升总体分数」转向「针对几何计算类任务的专项强化」。</div>
+  </div>
+  <div class="card-desc">arXiv:2610.26829 提出 ProteinGeoBench:131 个蛋白结构任务,4 个前沿模型 3 个分数差异 ≤ 0.031 无法分辨,数值任务仅 28 个却占「全部失败」一半;23.9% bootstrap replicate 会让不同模型排第一;论文核心主张:生物医药 AI 评测应按任务族报告分数,避免「单数字排行」误导选型;对蛋白结构 AI 下一轮研发方向:从「提升总体分数」转向「针对几何计算类任务的专项强化」。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.26829" target="_blank" rel="noopener">arXiv: 2610.26829 ProteinGeoBench:Frontier Structural-Biology Agents Are Fluent at Lookup but Lost in Geometry(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://arxiv.org/list/cs.AI/recent" target="_blank" rel="noopener">arXiv cs.AI recent: ProteinGeoBench 在「structural-biology agents」分类条目(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 2 · 通用智能与机器人 ========== -->
+<div class="theme" id="theme-2">
+  <h2>🤖 主题 2 · 通用智能与机器人</h2>
+  <span class="scope">覆盖:机器人大脑 API · 记忆原生大模型 · 具身后训练 · 推理-动作基础模型 <b>· 4 张</b></span>
+</div>
+
+<div class="card" id="c-2-1">
+  <div class="card-head">
+    <div class="card-title">Dream Labs Dream API:英伟达 DreamZero 团队创业,全球首个机器人大脑 API 开放,$9000 万种子</div>
+    <span class="tag tag-red">重磅·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Dream API 背后模型 Dream-1 基于「世界动作模型 WAM」(World Action Models)路线——英伟达 DreamZero 团队 2026 年 2 月提出,核心思想:把机器人控制视为「语言模型问题」(输入自然语言 + 当前状态,输出「动作 token」序列),用 transformer 统一「跨硬件」控制信号,做到「训练中未见的机器人本体也能零样本适配」;Dream Labs 用此架构训出 Dream-1,实时闭环地生成电机控制指令,定价 <span class="data-highlight">$3/小时</span>。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Dream Labs(创立于 2026)由前英伟达 DreamZero 团队成立,本轮 $9,000 万种子轮由 B Capital 领投,Kindred Ventures / A.Capital / Unusual Ventures / SV Angel / Wing VC / Scribble VC / Adrian Aoun 等跟投;Dream API 已有 20+ 家硬件厂商接入合作;全球工厂运行着 ~500 万台工业机器人但「学到的迁移不到另一台」,Dream API 把「通用大脑」做成 API + 部署在多个数据中心,目标:「让硬件便宜 + 零样本泛化模型」启动具身数据飞轮;对比 Tesla Optimus + Figure AI + Physical Intelligence(PI)走「自营机器人 + 自研模型」,Dream Labs 选择「API 经济 + 模型层独立」路径。</div>
+  </div>
+  <div class="card-desc">Dream Labs(英伟达 DreamZero 团队)10-20 上线 Dream API:全球首个机器人大脑 API,基于「世界动作模型 WAM」路线的 Dream-1,实时闭环电机控制,定价 $3/小时,$9,000 万种子轮(B Capital 领投,Adrian Aoun 等跟投),已有 20+ 硬件厂商接入;对比 Tesla Optimus / Figure AI / PI「自营机器人 + 自研模型」,Dream Labs 选「模型层独立 + API 经济」路径,目标启动具身数据飞轮。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4033427959534470" target="_blank" rel="noopener">36 氪 / 机器之心: 全球首个机器人大脑 API 开放,英伟达 DreamZero 团队创业,葛云皓任 CTO(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://dreamlabs.ai" target="_blank" rel="noopener">Dream Labs 官网:dreamlabs.ai(Dream API 试用入口)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-2">
+  <div class="card-head">
+    <div class="card-title">MemT 1.0 记忆张量开源:记忆原生大模型,500+ 轮 6.6 万 token 闭卷测试,MemTensor 押注「记忆内化」</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>MemT 1.0 走「记忆原生」(Memory-Native)路线,核心区别于外挂 RAG:把记忆从外挂模块内化到模型底层架构,模型通过训练自己学会「读写 / 更新 / 调用」记忆,经验积累本身成为模型能力的一部分;架构上分两块——主干网络(通用认知出厂设置)+ 动态记忆状态(独立记忆 / 用户间隔离 / token 级更新);每轮对话结束直接刷新记忆状态,无需重训整个模型;门控机制「留哪些改哪些」由模型在训练中学出。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>硬核测试案例:用户先告知展览原定时间,后续敲定周日改期 + 顺嘴提未采纳的周一备选;东拉西扯 500+ 轮 6.6 万 token,期间再未提展览——传统外挂检索易把闲聊当定论,但 MemT 1.0 在「闭卷」(完全脱离原始文本)状态下准确报出原定与改期时间,清晰区分周日定论与周一备选;直接对标 Meta Muse / OpenAI Dots / xAI Grok Bot 「私人助理」赛道,「主流外挂检索最多算翻查静态备忘录」;已在 GitHub + HuggingFace 开源,与「养成系 AI」产品(虚拟陪伴 / 长期助理)契合度高,直接降低「每周重置上下文」带来的体验割裂。</div>
+  </div>
+  <div class="card-desc">MemT 1.0(记忆张量)开源,「记忆原生」路线:把记忆内化到模型底层,token 级更新机制刷新记忆状态,无需重训整个模型;500+ 轮 6.6 万 token 闭卷测试准确区分原定 / 改期 / 备选;直接对标 Meta Muse / OpenAI Dots / xAI Grok Bot「私人助理」赛道,在 GitHub + HuggingFace 开源;降低「养成系 AI」「每周重置上下文」的体验割裂,适合虚拟陪伴 / 长期助理场景。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://github.com/MemTensor/MemT-1.0" target="_blank" rel="noopener">GitHub: MemTensor/MemT-1.0 代码仓库(记忆原生大模型)</a></li>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/collections/MemTensor/memt-1" target="_blank" rel="noopener">HuggingFace: MemTensor/memt-1 权重集合(2026-10)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4033688545760388" target="_blank" rel="noopener">36 氪 / 爱范儿: 押注记忆原生,MemT 1.0 破局养成系 AI 下半场(2026-10-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-3">
+  <div class="card-head">
+    <div class="card-title">HIL-UMI:北大董豪 + 启元机器人,Human-In-the-Loop UMI 让具身后训练摆脱「真机依赖」</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>arXiv:2609.20659 北大董豪团队 + 启元机器人提出 HIL-UMI:Human-In-the-Loop UMI,与传统 UMI(手持夹爪盲采数据)的关键区别——加了一个「模型大脑」做实时引导:人采集数据时,模型判断「这个动作未来能不能跑通」「现在该不该采集」「哪里会是失败高风险区」,让人专注高价值样本;核心突破在「纠错环节无本体」——过去 HG-DAgger(人在回路)需要真机运行 + 紧急接管 + 人工复位,后训练成本是大模型 RLHF 的百倍以上,HIL-UMI 把这套压缩到「日常手动 + 模型引导」模式。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>具身行业「预训练 + 后训练」范式共识是「预训练下限、后训练上限」,后训练成败决定能否进厂打工 / 家庭保洁;当前具身公司后训练数据规模是老大难(机械臂运转 + 人工干预 + 环境复位循环,一坐一下午能用数据不多);HIL-UMI 项目主页 hil-umi.github.io 已公开;启元机器人首席科学家董豪「继无本体之后,具身后训练范式有了新进展」,意味着具身 AI 从「重资本重人力」向「轻量化可持续数据飞轮」演进;对国内人形机器人公司(宇树 / 智元 / 银河通用 / 傅利叶)「训练数据成本曲线」是关键节点。</div>
+  </div>
+  <div class="card-desc">北大董豪团队 + 启元机器人 arXiv:2609.20659 HIL-UMI:Human-In-the-Loop UMI 让具身后训练摆脱真机依赖;核心突破在「纠错环节无本体」——过去 HG-DAgger 需真机运行 + 紧急接管 + 人工复位,后训练成本是大模型 RLHF 的百倍以上;HIL-UMI 引入「模型大脑」实时引导,让人类专注高价值样本;启元机器人首席科学家董豪:具身后训练范式有了新进展,意味着具身 AI 从「重资本重人力」向「轻量化可持续数据飞轮」演进。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/pdf/2609.20659" target="_blank" rel="noopener">arXiv: 2609.20659 HIL-UMI:Human-In-the-Loop UMI 让具身后训练摆脱真机依赖(北大董豪,启元机器人)</a></li>
+      <li><span class="src-1">一手</span><a href="https://hil-umi.github.io" target="_blank" rel="noopener">项目主页: hil-umi.github.io(HIL-UMI 演示视频与论文链接)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.leiphone.com/category/ai/XgCxObsqu8pc44px.html" target="_blank" rel="noopener">雷峰网 / AI 科技评论: 启元机器人新进展,北大董豪团队推出 HIL-UMI(2026-10-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-2-4">
+  <div class="card-head">
+    <div class="card-title">PhysWord arXiv:2610.26854:「推理-动作」基础模型,以原子动作动词为语义锚,LIBERO-Long 99.6% / UniVTAC 90.3%</div>
+    <span class="tag tag-gold">重要·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>arXiv:2610.26854 提出 PhysWord(Physical Words):「推理-动作」(reasoning-before-acting)基础模型,用「原子动作动词」(atomic action verbs,如「抓」「按」「旋转」)作为「语义锚点」,把连续物理动态嵌入共享语义空间;具体机制——预测下一动作词,把对应隐藏状态与未来观测的 latent target 直接对齐;构建时间结构化 PhysWord 空间(每动作词有视觉 + 可选触觉变体),跨未来时间步自回归预测物理词 → 抓取执行阶段转换 → 提供结构化多模态上下文给动作生成。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>SOTA 成绩:UniVTAC(视觉+触觉)成功率 <span class="data-highlight">90.3%</span>,LIBERO-Long(纯视觉)<span class="data-highlight">99.6%</span>;在双臂夹爪 / 灵巧手真实任务上均优于现有方法;能泛化到训练中未见场景 + 支持长程操作;对 Dream Labs「WAM 世界动作模型」、π0 / π0.5 / OpenVLA 等「VLA 路线」是直接竞争对手;「原子动作动词」设计是语言模型范式对物理世界的反向迁移——过去是「物理 → 语言」(机器人日志转自然语言),现在是「语言 → 物理」(用语义锚点直接对齐动作);与近期 NVIDIA DreamZero / Google RT-2 / Physical Intelligence π0 系列同台,标志「VLA」赛道从「端到端黑盒」向「结构化推理」分化。</div>
+  </div>
+  <div class="card-desc">arXiv:2610.26854 PhysWord「推理-动作」基础模型,用原子动作动词作语义锚点对齐物理动态;UniVTAC 90.3% / LIBERO-Long 99.6% SOTA;能泛化到未见场景 + 长程操作;对 Dream Labs WAM / π0 / OpenVLA 等 VLA 路线是直接竞争对手;「语言 → 物理」反向迁移让 VLA 从「端到端黑盒」向「结构化推理」分化。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.26854" target="_blank" rel="noopener">arXiv: 2610.26854 Physical Words:A Vocabulary for Structuring Latent Reasoning in Robot Manipulation(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://arxiv.org/list/cs.RO/recent" target="_blank" rel="noopener">arXiv cs.RO recent: Physical Words 在 robot manipulation 分类(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 3 · 基模与开源基础设施 ========== -->
+<div class="theme" id="theme-3">
+  <h2>🏢 主题 3 · 基模与开源基础设施</h2>
+  <span class="scope">覆盖:Flash 段位双强 · AI 算力 RISC-V 路线 · 实时世界模型 · 3D 模型编辑 · 意图理解模型 <b>· 5 张</b></span>
+</div>
+
+<div class="card" id="c-3-1">
+  <div class="card-head">
+    <div class="card-title">MiniMax M3.1 Flash 10-19 发布:1M 上下文 + 200+ TPS + 价格砍到 1/2,国产 Flash 段位「双强并立」</div>
+    <span class="tag tag-red">重磅·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>MiniMax M3.1 Flash 定位 Coding / Agent 优化轻量级模型,1M Token 上下文,采用更激进的稀疏注意力架构;基准——Agents' Last Exam(智能体长程多步骤任务)<span class="data-highlight">29.6%</span> 通过率 + ¥739 成本,处「低成本-高通过率」前沿区间;Automation-Bench v1.0.6 <span class="data-highlight">62.2 分</span>(反超 DeepSeek V4.1 Flash-1017 的 60.5 与 Opus 5);DeepSWE v1.1 73.7 分(距 Opus 5 仅差 0.3);SWE Refore Bench 23.0 分(DeepSeek 成绩两倍以上);BankerToolBench 76.2 与 Opus 5 并列第一;CyberGym 82.2 分与 GLM-5.3 同处第一梯队;HLE w/o tools 43.4 分略高于 DeepSeek V4.1 Flash-1017。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>价格:M3.1 Flash 输入 <span class="data-highlight">¥1/M Token</span> + 输出 <span class="data-highlight">¥4/M Token</span> + 缓存读取 ¥0.1/M Token;Agentic 类任务综合使用成本较前代降低 70%;约为 DeepSeek V4.1 Flash-1017 高峰期价格一半,与空闲时期价格持平;日常输出速度 <span class="data-highlight">200+ TPS</span>(P50 稳定 170+ TPS);M3.1 Flash 与 10-17 上线的 DeepSeek V4.1 Flash-1017「相隔 48 小时」「Flash 段位首次国产双强」;匿名期 Space Bunny 在 OpenCode 调用量稳居第二 + OpenRouter 一度第一,正式版承载社区期待;DeepSeek V4.1 Flash 采用稀疏 MoE(总 552B / 输入激活 8B / 输出激活 16B),两者形成「一快一省」差异化对比,开发者按任务调度。</div>
+  </div>
+  <div class="card-desc">MiniMax M3.1 Flash 10-19 发布:1M Token 上下文,Coding/Agent 优化;基准在 Agents' Last Exam 29.6% + Automation-Bench 62.2(反超 DeepSeek V4.1 Flash-1017 的 60.5 + Opus 5);价格输入 ¥1/M + 输出 ¥4/M + 缓存 ¥0.1/M,Agentic 任务成本较前代降 70%,约为 DeepSeek V4.1 Flash-1017 高峰期一半;输出 200+ TPS / P50 170+ TPS;与 10-17 上线 DeepSeek V4.1 Flash-1017 隔 48 小时,国产 Flash 段位首次「双强并立」。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4032947936662665" target="_blank" rel="noopener">36 氪 / 智东西: 正面硬刚 DeepSeek,MiniMax M3.1 Flash 发布,输出卷到 200+ TPS,价格砍到 1/2(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://zhidx.com/p/602354.html" target="_blank" rel="noopener">智东西 10-19 原文: 正面硬刚 DeepSeek!MiniMax M3.1 Flash 发布,输出卷到 200+TPS,价格砍到 1/2</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M1J72O051181RS.html" target="_blank" rel="noopener">网易 / 每日经济新闻: MiniMax "杀"回来了!M3.1 Flash 继 DeepSeek 后登场,国产 Flash"双子星" 72 小时竞速(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://openrouter.ai/rankings" target="_blank" rel="noopener">OpenRouter rankings: Space Bunny(匿名期)累计处理超 200 万亿 Token,调用量榜一度第一(2026-10)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-2">
+  <div class="card-head">
+    <div class="card-title">Tenstorrent $1.5B E 轮 $6.2B 估值:Jim Keller 路线,「RISC-V + 自研 AI」开辟第三算力阵营</div>
+    <span class="tag tag-red">重磅·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Tenstorrent 的差异化路线:RISC-V 开放指令集 + 自研 AI 加速 IP + 开源软件栈(对比 NVIDIA CUDA 封闭生态);Jim Keller(Zen 架构首席架构师 / 特斯拉 FSD 芯片 / Apple A 系列)主导架构;产品全栈——单卡 / 工作站 / 机架 / 超级集群 / 自定义 IP 授权;客户既「买算力」(Galaxy 服务器)又「买 IP 自己造芯片」;服务开源权重模型覆盖 LLM + 视频生成,意味着「不绑定单一模型路线」。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Series E 关键参数——<span class="data-highlight">$1.5B / $6.2B post-money</span>,由 Trace Capital + Innovation X 领投,Agostinelli Group / ARK Invest / Brett Barna / Cadence Ventures / Eclipse / Fidelity / Maverick Silicon / Morgan Stanley / Protagonist / Sandisk / T. Rowe Price / Tether Investments / Troluce Capital / Virtu Financial / XTX Markets 15+ 跟投;较 2024 年 12 月 D 轮 $700M / $2.6B 估值「两年翻 2.39 倍」;资金用途:Galaxy 服务器量产 + 全球商业扩张(芯片设计方、主权 AI 玩家、推理平台「自有 AI 算力」三向需求);Tenstorrent 与 Cerebras / Groq / Sambanova 在「NVIDIA 主导 + AMD MI / Intel Gaudi 之外」开辟第三条「RISC-V + 开源」路径。</div>
+  </div>
+  <div class="card-desc">Tenstorrent(Jim Keller)10-19 官宣 Series E $1.5B / $6.2B post-money,Trace Capital + Innovation X 领投,15+ 跟投含 ARK Invest / Fidelity / Morgan Stanley / Tether / Sandisk / T. Rowe Price;较 2024 年 12 月 D 轮 $700M / $2.6B「两年翻 2.39 倍」;资金用于 Galaxy 服务器量产 + 全球扩张 + AI/CPU IP 授权;RISC-V + 自研 AI + 开源软件栈开辟「NVIDIA 主导 + AMD MI / Intel Gaudi 之外」第三条路线。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://tenstorrent.com/newsroom/tenstorrent-announces-series-e" target="_blank" rel="noopener">Tenstorrent 官宣:Tenstorrent Announces a $1.5B Series E at a $6.2B valuation(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://aiweekly.co/ai-news-today" target="_blank" rel="noopener">AI Weekly 10-20: Tenstorrent 估值较 2024 年 12 月 D 轮翻倍,Jim Keller 路线进展</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-3">
+  <div class="card-head">
+    <div class="card-title">VAST 开源 EdenLive 实时世界模型:单消费级显卡 RTX 5090 720P 超 24FPS,百毫秒级端到端延迟</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>VAST 10-18 开源 EdenLive:实时生成前提下,「任意参考输入 + 任意画风生成 + 长时连续运行」三件套同时成立;模型架构——5B 参数,简化场景 / 参考视频 + 目标首帧 + 提示词沿参考布局与运动持续生成;在单张消费级显卡 RTX 5090 / 720P 条件下,<span class="data-highlight">5B 模型 24FPS+</span>,持续分钟级;端到端延迟百毫秒级(从用户输入操作到对应画面出现);分工:交互系统维护底层状态与运行规则,生成模型负责视觉渲染。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>EdenLive 是 VAST 6 月 Project Eden 研究预览的「状态维护与视觉渲染解耦」路线的阶段性成果——这一选择早于行业共识形成约 3-4 个月;对比 GPT-6 Astra「在 Blender 里搭建房屋再转入 UE5」(延迟以秒计),EdenLive「实时生成」是消费级 GPU 可承担的方案;昆仑万维 Matrix-Game 3.5 与 VAST EdenLive 形成「国产世界模型双路线」——Matrix-Game 3.5 强在「物理一致性 + 长期记忆」(空间索引),EdenLive 强在「实时生成 + 消费级硬件」;适用场景:场景漫游 / 推箱子等「低频交互」游戏原型,推动 AI 交互创作从「离线制作」向「在线体验」跨越。</div>
+  </div>
+  <div class="card-desc">VAST 10-18 开源 EdenLive 实时世界模型:5B 参数,单消费级显卡 RTX 5090 / 720P 条件下 24FPS+ 持续分钟级,端到端延迟百毫秒级;「状态维护 + 视觉渲染」解耦路线早于行业共识 3-4 个月;与昆仑万维 Matrix-Game 3.5 形成国产世界模型「双路线」——Matrix-Game 3.5 强物理一致性 + 长期记忆,EdenLive 强实时生成 + 消费级硬件;推动 AI 交互创作从「离线制作」向「在线体验」跨越。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://github.com/VAST-AI-Research/EdenLive" target="_blank" rel="noopener">GitHub: VAST-AI-Research/EdenLive 仓库(2026-10-18)</a></li>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/VAST-AI/EdenLive" target="_blank" rel="noopener">HuggingFace: VAST-AI/EdenLive 权重</a></li>
+      <li><span class="src-1">一手</span><a href="https://assets.vast-eden.ai/assets/edenlive/EdenLive-tech-report.pdf" target="_blank" rel="noopener">技术报告: EdenLive-tech-report.pdf(vast-eden.ai 公开)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/504136.html" target="_blank" rel="noopener">量子位: VAST 开源实时世界模型 EdenLive!单消费级显卡、720P 超 24FPS(2026-10-18)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-4">
+  <div class="card-head">
+    <div class="card-title">Meshy Edit 10-20 上线:圈选+一句话约一分钟 3D 模型局部编辑,MIT 胡渊鸣创业公司</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Meshy Edit 基于 Meshy 全新自研 AI 模型,「两步走」流程——选区(套索工具圈整块部件 / 画笔涂抹可见表面)+ 描述改动(一句话 + 最多 5 张参考图);每次生成新模型,原模型完整保留,可继续编辑 / 下载 / 直接发切片软件进 3D 打印流程;面向两类用户——3D 打印用户(手办 / 战棋 / 潮玩 / 文创,删减部件 / 替换配件)+ 游戏开发者与角色创作者(更换道具 / 配饰,角色本体不变快速产出版本)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Meshy 由 MIT 博士胡渊鸣(Ethan Hu)创立,自研 AI 3D 生成基础模型,2023 年发布首个模型;10 月 5 日 a16z 第七期《Top 100 生成式 AI 消费级应用》报告首次增设按月收入排名 Top 50 榜单(YipitData 美国消费者银行卡消费数据),Meshy 位列第 31,与 Midjourney / Suno / Runway 同榜,是榜单上唯一的 AI 3D 公司;Meshy Edit 已向全部注册用户开放,每次编辑消耗 20 积分,支持 Meshy 6 / Meshy 7.1 生成的高精度模型(带贴图自动切换未贴图版本);对标 Blender 手动编辑(数小时)→ Meshy Edit(约一分钟),直接降低「在 Blender 中修改细节」的时间成本。</div>
+  </div>
+  <div class="card-desc">Meshy Edit 10-20 上线:圈选 + 一句话约一分钟 3D 模型局部编辑,原模型完整保留;MIT 博士胡渊鸣创业公司,a16z 第七期《Top 100 生成式 AI 消费级应用》月收入榜第 31(Midjourney / Suno / Runway 同榜,唯一 AI 3D 公司);面向 3D 打印(手办 / 战棋 / 潮玩)+ 游戏角色创作者(快速产出版本);对标 Blender 手动编辑(数小时)→ Meshy Edit(约一分钟)。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.meshy.ai/" target="_blank" rel="noopener">Meshy 官网: meshy.ai(Meshy Edit 入口,全注册用户开放)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/504415.html" target="_blank" rel="noopener">量子位: Meshy 推出 Meshy Edit,基于全新自研 AI 模型,一句指令实现 3D 模型局部编辑(2026-10-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-3-5">
+  <div class="card-head">
+    <div class="card-title">中电信 Xing4.0-29B-Intent 开源:意图理解「选择+填空」,Jev 决策原语之后补齐「参数提取」环节</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Jev(TypeSafe AI「系统一模型」)验证「决策层 / 生成层分离」+ 三种决策原语——Noul 布尔判断 / Choice 分类选择 / Score 标尺打分,延迟低至 70ms,但「判断出意图后,谁来负责把事情交代清楚」是缺口;Xing4.0-29B-Intent 走「选择题 + 填空题」:判断意图(决策)+ 同时提取结构化参数(生成);用同一模型同时输出「动作类型 + 关键参数键值对」;29B 参数,基于中电信星辰通用人工智能实验室开源。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>典型场景——「把展厅东侧灯调到 80% / 色温 4000K,西侧调到 30% / 2700K,入口灯别动」:Jev 识别「调节灯光」(完成 50%) + Xing4.0 同时给出「哪盏灯对应哪个亮度 / 色温 / 哪盏必须保持原样」(完成另 50%);智东西 11 组实测覆盖智能空间 / 智能座舱 / 办公协同 / Personal Agent 场景;GitHub / HuggingFace / 魔搭 / 魔乐四平台同步开源 + 模型 / 训练语料 / 推理 SDK;直接对接「Agent 落地最后一公里」——参数提取是「意图到 API 调用」的桥梁,对智能家居 / 车载语音助手 / 企业 SaaS Agent 是关键技术补齐。</div>
+  </div>
+  <div class="card-desc">中电信星辰实验室 Xing4.0-29B-Intent 开源:29B 参数,「选择+填空」统一输出意图 + 结构化参数;补齐 Jev「系统一模型」决策原语之后的「参数提取」环节;11 组实测覆盖智能空间 / 智能座舱 / 办公协同 / Personal Agent;GitHub / HuggingFace / 魔搭 / 魔乐四平台同步开源;对接「Agent 落地最后一公里」——参数提取是「意图到 API 调用」的桥梁。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://github.com/XingChen-AGI/Xing4.0-29B-Intent" target="_blank" rel="noopener">GitHub: XingChen-AGI/Xing4.0-29B-Intent(中电信星辰实验室开源)</a></li>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/XingChen-AGI/Xing4.0-29B-Intent" target="_blank" rel="noopener">HuggingFace: XingChen-AGI/Xing4.0-29B-Intent 模型权重</a></li>
+      <li><span class="src-2">二手</span><a href="https://zhidx.com/p/602211.html" target="_blank" rel="noopener">智东西: Jev 刚火,国产 29B 开源模型来踢馆了!不光会判断,还能直接填参数(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 4 · 资本 & 监管 ========== -->
+<div class="theme" id="theme-4">
+  <h2>💰 主题 4 · 资本 & 监管</h2>
+  <span class="scope">覆盖:超算集群 · Robotaxi 债务融资 · AI App 用户结构 · 主权 AI + 网络安全 <b>· 4 张</b></span>
+</div>
+
+<div class="card" id="c-4-1">
+  <div class="card-head">
+    <div class="card-title">Meta Prometheus 1M GPU 超算 phase 1 完工:俄亥俄 New Albany,goodput >85%,MTBI 一年降 99%</div>
+    <span class="tag tag-red">重磅·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Prometheus 第一阶段已用于训练 Muse 基础模型(含 10-12 发布的 Muse Wonder 系列);报告 pre-training goodput <span class="data-highlight">>85%</span>,RL goodput <span class="data-highlight">>90%</span>;wall-clock MTBI 从 ~47k GPU-hours 提至 <span class="data-highlight">54k+ GPU-hours</span>(固件修复后);一年内中断率下降 99%;可靠性具体做法——「并行度感知容错」(故障仅影响数据并行副本时隔离副本,其余集群继续工作)+ 分布式异步 checkpoint(故障范围大则从最近检查点恢复);硬件:HBM3e + NVL72 域 + ConnectX-7/8 NICs + 60 万条 NVLink 差分对连接,做信号完整性测试。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>平台细节:Catalina(GB200 NVL72 Ariel 双机架变体,72 GPU + 13.4 TB HBM3e / 720 PFLOPS FP8 / ~120 kW)+ Clemente(GB300 NVL72 单机架,288 GB HBM3e / GPU + 1+ EFLOP FP4 / ~135 kW);San Miguel(Vera Rubin NVL72 单机架 288 GB HBM4 / 19.2 TB/s / GPU + 2.52 EFLOPS FP4 / 170+ kW)即将部署;网络——building fabric ≤ 20,736 GPU,aggregation 网络 2 km → 100 km Arista 7800 + Broadcom Jericho3;电力——Dynamo Dimmer 框架(30-40% 瞬时功率波动避免硬性停止)+ rack-level battery + facility battery;Hyperion(Louisiana)借鉴 Prometheus 经验由 Entergy 提供电网接入。</div>
+  </div>
+  <div class="card-desc">Meta 工程博客 10-19 披露 Prometheus 超算 phase 1 完工:俄亥俄 New Albany 吉瓦级集群当前连接数十万枚 GPU,目标扩展到 ~100 万枚,用于训练 Muse Wonder 系列;pre-training goodput >85% / RL goodput >90%,MTBI 从 ~47k GPU-hours 提至 54k+ GPU-hours,中断率一年内下降 99%;San Miguel Vera Rubin 平台即将部署(单机架 2.52 EFLOPS FP4 / 170+ kW);Hyperion(Louisiana)借鉴 Prometheus 经验。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.huxiu.com/ainews/15723.html" target="_blank" rel="noopener">虎嗅: Meta 详解 Prometheus 超算,百万 GPU 用于训练 Muse 模型(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/meta-details-prometheus-supercluster-scaling-toward-1-million-gpus/" target="_blank" rel="noopener">Unite.AI: Meta Details Prometheus Supercluster Scaling Toward 1 Million GPUs(2026-10-19)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.tsnmedia.org/meta-prometheus-ohio-supercluster" target="_blank" rel="noopener">TSN Media: Meta Details Prometheus, Its Gigawatt-Scale Ohio Supercluster(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-2">
+  <div class="card-head">
+    <div class="card-title">Waymo $5B 无追索权债务:8K → 20K Robotaxi 计划,Zeekr(吉利)整车供货 15 城 + 多伦多</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Waymo 计划——从 ~4,000 robotaxi 扩到 2026 年底 8,000 + 2027 年底 20,000;资金来源:史上首笔 <span class="data-highlight">$5B 私募信贷</span>,Alphabet 未担保,允许未来 fleet lease 证券化(ABS);贷款方:PIMCO / Blackstone / Sixth Street 牵头,Capital Group / Loomis Sayles / T. Rowe Price / Apollo / Blue Owl / Diameter Capital / Franklin Templeton / Fidelity / HPS / Oaktree 参与,Goldman Sachs 独家主簿;Equity 端:2026 年早些 $16B 股权融资 / $126B post-money。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>硬件来源:中国——大批 Zeekr 整车(吉利旗下 Geely Holding 集团,被 Semafor 称为「CCP-linked」);15 个美国城市 + Toronto(首个非美市场)+ Nashville 运营设施(与 Lyft 合作负责充电 / 清洁 / 维护);Waymo 安全数据:截至 2026 年 6 月已覆盖 270+ million 完全自动驾驶里程;关键问题——Rides-per-vehicle utilization 决定 5B 无追索债务可持续性;若美国对华汽车限制在 2027 年目标前收紧,Zeekr 供货链是否合规是潜在风险;行业意义:robotaxi 基础设施正被独立信贷市场承认为「独立资产类别」,未来 ABS 定价将确认其是否可重复融资。</div>
+  </div>
+  <div class="card-desc">Waymo 计划 4,000 → 8,000(2026 年底)→ 20,000(2027 年底)robotaxi,$5B 无追索权私募信贷(Alphabet 未担保),PIMCO / Blackstone / Sixth Street 牵头,允许未来 fleet lease 证券化;硬件主要来自中国 Zeekr(吉利 Geely),15 个美国城市 + Toronto + Nashville Lyft 合作设施;行业意义:robotaxi 基础设施正被独立信贷市场承认为「独立资产类别」。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://aiweekly.co/alerts/waymo-targets-8k-robotaxis-by-year-end-and-20k-by-end-of-2027-backed-by-5b-non" target="_blank" rel="noopener">AI Weekly: Waymo Targets 8K Robotaxis by Year-End and 20K by End of 2027, Backed by $5B Non-Recourse Debt(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://biztechweekly.com/waymos-5-billion-debt-deal-signals-robotaxis-are-entering-a-harder-commercial-test" target="_blank" rel="noopener">BizTech Weekly: Waymo's $5 Billion Debt Deal Signals Robotaxis Are Entering a Harder Commercial Test(2026-10)</a></li>
+      <li><span class="src-2">二手</span><a href="https://allmind.ai/news/8894ed2dbb5de0ccd6dedf18b12bfc923b86a302b7f4edce3e16714499c8262c" target="_blank" rel="noopener">AllMind AI: Waymo closes a $5bn loan, its first debt deal, to fund robotaxi growth(2026-10)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-3">
+  <div class="card-head">
+    <div class="card-title">QuestMobile 2026 Q3 AI 应用报告:AI 原生 App 月活 5.46 亿同比 +82.1%,豆包 4.19 亿 / 千问 1.58 亿 / DeepSeek 1.23 亿</div>
+    <span class="tag tag-gold">重要·趋势</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">趋势观察</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>QuestMobile 2026 年 9 月数据——AI 综合助手用户规模 <span class="data-highlight">11.57 亿</span>(同比 +44%),其中 AI 生活助手 3.47 亿(+55%),AI 办公月活 1.42 亿(+50.6%);AI 办公细分 WorkBuddy 3235.3 万 / 百度搭子 977 万 / 千问办公 790.5 万;AI 原生 App 抢占「模糊需求」:月活 <span class="data-highlight">5.46 亿(+82.1%)</span>,月人均使用次数 88.2 次(+59.3%),月人均使用时长 173.5 分钟(+44.2%);移动互联网原生派「支付 / 关系链 + AI 入口」(支付宝 / 微信)AI 插件形态月活 6.39 亿;终端厂商 AI 应用 7.83 亿(+16.9%)。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「三大入口」格局——AI 原生 App / 平台型 App 内 AI / 终端厂商 OS 级 AI;AI 原生 App 头部——豆包 <span class="data-highlight">4.19 亿</span> / 千问 <span class="data-highlight">1.58 亿</span> / DeepSeek <span class="data-highlight">1.23 亿</span>;终端厂商 AI 助手「无意识触发」——OPPO 小布建议 1.15 亿 MAU(+139.9%,月人均时长 +185%)/ vivo 小V 建议 0.62 亿(+33.9%);办公 Agent 崛起:AI 原生 App 端 +518.4% / PC 客户端 +512.2%;「AI 深度使用」关键变量——跨终端 / 跨入口 / 跨域连接 / 全局连接,「全场景拉通」成为个人 + 组织 AI 工具黏性的核心。</div>
+  </div>
+  <div class="card-desc">QuestMobile 2026 Q3:AI 综合助手 11.57 亿(+44%);AI 原生 App 月活 5.46 亿(+82.1%)——豆包 4.19 亿 / 千问 1.58 亿 / DeepSeek 1.23 亿;AI 办公 1.42 亿(+50.6%)——WorkBuddy 3235.3 万 / 百度搭子 977 万 / 千问办公 790.5 万;终端 OS AI 助手 7.83 亿,OPPO 小布建议 +139.9% / 月人均时长 +185%;AI 办公 Agent 端 +518.4% / PC 客户端 +512.2%。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4033570288948355" target="_blank" rel="noopener">36 氪 / QuestMobile: 2026 年三季度 AI 应用市场发展报告,AI 原生 App 用户 5.46 亿(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.questmobile.com.cn" target="_blank" rel="noopener">QuestMobile 官网: questmobile.com.cn(季度报告原文)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-4-4">
+  <div class="card-head">
+    <div class="card-title">Cohere 10-15 收购加拿大 AI 资安新创 AISLE:新设 Cohere Cyber 部门,主权 AI + 网络安全双线</div>
+    <span class="tag tag-gold">重要·产业</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">前沿产业</span>
+    <span class="sub-tag">政策监管</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>AISLE 创立于 2025,核心能力:用 AI 自动发现 + 验证软件漏洞,并生成补丁供软件维护者审查;收购后 AISLE 资安研究团队将与 Cohere AI 模型开发团队合作,探索「如何用可验证的资安问题评估 / 改善未来 AI 模型」——「AI 攻击 AI」的双向回路;Cohere Cyber 部门聚焦企业 / 政府客户的 AI 代理 + 自动化工作流治理 + 监控 + 敏感数据 / 关键业务系统保护。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Cohere 此举延续「扩大主权 AI 业务」布局——之前已公布与德国 Aleph Alpha 合并计划,强调企业可将 AI 服务部署在私有云 / 企业内部 / 与外部网络完全隔离环境;Command A+(开源主权 AI 关键基础设施模型,Apache 2.0,2026-05 发布)+ North(企业 AI 工作平台)+ Compass(企业搜索系统)+ 新设 Cohere Cyber;与 Microsoft + Nvidia「开源权重 AI 模型风险管理指引」(5 类 30 种风险)同步形成「主权 AI 阵营」(Cohere)+ 「主流 AI 阵营」(Microsoft / Nvidia)对资安 / 部署方式不同主张——企业选型会更明确分流;对企业 AI 采购的实操影响:从「模型选型」转向「模型 + 资安 + 部署一体化」方案。</div>
+  </div>
+  <div class="card-desc">Cohere 10-15 收购加拿大 AI 资安新创 AISLE(2025 创立):新设 Cohere Cyber 部门聚焦企业 / 政府客户 AI 代理 + 自动化工作流治理;延续「扩大主权 AI 业务」布局(此前已公布与德国 Aleph Alpha 合并);与 Microsoft + Nvidia「开源权重 AI 模型风险管理指引」同步形成「主权 AI + 主流 AI」对资安 / 部署方式不同主张——企业 AI 采购从「模型选型」转向「模型 + 资安 + 部署一体化」方案。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com.tw/news/179745" target="_blank" rel="noopener">iThome: AI 模型業者 Cohere 計畫併購資安新創 AISLE(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://cohere.com/blog" target="_blank" rel="noopener">Cohere Blog: 公司新闻专页(收购公告原文)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 5 · 顶会 & 学术生态 ========== -->
+<div class="theme" id="theme-5">
+  <h2>🎓 主题 5 · 顶会 & 学术生态</h2>
+  <span class="scope">覆盖:三大产业大会 · AI in Science 资助 · 开放权重风险管理 <b>· 3 张</b></span>
+</div>
+
+<div class="card" id="c-5-1">
+  <div class="card-head">
+    <div class="card-title">Microsoft Ignite + GitHub Universe + SC26:三大产业大会同档,企业 AI / 开发者 / 超算一站切换</div>
+    <span class="tag tag-gold">重要·会议</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">会议快讯</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>三大会议定位清晰——Microsoft Ignite(企业 AI / 云 / Microsoft 365 Copilot / Azure AI Foundry / Fabric 数据平台最新能力)+ GitHub Universe 2026(开发者生态,GitHub Copilot / Actions / Models / 安全;2026 年 8 月已发布排期);SC26(国际超级计算大会,St. Louis 11-15 → 11-20,HPC + AI 加速 + 量子 + 数据中心);三者在「企业 AI 落地」/「开发者工具」/「科研超算」三个垂直领域同期召开,反映 AI 在 2026 Q4 进入「垂直行业落地 + 基础研究 + 开发者体验」三轨同步深水区。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>协同信号——Microsoft Ignite 与 GitHub Universe 主题重合度高(Copilot 系列 + Agent / Copilot Tuning + 自定义模型);SC26 与 Microsoft Ignite 都有「AI factory」相关议程(NVL72 / GB300 / Vera Rubin rack);意味着大厂在「面向企业用户的 AI 产品发布会」与「面向超算研究的科研展示」两条赛道并行推进;同期物理 AI 与世界模型大会(2026-10-19~22 南京)9 个平行分会场覆盖医疗 / 工业 / 自动驾驶 / 具身智能,「国内外 AI 大会同期密集」显示 2026 Q4 进入「AI 工程化交付 + 学术规范制定」窗口期。</div>
+  </div>
+  <div class="card-desc">Microsoft Ignite + GitHub Universe + SC26 三大产业大会同档(10-11 月):企业 AI / 开发者生态 / 超算三轨同步深水区;同期物理 AI 与世界模型大会 10-19~22 南京 9 个平行分会场覆盖医疗 / 工业 / 自动驾驶 / 具身智能;2026 Q4 进入「AI 工程化交付 + 学术规范制定」窗口期,大厂在「企业 AI 产品发布」与「科研超算展示」并行推进。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 3)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://ignite.microsoft.com/en-US/home" target="_blank" rel="noopener">Microsoft Ignite 官网: ignite.microsoft.com(2026-11 大会主页)</a></li>
+      <li><span class="src-1">一手</span><a href="https://github.blog/news-insights/company-news/your-guide-to-github-universe-2026-is-here-the-schedule-just-launched/" target="_blank" rel="noopener">GitHub Blog: Your guide to GitHub Universe 2026 is here(2026-08-13)</a></li>
+      <li><span class="src-1">一手</span><a href="https://sc26.supercomputing.org/" target="_blank" rel="noopener">SC26 官网: sc26.supercomputing.org(St. Louis 11-15~11-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-5-2">
+  <div class="card-head">
+    <div class="card-title">Frontiers AIS26 Dublin:启动 €1.6M AI in Science Enablers pledge,1,000 个 Horizon Europe 数据集 + 100 个 FAIR² 出版资助</div>
+    <span class="tag tag-gold">重要·资助</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Frontiers 在 2026 AI in Science Summit(AIS26,都柏林)启动「AI in Science Enablers pledge」——12 个月内承诺:<span class="data-highlight">1,000 个 Horizon Europe 数据集</span>经 AI 驱动的数据整理(data curation)+ <span class="data-highlight">100 个 FAIR² Data Publication Grants</span>给早期职业研究者(Horizon Europe 项目)+ 提前开放 Frontiers Data(FAIR² Data Management 服务的扩展,研究者可用 AI 探索数据并准备发表);总计价值 €1.6M 以上的服务,免费提供给研究者。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>回应「欧洲公开科研数据难以被 AI 利用」的核心瓶颈——Horizon Europe 资助的研究数据被分散在各国机构,格式 / 元数据 / 质量差异巨大;Frontiers 用 AI 整理数据后,可直接进入下游 AI for Science 模型训练;同期平行——NIH(美国国立卫生研究院)Data Management & Sharing Policy / NSF(美国国家科学基金会)Public Access Plan 2.0 + UKRI(英国)「Data for Research」均在 2026 年扩大 AI-ready 数据范围;「AI for Science」已经从「模型 + 算力」竞赛延伸到「高质量 AI-ready 数据」竞赛;Frontiers 此举是欧洲在「AI for Science 数据底座」上的差异化动作。</div>
+  </div>
+  <div class="card-desc">Frontiers 在 2026 AI in Science Summit(AIS26, 都柏林)启动 AI in Science Enablers pledge:12 个月内 1,000 个 Horizon Europe 数据集经 AI 整理 + 100 个 FAIR² Data Publication Grants + 提前开放 Frontiers Data;总计 €1.6M+ 服务免费提供;回应「欧洲公开科研数据难以被 AI 利用」核心瓶颈;「AI for Science」竞赛从「模型 + 算力」延伸到「高质量 AI-ready 数据」。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.frontiersin.org/news/2026/10/19/ai-in-science-enablers-pledge" target="_blank" rel="noopener">Frontiers 官宣: Frontiers pledges €1.6 million worth of support to make Horizon Europe research data AI-ready at AI in Science Summit(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-5-3">
+  <div class="card-head">
+    <div class="card-title">Microsoft + Nvidia 10-16 发布《Risk Management for Open-Weight Models in Enterprise》:5 大类 30 种风险,GitHub 公开征求修订</div>
+    <span class="tag tag-gold">重要·标准</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>《Risk Management for Open-Weight Models in Enterprise》——5 大类风险(Cybersecurity 网络安全 + Data Protection 数据保护 + Content 内容 + Human-AI Interaction 人机交互 + Bias 偏见)下细分为 <span class="data-highlight">30 种风险类型</span>;每类风险给出风险评估方法 + 防护措施 + 持续监控建议;核心立场——「模型权重是否开放并非判断 AI 系统风险高低的唯一依据」,企业仍需根据模型特性 / 实际用途 / 部署方式 / 防护措施综合评估;参考 ISO/IEC 23894 + ISO/IEC 42001 + ISO/IEC 42005 + NIST AI RMF。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>关键建议——(1) 微调 / 量化 / 合并后「重新测试防护」;(2) 外部获取模型用「数字签名验证来源 + 完整性」;(3) 上线后持续监控输入 / 输出 / 工具使用,关注新攻击手法;(4) 多租户环境关注「数据隔离失效」;(5) 关注「微调后削弱原有防护」;GitHub 公开征求修订,后续将覆盖模型运行环境 + 模型与外部工具整合 + 应用层;对企业 IT 治理影响:从「GPU 资源配额 + 模型评分」转向「开放权重治理 + 持续验证 + 多层防护」一站式方案;与 Cohere「主权 AI」路线对比——「主流 AI 阵营」(Microsoft + Nvidia)主张「开放但有治理」,Cohere 主张「主权部署」。</div>
+  </div>
+  <div class="card-desc">Microsoft + Nvidia 10-16 发布《Risk Management for Open-Weight Models in Enterprise》:5 大类(Cybersecurity / Data Protection / Content / Human-AI Interaction / Bias)下细分 30 种风险类型;核心立场——「模型权重是否开放并非判断 AI 系统风险高低的唯一依据」;参考 ISO/IEC 23894 + 42001 + 42005 + NIST AI RMF;GitHub 公开征求修订;对企业 IT 治理影响:从「GPU 资源配额 + 模型评分」转向「开放权重治理 + 持续验证」。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com.tw/news/179757" target="_blank" rel="noopener">iThome: 微軟、Nvidia 提出開放權重 AI 模型風險管理指引(2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://github.com" target="_blank" rel="noopener">GitHub: Risk Management for Open-Weight Models in Enterprise 公开征求页(2026-10-16)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 主题 6 · 本周前瞻 ========== -->
+<div class="theme" id="theme-6">
+  <h2>🔮 主题 6 · 本周前瞻</h2>
+  <span class="scope">覆盖:Agent 自我演进 · 容错量子模拟 · Frontier Safety Roadmap 进展 <b>· 3 张</b></span>
+</div>
+
+<div class="card" id="c-6-1">
+  <div class="card-head">
+    <div class="card-title">Google Research Harness² 开源:Apache 2.0,不改模型权重让 AI 代理自我演进,WorkBuddy-Bench +11.5 / JobBench +4.5</div>
+    <span class="tag tag-red">重磅·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Harness²(Recursive Agent Harnessing for an Open World)——开源框架,聚焦「不修改底层模型权重」情况下,AI agent 凭借经验动态调整学习 + 自我演进;两层递归——任务层(单一任务 Propose / Probe / Compose 候选方案并验证行为有效性,不需要 ground-truth)+ Harnessing 层(Reflector 累积经验库指导未来任务);在 Google 3 个专业基准 + 4 个模型 harness 配置上:单步 Harness² 在 WorkBuddy-Bench 提升最多 <span class="data-highlight">+11.5 分</span>,JobBench <span class="data-highlight">+4.5 分</span>,LAB 部分通过率提高最多 <span class="data-highlight">+11.8 个百分点</span>;支持 parallel/sequential recursion + OpenCode + Codex executor。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>核心价值——开发者「不用花钱花时间微调模型权重」,直接通过调整外接框架提升任务成功率——意味着 GLM-5 / Gemini 3.5 Flash 等开源基础模型 + Harness² = 「不输顶级专有 agent」的组合;支持 Python 3.12 + uv 包管理,本地 / Vertex AI 项目均可执行;对 Agent 生态影响:OpenAI AgentKit / Anthropic Claude Skills / Google ADK / LangChain / CrewAI 等 agent 框架需重新审视「递归自我演进」是不是必备能力;与 DiscoveryRSI 同日发布,「科学发现 + Agent 自我演进」双向同步推进。</div>
+  </div>
+  <div class="card-desc">Google Research Harness² 开源:Apache 2.0,递归式 Agent Harnessing for an Open World;不改模型权重让 AI 代理自我演进,两层递归(任务层 + Harnessing 层);单步在 WorkBuddy-Bench +11.5 分 / JobBench +4.5 分 / LAB 部分通过率 +11.8 pp;支持 parallel / sequential recursion + OpenCode + Codex executor;意味着 GLM-5 / Gemini 3.5 Flash 等开源基础模型 + Harness² = 「不输顶级专有 agent」组合。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1,二手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://github.com/google-research/harness2" target="_blank" rel="noopener">GitHub: google-research/harness2(Apache 2.0 开源, 2026-10-20)</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.ithome.com.tw/news/179802" target="_blank" rel="noopener">iThome: Google 開源 Harness 2,不改模型權重 AI 代理人可自我演進提升(2026-10-20)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-6-2">
+  <div class="card-head">
+    <div class="card-title">NVIDIA + Jülich 104-qubit 容错量子模拟 JUPITER:比先前方案少 90% 物理 qubit,容错量子设计验证提速</div>
+    <span class="tag tag-gold">重要·基础设施</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>NVIDIA 10-19 宣布在 JUPITER(欧洲首台 exascale 超算,Jülich 超算中心)上完成「迄今最大规模综合容错量子计算模拟」——<span class="data-highlight">104-qubit 模拟</span>;模拟路径覆盖 magic state cultivation(容错量子计算主流方法,需大量魔法态生产);关键发现——该方法比先前方法少 <span class="data-highlight">90% 物理 qubit</span>(传统方案需 ~1000 物理 qubit 才能支撑 104 个逻辑 qubit);JUPITER 模拟为量子行业提供「噪声对容错量子计算影响」可操作洞察,让研究者在硬件建造前就能验证设计。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>意义——(1)「减少 90% 物理 qubit」直接降低容错量子计算硬件门槛,若工程化实现将让容错量子计算机更早可实现;(2)「在硬件建造前就能验证」=「用超算做量子计算研发的元开发」,直接缩短「想法到可工作量子硬件」路径若干年;(3) 适用场景:药物发现 / 金融建模 / 材料科学等「需大规模量子比特」领域将更早受益;(4) NVIDIA Quantum-2 / cuQuantum SDK 在此次模拟中是关键技术底座,GPU 加速量子模拟进一步巩固 NVIDIA 在「经典 + 量子」混合计算中的位置;(5) 同期 Google 10-15 Willow「魔态培育」99.99% 保真度与此 104-qubit 容错模拟形成「软件 + 硬件」双轨推进。</div>
+  </div>
+  <div class="card-desc">NVIDIA 10-19 宣布在 JUPITER(Jülich 超算中心,欧洲首台 exascale 超算)上完成迄今最大规模综合容错量子计算模拟——104-qubit,验证 magic state cultivation 路径;关键发现:比先前方法少 90% 物理 qubit;用超算做量子计算研发的「元开发」直接缩短「想法到硬件」路径若干年;同期 Google Willow「魔态培育」99.99% 保真度形成「软件 + 硬件」双轨推进。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 1)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://nvidianews.nvidia.com/news/nvidia-runs-record-simulation-of-fault-tolerant-quantum-computing-at-julich-supercomputing-centre" target="_blank" rel="noopener">NVIDIA Newsroom: NVIDIA Runs Record Simulation of Fault-Tolerant Quantum Computing at Jülich Supercomputing Centre(2026-10-19)</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" id="c-6-3">
+  <div class="card-head">
+    <div class="card-title">Anthropic Frontier Safety Roadmap Updates:World-class 红队能力目标 10-6 完成 + 移除,Reducing Reward Hacking 同步发布</div>
+    <span class="tag tag-gold">重要·安全</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Frontier Safety Roadmap 关键目标——「World-class internal red-teaming」状态 Completed(2026-10-6 完成,2026-10-19 从 Roadmap 移除);原目标:「建立内部越狱发现方法(专注化学 / 生物武器)匹配或超越所有 bug bounty 参与者集体能力」+「通过反复报告衡量」;同步发布新论文《Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It》(alignment.anthropic.com/2026/graft/);GRAFT(定位有害行为而非整体惩罚)是 Anthropic 在 reward hacking 缓解上的新方法论。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>Anthropic Frontier Safety Roadmap 是「前沿 AI 实验室自我承诺」最具体的范本之一——目标一旦达成即从 active 状态转入 archived,公开可查;同时「持续加入新目标」;行业意义——(1) Anthropic 在「安全治理 vs 模型迭代速度」权衡上偏向「持续可见的安全投入」,与 OpenAI「快速迭代 + 外部红队」策略形成对比;(2) GRAFT 等学术论文「实用化」,意味着前沿实验室「做对齐研究」与「发对齐论文」开始合并;(3) 与同期 Microsoft + Nvidia《Risk Management for Open-Weight Models》+ Frontiers AI in Science pledge 同步——2026 Q4 进入「AI 治理标准化 + 学术规范制定」窗口。</div>
+  </div>
+  <div class="card-desc">Anthropic Frontier Safety Roadmap 关键目标「World-class internal red-teaming」10-6 完成,10-19 从 Roadmap 移除(转为 archived 状态);同步发布《Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It》论文(GRAFT 方法);Anthropic 在「安全治理 vs 模型迭代」上偏向「持续可见的安全投入」,与 OpenAI「快速迭代 + 外部红队」策略形成对比;2026 Q4 进入「AI 治理标准化 + 学术规范制定」窗口。</div>
+  <div class="links">
+    <div class="links-title">参考链接 (一手 ≥ 2)</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/responsible-scaling-policy/updates" target="_blank" rel="noopener">Anthropic: Frontier Safety Roadmap Updates(World-class red-teaming 10-6 完成 + 移除记录)</a></li>
+      <li><span class="src-1">一手</span><a href="https://alignment.anthropic.com/2026/graft/" target="_blank" rel="noopener">Anthropic Alignment: Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It(2026 GRAFT 论文)</a></li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-stats">
+    <div><b>6</b><span>主题</span></div>
+    <div><b>24</b><span>条目</span></div>
+    <div><b>14+</b><span>一手来源</span></div>
+    <div><b>10+</b><span>二手来源</span></div>
+  </div>
+  © 2026 Daily AI · minimax slot · 最后更新 2026-10-20 13:00 GMT+8
+</footer>
+
+</body>
+</html>
