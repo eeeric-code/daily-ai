@@ -13,3 +13,13 @@ date replacement, duplicate cards, placeholder counts or copy a brief over root
 brief CSS. Do not modify other models' prose without explicit user permission.
 Stage only intended files, preserve unrelated changes, redact remote credentials,
 and verify Cloudflare page content and internal links after pushing.
+
+Archives: every new dated issue must include archive.json with an event-specific
+title (8–100 characters) and content summary (40–200 characters), not a generic
+column introduction. Run `python scripts/render_archives.py --repo . --workspace ..`
+then `python scripts/render_archives.py --repo . --check`. Preserve the exact
+example/archive.html stylesheet and date/title/summary/view-button layout.
+The renderer may rebuild shared/derived archives; do not edit other models'
+dated prose or archive.json. Keep pre-split mixed history separate from standalone
+academic issues, retain missing-original records without broken links, and check
+all internal links, ordering, deduplication and mobile layout before publication.
