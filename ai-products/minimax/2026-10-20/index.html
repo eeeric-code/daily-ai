@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 产品产业每日简报 · 2026年10月16日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 产品产业每日简报:24 张卡覆盖 AI 资本、产品发布、企业 AI 落地、行业监管 4 大主题。">
+<title>AI 产品产业每日简报 · minimax · 2026-10-16</title>
+<style>
+  :root{--ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;--paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;--red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;padding:10px 0;border-top:1px dashed var(--line);font-size:14.5px;}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}.tag-gold{background:var(--gold);}.tag-ink{background:var(--ink);}.tag-purple{background:var(--purple);}.tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  @media print{header.masthead{border-bottom:2px solid #000;}.closing .stats,footer{display:none;}.card{box-shadow:none;border-left:5px solid #000;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="masthead">
+    <div class="brand">AI 产品产业每日简报<small>minimax · 2026-10-20 · Day 69</small></div>
+    <div class="meta">
+      <div>2026 年 10 月 20 日 · 星期二 · Asia/Shanghai</div>
+      <div><strong>minimax</strong> · fork 自通用版 v2.0 · 2026-07-10 起</div>
+    </div>
+  </header>
+
+  <section class="exec">
+    <h2>执行摘要 · 2026-10-20</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <span class="body"><span class="label reg">监管</span><strong>工信部印发《“人工智能+软件”专项行动实施方案》+ 商务部等 9 部门首提“科技兴商”18 条</strong> — 工信部部署 6 方面 19 项任务，2028 年覆盖 2 万家规上软件企业、100 个智能体标杆；首份科技兴商文件把商业智能体写成新业态；同期市场监管总局发布钢铁 AI 三项国标（GB/Z 224/231/241—2026），行业大模型首次有了成熟度验收标尺。</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <span class="body"><span class="label reg">资本</span><strong>OpenAI 抢在 Anthropic 上市前冲刺 300 亿美元融资 估值或破 1.4 万亿美元</strong> — 软银、MGX 洽谈参投，推介年化营收 500 亿美元、年底预计 700 亿美元；对照 Anthropic Q3 营收 168 亿美元但增速放缓、估值预期下修至 1.5 万亿美元区间，两家争夺同一批投资者。</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <span class="body"><span class="label reg">算力</span><strong>英伟达 8192 块 GH200 完成 104 量子比特容错模拟 + 亚马逊开源 TorchNeuron 直上 Trainium</strong> — 英伟达在 JUPITER 上首次于真实硬件噪声下验证魔态培育，物理比特需求降低约 90%；亚马逊通过 PyTorch PrivateUse1 扩展点把 Trainium 注册为原生设备，开发者改 .to('neuron') 一行即可迁移。</span>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <span class="body"><span class="label reg">模型</span><strong>MiniMax M3.1 Flash 发布：4280 亿参数、200+ TPS、Agent 任务成本降 70%</strong> — 官方认领匿名处理超 200 万亿 Token 的“太空兔”Space Bunny；DeepSWE v1.1 得分 73.7%、Automation-Bench 62.8 居首，API 输入 1 元/输出 4 元每百万 Token，输入输出单价较 M3 降超 50%。</span>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <span class="body"><span class="label reg">采用</span><strong>中国大模型周调用量 79.18 万亿 Token 连续 25 周超美国 全球前五全部为中国模型</strong> — 10 月 12—18 日全球总调用 164 万亿 Token，中国 79.18 万亿、美国 17.36 万亿；DeepSeek V4.1 Flash 单周 32.8 万亿连续两周第一，Step 5 Preview 环比 +30%；同期工行、招行等集体拒绝授权豆包手机助手的 GUI 操作。</span>
+      </li>
+    </ol>
+  </section>
+
+    <div class="theme" id="theme-1">
+    <h2>一、国家战略、政府行动与监管治理</h2>
+    <div class="scope"><b>3 张卡</b> · 覆盖中国软件业 / 商贸 / 钢铁标准三大国家级政策 · 工信部 209 号文 + 首份科技兴商 + 三项钢铁国标</div>
+  </div>
+
+  <article class="card" id="c1">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>工信部印发《“人工智能+软件”专项行动实施方案》19 项任务落地 2028 年覆盖 2 万家规上软件企业 100 个智能体标杆</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">前沿产业</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏛 政策视角:</span>工信部信发〔2026〕209 号，6 方面 19 项任务；2028 年目标推广应用覆盖 2 万家规上软件企业、100 项智能化技改、100 个智能体软件标杆、孵化 5 个以上开源项目；2030 年关键软件全面智能化，抢占全球价值链制高点。</div>
+      <div class="p-item"><span class="p-label">💼 产业视角:</span>2025 年软件业营收 15.48 万亿元（2012 年 6.2 倍）；前 8 月软件业务收入 10.28 万亿元同比 +8.8%、出口 459.9 亿美元 +12.5%；截至 2026 年 6 月日均词元调用量突破 500 万亿；信通院调研企业 AI 代码生成采纳率超 40%。</div>
+    </div>
+    <p class="card-desc">工信部印发《“人工智能+软件”专项行动实施方案》，部署 <span class="data-highlight">6 方面 19 项</span>任务。到 2028 年推广应用覆盖 <span class="data-highlight">2 万家规模以上软件企业</span>，累计 <span class="data-highlight">100 项</span>智能化技改、<span class="data-highlight">100 个</span>智能体软件标杆应用，另建设 <span class="data-highlight">15 家以上</span>软硬协同适配中心。产业底座：2025 年软件业营收 <span class="data-highlight">15.48 万亿元</span>，前 8 月 <span class="data-highlight">10.28 万亿元</span>（+8.8%），出口 459.9 亿美元（+12.5%），截至 2026 年 6 月日均词元调用量已突破 <span class="data-highlight">500 万亿</span>。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.zhangshu.gov.cn/zssrmzf/zcjdc748eqsmffgrtssgfe/pc/content/2004270177135190016/content_2004270177135190016.html" target="_blank" rel="noopener">国务院《关于深入实施“人工智能+”行动的意见》(国发〔2025〕11 号)</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.sohu.com/a/1087688925_120303775" target="_blank" rel="noopener">《“人工智能+软件”专项行动实施方案》全文（工信部信息技术发展司）</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.stdaily.com/web/gdxw/2026-10/20/content_598995.html" target="_blank" rel="noopener">科技日报：方案印发，2030 年抢占全球价值链制高点</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnr.cn/tech/techyw/kan/20261020/t20261020_527847592.shtml" target="_blank" rel="noopener">央广网：2028 年量化目标与产业数据</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c2">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>商务部等 9 部门首提“科技兴商”18 条 工信部同步定调：人形机器人全年产量预计破 10 万台</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">产品落地</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏛 政策视角:</span>首份以“科技兴商”为主题的国家级综合性文件，18 条举措分四大方向——科技赋能商品消费提质、服务消费扩容、流通链条畅通、未来商业场景，另从标准、设施、安全监管、研发转化、人才、财政金融 6 方面支撑保障；10-13 成文、10-19 国新办发布。</div>
+      <div class="p-item"><span class="p-label">🦾 产业视角:</span>2025 年 AI 核心产业规模超 1.2 万亿元、AI 企业超 6600 家；上半年各类智能终端出货超 1 亿台；1—9 月重点平台智能眼镜销售额增长 1.1 倍。</div>
+    </div>
+    <p class="card-desc">商务部等 9 部门发布《关于加快推进科技兴商的意见》，<span class="data-highlight">18 条</span>举措首次将“科技兴商”写入国家级政策主题。产业侧同步给出硬数字：<span class="data-highlight">2025 年 AI 核心产业规模超 1.2 万亿元</span>、AI 企业超 <span class="data-highlight">6600 家</span>；2026 上半年各类智能终端出货 <span class="data-highlight">超 1 亿台</span>；1—9 月重点平台智能眼镜销售额增长 <span class="data-highlight">1.1 倍</span>。文件首次把“智能导购、智能运营、智能物流”等商业智能体写成新业态，并要求审慎开展商业智能体分级治理。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://news.cctv.cn/2026/10/19/ARTIzgL1hSg0PDg8vPF9aHp7261019.shtml" target="_blank" rel="noopener">央视网：《关于加快推进科技兴商的意见》全文</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.china.com.cn/zhibo/content_118736576.htm" target="_blank" rel="noopener">中国网：国新办新闻发布会文字实录</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.workercn.cn/c/2026-10-20/8920159.shtml" target="_blank" rel="noopener">中工网：18 条举措与“新、全、实”特点</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.nfnews.com/content/LownjrwO6J.html" target="_blank" rel="noopener">南方+：工信部产业数据与发布会实录</a></li>
+        <li><span class="src-2">二手</span><a href="https://epaper.cs.com.cn/zgzqb/html/2026-10/20/nw.D110000zgzqb_20261020_2-A01.htm" target="_blank" rel="noopener">中国证券报 A01 版：科技兴商 18 条</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c3">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>市场监管总局发布钢铁 AI 三项国标 GB/Z 224/231/241—2026 行业大模型首次有了成熟度验收标尺</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">📐 标准视角:</span>三项国家标准化指导性技术文件由钢研、宝武、宝信等产学研用 50 余家单位联合编制，构建“场景分类—数据集规范—成熟度评估”完整闭环；GB/Z 231—2026 于 2026-08-27 发布，起草单位含宝信软件、华为、中冶赛迪、北京大学长沙计算与数字经济研究院。</div>
+      <div class="p-item"><span class="p-label">🏭 产业视角:</span>对照“人工智能+制造”专项行动：已围绕钢铁等 20 个行业凝练 1000 余个高价值场景、发布 285 项典型案例，规模以上制造业企业 AI 技术应用普及率超 30%。</div>
+    </div>
+    <p class="card-desc">市场监管总局（国家标准委）发布《人工智能 钢铁行业应用场景分类指南》（<span class="data-highlight">GB/Z 224—2026</span>）、《人工智能 钢铁大模型数据集技术要求》（<span class="data-highlight">GB/Z 231—2026</span>）、《人工智能 钢铁大模型服务能力成熟度评估》（<span class="data-highlight">GB/Z 241—2026</span>）。<span class="data-highlight">50 余家</span>单位联合编制，首次给出行业大模型的成熟度分级规则与评估方法。对照“人工智能+制造”专项行动已凝练的 <span class="data-highlight">1000 余个</span>高价值场景与 <span class="data-highlight">285 项</span>典型案例，规上制造业 AI 应用普及率<span class="data-highlight">超 30%</span>——标准先行意味着钢铁大模型正从单点试点走向可度量、可验收的规模化落地。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://std.samr.gov.cn//gb/search/gbDetailed?id=5A138523DF9279B5E06397BE0A0AD5FD" target="_blank" rel="noopener">全国标准信息公共服务平台：GB/Z 231-2026 标准详情与起草单位</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cs.com.cn/ssgs/01/2026/10/19/detail_2026101910045641.html" target="_blank" rel="noopener">中证网：三项国家标准化指导性技术文件发布</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ce.cn/xwzx/gnsz/gdxw/202610/t20261019_3263923.shtml" target="_blank" rel="noopener">中国经济网：构建“场景分类—数据集—成熟度”完整闭环</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.jjckb.cn//20261019/093bb8587bb448258d2e400677450436/c.html" target="_blank" rel="noopener">经济参考网：人工智能赋能钢铁行业首批标准</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-2">
+    <h2>二、资本、投资、并购与企业财务</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖一级市场与二级市场两条线 · 300 亿私募到 35 亿美元数据估值</div>
+  </div>
+
+  <article class="card" id="c4">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>OpenAI 抢在 Anthropic 上市前冲刺 300 亿美元融资 估值或破 1.4 万亿美元</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">公司级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">💰 资本视角:</span>软银集团、阿布扎比主权投资机构 MGX 等现有股东正就参与约 300 亿美元融资进行磋商；OpenAI 向投资者推介年化营收 500 亿美元，预计年底随 GPT-6 Astra 上线升至 700 亿美元；今年 3 月已募 1220 亿美元、估值 8520 亿美元。</div>
+      <div class="p-item"><span class="p-label">📉 对冲视角:</span>Anthropic 第三季度营收由 116 亿升至 168 亿美元但月度增速放缓，部分投资者将其 IPO 估值预期由约 2 万亿下调至 1.5 万亿美元区间；两家共享同一批投资者，资金分流成为定价变量。</div>
+    </div>
+    <p class="card-desc">路透 10-20 报道 OpenAI 正以<span class="data-highlight">异常压缩的时间表</span>推进约 <span class="data-highlight">300 亿美元</span>私募融资，力争在 Anthropic 预计 <span class="data-highlight">11 月中旬</span>上市前锁定认购承诺，完成后估值可能突破 <span class="data-highlight">1.4 万亿美元</span>（约 9.37 万亿元）。推介口径为年化营收 <span class="data-highlight">500 亿美元</span>、年底预计 <span class="data-highlight">700 亿美元</span>。对照面：Anthropic Q3 营收由 116 亿升至 <span class="data-highlight">168 亿美元</span>但月度增速放缓，部分投资者将其 IPO 估值预期下修至 <span class="data-highlight">1.5 万亿美元</span>区间。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/015/078.htm" target="_blank" rel="noopener">IT之家：抢在 Anthropic 上市前加速融资</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M329G90519U3I5.html" target="_blank" rel="noopener">三言科技：估值与年化营收口径</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9MAICGT05198NMR.html" target="_blank" rel="noopener">华尔街见闻：抢跑 Anthropic 的融资时间表</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M40RPC0550B1DU.html" target="_blank" rel="noopener">财联社：知情人士与投资方名单</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LUGKP70511B8LM.html" target="_blank" rel="noopener">IT之家转载：软银 / MGX 洽谈加入</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c5">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>Anthropic 与 Nscale 洽谈第二笔 450 亿美元算力协议 Monarch 二期 460MW 搭载 Vera Rubin</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">资本级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏗 基建视角:</span>标的为西弗吉尼亚州 Monarch 数据中心园区第二栋设施，规划 460 兆瓦计算容量并采用英伟达最新一代 Vera Rubin 芯片；Anthropic 同时取得第三栋设施的优先拒绝权；今年 8 月双方已签署最高约 446 亿美元的首批协议。</div>
+      <div class="p-item"><span class="p-label">📊 资本视角:</span>Nscale 成立两年半合同总值从 1 亿美元增至超 1030 亿美元，IPO 目标估值约 300 亿美元但部分投资者要求下调至 160—190 亿美元；背景是竞争对手 CoreWeave 因 500 亿美元债务上周股价大跌，引发全球 AI 股抛售。</div>
+    </div>
+    <p class="card-desc">彭博与路透 10-20:AI 数据中心开发商 Nscale 正与 Anthropic 洽谈<span class="data-highlight">约 450 亿美元</span>算力销售协议，标的为 Monarch 园区<span class="data-highlight">第二栋设施（460 兆瓦、Vera Rubin 芯片）</span>，最快数日可敲定。若落地，双方已签及洽谈协议总规模将达 <span class="data-highlight">约 900 亿美元</span>。Nscale IPO 目标估值约 <span class="data-highlight">300 亿美元</span>，但部分投资者要求下调至 <span class="data-highlight">160—190 亿美元</span>；背景是 CoreWeave 因 <span class="data-highlight">500 亿美元</span>债务上周大跌拖累板块。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/world/2026-10-20/doc-inivuzxx7650825.shtml" target="_blank" rel="noopener">新浪财经/环球市场播报：450 亿美元协议细节</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/stock/estate/integration/2026-10-20/doc-inivvnpx6582547.shtml" target="_blank" rel="noopener">新浪财经/观点网：Monarch 二期 460 兆瓦</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M56RLF0511A6N9.html" target="_blank" rel="noopener">鞭牛士：8 月已签 446 亿美元首批协议</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LITQUM05198NMR.html" target="_blank" rel="noopener">华尔街见闻：IPO 估值分歧与 CoreWeave 背景</a></li>
+        <li><span class="src-2">二手</span><a href="https://k.sina.com.cn/article_5182171545_134e1a99902002kjzs.html" target="_blank" rel="noopener">新浪/界面新闻：Vera Rubin 与 460 兆瓦规划</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c6">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>新石器 E 轮 4 亿美元 国家人工智能产业投资基金首投无人配送 累计融资破百亿元</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">资本财务</span><span class="sub-tag">产品落地</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">💼 资本视角:</span>本轮由博裕投资与国家人工智能产业投资基金联合领投，阿里巴巴 AEF NextGen 香港基金、Monolith 砺思资本、淡马锡旗下 Vertex Growth、广汽资本等参与，高鹄资本任独家财务顾问；一年前该公司刚完成逾 6 亿美元 D 轮。</div>
+      <div class="p-item"><span class="p-label">🏛 政策视角:</span>国家人工智能产业投资基金由国家大基金三期出资设立，配置重心集中在 AI 与算力芯片、HBM、大模型算法、具身智能机器人与 AI 安全，已投月之暗面 Kimi、DeepSeek、沐曦、银河通用、长亭科技；本次是其首次出手投资无人配送赛道。</div>
+    </div>
+    <p class="card-desc">自动驾驶科技公司新石器 10-20 宣布完成 <span class="data-highlight">4 亿美元</span>E 轮融资，累计融资规模突破 <span class="data-highlight">百亿元人民币</span>，居无人配送行业首位。本轮由博裕投资与<span class="data-highlight">国家人工智能产业投资基金</span>联合领投——这是该基金<span class="data-highlight">首次出手投资无人配送赛道</span>。资金将投向精细化运营网络的全球区域枢纽布局，以及<span class="data-highlight">端到端大模型数据训练闭环</span>，以提高无人驾驶安全等级并压低车辆全生命周期运维成本。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1090067009_313745" target="_blank" rel="noopener">财报网：E 轮投资方结构与资金用途</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9MDG94O05119MAU.html" target="_blank" rel="noopener">TechWeb：累计融资超百亿元，D 轮逾 6 亿美元</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c7">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>训练数据成 AI 硬通货：Snorkel AI 估值破 35 亿美元营收一年增 18 倍，Mecka AI 拿红杉 6000 万美元</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">前沿产业</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🔧 技术视角:</span>Snorkel 从售卖标注工具转为交付“现成可用”的高质量数据集，采用“专家主导 + 人机协同 + 可控合成”路径；与纪念斯隆-凯特琳癌症中心合作构建的 HER-2 阳性分型模型整体准确率达 93%，以 3200 份专家人工标注病历作验证集。</div>
+      <div class="p-item"><span class="p-label">📉 供给视角:</span>Epoch AI 测算按当前训练消耗速度，适合训练通用大模型的优质公开人类文本将在 2026—2032 年间接近枯竭；欧盟 AI 法案第 10 条要求高风险系统训练数据相关性、代表性、无偏见且来源可追溯，该规则 2027 年正式实施。</div>
+    </div>
+    <p class="card-desc">两笔横跨赛道的融资暴露同一条产业逻辑：不做终端 AI 产品，专注生产训练数据。<span class="data-highlight">Snorkel AI</span> 新一轮后估值突破 <span class="data-highlight">35 亿美元</span>、一年营收增 <span class="data-highlight">18 倍</span>；<span class="data-highlight">Mecka AI</span> 拿下红杉领投 <span class="data-highlight">6000 万美元</span>B 轮、成立两年估值 5 亿美元。供给侧 Epoch AI 测算：优质公开人类文本将在 <span class="data-highlight">2026—2032 年</span>接近枯竭；欧盟 AI 法案第 10 条数据质量条款将于 <span class="data-highlight">2027 年</span>正式实施，低质量数据届时无法用于医疗、教育、安防等重点领域。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.stdaily.com/web/gdxw/2026-10/20/content_598835.html" target="_blank" rel="noopener">科技日报：大模型竞争进入下半场，高质量数据成硬通货</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.china.com.cn/ai/20261020/414133.shtml" target="_blank" rel="noopener">中国网科技：数据生产方式革新与合规压力</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-3">
+    <h2>三、算力、芯片、云与 AI 基础设施</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖量子模拟 / 自研芯片软件栈 / 全栈交付 / 电力瓶颈 · 8192 GPU 到 21.1GW 需求</div>
+  </div>
+
+  <article class="card" id="c8">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>英伟达 8192 块 GH200 在 JUPITER 完成 104 量子比特容错模拟 物理比特需求降低 90%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">前沿产业</span><span class="sub-tag">产业级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🔬 技术视角:</span>在欧洲首台百亿亿次超算 JUPITER 上用 8192 块 GH200 Grace Hopper 完成 104 量子比特“魔态培育”（Magic State Cultivation）容错模拟，首次纳入真实硬件噪声与三能级泄漏；此前于利希同类研究仅在理想无噪声条件下模拟 50 比特。</div>
+      <div class="p-item"><span class="p-label">🧮 工程视角:</span>45 位编码态矢量追踪约 35.2 万亿复振幅、占用 512 TiB GPU 内存；开发阶段先在 GB200 NVL72 上把规模从 4 卡扩到数百卡再迁移 JUPITER，把原本数周的模拟压缩至数天。</div>
+    </div>
+    <p class="card-desc">英伟达 10-19 在德国于利希超级计算中心宣布，用 <span class="data-highlight">8192 块 GH200</span> 在欧洲首台百亿亿次超算 JUPITER 上完成迄今规模最大的容错量子计算模拟：<span class="data-highlight">104 个量子比特</span>，并首次在<span class="data-highlight">真实硬件噪声</span>下验证“魔态培育”方案，相比传统蒸馏可减少约 <span class="data-highlight">90%</span> 物理比特开销。45 位编码态矢量追踪约 <span class="data-highlight">35.2 万亿</span>复振幅、占用 512 TiB 内存。对照面：谷歌 10-16 刚在 Science 发表 Willow 处理器上的硬件实现，模拟侧正好接上这条 T2 路径。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://nvidianews.nvidia.com/news/nvidia-runs-record-simulation-of-fault-tolerant-quantum-computing-at-julich-supercomputing-centre" target="_blank" rel="noopener">NVIDIA Newsroom：官方技术公告</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/NVIDIA/cuquantum" target="_blank" rel="noopener">NVIDIA cuQuantum 开源仓库（模拟所用软件栈）</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.ifeng.com/c/8xMvAQoPbyE" target="_blank" rel="noopener">凤凰网科技 / IT之家：JUPITER 集群与魔态培育技术</a></li>
+        <li><span class="src-2">二手</span><a href="https://quantumcomputingreport.com/nvidia-and-julich-run-104-qubit-magic-state-cultivation-simulation-on-jupiter-supercomputer/" target="_blank" rel="noopener">Quantum Computing Report：协议与内存工程细节</a></li>
+        <li><span class="src-2">二手</span><a href="https://stock.10jqka.com.cn/usstock/20261020/c680862402.shtml" target="_blank" rel="noopener">同花顺：JUPITER 算力基础与产业影响</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c9">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>亚马逊开源 TorchNeuron 原生 PyTorch 后端直上 Trainium 开发者改一行代码即可迁移</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">前沿产业</span><span class="sub-tag">产业级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">⚙️ 技术视角:</span>通过 PyTorch 官方 PrivateUse1 扩展点把 Trainium2/Trainium3 注册为标准 “neuron” 设备，.to('neuron') 即可切换；支持 eager、实验性 adaptive eager、torch.compile 与 NKI 自定义算子，DDP / FSDP2 / 张量并行 / DeviceMesh 齐备，10 月 20 日以 Apache 2.0 公测开源。</div>
+      <div class="p-item"><span class="p-label">💰 生态视角:</span>亚马逊称 85% 的 AI 研究者与开发者使用 PyTorch；Deepgram 称每美元处理的音频时长提升约 60%；但首版有约 2.2 万项 PyTorch 测试被跳过，暂不支持动态形状与稀疏张量。</div>
+    </div>
+    <p class="card-desc">亚马逊 10-19 宣布开源 <span class="data-highlight">TorchNeuron</span>，把 Trainium 通过 PyTorch 官方 <span class="data-highlight">PrivateUse1</span> 扩展点注册为原生设备，开发者把 <span class="data-highlight">.to('neuron')</span> 一行改动即可把现有 PyTorch 代码搬到 Trainium2/3，10 月 20 日以 Apache 2.0 开源公测。早期客户超 <span class="data-highlight">30 家</span>，覆盖机器人、世界模型与语音 AI。代价同样明确：首版跳过约 <span class="data-highlight">2.2 万项</span> PyTorch 测试，<code>torch.compile</code> 需静态形状、不支持动态与符号形状——换句话说，CUDA 生态的护城河正从“不可替代”退化为“改一行”。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://github.com/aws-neuron/torch-neuronx" target="_blank" rel="noopener">AWS Neuron 官方仓库：安装、版本矩阵与已知限制</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/pytorch/pytorch" target="_blank" rel="noopener">PyTorch 上游仓库（PrivateUse1 扩展点）</a></li>
+        <li><span class="src-2">二手</span><a href="https://tsnmedia.org/torchneuron-pytorch-aws-trainium" target="_blank" rel="noopener">TSN Media：TorchNeuron 技术拆解与 30+ 早期客户</a></li>
+        <li><span class="src-2">二手</span><a href="https://dev.to/gabrielanhaia/awss-torchneuron-runs-pytorch-on-trainium-with-toneuron-shapes-must-be-static-24hk" target="_blank" rel="noopener">实操分析：静态 shape、版本锁定与 CPU 回退陷阱</a></li>
+        <li><span class="src-2">二手</span><a href="https://bigchange.ai/blog/aws-torchneuron-native-pytorch-backend-trainium" target="_blank" rel="noopener">BIG CHANGE：Neuron 2.33 发布矩阵与限制清单</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c10">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>英伟达拿下 Modal 的 CPU 订单切入 x86 腹地 台积电 Q3 营收 463.6 亿美元同比增 50.9%</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">资本财务</span><span class="sub-tag">产业级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🔧 架构视角:</span>Modal 此前 CPU 采购完全依赖英特尔与 AMD，此次将英伟达纳入供应体系；英伟达以 Grace（Arm）系列 + NVLink-C2C + BlueField DPU + Spectrum-X 交换平台打包，把采购单位从“按 CPU、GPU、网络设备分别招标”改成按整机架、整集群、整栈方案交付。</div>
+      <div class="p-item"><span class="p-label">🏭 制造视角:</span>台积电第三季度营收 463.6 亿美元同比增 50.9%、净利 237 亿美元增 68.7%，连续第 6 个季度创利润纪录，并计划在台南建造亚利桑那和熊本之后的第三座 3nm 晶圆厂、2028 年上半年投产。</div>
+    </div>
+    <p class="card-desc">英伟达首次从 AI 初创公司 Modal 拿下 <span class="data-highlight">CPU 芯片</span>订单——此前 Modal 完全依赖英特尔与 AMD。信号意义大于订单量：算力采购正从<span class="data-highlight">按芯片分别招标</span>转向按整机架、整集群交付，生态锁定取代单颗性价比。制造端同步印证：台积电 Q3 营收 <span class="data-highlight">463.6 亿美元</span>（+<span class="data-highlight">50.9%</span>）、净利 <span class="data-highlight">237 亿美元</span>（+68.7%），连续 <span class="data-highlight">6 个季度</span>创利润纪录；应英伟达要求，三星将首次以台积电 3nm 生产定制 HBM 基础芯片。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M9IS0H051288FS.html" target="_blank" rel="noopener">通信世界：全栈算力越过 GPU 边界，采购模式变化</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LR96RP05198NMR.html" target="_blank" rel="noopener">华尔街见闻早餐：台积电 Q3、三星 3nm HBM 与供应链</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ithome.com.tw/news/179757" target="_blank" rel="noopener">iThome：先进制程与 HBM 供应链节点</a></li>
+        <li><span class="src-1">一手</span><a href="https://blogs.nvidia.com/blog/spain-startups-barcelona-supercomputing-center/" target="_blank" rel="noopener">NVIDIA 官方博客：算力中心与全栈交付实践</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c11">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>AI 数据中心撞上比芯片更硬的墙：2025 年交付 8.9GW 对需求 21.1GW，电力接入排队超 5 年</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">产业级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">⚡ 基建视角:</span>摩根大通研究笔记指出：现代数据中心两到三年可盖好，但供电周期天然气发电需五到七年、核能十年以上；Jefferies 测算 2021—2025 年累计未交付容量已达 20.4GW，且缺口仍在扩大。</div>
+      <div class="p-item"><span class="p-label">📊 效率视角:</span>SemiAnalysis 2026 年 9 月首次将中国纳入全球数据中心追踪模型：中国已交付容量超 24GW（仅次于美国 56GW，超欧洲中东非洲总和），但国产芯片单位功耗算力仅为进口芯片的 10%—30%，全国算力设施上架率约 71.4%。</div>
+    </div>
+    <p class="card-desc">2026 年科技巨头财报会上，分析师盘问的问题已从“模型能力提升多少”变成“<span class="data-highlight">算力什么时候真正到手上</span>”。Jefferies 测算 2025 年全球实际投运数据中心容量仅 <span class="data-highlight">8.9GW</span>，而需求接近 <span class="data-highlight">21.1GW</span>，缺口约 12GW；四大科技巨头 2026 年资本开支合计预计达 <span class="data-highlight">7500 亿美元</span>量级（同比 +80%），焦虑却不缓解。另一侧:有报道称 MiniMax 算力足迹约 <span class="data-highlight">7 万颗 H100 等效</span>、DeepSeek 约 <span class="data-highlight">4.7 万颗</span>,单位算力的智能产出正在取代卡数成为核心变量。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://app.myzaker.com/news/article.php?pk=6ad6dfdfb15ec00cd6252c78" target="_blank" rel="noopener">电力瓶颈深度分析：交付曲线与需求曲线分叉</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M5R23O0511CPVM.html" target="_blank" rel="noopener">快科技：中美 AI 实验室算力足迹与单位算力效率对比</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-4">
+    <h2>四、模型平台、开发者生态与分发渠道</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖国产旗舰 / 前沿实验室 / 芯片厂开源 / 开源矩阵 · 4280 亿参数到一行代码迁移</div>
+  </div>
+
+  <article class="card" id="c12">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>MiniMax M3.1 Flash 发布：4280 亿参数 200+ TPS，Agent 任务成本降 70%，输入 1 元/百万 Token</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">前沿产业</span><span class="sub-tag">产品落地</span><span class="sub-tag">产品级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">⚙️ 技术视角:</span>4280 亿总参数、约 230 亿激活的 MoE 架构，更激进的推理期稀疏注意力使线上推理速度提升近 3 倍，日常输出 200+ TPS、P50 稳定 170+ TPS；100 万 Token 上下文，思考模式常开并提供 low 到 max 五档 effort 参数。</div>
+      <div class="p-item"><span class="p-label">📊 评测视角:</span>DeepSWE v1.1 得分 73.7%（压过 GPT-5.6 Sol 的 73.0），Automation-Bench 62.8 居首、BankerToolBench 76.2、OSWorld V2 61.7 与 ALE 29.6 均为国产第一；短板是 Terminal Bench 4.0 仅 38.1，落后 Opus 5 的 51.8。</div>
+    </div>
+    <p class="card-desc">MiniMax 10-19 发布 M3.1 Flash，并正式认领此前匿名处理超 <span class="data-highlight">200 万亿 Token</span> 的“太空兔”Space Bunny。参数 <span class="data-highlight">4280 亿</span>（激活约 230 亿）、上下文 <span class="data-highlight">100 万 Token</span>，线上推理速度提升近 <span class="data-highlight">3 倍</span>、日常输出 <span class="data-highlight">200+ TPS</span>，Agentic 任务综合成本降至前代 <span class="data-highlight">三成</span>。API 每百万 Token <span class="data-highlight">输入 1 元、输出 4 元、缓存读取 0.1 元</span>，输入输出单价较 M3 降超 50%。上述成绩全部为厂商自评，尚无独立复现。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://github.com/MiniMax-AI/MiniMax-M3" target="_blank" rel="noopener">MiniMax 官方开源仓库（M3 系列基线）</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnstock.com/commonDetail/804858" target="_blank" rel="noopener">中国证券网 / 上证报：评测成绩与 API 定价</a></li>
+        <li><span class="src-2">二手</span><a href="https://siliconangle.com/2026/10/19/minimax-launches-m3-1-flash-model-says-it-cuts-ai-agent-costs-by-70/" target="_blank" rel="noopener">SiliconANGLE：Agent 成本下降 70% 与参数规模</a></li>
+        <li><span class="src-2">二手</span><a href="https://metaailabs.com/minimax-just-launched-m3-1-flash-428b-moe-agentic-model-at-0-15-m-input" target="_blank" rel="noopener">Meta AI Labs：逐项基准与短板对照表</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LNGIGG05568W0A.html" target="_blank" rel="noopener">上观新闻 / 新民晚报：Space Bunny 身份认领</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c13">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>Anthropic、Google、OpenAI 同周推进下一代模型：意图推断、Gemini 4 Carbon、Terra 新版</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">前沿产业</span><span class="sub-tag">公司级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🧠 产品视角:</span>The Information 披露 Anthropic 正开发能在指令含糊时主动推断真实意图的模型，推理与直觉判断能力超过现有商用模型；试用者举例：修复 Bug 时主动发现同类底层问题，并先征询用户是否扩大修复范围。</div>
+      <div class="p-item"><span class="p-label">🗺️ 格局视角:</span>Google 内部代号 Gemini 4 Carbon 开发中，旗舰 Gemini 4 Argon 已于 10-14 扩大全球开放；OpenAI 计划未来数周推出 Terra 系列新版本，价格低于 GPT-6.1 Sol；三款 aurora-*alpha 模型 10-18 现身 API 后调用返回 503 并迅速下架。</div>
+    </div>
+    <p class="card-desc">前沿实验室在 <span class="data-highlight">48 小时</span>内同时推进三条产品线。Anthropic 的差异化明确指向<span class="data-highlight">意图推断</span>——指令不完整时主动补齐目标，交互竞争焦点从“听懂并执行”转向“理解意图”；The Information 联合创始人 Amir Efrati 在 X 上猜测可能为 Fable 5.5，但官方<span class="data-highlight">尚未确认</span>名称、定价与时间表。Google 侧 Carbon 在研、Argon 已于 <span class="data-highlight">10-14</span> 扩大开放；OpenAI 预计<span class="data-highlight">未来数周</span>推出 Terra 系列新版，定价低于 GPT-6.1 Sol。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LS20BE05568W0A.html" target="_blank" rel="noopener">机器之心：Anthropic / Gemini 4 Carbon / Terra 三线动向</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9LJISMQ05198NMR.html" target="_blank" rel="noopener">华尔街见闻：意图推断能力细节与在役模型对照</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c14">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>英伟达开源 Nemotron 3.5 Super VL 1200 亿参数与 Bolt 端侧模型 瞄准常驻企业智能体</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">前沿产业</span><span class="sub-tag">公司级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🔧 技术视角:</span>Nemotron 3.5 Super VL 为 1200 亿参数多模态模型，面向企业常驻运行智能体，参数量低于 Nemotron 3 Ultra，但英伟达称其在指令遵循与工具调用任务上可达到相近精度；Bolt 系列轻量模型可在 RTX Spark 芯片 AI PC 与 DGX Spark 工作站本地运行。</div>
+      <div class="p-item"><span class="p-label">🏢 商业视角:</span>英伟达称 Super VL 经特定智能体任务后训练后，在文档智能、财务会计、科学实验、医疗保险理赔与安全攻击抵御任务上快于 Anthropic 与 OpenAI 同级模型；首批使用企业包括 Skydance、EY、Ramp、CrowdStrike、Perplexity 与 Salesforce。</div>
+    </div>
+    <p class="card-desc">英伟达推出两款开源权重模型，把开源策略从“训练与推理”扩展到<span class="data-highlight">常驻企业智能体与端侧</span>。<span class="data-highlight">Nemotron 3.5 Super VL</span> 规模 <span class="data-highlight">1200 亿参数</span>，参数量低于上代旗舰但官方称指令遵循与工具调用精度相当；配套 <span class="data-highlight">Bolt</span> 系列可在 RTX Spark / DGX Spark 本地运行。首批企业用户含 <span class="data-highlight">Skydance、EY、Ramp、CrowdStrike、Perplexity、Salesforce</span>——英伟达在用“能力与可部署性不必二选一”的说法，直接回应开源阵营对其闭源路线的批评。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9L3M2VS05527PMU.html" target="_blank" rel="noopener">IT时代网：两款开源模型规格与首批用户</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/huggingface/transformers" target="_blank" rel="noopener">Hugging Face Transformers：开源模型分发与加载生态</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c15">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>国产开源矩阵同步迭代：Qwen3、DeepSeek-V3、MiMo、Step 系模型集体在架并接入调用榜前列</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">前沿产业</span><span class="sub-tag">产品落地</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">📦 生态视角:</span>千问同步推出面向超长程智能体任务的在线强化学习框架 QwenGyre，NL2RepoBench 模型通过率升至 58.5%；小米开源 MiDashengLM-Spatial 音频模型，可识别声音来源并支持语音识别、字幕、环境音与音乐问答。</div>
+      <div class="p-item"><span class="p-label">📈 调用视角:</span>OpenRouter 口径下 DeepSeek V4.1 Flash 连续两周居首（32.8 万亿 Token/周），GLM 5.3 Flash 12.2 万亿、Step 5 Preview 11.5 万亿（环比 +30%）、MiMo-V2.6-Flash 9.94 万亿、腾讯 Hy4 preview 7.55 万亿——前五均为中国模型。</div>
+    </div>
+    <p class="card-desc">国产模型仓库在本周形成密集迭代：<span class="data-highlight">Qwen3</span> 配套 QwenGyre 在线强化学习框架面向超长程智能体任务、NL2RepoBench 通过率升至 <span class="data-highlight">58.5%</span>；<span class="data-highlight">DeepSeek-V3</span> 系列保持开源基座地位；<span class="data-highlight">MiMo</span> 开源音频定位模型；<span class="data-highlight">Step</span> 系列在调用榜冲到全球第三。调用侧印证：OpenRouter 口径下<span class="data-highlight">全球前五全部为中国模型</span>，DeepSeek V4.1 Flash 单周 <span class="data-highlight">32.8 万亿 Token</span>，开源基座已成为开发者默认起点。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://github.com/QwenLM/Qwen3" target="_blank" rel="noopener">Qwen 官方开源仓库</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener">DeepSeek 官方开源仓库</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/MiMo-AI" target="_blank" rel="noopener">小米 MiMo 官方开源组织</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/OpenMOSS" target="_blank" rel="noopener">阶跃星辰 OpenMOSS 开源组织</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.36kr.com/p/4033570288948355" target="_blank" rel="noopener">36氪：国产开源生态与调用侧观察</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-5">
+    <h2>五、AI 产品、行业应用与用户采用</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖调用规模 / 智能体终端 / 企业级落地 / 消费侧渗透 · 79.18 万亿 Token 到 3999 元整机</div>
+  </div>
+
+  <article class="card" id="c16">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>中国大模型周调用量 79.18 万亿 Token 连续 25 周超过美国 全球调用量前五全部为中国模型</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产品落地</span><span class="sub-tag">用户级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">📈 数据视角:</span>10 月 12—18 日全球大模型总调用量 164 万亿 Token（环比 -4.65%），其中中国模型 79.18 万亿（-8.72%）、美国模型 17.36 万亿（-8.49%）；中国已连续 25 周居首，但环比同步下滑提示需求仍存波动。</div>
+      <div class="p-item"><span class="p-label">🧮 结构视角:</span>榜单结构为 DeepSeek V4.1 Flash 32.8 万亿（第一，连续两周）、GLM 5.3 Flash 12.2 万亿、Step 5 Preview 11.5 万亿（环比 +30%）、MiMo-V2.6-Flash 9.94 万亿、腾讯 Hy4 preview 7.55 万亿；此前一周排名第九的 DeepSeek V4 Flash 正式版跌出榜单。</div>
+    </div>
+    <p class="card-desc">OpenRouter 最新测算：10 月 12—18 日全球大模型总调用量 <span class="data-highlight">164 万亿 Token</span>（环比 -4.65%），其中中国模型 <span class="data-highlight">79.18 万亿</span>（-8.72%）、美国模型 <span class="data-highlight">17.36 万亿</span>（-8.49%），中国已连续 <span class="data-highlight">25 周</span>居首，且<span class="data-highlight">全球调用量前五全部为中国模型</span>。结构上 DeepSeek V4.1 Flash 单周 <span class="data-highlight">32.8 万亿 Token</span> 连续两周第一，Step 5 Preview 环比 <span class="data-highlight">+30%</span> 至 11.5 万亿。需注意中美环比均下滑，行业正从“拼参数”转向“拼调用、拼成本、拼场景”。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9JJP91R0512B07B.html" target="_blank" rel="noopener">每日经济新闻：调用量测算与榜单结构</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9JL749J0550B1DU.html" target="_blank" rel="noopener">财联社：全球前五榜单与环比变化</a></li>
+        <li><span class="src-1">一手</span><a href="https://openrouter.ai/rankings" target="_blank" rel="noopener">OpenRouter 实时调用量排行榜（数据源）</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c17">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>阶跃 STEPX Neo 3999 元全栈定价开售 双域记忆 15 毫秒召回 明确选 MCP 而非 GUI 路线</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产品落地</span><span class="sub-tag">产品级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🔧 技术视角:</span>搭载第五代骁龙 8 与 6.36 英寸 120Hz OLED，配 MiniLED 点阵背屏专供智能体 Amoo 状态反馈；Step AOS 1.0 采用双域记忆结构（用户域 / 智能体域），记忆召回最快 15 毫秒，配“记—理—忆”三步链路。</div>
+      <div class="p-item"><span class="p-label">⚖️ 生态视角:</span>阶跃明确选 MCP 路线而非 GUI：App 主动开放接口、每步调用可追溯、不受应用界面改版影响；已换来支付宝、腾讯、携程、滴滴、剪映、高德、美团等近百家企业接口级接入，并成为首个接入支付宝 Vibe Pay 的终端厂商。</div>
+    </div>
+    <p class="card-desc">阶跃星辰推出首款大模型原生智能体手机 STEPX Neo 先行版，<span class="data-highlight">全栈定价 3999 元</span>（骁龙 8 第五代 + 16GB/256GB + MiniLED 背屏），含 Step AOS 1.0 与连续 12 个月每月<span class="data-highlight">百亿 Token</span>额度。系统用<span class="data-highlight">双域记忆</span>（用户域 / 智能体域），召回最快 <span class="data-highlight">15 毫秒</span>。路线上明确<span class="data-highlight">弃 GUI 取 MCP</span>，靠近百家企业接口级开放换取可追溯调用，而非模拟点击绕过界面——这正是豆包手机助手被 150 余款应用拒绝授权后的分岔点。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M4KOVR05118O92.html" target="_blank" rel="noopener">钛媒体 / 巨潮：全栈定价、双域记忆与 MCP 生态</a></li>
+        <li><span class="src-2">二手</span><a href="https://dy.163.com/article/L9M8H18I0511AG3I.html" target="_blank" rel="noopener">互联网江湖：AI 手机两种路线与 Token 成本账</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c18">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>中国企业级智能体落地全景：OSWorld 90.2% 领跑，蚂蚁 Agentar 2.0 预置近 200 个岗位级数字专家</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产品落地</span><span class="sub-tag">公司级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏢 产品交付视角:</span>实在智能 7 月以 OSWorld 90.2% 任务成功率居总榜第一（该基准含 369 个真实计算机任务，发表于 NeurIPS 2024），执行策略为“API 优先、GUI 兜底”；中远海运重工单项业务人工成本从每年 36 万元降至 6 万元，错误成本下降 94%。</div>
+      <div class="p-item"><span class="p-label">🏦 平台生态视角:</span>蚂蚁数科在 2026 WAIC 发布“商业智能体超级工厂”与 Agentar 2.0，预置近 200 个岗位级数字专家模板；金融行业已联合打造超 300 个专业智能体，服务全部国有银行与股份制银行、超 60% 地方商业银行，平台 ARR 增速 60%、净收入留存率超 110%。</div>
+    </div>
+    <p class="card-desc">企业级智能体的竞争已从参数转向交付，三条路线同时成立：产品交付（实在智能 <span class="data-highlight">OSWorld 90.2%</span> 总榜第一，单客户人工成本从 <span class="data-highlight">36 万降至 6 万</span>）、平台生态（蚂蚁 Agentar 2.0 预置<span class="data-highlight">近 200 个</span>岗位级数字专家，金融已落地<span class="data-highlight">超 300 个</span>专业智能体）与开源框架（Dify 承载超 100 万应用）。分水岭只有一个：<span class="data-highlight">能否接入企业真实系统并在生产环境连续跑下去</span>——OSWorld 90.2% 衡量无接口时的操作成功率，华润信托 95% 衡量业务准确率，来伊份近 3000 家门店衡量覆盖广度。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.ithome.com/1/015/130.htm" target="_blank" rel="noopener">IT之家：2026 中国企业级 AI Agent 厂商全景与三条路线</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.10jqka.com.cn/20261020/c680866950.shtml" target="_blank" rel="noopener">同花顺 / 中国金融家：蚂蚁 Agentar 2.0 与商业智能体超级工厂</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c19">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>智能终端与具身智能消费化提速：上半年终端出货超 1 亿台，人形机器人已在 300 多个场景实训</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产品落地</span><span class="sub-tag">用户级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🛒 消费视角:</span>1—9 月重点平台智能眼镜销售额增长 1.1 倍；2026 上半年各类智能终端出货超 1 亿台；《人工智能终端智能化分级》系列国家标准已发布智能手机、电脑、电视、眼镜等 7 个品类标准，超百款产品达到辅助级能力要求。</div>
+      <div class="p-item"><span class="p-label">🦾 场景视角:</span>人形机器人整机上半年突破 400 款、产量超 4 万台、全年预计突破 10 万台，已在仓储物流、餐饮零售、家庭服务 300 多个重点场景加快验证部署；文旅部已遴选立项 14 个“人工智能+文化和旅游”应用试点。</div>
+    </div>
+    <p class="card-desc">工信部 10-19 国新办发布会给出消费侧硬数据：<span class="data-highlight">2026 上半年各类智能终端出货超 1 亿台</span>，1—9 月重点平台<span class="data-highlight">智能眼镜销售额增长 1.1 倍</span>；终端分级国标已覆盖手机、电脑、电视、眼镜等 <span class="data-highlight">7 个品类</span>、超百款产品达辅助级能力。具身智能侧：人形机器人整机上半年突破 <span class="data-highlight">400 款</span>、产量超 <span class="data-highlight">4 万台</span>、全年预计破 <span class="data-highlight">10 万台</span>，已在 <span class="data-highlight">300 多个</span>重点场景实训；文旅部另立项 <span class="data-highlight">14 个</span>“人工智能+文旅”试点。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.nfnews.com/content/0oXLZPApo9.html" target="_blank" rel="noopener">南方+：智能终端出货、眼镜销售与人形机器人数据</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.nfnews.com/content/96qKpxK5yM.html" target="_blank" rel="noopener">南方+：科技兴商中的 AI 消费落地与发布会实录</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ce.cn/cysc/newmain/yc/jsxw/202610/t20261020_3264699.shtml" target="_blank" rel="noopener">中国经济网：18 条举措与 300+ 场景实训</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-6">
+    <h2>六、竞争格局、安全信任与产业前瞻</h2>
+    <div class="scope"><b>5 张卡</b> · 覆盖越权边界 / 具身伦理 / 治理体系 / 全球共治 / 安全评测 · 50 人门槛到 95.02% 漏洞成功率</div>
+  </div>
+
+  <article class="card" id="c20">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>智能体越权撞上两道监管墙：Anthropic 游说设 50 人/10 亿美元门槛，工行招行集体拒绝 GUI 授权</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏛 立法视角:</span>Anthropic 10 月私下向美国国会议员介绍法案草案，设定三重几乎难以逾越的干预门槛：风险须可预见且迫在眉睫、可能造成超 10 亿美元经济损失，或导致 50 人以上死亡重伤，且须源自生物武器制造扩散、模型脱离掌控或严重网络攻击；即便全部满足，商务部也须向联邦地区法院申请。</div>
+      <div class="p-item"><span class="p-label">🏦 金融视角:</span>豆包手机助手屏幕自动化操作声明协议公示期结束后公布拒绝授权清单，涉及微信、淘宝、支付宝、DeepSeek、小红书等 150 余款应用，其中含工行、招行、重庆农商行；银行顾虑集中在账户资金安全、敏感信息泄露与责任边界难以厘清。</div>
+    </div>
+    <p class="card-desc">智能体越权边界在本周被两面夹击。立法侧：Anthropic 草案把干预门槛设为<span class="data-highlight">超 10 亿美元损失或 50 人以上死亡/重伤</span>，并允许实验室付费给评估机构，批评者称这是给 AI 巨头发的“免死金牌”，且把算法歧视、深度伪造、就业冲击等日常争议全部排除在监管范围外。执行侧：豆包手机助手公布<span class="data-highlight">150 余款</span>应用拒绝屏幕自动化授权清单，含<span class="data-highlight">工行、招行等银行 App</span>——GUI Agent 可读屏、可模拟点击，现有风控模型难以判别操作主体是用户本人还是外部智能体。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.financialnews.com.cn/2026-10/20/content_459123.html" target="_blank" rel="noopener">中国金融新闻网 / 金融时报：Anthropic 法案草案的三重门槛与批评</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.10jqka.com.cn/20261020/c680867108.shtml" target="_blank" rel="noopener">同花顺：银行拒绝授权清单与智能体风控困境</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c21">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>具身智能催生全新传播伦理：从“价值对齐”走向“价值共生”的三重协同治理框架</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">前沿产业</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">⚖️ 治理视角:</span>工信部等十部门《人工智能科技伦理审查与服务办法（试行）》与 7 月 15 日起施行的《人工智能拟人化互动服务管理暂行办法》构成制度基础；三类高风险活动须专家复核——影响人机融合主体性的系统、具舆论动员能力的算法模型、面向安全风险场景的自主决策系统。</div>
+      <div class="p-item"><span class="p-label">🧩 框架视角:</span>提出的三位一体框架为技术规制（全生命周期内嵌伦理，全流程日志完整可查、责任链条清晰可追溯）、伦理适配（以风险等级为骨架、场景分类为血肉、动态调整机制为神经系统）与法律治理（责任分配规则 + 数据权属与使用规则），并探索监管沙盒机制。</div>
+    </div>
+    <p class="card-desc">中国社会科学报 10-20 刊文指出，智能机器人正推动 AI 完成从“数字表征”到“物理行动”再到“人机交往”的范式跃迁，催生<span class="data-highlight">恐怖预警、责任界定、身份认同</span>三重新伦理难题。制度侧已有落点：三类高风险活动须<span class="data-highlight">专家复核</span>，并把<span class="data-highlight">全流程日志完整可查、责任链条清晰可追溯</span>列为刚性要求。核心主张是治理逻辑从事后追责转向前置的价值对齐，并进一步走向“价值共生”——当大量智能体在共享物理空间自主行动时，如何界定责任与“系统级重置”能力将成为新考验。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9M90EG3051495OJ.html" target="_blank" rel="noopener">中国社会科学网 / 中国社会科学报：智能机器人的传播风险与治理路径</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.nopss.gov.cn/n1/2026/1020/c219544-40817893.html" target="_blank" rel="noopener">全国哲学社会科学工作办公室：协同推进全球人工智能伦理治理</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c22">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>完善人工智能治理体系：围绕研发训练部署使用迭代退出全流程 建立分类分级制度谱系</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🏛 制度视角:</span>“十五五”规划纲要明确要求完善人工智能领域法律法规、政策制度、应用规范、伦理准则；治理对象已由可见的机器设备转向动态演化的模型系统，治理难点由局部安全风险扩展为伦理、就业、权责、文化等复合议题。</div>
+      <div class="p-item"><span class="p-label">⚖️ 方法视角:</span>提出构建层次化制度谱系：以基础性制度明确共同底线，以行业规则回应专业差异，以技术标准支撑可执行、可验证、可追溯；并要求同步开展影响评估、技能培训与转岗支持，面向未成年人与老年人实行更严格的安全和伦理要求。</div>
+    </div>
+    <p class="card-desc">中共中央党校（国家行政学院）科研部署名文章系统阐述治理体系框架，主张治理不是给创新“踩刹车”而是<span class="data-highlight">铺设安全轨道</span>。文章承接国务院《关于深入实施“人工智能+”行动的意见》提出的<span class="data-highlight">6 大重点领域</span>与<span class="data-highlight">2027 / 2030 / 2035</span> 三阶段普及率目标，要求围绕研发、训练、部署、使用、迭代、退出这 <span class="data-highlight">6 个环节</span>建立贯通<span class="data-highlight">事前、事中、事后的制度链条</span>。技术侧要求发展<span class="data-highlight">可解释性评估、内容溯源、生成标识、隐私计算</span>与安全审计工具，把生成端标识、传播端识别、用户端提示、执法端取证贯通成全链条闭环。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.ccdi.gov.cn/yaowenn/202610/t20261020_517726.html" target="_blank" rel="noopener">中央纪委国家监委网站：完善人工智能治理体系</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.tjjw.gov.cn/llsy/2026/10/20/detail_2026102092960.html" target="_blank" rel="noopener">天津纪检监察网：同文转载与解读</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c23">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>协同推进全球人工智能伦理治理：技术普惠、精准治理、多元参与、全球共治四位一体</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🌍 全球信号</span><span class="sub-tag">政策监管</span><span class="sub-tag">国家级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🌐 普惠视角:</span>算力、数据、基础模型与高端人才加速向少数发达国家及头部科技企业集聚，抬高了中小企业、科研机构与发展中国家的准入门槛；主张扩大面向公共算力、公共数据与基础模型服务，搭建成本可控、配套完善、风险可防的普惠型智能公共服务体系。</div>
+      <div class="p-item"><span class="p-label">🤝 协同视角:</span>全球伦理规范高度依赖倡议、宣言等软性文件，统一执行规范与跨境监管协作机制尚不健全；主张依托联合国多边框架搭建常态化协商议事机制，加强风险分类、评估程序与技术标准的对接与互认，并防范部分国家以技术垄断和单边强制措施制造壁垒。</div>
+    </div>
+    <p class="card-desc">《光明日报》10-20 刊文提出全球 AI 伦理治理的<span class="data-highlight">4 个维度</span>：技术普惠（纠正智能要素结构性失衡）、精准治理（伦理审查前置嵌入研发设计到迭代更新全流程，医疗、金融、教育、政务实行严格市场准入与周期性伦理复核）、多元参与（政府、企业、公众协同）与全球共治（依托联合国多边框架）。核心判断是：<span class="data-highlight">全球治理的主要矛盾在于技术能力全球分布与治理规则碎片化之间的张力</span>，以及先发国家与发展中国家之间不断扩大的“数智鸿沟”——按其判断，欧盟 AI 法案数据质量条款 2027 年实施后，低质量数据将无法用于医疗、教育、安防等重点领域。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://news.gmw.cn/2026-10/20/content_39054452.htm" target="_blank" rel="noopener">《光明日报》/光明网：协同推进全球人工智能伦理治理</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.workercn.cn/c/2026-10-20/8920004.shtml" target="_blank" rel="noopener">中工网 / 工人日报：同文全文与分类分级动态规制</a></li>
+      </ul>
+    </div>
+  </article>
+
+
+  <article class="card" id="c24">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>AI 安全从“会说话”转向“会动手”：AIIA 发布工信部领域人工智能安全评测框架 2026 版</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags">
+      <span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">前沿产业</span><span class="sub-tag">产业级</span>
+    </div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🛡️ 方法论视角:</span>绿盟科技指出 AI 应用安全风险已从内容合规层升级到系统控制层，呈现组合性强、路径动态化、结果概率化三大特征——同样的攻击这次被拦住、下次可能绕过，传统规则扫描和一次性测评覆盖不了这类风险。</div>
+      <div class="p-item"><span class="p-label">📐 标准视角:</span>10 月 15 日在工信部网络安全管理局指导下，中国人工智能产业发展联盟（AIIA）牵头发布《工业和信息化领域人工智能安全评测框架（2026 版）》，绿盟科技等参编；其 AI 漏洞挖掘智能体曾在 CyberGym 全球榜单以 95.02% 漏洞成功率位列第一。</div>
+    </div>
+    <p class="card-desc">智能体让 AI 风险从“说错话”变成“做错事”。绿盟科技给出“以模治模”方法论：用 <span class="data-highlight">AI 红队</span>做大规模自动化对抗，把概率性风险变成<span class="data-highlight">可量化</span>的安全账本，让风险在上线前可见、可评、可验证；其 AI 漏洞挖掘智能体在 CyberGym 全球榜单以 <span class="data-highlight">95.02%</span> 漏洞成功率居首。标准侧，10 月 15 日在工信部网络安全管理局指导下，<span class="data-highlight">AIIA 发布《工业和信息化领域人工智能安全评测框架（2026 版）》</span>，为智能体时代的评测提供统一依据。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://ex.chinadaily.com.cn/exchange/partners/82/rss/channel/cn/columns/snl9a7/stories/WS6ad6e4b7e4b09a165c790460.html" target="_blank" rel="noopener">中国日报网：AI 安全双轮驱动与评测框架 2026 版</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1089878331_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递 20261020：全球模型安全与治理动态</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <section class="closing">
+    <h3>关键判断 · 2026-10-20</h3>
+    <p><strong>国家层面的产业政策已从单点补贴转为成体系的标准与指标体系。</strong>人工智能+软件”19 项任务、钢铁三项国标、终端分级国标同时落地，软件、数据集、成熟度评估三层标准一起出现，意味着行业从“试点”进入“可度量、可验收”阶段。</p>
+    <p><strong>资本竞速已从估值叙事转为现金流与交付能力的对赌。</strong>OpenAI 300 亿美元融资要抢在 Anthroper 上市前落地、Anthropic 单周再谈 450 亿美元算力、训练数据赛道靠 Snorkel 与 Mecka 走出 35 亿美元与 5 亿美元估值，三条线共同指向：能证明单位算力智能产出与单位数据商业价值的公司才有溢价。</p>
+    <p><strong>算力竞争的主战场已越过 GPU 本身。</strong>英伟达同时向 CPU、量子模拟与自研芯片软件栈扩张，亚马逊用一行代码迁移正面挑战 CUDA，而真正的物理瓶颈已变成电力接入——2025 年全球交付 8.9GW 对 21.1GW 需求，建楼的速度与通电的速度不在同一时间尺度上。</p>
+    <p><strong>国产模型的分水岭从“能不能追平”转向“能不能便宜地跑完复杂任务”。</strong>M3.1 Flash 用 200+ TPS 与三成 Agent 成本拿下 Automation-Bench 与 BankerToolBench 榜首，OpenRouter 前五全为中国模型，但 Terminal Bench 4.0 的 38.1 分提醒：便宜不等于能兜住所有工程任务。</p>
+    <p><strong>智能体的真正摩擦点已从模型能力转到授权边界。</strong>Anthropic 游说美国国会设 50 人/10 亿美元的高干预门槛、豆包手机助手被 150 余款应用拒绝屏幕自动化授权、银行风控无法判别操作主体是人还是智能体——三条线索共同说明：谁来为智能体的越权行为负责，仍是 2026 年最没有共识的问题。</p>
+
+    <div class="stats">
+      <div class="stat"><span class="v">24</span><span class="l">本日卡片</span></div>
+      <div class="stat"><span class="v">6</span><span class="l">主题板块</span></div>
+      <div class="stat"><span class="v">12+</span><span class="l">一手源</span></div>
+      <div class="stat"><span class="v">52</span><span class="l">候选池</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 minimax · AI 产品产业每日简报 · 2026-10-20 · 69 期</div>
+    <div>minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</div>
+  </footer>
+</div>
+</body>
+</html>
