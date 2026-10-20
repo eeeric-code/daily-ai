@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MiniMax 学术每日简报 · 2026-10-20</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8f;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  /* Compatibility: old style .label academic/capital/industry (0703) */
+  .exec .label.capital{background:var(--red);}
+  .exec .label.academic{background:var(--ink);}
+  .exec .label.industry{background:var(--green);}
+  .card .label.capital{background:var(--red);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.academic{background:var(--ink);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.industry{background:var(--green);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.regulatory{background:var(--purple);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.forecast{background:var(--gold);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  /* Compatibility for older files using .section-title (0703 style) */
+  .section-title{margin:38px 0 6px;font-size:22px;color:var(--ink);letter-spacing:0.5px;}
+  .section-sub{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.55;}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+  .tag-purple{background:var(--purple);}
+  .tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);
+    padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  /* Compatibility for 0703 style star */
+  .star{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;
+    font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  /* Compatibility for 0703 style .ref-source */
+  .ref-source{display:inline-block;background:var(--ink);color:#fff;padding:1px 6px;
+    border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .ref-source.src-2{background:var(--gold);}
+
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .deliver-assets{display:block;}
+
+  @media print{
+    header.masthead{border-bottom:2px solid #000;}
+    .toc,.closing .stats,footer{display:none;}
+    .card{box-shadow:none;border-left:5px solid #000;}
+    .tag,.src-1,.src-2,.exec li .num{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  }
+
+  /* ===== 顶部 + 底部导航条 (精致版) ===== */
+  .nav-top, .nav-bottom {
+    background: rgba(246, 245, 241, 0.94);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    z-index: 100;
+  }
+  .nav-top { top: 0; }
+  .nav-bottom {
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .date {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: 1.2px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    margin-top: 2px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-top a, .nav-bottom a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-top a:hover, .nav-bottom a:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  .nav-top a:active, .nav-bottom a:active { transform: translateY(0); }
+  @media (max-width: 640px) {
+    .nav-top, .nav-bottom { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-brand-text .date { font-size: 10.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-top a, .nav-bottom a { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+  </style>
+</head><body>
+<nav class="nav-top"><a href="../../../">← 首页</a><a href="../archive.html">本栏往期</a><a href="../../../ai-products/minimax/">MiniMax 产业版</a></nav>
+<div class="container"><header class="masthead"><div class="brand">MiniMax 学术每日简报<small>GLOBAL AI · 学术独立版</small></div><div class="meta"><strong>2026-10-20 · 星期二</strong><br>事件窗口：10月19—20日 · Asia/Shanghai<br>6 个主题 · 5 条精选</div></header>
+<p class="toc-sub">MiniMax 当日原稿学术选编，经 GPT 分栏整理与来源复核；不是重新调用 MiniMax 生成的新稿。保留研究选题，删去混合商业段落和无原文支持的推断。</p>
+<section class="exec"><h2>执行摘要 · 今日四项关键信号</h2><ol>
+<li><span class="num">1</span><div class="body"><span class="label sci">科学评测</span><strong>ProteinGeoBench：几何任务暴露结构生物学智能体的短板</strong><br>任务族与重复实验比单一榜单名次更有解释力。元数据查找成功不能代表几何计算正确，后续复现应检查数值任务的执行轨迹，并控制工具访问条件造成的差异。</div></li>
+<li><span class="num">2</span><div class="body"><span class="label sci">具身学习</span><strong>PhysWord：原子动作词连接视觉、触觉与操作推理</strong><br>动作词的研究价值是组织物理表征与执行阶段，而不是让机器人多输出一段自然语言说明。有效性应由相同数据和预算下的消融与真实任务重复实验支持，不能仅依据最高基准分数。</div></li>
+<li><span class="num">3</span><div class="body"><span class="label sci">原生记忆</span><strong>MemT-1.0：记忆内化提出长期交互的新研究路径</strong><br>记忆原生架构让经验进入模型状态，但必须区分信息保持、更新冲突和安全遗忘。单次闭卷回答成功不足以代表长期助手可靠性，独立测试应覆盖错误记忆与多用户状态隔离。</div></li>
+<li><span class="num">4</span><div class="body"><span class="label sci">安全研究</span><strong>GRAFT：原稿安全动态中的梯度隔离研究</strong><br>把坏行为局部化是可复现的训练机制问题，而不是对任何部署环境的安全承诺。研究重点应是错误梯度是否确实被隔离、适配器移除后是否复发，以及正常任务能力是否受损。</div></li>
+</ol></section><h2 class="toc-title">本期目录</h2>
+<p class="toc-sub">按主题阅读；数字均保留原始口径，结论区分事实、作者报告与编辑判断。</p><div class="toc">
+<div class="toc-card"><div class="head"><span class="n">1</span><span class="icon">🧬</span><span class="t">AI for Science</span></div><ul>
+<li><a href="#c-1-1">ProteinGeoBench：几何任务暴露结构生物学智能体的短板</a></li>
+</ul></div>
+<div class="toc-card"><div class="head"><span class="n">2</span><span class="icon">🤖</span><span class="t">智能体与具身学习</span></div><ul>
+<li><a href="#c-2-1">PhysWord：原子动作词连接视觉、触觉与操作推理</a></li>
+</ul></div>
+<div class="toc-card"><div class="head"><span class="n">3</span><span class="icon">🧠</span><span class="t">基础模型与多模态</span></div><ul>
+<li><a href="#c-3-1">MemT-1.0：记忆内化提出长期交互的新研究路径</a></li>
+</ul></div>
+<div class="toc-card"><div class="head"><span class="n">4</span><span class="icon">⚙️</span><span class="t">训练推理与研究系统</span></div><ul>
+<li>本期无通过核验的新条目</li>
+</ul></div>
+<div class="toc-card"><div class="head"><span class="n">5</span><span class="icon">🔎</span><span class="t">评测、安全与可解释性</span></div><ul>
+<li><a href="#c-5-1">GRAFT：原稿安全动态中的梯度隔离研究</a></li>
+</ul></div>
+<div class="toc-card"><div class="head"><span class="n">6</span><span class="icon">📚</span><span class="t">开放研究与学术生态</span></div><ul>
+<li><a href="#c-6-1">Frontiers 科研数据计划：服务支持不等于现金拨款</a></li>
+</ul></div>
+</div>
+<section class="theme-block" id="t1"><div class="theme"><h2>🧬 主题 1 · AI for Science</h2><div class="scope"><b>覆盖:</b> 结构生物学 · RNA 构象 · 科研验证</div></div>
+<div class="card" id="c-1-1"><div class="card-head"><div class="card-title">ProteinGeoBench：几何任务暴露结构生物学智能体的短板</div><span class="tag tag-ink">重要</span></div><div class="sub-tags">
+<span class="sub-tag">MiniMax 原稿选编</span>
+<span class="sub-tag">结构生物学</span>
+<span class="sub-tag">预印本</span>
+<span class="sub-tag">2026-10-19</span>
+</div><div class="perspective"><p><span class="p-label">研究贡献</span>原稿关注 ProteinGeoBench 的131个蛋白结构任务：四个前沿模型共4249次运行，另有26模型4486次扩展试验。三款领先模型得分差异不超过0.031；数值任务只有28个，却占四模型共同失败的12个任务的一半，说明总分可能掩盖具体能力短板。</p><p><span class="p-label">证据与局限</span>原稿提出按任务族报告分数，并同时记录运行次数、框架和访问条件，这与论文的方法学主张一致。单次抽样有23.9%的概率改变榜首，不能据此稳定排列模型；本版删除了原稿对无直接实验支持的具体蛋白模型研发路线的外推，保留可核验实验结论。</p></div>
+<p class="card-desc">关键数据:任务族与重复实验比单一榜单名次更有解释力。元数据查找成功不能代表几何计算正确，后续复现应检查数值任务的执行轨迹，并控制工具访问条件造成的差异。</p><div class="links"><span class="links-title">参考：</span><ul>
+<li>一手：<a href="https://arxiv.org/abs/2610.26829" target="_blank" rel="noopener">arXiv：ProteinGeoBench</a> <span class="ref-source">· 2026-10-19</span></li>
+</ul></div></div>
+</section>
+<section class="theme-block" id="t2"><div class="theme"><h2>🤖 主题 2 · 智能体与具身学习</h2><div class="scope"><b>覆盖:</b> 物理推理 · 目标泛化 · 协作与事件理解</div></div>
+<div class="card" id="c-2-1"><div class="card-head"><div class="card-title">PhysWord：原子动作词连接视觉、触觉与操作推理</div><span class="tag tag-ink">重要</span></div><div class="sub-tags">
+<span class="sub-tag">MiniMax 原稿选编</span>
+<span class="sub-tag">具身学习</span>
+<span class="sub-tag">预印本</span>
+<span class="sub-tag">2026-10-19</span>
+</div><div class="perspective"><p><span class="p-label">研究贡献</span>原稿介绍 PhysWord 以抓、按、旋转等原子动作词作为语义锚点，将对应隐藏状态与未来视觉及可选触觉表征对齐，再沿时间预测动作阶段。论文报告 UniVTAC 成功率90.3%、LIBERO-Long 99.6%，并包含双臂夹爪与灵巧手的真实操作实验。</p><p><span class="p-label">证据与局限</span>两个成功率来自不同基准，不能合并为通用机器人能力，也不能直接证明优于所有世界动作模型路线。本版保留原稿对结构化推理的观察，去掉无统一对照支持的竞争排名；复现仍需检查动作词消融、长程错误累积、传感器条件与任务划分。</p></div>
+<p class="card-desc">关键判断:动作词的研究价值是组织物理表征与执行阶段，而不是让机器人多输出一段自然语言说明。有效性应由相同数据和预算下的消融与真实任务重复实验支持，不能仅依据最高基准分数。</p><div class="links"><span class="links-title">参考：</span><ul>
+<li>一手：<a href="https://arxiv.org/abs/2610.26854" target="_blank" rel="noopener">arXiv：Physical Words</a> <span class="ref-source">· 2026-10-19</span></li>
+</ul></div></div>
+</section>
+<section class="theme-block" id="t3"><div class="theme"><h2>🧠 主题 3 · 基础模型与多模态</h2><div class="scope"><b>覆盖:</b> 原生记忆 · 视觉工具 · 表征机制</div></div>
+<div class="card" id="c-3-1"><div class="card-head"><div class="card-title">MemT-1.0：记忆内化提出长期交互的新研究路径</div><span class="tag tag-ink">重要</span></div><div class="sub-tags">
+<span class="sub-tag">MiniMax 原稿选编</span>
+<span class="sub-tag">原生记忆</span>
+<span class="sub-tag">非商业许可</span>
+<span class="sub-tag">2026-10-20</span>
+</div><div class="perspective"><p><span class="p-label">研究贡献</span>原稿将 MemT-1.0 的特点概括为主干网络与动态记忆状态分离，模型学习记忆的读写和更新，在交互后刷新状态，无需为每轮对话重新训练完整模型。它不同于每次重新检索全部历史文本的路线，但长期信息保留仍受状态容量和训练分布约束。</p><p><span class="p-label">证据与局限</span>原稿引用的长对话案例只能作为演示，不能证明在所有记忆任务上领先。官方仓库承认文本记忆系统在部分长历史细节检索上更强；本版同时补充非商业软件许可边界，研究者还需复现纠错、删除、隔离及状态压缩损失，不能将公开代码等同商业开放。</p></div>
+<p class="card-desc">关键判断:记忆原生架构让经验进入模型状态，但必须区分信息保持、更新冲突和安全遗忘。单次闭卷回答成功不足以代表长期助手可靠性，独立测试应覆盖错误记忆与多用户状态隔离。</p><div class="links"><span class="links-title">参考：</span><ul>
+<li>一手：<a href="https://github.com/MemTensor/MemT-1.0" target="_blank" rel="noopener">MemTensor：MemT-1.0 仓库与限制</a> <span class="ref-source">· 2026-10-20</span></li>
+</ul></div></div>
+</section>
+<section class="theme-block" id="t4"><div class="theme"><h2>⚙️ 主题 4 · 训练推理与研究系统</h2><div class="scope"><b>覆盖:</b> 梯度路由 · 证据管理 · 执行框架</div></div>
+<p class="toc-sub">本期无通过核验的新条目，不以旧闻填充。</p>
+</section>
+<section class="theme-block" id="t5"><div class="theme"><h2>🔎 主题 5 · 评测、安全与可解释性</h2><div class="scope"><b>覆盖:</b> 知识结构 · 干预泛化 · 可靠性</div></div>
+<div class="card" id="c-5-1"><div class="card-head"><div class="card-title">GRAFT：原稿安全动态中的梯度隔离研究</div><span class="tag tag-ink">重要</span></div><div class="sub-tags">
+<span class="sub-tag">MiniMax 原稿选编</span>
+<span class="sub-tag">安全对齐</span>
+<span class="sub-tag">梯度路由</span>
+<span class="sub-tag">2026-10-19</span>
+</div><div class="perspective"><p><span class="p-label">研究贡献</span>原稿在 Anthropic 安全路线图条目中提及19日发布的 GRAFT，本版将其中研究内容独立选出。方法利用监测器把不良行为相关梯度导向部署时丢弃的适配器，而让保留部分学习目标行为，探索不用整体惩罚来隔离训练中的错误捷径。</p><p><span class="p-label">证据与局限</span>原文实验以小模型及简化任务为主，不能推出对齐论文已经解决生产模型安全问题。监测器漏检、误判、分布外行为和正常能力损失都需要进一步验证；本版不保留原稿对不同公司的泛化价值判断，只呈现方法机制及作者实验所能支持的边界。</p></div>
+<p class="card-desc">关键判断:把坏行为局部化是可复现的训练机制问题，而不是对任何部署环境的安全承诺。研究重点应是错误梯度是否确实被隔离、适配器移除后是否复发，以及正常任务能力是否受损。</p><div class="links"><span class="links-title">参考：</span><ul>
+<li>一手：<a href="https://alignment.anthropic.com/2026/graft/" target="_blank" rel="noopener">Anthropic Alignment Science：GRAFT</a> <span class="ref-source">· 2026-10-19</span></li>
+</ul></div></div>
+</section>
+<section class="theme-block" id="t6"><div class="theme"><h2>📚 主题 6 · 开放研究与学术生态</h2><div class="scope"><b>覆盖:</b> 可复用数据 · 科研支持 · 许可边界</div></div>
+<div class="card" id="c-6-1"><div class="card-head"><div class="card-title">Frontiers 科研数据计划：服务支持不等于现金拨款</div><span class="tag tag-ink">重要</span></div><div class="sub-tags">
+<span class="sub-tag">MiniMax 原稿选编</span>
+<span class="sub-tag">科研数据</span>
+<span class="sub-tag">开放生态</span>
+<span class="sub-tag">2026-10-19</span>
+</div><div class="perspective"><p><span class="p-label">研究贡献</span>原稿介绍 Frontiers 于19日宣布的 AI in Science Enablers pledge：计划在12个月内支持1000个 Horizon Europe 数据集整理，提供100项 FAIR² 发表资助，并提前开放相关数据服务。公告总额为超过160万欧元的服务价值，不应描述为直接发放同额现金。</p><p><span class="p-label">证据与局限</span>研究意义在于改善机器可读元数据、数据发现与复用条件，但计划规模尚非已经交付的成果。研究者需检查申请资格、数据许可、敏感信息授权和后续维护；本版移除原稿对其他机构同期政策的未核实延伸，不将数据整理自动等同于可直接训练或有效提升模型。</p></div>
+<p class="card-desc">关键信号:科研数据基础设施正成为 AI for Science 的重要投入环节。评估计划应看实际完成的数据集、质量及可复用性，同时区分服务承诺、资助名额和可支配研究经费。</p><div class="links"><span class="links-title">参考：</span><ul>
+<li>一手：<a href="https://www.frontiersin.org/news/2026/10/19/ai-in-science-enablers-pledge" target="_blank" rel="noopener">Frontiers：AI in Science 支持计划</a> <span class="ref-source">· 2026-10-19</span></li>
+</ul></div></div>
+</section>
+<div class="closing"><div class="stats">
+<div class="stat"><span class="v">6</span><span class="l">主题</span></div>
+<div class="stat"><span class="v">5</span><span class="l">条目</span></div>
+<div class="stat"><span class="v">5</span><span class="l">一手引用</span></div>
+<div class="stat"><span class="v">0</span><span class="l">二手引用</span></div>
+</div></div><footer>© 2026 AI Daily Brief · MiniMax 学术版</footer><deliver-assets></deliver-assets></div></body></html>
