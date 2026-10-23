@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 产品产业每日简报 · 2026年10月23日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 产品产业每日简报:24 张卡覆盖 AI 资本、产品发布、企业 AI 落地、行业监管 4 大主题。">
+<title>AI 产品产业每日简报 · minimax · 2026-10-23</title>
+<style>
+  :root{--ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;--paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;--red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;padding:10px 0;border-top:1px dashed var(--line);font-size:14.5px;}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}.tag-gold{background:var(--gold);}.tag-ink{background:var(--ink);}.tag-purple{background:var(--purple);}.tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  @media print{header.masthead{border-bottom:2px solid #000;}.closing .stats,footer{display:none;}.card{box-shadow:none;border-left:5px solid #000;}}
+</style>
+</head>
+
+
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div class="brand">AI 产品产业每日简报<small>minimax · 2026-10-23 · Day 72</small></div>
+    <div class="meta">
+      <div>2026 年 10 月 23 日 · 星期五 · Asia/Shanghai</div>
+      <div><strong>minimax</strong> · fork 自通用版 v2.0 · 2026-07-10 起</div>
+    </div>
+  </header>
+
+  <section class="exec">
+    <h2>执行摘要 · 2026-10-23</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <span class="body"><span class="label reg">监管</span><strong>中办国办印发《产业基础能力提升“十五五”规划》相关部署，八部门把产业基础大模型写入国家重点任务</strong> — 规划围绕 7 个方面提出 22 项重点任务，把 2030 年设为产业基础“总体进入国际先进行列”的验收时点；技术落点不在新增算力指标，而在“工业机理与智能体决策模型融合”，并提出智能排产、参数调优、缺陷检测、设备运维四类场景专项攻关。</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <span class="body"><span class="label reg">监管</span><strong>发改委公布《对外投资管理办法》共 76 条、12 月 1 日起施行：投资者范围首次明确含居民个人</strong> — 六章结构覆盖总则、指导服务、监管、保护与法律责任，自 12 月 1 日起施行并同步废止 2017 年《企业境外投资管理办法》。配套三项制度变化：重大不利情况报告、对外投资信息年度报告、面向大额非敏感类境外再投资的情况报告。对外投资流量已从 2017 年 1583 亿美元增至 2025 年 2136 亿美元、存量 3.4 万亿美元。</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <span class="body"><span class="label cap">资本</span><strong>OpenAI 推进最高 300 亿美元融资，投前估值 1.25 万亿美元由阿联酋与 Coatue 联合领投</strong> — 较一个月前 1.4 万亿美元的要价下调逾 10%，投前估值不含本轮募资、对应投后约 1.28 万亿；年化营收从 8 月 400 亿美元升至 9 月约 500 亿美元，按年底 700 亿口径对应约 18 倍远期市销率，按净口径 500 亿则为约 25.6 倍。公司同步与阿联酋洽谈额外算力商业协议，CFO 此前称上市窗口在 2027 年。</span>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <span class="body"><span class="label cap">资本</span><strong>马斯克力推特斯拉与 SpaceX 合并：合计市值约 3.7 万亿美元，或成史上最大企业并购</strong> — 双方已各自成立由独立董事组成的特别委员会，马斯克因利益冲突回避。SpaceX Q3 营收 145.8 亿美元、同比增 161%，净利润 44 亿美元扭亏，超级智能业务收入首超星链、同比增 830%。巴克莱按全股票交易给出参考估值 SpaceX 2.1 万亿 / 特斯拉 1.5 万亿、每股换约 0.7 股，马斯克将持约 37% 股份与约 56% 投票权。</span>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <span class="body"><span class="label sci">科技</span><strong>英伟达推出 AI 工厂运维平台 Minerva：每小时分析数十亿数据点，用动态阈值替代固定告警</strong> — 平台整合基础设施与 AI 工作负载遥测数据，识别异常并预测潜在故障，把关联告警整合为可执行的故障处理事项，配原生 AI 助手支持自然语言查询与修复建议。IREN 已投入使用，IBM、Jio、Lambda、Bitdeer AI 与特斯拉计划部署，戴尔、联想、超微将纳入各自 AI 工厂运维产品组合。</span>
+      </li>
+    </ol>
+  </section>
+
+  <div class="theme" id="theme-1">
+    <h2>一、国家战略、政府行动与监管治理</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖产业基础“十五五”规划 / 对外投资与出口管制目录 / 微短剧与 AI 剧双轨 · 22 项重点任务到 76 条对外投资新规</div>
+  </div>
+
+  <article class="card" id="c1">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>八部门印发《产业基础能力提升“十五五”规划》：产业基础领域通用大模型与行业模型双线布局，培育“模型即服务、智能体即服务”新业态</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">顶层设计</span><span class="sub-tag">国家级</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>文件的技术落点不在新增算力指标，而在“工业机理与智能体决策模型融合”这条路径上：把物理过程的确定性机理与智能体的非确定性决策分层建模，再以模数共振动作业验证。同时提出围绕智能排产、参数调优、缺陷检测、设备运维四类场景实施专项攻关。研发机制侧有两条实质变化：允许高校院所按“先使用后付费”把成果许可给中小微企业，以及支持优质企业牵头组建创新联合体攻关关键基础产品。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业含义是采购逻辑从“买算力”转为“买可用能力”。文件要求国有企业通过长期技术合作向产业基础领域企业开放工程实践、供应链配套资源，意味着央企与制造业龙头从甲方变首批共研方。技术攻关与推广应用被并列为同一组重点任务，配套的是制造业单项冠军与专精特新“小巨人”培育，产业基础的评价指标从自给率转向整机创新支撑能力。</div>
+    </div>
+    <p class="card-desc">规划围绕 <span class='data-highlight'>7 个方面</span>提出 <span class='data-highlight'>22 项</span>重点任务，并把 <span class='data-highlight'>2030 年</span>设为产业基础“总体进入国际先进行列”的验收时点。给出两个可追责的判断基线：一是“模型即服务、智能体即服务”被写入新业态清单，二是高校院所成果许可从无偿改为“先使用后付费”——技术扩散第一次有了价格机制。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.miit.gov.cn/jgsj/ghs/gzdt/art/2026/art_5fab903fabde41e3857ad4e7a939c8d8.html" target="_blank" rel="noopener">工信部 · 规划印发消息</a></li>
+        <li><span class="src-1">一手</span><a href="https://news.cctv.cn/2026/10/22/ARTIgkZVPHCXw7jO5jlBO2er261022.shtml" target="_blank" rel="noopener">央视网 · 7方面22项重点任务</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.zhonghongwang.com/show-451-475736-1.html" target="_blank" rel="noopener">中宏网 · 规划全文与 22 项重点任务</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnr.cn/jingji/ycbd/20261022/t20261022_527849944.shtml" target="_blank" rel="noopener">央广网 · 攻关任务与创新联合体</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c2">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>发改委公布《对外投资管理办法》共 76 条、12 月 1 日起施行：投资者范围明确含居民个人，前三季度 ODI 1286.2 亿美元</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">出海</span><span class="sub-tag">国家级</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>新办法的技术属性体现在报告链条上：在大额非敏感类项目（境外再投资）情况报告与项目完成情况报告之外，针对少数金额大、关乎与有关国家外交关系的项目新增“前期工作情况报告”制度。制度设计逻辑是把对外投资的风险从事后统计，转为按金额与国别关系的双阈值分级触发，阈值由审批部门而非企业自行判断。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧最直接的变化是投资者主体扩容至居民个人，并明确继续通过合格境内机构投资者、港股通、跨境理财通等渠道配置境外资产，制度与现行渠道做了衔接而非另起炉灶。配套的出海服务也在同一时间窗口扩容：截至 2025 年底我国在境外共设立对外直接投资企业 5.8 万家、分布在 189 个国家和地区，商务部表示将聚焦法律、金融、物流等企业关注领域出台务实政策。</div>
+    </div>
+    <p class="card-desc">办法自 <span class='data-highlight'>2026 年 12 月 1 日</span>起施行，共 <span class='data-highlight'>76 条</span>、六章，同时废止 2017 年《企业境外投资管理办法》。给出三个可核对的量：存量 <span class='data-highlight'>3.4 万亿美元</span>（连续 9 年世界前三）、前三季度 ODI <span class='data-highlight'>1286.2 亿美元</span>、前 9 个月外商利润再投资 <span class='data-highlight'>939.9 亿元</span>同比增 4.7%。规则变化落点是“分级报告”取代“统一备案”，出海项目的合规成本会从末端前移到架构阶段。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.tmtpost.com/8178065.html" target="_blank" rel="noopener">钛媒体 · 办法全文与发改委答问五问</a></li>
+        <li><span class="src-1">一手</span><a href="https://news.cnr.cn/native/gd/20260918/t20260918_527817163.shtml" target="_blank" rel="noopener">央广网 · 人民日报原文：出海服务与算网一体</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c3">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>商务部、科技部就《中国禁止出口限制出口技术目录》修订征求意见：23 项 AI 技术被纳入，配套可自评的量化阈值与开源便利</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">技术出口</span><span class="sub-tag">全球信号</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>规则把技术出口管理拆成三条判定线：训练数据涉及国家核心数据的大模型拟禁止出口、涉及重要数据的拟限制出口；达到一定性能的智能体技术本身限制出口，但专用于国家关键信息基础设施、国防军工、核心政务等高敏感场景时升级为禁止；AI 处理芯片设计与大规模智能算力集群片间/节点间高速互连技术被纳入。接口规范层面提供了明确可自评的量化门槛，避免企业揣测监管方向。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧的关键是“管什么不管什么”被写清楚了：企业用限制类模型对外提供 API 调用、APP/网页交互、SaaS 应用、本地端侧轻量化部署，均不属于大模型技术出口管理范围。对已经出海的头部厂商，这意味着商业模式未被切断；但技术许可、境外自建算力中心、境外流片等动作需要按目录逐项判断。同时设置了两类便利情形——开源、境外自营算力中心等适用自动许可，已进入公共领域的技术拟不纳入管理。</div>
+    </div>
+    <p class="card-desc">征求意见稿给出三组可自评阈值：训练计算量超过 <span class='data-highlight'>10²⁶ 次浮点运算</span>、参数超过 <span class='data-highlight'>2 万亿</span>、能力达到<span class='data-highlight'>全球前十</span>水平。政策落地后，DeepSeek、MiniMax 两家头部企业已完成出口前登记并完成开源与海外授权使用。判断基线：这条规则限制的是技术出口行为而不是技术本身，产业出海的常规路径被保留，边界划在底层技术而非产品形态。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.cls.cn/detail/2512926" target="_blank" rel="noopener">财联社 · 23 项技术与三类判定</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.sctv.com/news/2113409778218291201" target="_blank" rel="noopener">央视新闻 · 量化指标与开源便利情形</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c4">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>广电总局“十五五”规划把内容生产写成双轨制：推动真人剧与 AI 剧并轨，前 8 个月上线微短剧 43 万部、AI 剧占比超九成</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">内容产业</span><span class="sub-tag">AI 剧</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>规划给出的技术治理路径是“标注加人工把关”两条硬约束：使用人工智能生成制作、播出的节目必须添加相应标识，制作关键环节与成片内容审核必须坚持人工审核把关。产业侧的量化底座是：全国微短剧用户已超 <span class='data-highlight'>8 亿</span>，2025 年市场规模突破 <span class='data-highlight'>千亿元</span>，今年前 8 个月上线微短剧 <span class='data-highlight'>43 万部</span>（为去年全年的 <span class='data-highlight'>13 倍</span>），其中 AI 剧占比超过 <span class='data-highlight'>9 成</span>。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>监管的另一半是收紧。今年以来全网下架违规微短剧 <span class='data-highlight'>6.8 万部</span>、督导平台处置违规账号 <span class='data-highlight'>1200 余个</span>，其中被处置内容九成以上也是 AI 剧；今年 9 月 1 日《微短剧发展管理办法》正式实施并启用统一标识“苔花标”。规划同时把基础设施侧的算力要求写进来，提出深化广电网络光纤化、IP 化、智能化、超高清化改造，推动算网一体、固移融合。</div>
+    </div>
+    <p class="card-desc">给出四个可核对的量：前 8 个月上线 <span class='data-highlight'>43 万部</span>、AI 剧占比<span class='data-highlight'>超 9 成</span>、全年下架违规内容 <span class='data-highlight'>6.8 万部</span>、被处置内容中 AI 剧<span class='data-highlight'>占九成以上</span>；另有用户规模 <span class='data-highlight'>超 8 亿</span>与 <span class='data-highlight'>千亿元</span>市场规模两个存量口径。判断基线：AI 剧已经从“能不能用”进入“按什么标准标注与审核”的阶段，标识与人工复核是准入条件而非可选项。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://politics.gmw.cn/2026-09/17/content_39005902.htm" target="_blank" rel="noopener">光明网 · 43 万部与 AI 剧占比九成</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ce.cn/xwzx/gnsz/gdxw/202609/t20260918_3220190.shtml" target="_blank" rel="noopener">中国经济网 · 人民日报：算网一体与人工审核</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-2">
+    <h2>二、资本、投资、并购与企业财务</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖一级市场融资 / 估值下修 / 万亿级并购 / 支出承诺 · 1000 亿人民币轮次到 8250 亿美元承诺</div>
+  </div>
+
+  <article class="card" id="c5">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>OpenAI 推进最高 300 亿美元融资，投前估值 1.25 万亿美元由阿联酋投资者与 Coatue 领投，目标下周末前签署</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">IPO</span><span class="sub-tag">重磅融资</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这笔钱的结构比金额更值得记：投前 1.25 万亿美元不计入本轮新资金，与 3 月那轮 8520 亿美元投后估值不同口径，因此不能直接相减。同期 OpenAI 正与阿联酋方面谈判一项商业协议以获取额外算力供给，资金与数据中心容量被打包进同一份谈判。值得注意的是节奏：Anthropic 预计 11 月中旬上市，OpenAI 抢在其之前锁定投资人承诺。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧出现一个此前少见的组合：投资人同时给钱和给机柜。据路透社报道，软银、总部在阿布扎比的 MGX 等既有投资方参与谈判，说明新一轮的增量投资人身份正在从财务投资者变成算力供给方。对下游而言，一家同时是 OpenAI 股东与算力供应商的公司，其资本开支节奏与 OpenAI 的融资节奏绑得更紧，基础设施侧的信用敞口需要按关联交易口径重估。</div>
+    </div>
+    <p class="card-desc">三个可核对变量：<span class='data-highlight'>300 亿美元</span>融资上限、<span class='data-highlight'>1.25 万亿美元</span>投前估值、<span class='data-highlight'>下周末</span>签署截止日（认购截止日 <span class='data-highlight'>10 月 30 日</span>）。若成交即刷新全球最值钱私营公司纪录。真正被压价的是节奏——三天前路透社口径为估值可能超过 1.4 万亿美元，Anthropic 的 IPO 估值预期同期从约 2 万亿下调至约 1.5 万亿。资金仍大规模流入，但定价权已从买方转向卖方。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://techcrunch.com/2026/10/22/openai-working-on-new-30b-raise-at-1-25t-valuation-ahead-of-ipo/" target="_blank" rel="noopener">TechCrunch · 融资规模与领投方</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnbeta.com.tw/articles/tech/1583464.htm" target="_blank" rel="noopener">cnBeta · 投前口径与阿联酋算力协议</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/stock/usstock/c/2026-10-23/doc-iniwcxkx5755473.shtml" target="_blank" rel="noopener">新浪财经 · 过渡性融资定位</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c6">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>DeepSeek 最新一轮融资约 1000 亿元人民币落定在途：腾讯、宁德时代出资最多，目标从 500 亿两度上调至约 1000 亿元</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">资本财务</span><span class="sub-tag">大模型</span><span class="sub-tag">IPO 铺垫</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>资金用途被明确指向三处：模型训练、算力建设与人才招募。值得注意的是募资目标的上调轨迹——最初设定 500 亿元，此后多轮上调至约 1000 亿元，推动上调的是新模型发布后涌来的认购需求。这条曲线与开源权重的分发节奏同步：模型以 MIT 许可放出后，调用需求先于资本需求出现，融资规模实际上是需求侧的读数，不到半个月时间翻了一倍。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧的结构性变化在投资方名单上。腾讯同时是算力与分发渠道的持有方，宁德时代则代表制造业资本进入大模型层，这两家都不是纯财务投资人。多家消息人士判断本轮融资为筹备中的科创板 IPO 铺路。对国内大模型竞争格局而言，头部单家融资规模已与 Anthropic、OpenAI 各超 1000 亿美元的融资体量处于同一数量级，但资金仍全部用于训练与算力，未见并购型支出。</div>
+    </div>
+    <p class="card-desc">给出四个量化锚点：<span class='data-highlight'>约 1000 亿元</span>（约 <span class='data-highlight'>150 亿美元</span>）融资规模、目标从 <span class='data-highlight'>500 亿元</span>两度上调、腾讯与宁德时代为最大出资方、交易预计<span class='data-highlight'>未来数日</span>内完成。这是中国私募市场有记录以来规模最大的单轮融资之一，也是制造业主体首次以大额出资方身份直接进入大模型层。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.cn/stock/jdts/2026-10-23/detail-iniwcnuz5189694.d.html" target="_blank" rel="noopener">新浪财经 · 第一财经与上证报多信源交叉求证</a></li>
+        <li><span class="src-2">二手</span><a href="https://chinaidb.com/companies/alibaba" target="_blank" rel="noopener">China AI Index · 中资大模型融资与 ARR 追踪</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c7">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>马斯克力推特斯拉与 SpaceX 合并：合计市值约 3.7 万亿美元或成史上最大企业并购，SpaceX Q3 营收 145.8 亿美元同比增 161%、超级智能业务首超星链</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">并购重组</span><span class="sub-tag">超级智能</span><span class="sub-tag">算力</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>驱动这笔交易的技术事实已经变了：SpaceX 三季度营收 145.8 亿美元、同比增 161%，净利润 44 亿美元实现扭亏，其中“超级智能”业务当季收入首次超过星链连接业务、同比增 830%。合并的技术逻辑被写在协同清单里——Terafab 晶圆厂同时服务特斯拉、SpaceX 与 xAI 的算力需求，xAI 已并入 SpaceX，特斯拉持有 Megapack 储能与 Cybertruck 产能，星链补地面信号盲区，巴克莱认为垂直整合的最大驱动力就是 Terafab。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>卡住交易的不是技术而是治理。SpaceX 股东层面障碍小（马斯克控制 80% 以上投票权），特斯拉层面需全体已发行股份 50% 以上赞成票，而马斯克在特斯拉仅持股约 20%；忠诚散户估计持有特斯拉 25%—27% 股份，机构股东只需小部分转向即可过关。巴克莱按全股票交易假设给出参考估值：SpaceX 2.1 万亿、特斯拉 1.5 万亿，每股换约 0.7 股 SpaceX，马斯克最终持约 37% 股份、约 56% 投票权。摩根大通测算 SpaceX 2027 年营收可达 2540 亿美元、年底算力规模 10 吉瓦。</div>
+    </div>
+    <p class="card-desc">四个可核对的数字：合并后总市值约 <span class='data-highlight'>3.7 万亿美元</span>、目标 <span class='data-highlight'>2027 年上半年</span>宣布并在本届任期内交割、SpaceX Q3 净利 <span class='data-highlight'>44 亿美元</span>、超级智能业务同比 <span class='data-highlight'>+830%</span> 首超星链。判断基线：这笔交易的定价权不在技术而在投票权——特斯拉需要全体股份 <span class='data-highlight'>50%</span> 赞成而马斯克只有 <span class='data-highlight'>20%</span> 持股，美国中期选举不到两周，芯片股回撤会直接削弱股东投票意愿。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://paper.cnstock.com/html/2026-10/23/content_2280323.htm" target="_blank" rel="noopener">上海证券报 · 合并障碍与巴克莱换股方案</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.stcn.com/article/detail/4235867.html" target="_blank" rel="noopener">证券时报 · 彭博：3.7 万亿与摩根大通测算</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.chinatechnews.com/2026/10/23/131228-musk-wants-to-merge-spacex-and-tesla" target="_blank" rel="noopener">ChinaTechNews · AFP 视角的投票权与德州注册</a></li>
+        <li><span class="src-2">二手</span><a href="http://intl.ce.cn/sjjj/qy/202610/t20261023_3268793.shtml" target="_blank" rel="noopener">中国经济网 · SpaceX 三季度营收结构</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.jrj.com.cn/2026/10/22090258816398.shtml" target="_blank" rel="noopener">金融界 · 财联社：2027 上半年时间表</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c8">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>Meta 披露未来支出承诺总额约 8250 亿美元、五年期 CDS 创历史新高；特斯拉同日把 2026 年资本开支下调至约 200 亿美元</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">capex</span><span class="sub-tag">融资结构</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>8250 亿美元的构成被拆成三段：未计入资产负债表的经营租赁与融资租赁价值 3557 亿美元（数据中心及能源基础设施，租赁期自 2026 年剩余时间延续至 2036 年）、截至 9 月 30 日 4545 亿美元不可取消的短期与长期合同（第三方云计算、数据中心能源协议、Reality Labs 消费硬件），以及未来五年最高 147.2 亿美元的附带条件云容量采购义务。付款时间也在靠近：约 1214 亿美元需在 2027 年支付，三个月前这一数字为 817 亿美元。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>同一天出现的反向动作更有信息量：特斯拉把全年资本开支从超过 250 亿美元下调至约 200 亿美元，首席财务官称源于资本配置效率改善。两家公司的做法合起来构成一个转折信号：巨头开始把 AI 投入从“承诺即资产”改写为“按合同分批兑现”，用股权与租赁工具换取延后现金支出。值得注意的是资产负债表对照——Meta 期末现金及有价证券 824.5 亿美元，长期债务 809.2 亿美元。</div>
+    </div>
+    <p class="card-desc">五个量化锚点给出判断基线：支出承诺 <span class='data-highlight'>8250 亿美元</span>（较 7 月披露的近 7000 亿再增约 1250 亿）、表外租赁 <span class='data-highlight'>3557 亿美元</span>、不可取消合同 <span class='data-highlight'>4545 亿美元</span>、<span class='data-highlight'>2027 年</span>到期 <span class='data-highlight'>1214 亿美元</span>、五年期 CDS 升至 <span class='data-highlight'>约 119.3 个基点</span>创历史新高。融资成本已被市场按曲线定价，而非按合同金额定价。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.thestar.com.my/tech/tech-news/2026/10/23/steep-bill-for-ai-buildout-punishes-meta-other-tech-favorites" target="_blank" rel="noopener">路透社 · 8250 亿支出承诺与负自由现金流</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.fxbrokertrust.com/insights/meta-shares-fall-7-as-massive-spending-plan-overshadows-beat" target="_blank" rel="noopener">FXBrokerTrust · C 类股与 Oppenheimer 测算</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-3">
+    <h2>三、算力、芯片、云与 AI 基础设施</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖 AI 工厂运维 / LPU 存储架构 / FC-BGA 基板 / 算力底座 · 每小时数十亿数据点到 1590 EFLOP</div>
+  </div>
+
+  <article class="card" id="c9">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>英伟达推出 AI 工厂运维平台 Minerva：每小时分析数十亿数据点，用动态知识图谱把 GPU、网络、存储与作业映射成一张图</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">可观测性</span><span class="sub-tag">产品发布</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>Minerva 的技术内核是两张表的组合：一是用动态知识图谱在逻辑上把基础设施（GPU、SuperNIC、交换机、线缆）与运行其上的作业建立映射，从而在几十万张 GPU 规模的工厂里把一次慢速训练回溯到具体部件；二是用有监督与无监督机器学习每小时处理数十亿数据点，学习正常行为、发现未见过的异常、预测正在形成的故障，并按工厂拓扑把告警风暴收敛成带根因的单一事件。它暴露的是不易被察觉的降级信号，例如某张 GPU 异常高温、某块 NVMe 在负载下掉速。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>值得关注的是英伟达给出的度量口径：AI 工厂产出被定义为 GPU 小时、goodput、集群可用度与 token 产量四项，而不是笼统的“性能提升”。平台自带以实时遥测为基础的 AI 助手，也支持接入外部智能体工具与自动化接口，把修复动作从人工改为可编排。产业含义是：算力资产的折旧正在从设备账面转向运行小时，MLOps 层的预算此前被算进运维，现在开始有独立产品形态。</div>
+    </div>
+    <p class="card-desc">给出四个可核对的运行指标基线：每小时分析 <span class='data-highlight'>数十亿</span>个数据点、可覆盖 <span class='data-highlight'>几十万张</span> GPU 的单一知识图谱，产出度量定义为 GPU 小时 / goodput / 集群可用度 / token 产量四项。需要标注的不确定性：英伟达未提供任何量化的改善幅度——中断间隔、修复速度、GPU 开机率的提升数值均为空；IREN 已在使用，Aolani、Bitdeer AI、IBM、Jio、Lambda、Quake AI、特斯拉计划部署，戴尔、联想、超微将纳入各自产品组合。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://blogs.nvidia.com/blog/minerva-platform-infrastructure/" target="_blank" rel="noopener">NVIDIA Blog · Minerva 发布与度量口径</a></li>
+        <li><span class="src-2">二手</span><a href="https://techbeat.co/story/nvidia-minerva-brings-ai-powered-observability-to-ai-factories" target="_blank" rel="noopener">TechBeat · 正面与风险项拆解</a></li>
+        <li><span class="src-2">二手</span><a href="https://digestai.news/story/nvidia-launches-minerva-aiops-platform-for-ai-factory-observability" target="_blank" rel="noopener">Digest AI · 告警收敛与接入方</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c10">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>英伟达收购 Groq 后首度改架构：下一代 LPU 弃 SRAM 转向 3D 堆叠 DRAM，500MB 片上缓存仅为 Rubin HBM 容量的 1/500</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">芯片架构</span><span class="sub-tag">存储</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>转向的原因是可量化的容量天花板：Groq 3 LPU 每颗约 500MB 片上 SRAM、内存带宽最高 150TB/s，而 Rubin GPU 单颗 288GB HBM4，容量相差约 500 倍；SRAM 访问延迟约 1 纳秒而 HBM/DRAM 约 100 纳秒，速度优势真实存在，但在台积电 5 纳米到 3 纳米演进中计算单元可缩小约 1.6 倍、SRAM 单元面积仅减少约 5%，缩放已近极限。新方案名为 3DS，用 TSV 在 DRAM 内部打穿数千微孔垂直互连，在保持标准 DRAM 接口协议的前提下扩张容量，而非像 HBM 那样追求极致带宽。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>这不是孤立事件：Cerebras 已在 Hot Chips 2026 预告 CS-6 将首次引入晶圆级 3D 堆叠，把 DRAM 层置于逻辑与 SRAM 晶圆之上；d-Matrix 2025 年 11 月与 Alchip 合作开发 3D 堆叠 DRAM 方案，其 Raptor 采用台积电 N4 逻辑裸片与 3D DRAM 面对面堆叠，单位面积带宽 32.6GB/s/mm²、约为 HBM4 的 20 倍，单卡带宽超 100TB/s。三家大 SRAM 流派同时转向“SRAM 做计算级缓存 + 3D 堆叠 DRAM 做容量层”，意味着保留标准 DRAM 接口可直接接入成熟存储生态。</div>
+    </div>
+    <p class="card-desc">四个数字给出判断基线：<span class='data-highlight'>2026 年</span>推理算力在全球 AI 基础设施占比首次超过 <span class='data-highlight'>70%</span>，英伟达推理芯片份额由 <span class='data-highlight'>66%</span>升至 <span class='data-highlight'>74%</span>，SRAM 容量每两年仅增 <span class='data-highlight'>10%—20%</span> 而模型规模每 <span class='data-highlight'>6—9 个月</span>翻倍。结论：当推理成为主战场，存储层级而非制程节点才是推理芯片的定价权来源。需要保留的不确定性是 TSV 量产良率与编译器重写成本——3DS 目前只是业界消息，双方均未官方确认。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://learning.sohu.com/a/1091247209_166680" target="_blank" rel="noopener">搜狐 · 3DS 方案与三家厂商对照</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9OLGP530511CPMT.html" target="_blank" rel="noopener">网易 · 半导体行业观察：SRAM 缩放瓶颈</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/stock/t/2026-10-21/doc-inivyaar5539144.shtml" target="_blank" rel="noopener">新浪财经 · 快科技：3DS 与 HBM 路线差异</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c11">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>AI 芯片的瓶颈连成一条链：三星电机获特斯拉与英伟达 28 亿美元投建 FC-BGA 产线，泛林指引不及预期单日跌 11.76%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">先进封装</span><span class="sub-tag">供应链</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这条链上有三个可独立验证的环节。其一，FC-BGA（倒装芯片球栅格阵列基板）正成为 AI 芯片下一代基板的供应链瓶颈——先进封装不再是后段产能问题，而是决定 GPU 能否按计划出货的前置条件。其二，泛林集团本季营收 82.2 亿美元、环比增 22%、非 GAAP 摊薄每股收益 2.20 美元均创纪录，但对截至 12 月 27 日季度的营收指引为 86 亿美元上下浮动 4 亿美元，未满足预期，管理层明确表示若非近期供应链限制本可给出更高指引。其三，存储侧三星西安工厂拟转产 286 层 V9 NAND。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>投资结构值得单列：芯片设计方（英伟达出资约 19.7 亿美元）与终端需求方（特斯拉约 8.3 亿美元）同时向基板厂注资，锁的是同一段产能的不同用途——自动驾驶汽车、人形机器人与 AI 芯片。这与传统“设计方下单、基板厂扩产”的采购关系不同，是把产能风险前移到股权层面。设备端的“需求旺盛但交付受限”则是收入确认被卡在交付环节，而非需求环节。</div>
+    </div>
+    <p class="card-desc">五个量化锚点：特斯拉出资 <span class='data-highlight'>1.1 万亿韩元</span>（约 <span class='data-highlight'>8.3 亿美元</span>）、英伟达 <span class='data-highlight'>2.6 万亿韩元</span>（约 <span class='data-highlight'>19.7 亿美元</span>）、合计约 <span class='data-highlight'>28 亿美元</span>，产线计划 <span class='data-highlight'>2028 年</span>量产并自 <span class='data-highlight'>2029 年</span>起供货 <span class='data-highlight'>5 年</span>；泛林集团 Q3 营收 <span class='data-highlight'>82.2 亿美元</span>、下季指引 <span class='data-highlight'>86 亿美元 ±4 亿美元</span>、当日跌 <span class='data-highlight'>11.76%</span>。判断基线：未来两年 AI 芯片的产能约束点不是制程，而是封装基板与设备交付能力。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://stock.eastmoney.com/a/202610233904666675.html" target="_blank" rel="noopener">东方财富 · 泛林集团业绩与指引拆解</a></li>
+        <li><span class="src-2">二手</span><a href="https://cryptocortex-ai.com/news/dd194a3d-8569-4fc6-a2ae-b19c11d7e3c6" target="_blank" rel="noopener">CryptoCortex · 机架级内存容量账</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c12">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>“十五五”数智底座账本：全国智能算力 2025 年末达 1590 EFLOPS，2030 年目标 9800 EFLOPS，算力网建设新增直接投资 4 万亿元</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">十五五</span><span class="sub-tag">产业基金</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这条账由三个可验证的存量与目标组成：截至 2025 年末全国智能算力规模 <span class='data-highlight'>1590 EFLOPS</span>，《信息通信行业发展“十五五”规划》把 2030 年目标锚定在 <span class='data-highlight'>9800 EFLOPS</span>，意味着 2026—2030 年复合增长率需超过 <span class='data-highlight'>40%</span>；算力网被纳入“六张网”国家顶层部署，有关机构测算“十五五”时期算力网建设将新增直接投资 <span class='data-highlight'>4 万亿元</span>。数据侧同步给出：2025 年数据产业规模 <span class='data-highlight'>6.78 万亿元</span>、同比增 15.7%。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>需求侧的读数来自落地：IDC 调研显示中国工业企业应用大模型及智能体的比例从 2024 年的 9.6% 跃升至 2025 年的 47.5%，一年提升近 38 个百分点；截至 2026 年 8 月全国累计建成高质量数据集超 12.6 万个、数据总体量超 1815PB。三者按各自节奏到位，渗透率是叠加后的结果变量——这解释了为什么基建投资与场景开放必须同步推。</div>
+    </div>
+    <p class="card-desc">五个量化锚点给出判断基线：智能算力 <span class='data-highlight'>1590 EFLOPS</span>（2025 年末）→ <span class='data-highlight'>9800 EFLOPS</span>（2030 年目标）、CAGR 需超 <span class='data-highlight'>40%</span>、算力网新增直接投资 <span class='data-highlight'>4 万亿元</span>、数据产业 <span class='data-highlight'>6.78 万亿元</span>（<span class='data-highlight'>+15.7%</span>）、高质量数据集超 <span class='data-highlight'>12.6 万个</span>/<span class='data-highlight'>1815PB</span>。判断基线：算力是确定性最高、可验证性最强的先行指标，它的增速决定了场景开放政策的实际承载力。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9TJ1SBG0519DDQ2.html" target="_blank" rel="noopener">第一财经 · 芯片股与算力链表现</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9SP35KE0550B1DU.html" target="_blank" rel="noopener">财联社 · Minerva 与 AI 工厂运维</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-4">
+    <h2>四、模型平台、开发者生态与分发渠道</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖决策 API / 端云一体训练 / 开源游戏框架 / 智能体分发 · 10 万 token 到 5000 个技能</div>
+  </div>
+
+  <article class="card" id="c13">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>OpenAI 决策 API 全面开放：基于 GPT‑6 Luna，输入每百万 token 0.10 美元、输出免费，单请求最多 400 个问题，比 Responses API 快最多 10 倍</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">产品发布</span><span class="sub-tag">API 定价</span><span class="sub-tag">智能体</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>决策 API 不训练新模型，而是把 Luna 重新配置为面向“有限答案”的推理形态，返回概率、预设选项或评分，而非生成文本——三种问题类型分别是 predicate（条件成立的概率）、choice（从 2—255 个选项中选一个，附完整概率分布与独立置信度字段）、score（对 2—10 个有序档位评分，返回概率加权平均）。工程价值在于约束输出结构省掉了后处理解析。官方明确其不适用于需要自定义 JSON schema、函数调用或带解释的场景。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>真正有意思的是排名。据 TechCrunch 报道，OpenAI 的模型在 AIM System One Index 排第 8、Artificial Analysis 决策指数排第 14，落后于 Liquid 的 D1 Ultra、Base Labs 的 elephant-1，而最早开创这一品类的 TypeSafe Jev 排第 7 与第 3，且仍是 OpenRouter 上被查询最多的决策模型。OpenAI 的打法是价格与分发——不收输出费、并把它设为所有 API 用户默认可见的入口。客户实测数字多来自 OpenAI 自身引用，需注意口径。</div>
+    </div>
+    <p class="card-desc">六个变量给出判断基线：<span class='data-highlight'>0.10 美元/百万 token</span>输入、缓存输入 <span class='data-highlight'>0.01 美元</span>、<span class='data-highlight'>输出免费</span>、单请求上限 <span class='data-highlight'>400 个问题</span>（公测期为 200）、缓存前缀需至少 <span class='data-highlight'>1024 token</span>、响应时延从 1—3 秒降至约 <span class='data-highlight'>100—180 毫秒</span>。新增原生 GPT‑Live 语音集成、原生 JSON 输入与美国和欧盟的推理数据驻留。判断基线：决策层是智能体栈里第一个“实验室厂商不是默认选择”的环节。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://techcrunch.com/2026/10/22/openai-makes-its-jev-competitor-widely-available-as-decision-model-competition-heats-up/" target="_blank" rel="noopener">TechCrunch · 公开榜单排名与 Jev 竞争</a></li>
+        <li><span class="src-2">二手</span><a href="https://clauday.com/article/d922100b-48f0-4f60-b085-30f70f770a2d" target="_blank" rel="noopener">Clauday · 定价与延迟口径复核</a></li>
+        <li><span class="src-2">二手</span><a href="https://el-fondo-dev.alpha-nex.de/en/news/openai-rolls-out-decisions-api-to-all-customers" target="_blank" rel="noopener">决策模型品类与 TypeSafe 估值</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c14">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>科大讯飞在 1024 开发者节发布星火 X2.6：293‑A30B、百万上下文、首个基于全国产设备的四层 KVCache，超长上下文训练效率提升约 4 倍</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">模型发布</span><span class="sub-tag">国产算力</span><span class="sub-tag">端云一体</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>X2.6 的技术主张全部落在国产算力的效率上：云端型号为 293‑A30B 混合专家架构、上下文上限 100 万 token，已上线国产万卡推理集群；针对国产芯片显存与带宽限制，训练侧用长程任务动态并行训练按任务长度自适应分配计算资源，以 2000B 规模、256K 长度数据为例训练时间由 4.5 个月缩短至 1.2 个月，超长上下文训练效率提升至原来的 4 倍；推理侧用自适应存算协同推理加首个基于全国产设备的四层 KVCache，推理效率提升 4.5 倍、KVCache 命中率由 63% 升至 95.7%。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>端云一体协同架构是这次真正的产品变量：基于端侧模型精准路由，系统先判断任务属于纯端办、纯云办还是端云协办，路由准确率提升至 96.1%；官方给出的目标分布是 60% 的应用可在本地完成、30% 通过云端协同、10% 需要云端大模型。配套开源的 X2.6‑4B 端侧模型智能体任务覆盖度达 41.9%，而 X2.5 端侧模型自 9 月开源以来累计下载已达 256 万次。</div>
+    </div>
+    <p class="card-desc">八个量化锚点：模型 <span class='data-highlight'>293‑A30B</span>、上下文 <span class='data-highlight'>100 万 token</span>、超长上下文训练效率提升<span class='data-highlight'>约 4 倍</span>（2000B/256K 训练从 <span class='data-highlight'>4.5 个月</span>缩至 <span class='data-highlight'>1.2 个月</span>）、推理效率提升 <span class='data-highlight'>4.5 倍</span>、KVCache 命中率 <span class='data-highlight'>63%→95.7%</span>、端云路由准确率 <span class='data-highlight'>96.1%</span>、端侧 4B 智能体任务覆盖度 <span class='data-highlight'>41.9%</span>、X2.5 端侧累计下载 <span class='data-highlight'>256 万次</span>。判断基线：国产算力训练的竞争焦点已从“能不能训”转为“长上下文训得贵不贵”。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.cnstock.com/commonDetail/807327" target="_blank" rel="noopener">上海证券报 · 端云路由与四层 KVCache</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091373233_120682184" target="_blank" rel="noopener">搜狐 · 训练 4.5 个月→1.2 个月与行业落地</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c15">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>米哈游联合清华、北大、中科院等开源 GameScaling：基于 Qwen3.5 视觉语言模型续训，0.8B 至 27B 共 8 个检查点、统一 1600 小时训练</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">开源模型</span><span class="sub-tag">智能体</span><span class="sub-tag">游戏</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>GameScaling 的技术路线是“观察—动作”生成：模型接收当前画面与此前若干帧画面、操作记录，输出接下来 <span class='data-highlight'>200 毫秒</span>的键鼠指令——<span class='data-highlight'>6 步 ×33 毫秒</span>的动作序列加一次鼠标移动与滚轮。底座选 Qwen3.5 视觉语言模型继续预训练，训练步数在 <span class='data-highlight'>6736—7020</span>之间，键名词表 <span class='data-highlight'>74 个 token</span>且大小写敏感。工程上给了完整交付路径：0.8B/2B/9B 单卡可跑，27B 需 2 卡张量并行，vLLM 0.17 起可服务。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>这条发布的产业意义在于它选了一个有付费意愿、有真实操作数据的垂直场景做开源，而不是又一个通用基座。游戏行业的操作数据天然带有“目标—动作序列”的结构，是训练智能体最省事的语料之一；同时键鼠指令空间是现成的、低维的、可被人类复核的，比让模型输出任意代码或任意 API 调用更容易建立评测基线。需要注意的是授权边界：游戏对局数据不公开，训练语料保持私有，Apache 2.0 只覆盖权重与代码。</div>
+    </div>
+    <p class="card-desc">六个量化锚点：参数量覆盖 <span class='data-highlight'>0.8B—27B</span>、共 <span class='data-highlight'>8 个</span>检查点、统一 <span class='data-highlight'>1600 小时</span>训练、单次决策覆盖 <span class='data-highlight'>200 毫秒</span>（<span class='data-highlight'>6×33 毫秒</span>步进）、键名词表 <span class='data-highlight'>74 token</span>、许可 <span class='data-highlight'>Apache 2.0</span>、服务依赖 <span class='data-highlight'>vLLM ≥0.17</span>。判断基线：开源基座的竞争重心正在从参数量转向“能否在有付费验证的垂直场景里把动作空间定义清楚”。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://github.com/THUSI-Lab/GameScaling" target="_blank" rel="noopener">GitHub · 推理客户端与检查点索引</a></li>
+        <li><span class="src-1">一手</span><a href="https://huggingface.co/THUSI-Lab/GameScaling" target="_blank" rel="noopener">Hugging Face · 权重与逐检查点配置</a></li>
+        <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.28698" target="_blank" rel="noopener">arXiv · 论文原文（引自官方仓库引用）</a></li>
+        <li><span class="src-2">二手</span><a href="https://gamescaling.github.io/" target="_blank" rel="noopener">项目主页 · 检查点表与动作格式说明</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.ifeng.com/c/8xQwuH4OLe5" target="_blank" rel="noopener">凤凰网科技 · 联合机构与游戏任务类型</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.sina.cn/2026-10-22/detail-iniwavxm5954559.d.html" target="_blank" rel="noopener">新浪科技 · 200 毫秒动作序列说明</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c16">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>国产“龙虾”智能体集体铺开：MiniMax MaxClaw 十秒云端部署、字节 ArkClaw 月费 9.9 元，分发渠道取代模型能力成为获客变量</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">智能体</span><span class="sub-tag">分发渠道</span><span class="sub-tag">生态竞争</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这一批产品的共同点是架构同源：基于开源智能体框架 OpenClaw 改造，差异集中在模型底座、部署形态与生态绑定。技术分层看有三类——端侧本地部署（数据不出设备、加密存储、可追溯操作日志）、云端零部署（挂载厂商长上下文账号体系）、企业级多智能体协作（企业微信/钉钉/飞书全覆盖）。MiniMax 的 MaxClaw 走云端全托管、十秒部署，强调长期记忆能力；讯飞 AstronClaw 用语音交互差异化；阶跃 StepClaw 的技能市场超过五千个可扩展技能。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>真正的竞争维度是“连接了什么”，不是“模型多强”。腾讯 WorkBuddy 已连接企业微信、腾讯文档、腾讯会议、QQ 邮箱，并接入飞书、钉钉、可画等第三方服务，智能眼镜、录音卡片、麦克风、耳机、平板、手机等十余个硬件品类已接入；阿里的 CoPaw 是开源工作台，字节 ArkClaw 与飞书生态深度绑定并把月费压到 9.9 元。价格打到个位数说明厂商宁可让利也要占住入口，模型底座反而是可替换项。</div>
+    </div>
+    <p class="card-desc">给出五个可核对的变量：MiniMax MaxClaw <span class='data-highlight'>十秒</span>云端部署并强调长期记忆、阶跃 StepClaw 技能市场超 <span class='data-highlight'>5000 个</span>技能、字节 ArkClaw 月费 <span class='data-highlight'>9.9 元</span>、百度 DuClaw 月费 <span class='data-highlight'>17.8 元</span>、腾讯 WorkBuddy 已接入 <span class='data-highlight'>十余个</span>硬件品类。判断基线：这一轮的胜负手在渠道绑定与技能生态厚度，定价已经让位给入口争夺。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.hqwc.cn/a/559071.html" target="_blank" rel="noopener">开源情报站 · 龙虾智能体三梯队盘点与定价</a></li>
+        <li><span class="src-2">二手</span><a href="https://superpowerdaily.com/posts/iflytek-launches-spark-x2-6-claiming-training-entirely-on-domestic-computing" target="_blank" rel="noopener">Superpower Daily · 端云一体与定价口径</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-5">
+    <h2>五、AI 产品、行业应用与用户采用</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖个人智能体采用 / 视频生成 4K / 车载召回 / 工业渗透 · 1000 万个智能体到 9.6%→29.3%</div>
+  </div>
+
+  <article class="card" id="c17">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>Meta 称 Muse 个人智能体在美加约六周内被创建超 1000 万个，约 25% 用户每天使用，Q3 自由现金流上市以来首次转负</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">用户采用</span><span class="sub-tag">个人智能体</span><span class="sub-tag">财报电话会</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>扎克伯格给出的商业化路径依赖一个前提变量：Muse 的计算成本效率。表述是“预计未来一年内提高 10 倍”，并给出条件式判断——如果效率在未来几年继续快速提高，Muse 将在未来几年内实现高额盈利。25% 的日活比例是这条路径上目前唯一被披露的留存读数：1000 万是累计创建量而非活跃量，两者之间隔着一次从“试过”到“每天用”的转化。公司同时表示希望建设足够算力支持未来超过 10 亿用户。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>把 Muse 与同日的财务数据放在一起才看得完整：公司 Q3 经营现金流 327.9 亿美元、资本支出 349.1 亿美元，自由现金流为负 21.2 亿美元，而上年同期为正 106.3 亿美元，是十多年来首次季度现金净流出；总费用同比增 68% 至 516 亿美元。也就是说，AI 助手的采用曲线被放在一个自由现金流为负、且需要靠发股融资的资产负债表上评估——这解释了为什么效率指标被单独抽出来当作论证材料。</div>
+    </div>
+    <p class="card-desc">六个量化锚点：约<span class='data-highlight'>六周</span>内美加创建量超 <span class='data-highlight'>1000 万</span>、其中约 <span class='data-highlight'>25%</span> 每天使用、计算成本效率预计<span class='data-highlight'>一年内</span>提升 <span class='data-highlight'>10 倍</span>、超 <span class='data-highlight'>1/4</span> 活跃用户使用购物功能且平均交易额超 <span class='data-highlight'>200 美元</span>、Q3 自由现金流 <span class='data-highlight'>‑21.2 亿美元</span>（上年同期 <span class='data-highlight'>+106.3 亿美元</span>）。判断基线：个人智能体已进入“单位经济能否成立”阶段，25% 日活是这条论证里唯一的实测锚点。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.channelnewsasia.com/world/sp-500-nasdaq-end-sharply-lower-revived-ai-doubts-ignite-tech-selloff-6484366" target="_blank" rel="noopener">CNA · Meta 现金流首次转负与纳斯达克走势</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.10jqka.com.cn/20261022/c680988533.shtml" target="_blank" rel="noopener">同花顺 · 10 月 22 日 AI 产业速览</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c18">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>火山引擎启动 Seedance 2.5 4K 首批企业试用：与作品绑定、定向供应全球 20 家工作室，最早下月有卫视 S 级 IP 播出</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产品落地</span><span class="sub-tag">视频生成</span><span class="sub-tag">商业化</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>Seedance 2.5 在 6 月首发、8 月放开商用 API，支持原生 4K、单段 30 秒视频与局部精修。这一次的 4K 版本不是纯参数升级，而是投放方式变了——采取与作品绑定、定向供应而非公开售卖，走的是高端影视的定制交付路径。定价机制也透露了验证意图：一家已试用模型的电影工作室称价格设置并未预期中高，允许先用 480P 生成样片、有满意的镜头后再用 4K 重新生成。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>把 20 家工作室这个数字当作出场时间来读更准。这批 4K 作品里最早在下月有卫视 S 级 IP 播出，还包括全球大 IP 电影——也就是说模型能力要在一个有档期、有宣发预算、有观众检验的内容节点上被验证。对厂商来说，这条路线的收益不在 API 调用量，而在把该模型变成影视工业的默认工具，从而反向拉动 API 需求；风险则是交付质量一旦出问题，责任边界会从模型供应商滑向内容出品方。</div>
+    </div>
+    <p class="card-desc">五个量化锚点：<span class='data-highlight'>4K</span> 原生分辨率、<span class='data-highlight'>30 秒</span>单段时长、首批 <span class='data-highlight'>20 家</span>工作室与导演、最早<span class='data-highlight'>下月</span>有卫视 S 级 IP 播出、节点为 <span class='data-highlight'>8 月</span>放开商用 API（<span class='data-highlight'>6 月</span>首发），另有 <span class='data-highlight'>480P</span> 样片先行、<span class='data-highlight'>4K</span> 重生成的按需计费路径。判断基线：视频生成已进入“按作品交付、按档期验收”的阶段，可用量不再是评价标准，成片可用性才是。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9T0RD950511CMF5.html" target="_blank" rel="noopener">网易 · 科技狐：20 家工作室与播出安排</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.volcengine.com/docs/85621/seedance" target="_blank" rel="noopener">火山引擎 · Seedance 官方模型文档</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c19">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>市场监管总局通报前三季度智能网联汽车召回 617 次、涉及 2039.38 万辆，其中督促调查召回占 71.23%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">监管</span><span class="sub-tag">智能驾驶</span><span class="sub-tag">安全</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这组数字的关键在结构而非总量：全国汽车召回制度实施以来累计召回 3200 余次、涉及车辆超 1.2 亿辆，其中受调查影响召回占比过半；仅 2026 年 1—9 月就实施智能网联汽车召回 617 次、涉及 2039.38 万辆，而通过加大缺陷调查、行政约谈、现场调查和技术交流督促调查召回 1452.68 万辆，占召回总数量的 71.23%。也就是说，超过七成的智能网联召回不是企业主动申报，而是监管倒查的结果。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>监管方的要求被写成了一条技术流程约束：把安全优先原则嵌入研发、验证、迭代全流程，杜绝牺牲安全性换取上市速度，并明确要求企业严格履行事故报告与缺陷召回义务、严禁瞒报漏报。对厂商的实际影响是召回责任从“售后环节”前移到“测试与准入环节”——事故报告的数据会反向成为缺陷调查的输入，形成闭环。这也构成对激进路线跳跃的制度约束。</div>
+    </div>
+    <p class="card-desc">四个量化锚点给出判断基线：<span class='data-highlight'>617 次</span>召回、涉及 <span class='data-highlight'>2039.38 万辆</span>、督促调查召回 <span class='data-highlight'>1452.68 万辆</span>、占比 <span class='data-highlight'>71.23%</span>；累计口径为 <span class='data-highlight'>3200 余次</span>/<span class='data-highlight'>超 1.2 亿辆</span>。判断基线：智能网联汽车的合规重心已从上市准入转到缺陷调查与召回闭环，超七成召回由倒查触发这一比例意味着企业自检体系的可信度仍需被逐案验证。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.tmtpost.com/fm/8178191.html" target="_blank" rel="noopener">钛媒体 · 市场监管总局通报与监管要求</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.smm.cn/news/104174079" target="_blank" rel="noopener">上海有色网 · 智能网联与汽车链市场反馈</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c20">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>IDC 调研显示中国工业企业应用大模型及智能体比例一年从 9.6% 跃升至 47.5%，算法从“生成内容”转向“执行任务”</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">企业 AI</span><span class="sub-tag">采用率</span><span class="sub-tag">渗透率</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>一年提升近 38 个百分点是本条最硬的数字。渗透结构也随之改变：算法不再只是生成内容，而是进入医疗、营销、旅游等场景的实际业务流程并承担任务执行。这与同日工业和信息化部等八部门《产业基础能力提升“十五五”规划》提出的“工业机理与智能体决策模型融合”方向一致——模型价值开始由生成质量决定，转为能否嵌入既有工序并被考核。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>放到更大的分母上看得更清楚：2025 年基础研究经费 2834.6 亿元、同比增 13.3%，但占比仅 7.21%，而 OECD 国家平均水平在 15% 以上；2025 年全社会研发经费 39288.2 亿元、投入强度 2.8% 首次超过 OECD 平均。“十五五”把节标题从“持之以恒加强基础研究”改为“全面提升基础研究水平”，并首次把“基础研究和原始创新能力显著增强”写入主要目标，明确提出探索长周期资助模式。渗透率上升与基础研究占比偏低同时存在，是当前结构最真实的张力。</div>
+    </div>
+    <p class="card-desc">五个量化锚点给出判断基线：工业企业大模型及智能体应用比例 <span class='data-highlight'>2024 年 9.6%</span> → <span class='data-highlight'>2025 年 47.5%</span>（一年 <span class='data-highlight'>+38 个百分点</span>）、2025 年全社会 R&D 经费 <span class='data-highlight'>39288.2 亿元</span>、投入强度 <span class='data-highlight'>2.8%</span>、基础研究 <span class='data-highlight'>2834.6 亿元</span>、占比仅 <span class='data-highlight'>7.21%</span>（OECD 在 <span class='data-highlight'>15% 以上</span>）。判断基线：渗透率越过 47% 意味着“要不要用”不再是决策变量，剩下的是工序改造与验收口径。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.stcn.com/article/detail/4236138.html" target="_blank" rel="noopener">证券时报 · IDC 调研与研发投入结构</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.cn/2026-10-23/detail-iniwcnvc5905341.d.html" target="_blank" rel="noopener">新浪财经 · 十五五 研发与算力投入口径</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-6">
+    <h2>六、竞争格局、安全信任与产业前瞻</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖二级市场重挫 / 资本开支测算 / 物理 AI 分歧 / 存储回撤 · 纳指 -2.60% 到累计 -41.6%</div>
+  </div>
+
+  <article class="card" id="c21">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>10 月 22 日美股 AI 交易单日重挫：纳指跌 2.60% 创 6 月 5 日以来最大跌幅，费城半导体指数跌 6.72%，黄仁勋称“资本供给不足”</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">市场</span><span class="sub-tag">资本成本</span><span class="sub-tag">新云</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>黄仁勋当日接受 CNBC 采访时的表述构成整轮抛售的触发点之一：市场对新型云服务商（Neocloud）的算力需求极其旺盛，但推动这些企业增长所需的营运资金缺失，“由于人工智能各个领域的需求都十分旺盛，资本出现了短缺”。路透社的报道把这条话术与设备股连起来：投资人对信贷投资者风险承受能力的担忧被重新唤起。技术侧的对应事实是，收入端已有支撑——西部数据 2027 财年一季营收同比增长 55% 至 43.81 亿美元、调整后每股收益 4.64 美元同比增 161%。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>压力落在融资而非需求上，且分层明显：Meta 五年期 CDS 创历史新高，而银行家同时表示“没有人为 Meta、亚马逊或谷歌能否拿到融资而担心，但对小公司而言，如果融资变得不可承受，那就足以让人紧张”。具体数字是 Nebius 宣布获花旗 35 亿美元新信贷额度后股价仍跌约 7%，CoreWeave 无担保债券收益率上周一度冲至 15%，美国银行分析师认为该公司需要再融资约 200 亿美元才能履行对客户的承诺。</div>
+    </div>
+    <p class="card-desc">六个量化锚点给出判断基线：纳指 <span class='data-highlight'>‑2.60%</span>（<span class='data-highlight'>6 月 5 日</span>以来最大单日跌幅）、费城半导体指数 <span class='data-highlight'>‑6.72%</span>（自 <span class='data-highlight'>6 月 22 日</span>高点累计 <span class='data-highlight'>‑26%</span>、年内仍 <span class='data-highlight'>+51.5%</span>）、Meta <span class='data-highlight'>‑6.98%</span>、CoreWeave 需再融 <span class='data-highlight'>约 200 亿美元</span>、其无担保债收益率曾达 <span class='data-highlight'>15%</span>、Nebius 新增信贷 <span class='data-highlight'>35 亿美元</span>。判断基线：AI 交易的定价单位已从需求增速切换为融资成本。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.aol.com/articles/steep-bill-ai-buildout-punishes-183257000.html" target="_blank" rel="noopener">路透社 · AI 建设的账单到期与新云融资</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.insiderfinance.io/news/tech-stocks-sink-on-ai-spending-fears" target="_blank" rel="noopener">InsiderFinance · capex 下调与融资收紧</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c22">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>算力链出现结构性分化：摩根大通测算 2026 年全球 AI 资本开支约 9000 亿美元，同时设备股因指引不及预期单日跌超 10%</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">资本开支</span><span class="sub-tag">供应链</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>同一天的两组数据构成对照：需求侧，摩根大通 10 月公开研究预计 2026 年全球 AI 资本开支可能达到约 9000 亿美元，到 2030 年的累计投入规模可能达到数万亿美元；供给侧，泛林集团指引不及预期、应用材料跌 8.16%、科磊跌 9.55%，设备环节的订单交付与收入确认进度被集中重估。研究机构 Bespoke 的统计显示存储股自高点回撤已达 41.6%，半导体行业 ETF 自 10 月 5 日以来累计下跌 16%。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>TrendForce 的判断链条给出了下一个量级：AI 服务厂商密集推出智能体应用，带动服务器 CPU 需求自 2025 年下半年起稳步成长，预估 2026 年出货年增幅达 31%，2027 年因推理需求持续成长与 Agentic AI 渗透率提升再增逾 40%，但以 x86 阵营主导的市场格局可能出现变化。国内侧的对应读数是锐捷网络前三季度营收 57.64 亿元、同比增 42.98%，公司称交换机芯片供应紧张延续。</div>
+    </div>
+    <p class="card-desc">五个量化锚点：全球 AI 资本开支 <span class='data-highlight'>2026 年约 9000 亿美元</span>（<span class='data-highlight'>2030 年</span>累计达数万亿美元）、服务器 CPU 出货 <span class='data-highlight'>2026 年 +31%</span>/<span class='data-highlight'>2027 年再增逾 40%</span>、存储股自高点回撤 <span class='data-highlight'>41.6%</span>、半导体 ETF 自 <span class='data-highlight'>10 月 5 日</span>累计 <span class='data-highlight'>‑16%</span>、锐捷网络前三季营收 <span class='data-highlight'>57.64 亿元</span>同比 <span class='data-highlight'>+42.98%</span>。判断基线：需求总量仍在上行，但估值已按“供给兑现节奏”而非“需求增速”重新排序。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://m.10jqka.com.cn/20261023/c680998118.shtml" target="_blank" rel="noopener">同花顺 · 服务器 CPU 与设备链需求预期</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/stock/usstock/c/2026-10-23/doc-iniwcxma4871446.shtml" target="_blank" rel="noopener">新浪财经 · 存储与设备股逐只拆解</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c23">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>物理 AI 的路径分歧被公开摆上台面：宇树王兴兴称 GPT‑6 后已见“击穿苗头”，何小鹏主张自动驾驶跳过 L3</div>
+      <span class="tag tag-blue">观察</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">具身智能</span><span class="sub-tag">前沿产业</span><span class="sub-tag">行业判断</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>王兴兴给出的判断包含一个可检验的时间窗与一个明确的核心瓶颈：随 GPT‑6 发布，物理 AI 已看到被击穿的苗头，很可能最近 1 至 2 年或 2 至 3 年出现；核心挑战是 AI 模型输入输出与真实机器人的对齐，商业服务落地会比家庭与工业领域更快。他此前判断临界点“快则一两年内”，并预测 2027 年 GPT‑7 或打穿具身智能问题。三条产业布局同步给出：大规模量产能力、适配自身硬件的物理 AI 小模型、超大规模算力集群。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>何小鹏在同日世界智能网联汽车大会上给出了对立的技术路线判断：自动驾驶应跳过 L3，因为 L3 把安全责任转移给系统但用户体验未优化，安全性是否提高仍需打问号；他认为 L3 本质更接近 L2 的增强形态，看好的路径是 L2、L4 与重新定义后的 L5，并指出过去 L5 定义主要从技术维度出发、缺少安全与场景可控的考量。同日智元开源首个面向真实场景的 Physical Agent 数据集，把任务重心从“操作难度”升级到“决策难度”。</div>
+    </div>
+    <p class="card-desc">五个量化锚点给出判断基线：物理 AI 破壁窗口判断为<span class='data-highlight'>1—3 年</span>、GPT‑7 打穿具身智能预测时点 <span class='data-highlight'>2027 年</span>、智能网联召回中督促调查占比 <span class='data-highlight'>71.23%</span>、国家机器人相关人形企业估值参照（宇树对应市值约 <span class='data-highlight'>2103 亿元</span>）、智元数据集为<b>首个</b>真实场景 Physical Agent 开源数据集。判断基线：两家创始人在“是否保留 L3 人为责任节点”上的分歧，与监管把事故报告与缺陷召回闭环化的方向并不一致——2027 年之前路线分歧不会由技术单方面收敛。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9SRDITB055280AV.html" target="_blank" rel="noopener">网易 · 蓝媒GPT：何小鹏跳过 L3 与产业方判断</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9TLSMH705562DGT.html" target="_blank" rel="noopener">网易 · 极新早报：智元开源与宇树三大布局</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c24">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>存储链回撤被量化：存储股自高点累计下跌 41.6%，半导体 ETF 自 10 月 5 日以来跌 16%，而西部数据一季营收同比增 55%</div>
+      <span class="tag tag-blue">观察</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">存储</span><span class="sub-tag">市场</span><span class="sub-tag">设备与互联</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>这是当天最典型的“基本面与股价背离”样本：西部数据 2027 财年一季营收同比增长 <span class='data-highlight'>55%</span> 至 43.81 亿美元、非 GAAP 每股收益 <span class='data-highlight'>4.64 美元</span>同比增 161%，二季度营收指引 <span class='data-highlight'>50—52 亿美元</span>、调整后每股收益指引 <span class='data-highlight'>5.60—6.00 美元</span>均大幅高于预期，季度股息上调 <span class='data-highlight'>17%</span>——公司层面业绩是达标的。但费城半导体指数成份股当日合计蒸发 <span class='data-highlight'>8173 亿美元</span>市值，一夜之间美股总市值蒸发 <span class='data-highlight'>1.55 万亿美元</span>。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>分歧点在“需求能不能持续到下一轮财报”。存储股自高点的回撤幅度已达 <span class='data-highlight'>41.6%</span>，半导体行业 ETF 自 <span class='data-highlight'>10 月 5 日</span>以来累计下跌 <span class='data-highlight'>16%</span>、距 6 月历史高点回落 <span class='data-highlight'>20.3%</span>。设备端的解释是订单无法按期转化为收入：泛林集团管理层明确表示若非近期供应链限制，本可给出更高指引——约束在交付而非需求。存储链的分化则更直接：颗粒与基板环节按季度抢货，服务器与整机侧按订单排产。</div>
+    </div>
+    <p class="card-desc">六个量化锚点：西部数据一季营收 <span class='data-highlight'>43.81 亿美元</span>（同比 <span class='data-highlight'>+55%</span>）、调整后 EPS <span class='data-highlight'>4.64 美元</span>（<span class='data-highlight'>+161%</span>）、存储股自高点回撤 <span class='data-highlight'>41.6%</span>、半导体 ETF 自 <span class='data-highlight'>10 月 5 日</span>累计 <span class='data-highlight'>‑16%</span>、费半成分股单日蒸发 <span class='data-highlight'>8173 亿美元</span>、全市场蒸发 <span class='data-highlight'>1.55 万亿美元</span>。判断基线：这一轮回调定价的不是当期业绩，而是下一轮财报能否证明交付节奏跟上需求。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.egsea.com/news/detail/2353189.html" target="_blank" rel="noopener">证券时报 e公司 · 市值蒸发与板块普跌</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.bgportable.com/news/detail/12560606006768" target="_blank" rel="noopener">Bitget · 存储与光通信产业链同步重挫</a></li>
+      </ul>
+    </div>
+  </article>
+
+<section class="closing">
+    <h3>关键判断 · 2026-10-23</h3>
+    <p><strong>政策这一轮的动作是把“能不能算”写进了两张清单。</strong>《产业基础能力提升“十五五”规划》把产业基础领域通用大模型与行业模型列为重点任务，同时把“模型即服务、智能体即服务”写成新业态；对外投资管理办法则把居民个人正式写进投资者范围。新增项目的立项依据，正在从“有没有需求”变成“需求、能耗与出资主体是否同时成立”。</p>
+    <p><strong>资本端的定价特征从“抢跑验证”切换到“给合并打折”。</strong>OpenAI 把要价从 1.4 万亿下调到 1.25 万亿，Anthropic 的 IPO 估值预期被压到约 1.5 万亿，而 SpaceX 与特斯拉的合并按参考估值合计已达 3.7 万亿。一级市场仍在放钱，但二级市场开始把增长和代价放在一起算账——十年 5180 亿美元这类不可取消的基础设施承诺，正在成为折价的主要来源。</p>
+    <p><strong>算力的瓶颈从设备交付移到了运营效率。</strong>英伟达用 Minerva 把每小时数十亿数据点的遥测分析做成产品，说明瓶颈已经不在买不买得到 GPU；而 Groq 转向 3D DRAM、FC-BGA 成为 AI 基板新瓶颈、十五五算力底座 1590 EFLOP 的账面，进一步说明约束同时出现在存储层级、封装产能与电力三个方向。</p>
+    <p><strong>模型分发正在把胜负手从能力转到渠道绑定。</strong>OpenAI 决策 API 全面开放、讯飞星火 X2.6 用全国产算力把训练周期压到 1.2 个月、米哈游联合清华开源 GameScaling、国产“龙虾”智能体集体铺开——价格被打到 9.9 元月费档位时，模型底座反而是可替换项，决定胜负的是连接了什么、技能生态有多厚。</p>
+    <p><strong>产品采用的量级已经出现，但成本效率仍是唯一变量。</strong>Meta 称 Muse 在美加约六周被创建超 1000 万个、约 25% 每天使用；IDC 调研显示中国工业企业大模型与智能体应用比例一年从 9.6% 跃升。扎克伯格同时把话说得很直白——只有计算效率继续提升，Muse 才能在未来几年实现高额盈利。</p>
+    <p><strong>二级市场的第一次压力测试给出了新变量：信用。</strong>10 月 22 日纳指跌 2.60% 创 6 月以来最大单日跌幅，费城半导体指数跌 6.72%，而 Meta 五年期 CDS 一度上行 8.9 个基点至约 119.3 个基点、创该合约上市以来盘中最高。当 AI 支出从股权融资转向发债，关注点就从“投多少”变成“利息还得上吗”。</p>
+
+    <div class="stats">
+      <div class="stat"><span class="v">24</span><span class="l">本日卡片</span></div>
+      <div class="stat"><span class="v">6</span><span class="l">主题板块</span></div>
+      <div class="stat"><span class="v">13</span><span class="l">一手源</span></div>
+      <div class="stat"><span class="v">61</span><span class="l">候选池</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 minimax · AI 产品产业每日简报 · 2026-10-23 · 72 期</div>
+    <div>minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</div>
+  </footer>
+</div>
+</body>
+</html>
