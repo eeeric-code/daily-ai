@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 学术与产业每日简报 · 2026年10月23日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 学术与产业每日简报:24 张卡覆盖 AI4S、通用智能、基础模型、资本、顶会、前瞻 6 大主题。">
+<title>AI 学术与产业每日简报 · 2026-10-23 (minimax)</title>
+<style>
+  :root{
+    --ink:#1d3a6e;
+    --ink-2:#2c4f8e;
+    --ink-soft:#e8eef7;
+    --gold:#b8924a;
+    --gold-soft:#f4ecd9;
+    --paper:#f6f5f1;
+    --paper-2:#ffffff;
+    --line:#d9d4c5;
+    --muted:#6a6557;
+    --red:#b04a3b;
+    --green:#3f7a52;
+    --purple:#6c4a8e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);
+    letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);
+    border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px dashed var(--line);}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .body{font-size:15px;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;
+    padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;
+    text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.acc{background:var(--gold);}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .exec .label.capital{background:var(--red);}
+  .exec .label.academic{background:var(--ink);}
+  .exec .label.industry{background:var(--green);}
+  .card .label.capital{background:var(--red);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.academic{background:var(--ink);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.industry{background:var(--green);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.regulatory{background:var(--purple);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+  .card .label.forecast{background:var(--gold);color:#fff;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;}
+
+  .toc-wrap{margin-bottom:32px;}
+  .toc-title{font-size:20px;color:var(--ink);margin:0 0 6px;letter-spacing:0.5px;}
+  .toc-sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .toc-card{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--ink);
+    padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .toc-card .head{display:flex;align-items:center;gap:10px;padding-bottom:8px;
+    border-bottom:1px dashed var(--line);}
+  .toc-card .head .n{display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;}
+  .toc-card .head .icon{font-size:20px;}
+  .toc-card .head .t{font-weight:700;color:var(--ink);font-size:14.5px;flex:1;min-width:0;}
+  .toc-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .toc-card li a{color:#2a2f3d;text-decoration:none;font-size:13.5px;
+    border-left:2px solid transparent;padding-left:6px;display:block;line-height:1.45;}
+  .toc-card li a:hover{border-left-color:var(--gold);color:var(--ink);}
+  @media(max-width:820px){.toc{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.toc{grid-template-columns:1fr;}}
+
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);
+    padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}
+  .tag-gold{background:var(--gold);}
+  .tag-ink{background:var(--ink);}
+
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px;}
+  .sub-tag{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:12px;
+    background:var(--ink-soft);color:var(--ink);border:1px solid rgba(29,58,110,.18);}
+
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;
+    background:linear-gradient(180deg,var(--gold-soft),#faf6ec);
+    border:1px solid var(--line);border-radius:4px;padding:12px 14px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{font-weight:700;color:var(--ink);margin-right:4px;}
+  .data-highlight{background:#fff7d4;color:#7a4a00;font-weight:700;padding:1px 4px;border-radius:2px;
+    border:1px solid rgba(184,146,74,.4);}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+
+  .card-desc{font-size:14.5px;color:#333;background:#fbfaf6;border:1px dashed var(--line);
+    padding:10px 14px;border-radius:3px;margin:8px 0 12px;line-height:1.65;}
+
+  .links{margin-top:8px;}
+  .links-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px;
+    letter-spacing:0.5px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .links li{font-size:13px;line-height:1.5;}
+  .links li a{color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(29,58,110,.2);}
+  .links li a:hover{border-bottom-color:var(--ink);color:var(--red);}
+  .src-1,.src-2{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 6px;
+    border-radius:3px;margin-right:6px;letter-spacing:0.5px;}
+  .src-1{background:#fff;color:var(--red);border:1px solid var(--red);}
+  .src-2{background:#f0f0ea;color:var(--muted);border:1px solid var(--line);}
+
+  footer.footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12.5px;text-align:center;}
+  .footer-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;
+    max-width:760px;margin-left:auto;margin-right:auto;}
+  .footer-stats div{background:var(--paper-2);border:1px solid var(--line);
+    padding:10px 8px;border-radius:4px;}
+  .footer-stats div b{display:block;font-size:20px;color:var(--ink);font-weight:700;}
+  @media(max-width:640px){.footer-stats{grid-template-columns:repeat(2,1fr);}}
+
+
+  .tag-blue{background:var(--ink-2);}
+  .tag-green{background:var(--green);}
+  .tag-orange{background:#b06a2c;}
+  .data-yellow{background:#fdeccd;color:#8a4b00;font-weight:700;padding:1px 4px;border-radius:2px;
+    border:1px solid rgba(184,146,74,.45);}
+
+
+  .tag-blue{background:var(--ink-2);}
+  .tag-green{background:var(--green);}
+  .tag-orange{background:#b06a2c;}
+  .data-yellow{background:#fdeccd;color:#8a4b00;font-weight:700;padding:1px 4px;border-radius:2px;
+    border:1px solid rgba(184,146,74,.45);}
+
+  /* nav-top */
+  .nav-top {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .nav-brand-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(29,58,110,0.18);
+  }
+  .nav-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .nav-brand-text .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .nav-brand-text .model-pill {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--gold);
+    background: var(--ink-soft);
+    padding: 1px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .nav-date {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", monospace;
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    transition: all 0.18s ease;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+  }
+  .nav-btn:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 146, 74, 0.28);
+  }
+  @media (max-width: 640px) {
+    .nav-top { padding: 10px 16px; }
+    .nav-brand-text .title { font-size: 13px; }
+    .nav-date { font-size: 11.5px; }
+    .nav-brand-mark { width: 28px; height: 28px; font-size: 12px; }
+    .nav-btn { padding: 6px 12px; font-size: 12.5px; }
+    .nav-inner { gap: 10px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
+</head>
+
+<nav class="nav-top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-brand-mark">AI</span>
+      <span class="nav-brand-text"><span class="title">AI 学术与产业每日简报 <span class="model-pill">minimax</span></span></span>
+    </div>
+    <span class="nav-date">2026-10-23</span>
+    <div class="nav-actions">
+      <a class="nav-btn" href="../../index.html">返回首页</a>
+      <a class="nav-btn" href="../../ai-daily/minimax/archive.html">minimax 往期目录</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<header class="masthead">
+  <div class="brand">AI 学术与产业每日简报 <small>GLOBAL AI · DAILY BRIEF · MINIMAX SLOT</small></div>
+  <div class="meta">
+    <strong>2026-10-23</strong> · 周五<br>
+    数据截止 2026-10-23 08:58 (GMT+8)<br>
+    主题分块: 🧬 AI4S 5 · 🤖 通用智能 4 · 🏢 基模开源 5 · 💰 资本监管 4 · 🎓 顶会 3 · 🔮 前瞻 3
+  </div>
+</header>
+<section class="exec">
+  <h2>📌 今日 4 条最重要要闻</h2>
+  <ol>
+    <li>
+      <span class="num">1</span>
+      <div class="body">
+        <span class="label cap">产业落地</span>
+        <b>科大讯飞发布<b>全国产算力训练</b>的首发端云一体模型讯飞星火 X2.6:云端 <b>293-A30B</b> 支持<b>百万 token</b> 上下文,输入价 <b>0.9 元/百万 tokens</b>(缓存命中 0.08 元)、输出 3.6 元/百万 tokens,未命中缓存的输入与输出价均低于 DeepSeek-V4.1-Flash-1017。训练侧以飞星二号万卡训2000B、256K 长度数据为例,周期由 <b>4.5 个月缩至 1.2 个月</b>,超长上下文训练效率提到 <b>4 倍</b>;推理侧国产芯片效率提升 <b>4.5 倍</b>,四层 KV Cache 架构把命中率从 <b>63%</b> 拉到 <b>95.7%</b>;端云路由准确率从 81.2% 提到 <b>96.1%</b>。刘庆峰给出的任务拆分是 <b>60%</b> 本地跑、<b>30%</b> 端云协同、<b>10%</b> 纯云端。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">2</span>
+      <div class="body">
+        <span class="label sci">学术成果</span>
+        <b><b>微软 MAI-DxO 正式刊于 Science:序贯诊断 83.2% 对医生 36.1%。</b>SDBench 把 <b>304 例</b> NEJM 病例与 <b>325 例</b> MIMIC-IV-ED 急诊病例转成多轮交互,诊断方每次只能问诊、开检查或下结论。MAI-DxO 让单个模型扮演假设、选检查、唱反调、成本把关、清单质控五个角色。NEJM 病例上配 GPT-5 无预算约束达 <b>83.2%</b>(单例 5,431 美元),受限预算下 <b>80.9% / 2,241 美元</b> 与 <b>79.6% / 1,303 美元</b>;急诊病例 <b>80.3%</b>(4,979 美元)对医生 46.8%。21 位英美临床医生中位经验 12 年,开卷 <b>36.1%</b>、闭卷 <b>22.3%</b>。论文自陈对专科医生与真实临床均未证明优势。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">3</span>
+      <div class="body">
+        <span class="label sci">学术成果</span>
+        <b><b>Hugging Face 发布 Carbon-X:14.8B 开源权重把「与 DNA 对话」压进单卡。</b>从 Qwen3-14B 出发加进 <b>5,515</b> 个 DNA token(6-mer),<b>3,020 亿</b> token 中期训练后 SFT 加两轮 GRPO。五项 DNA 基准平均 <b>66.7%</b>,比起点高 <b>27 分</b>,略低于 GPT-6.1 Sol 的 67.5%,而单题推理成本约为后者的 <b>1/1800</b>;权重 bfloat16 下可放进单张 <b>80GB</b> GPU。经济学换算:扫完 ClinVar <b>240 万</b>意义未明变异体约需 <b>300 美元</b>,对照前沿模型是 3.2 万至 400 万美元。弱项:剪接位点 <b>29.8%</b>、组蛋白标记 <b>34.6%</b>,未做湿实验。</b>
+      </div>
+    </li>
+    <li>
+      <span class="num">4</span>
+      <div class="body">
+        <span class="label reg">政策监管</span>
+        <b><b>一级估值创新高与二级单日重挫同时发生:纳指 -2.60%、半导体指数 -6.7%。</b>触发因素是 Meta 现金流与特斯拉资本开支削减。同期 OpenAI 正推进 <b>300 亿美元</b>新融资、估值 <b>1.25 万亿美元</b>(4 月那轮为 1220 亿 / 8520 亿),OpenAI、Anthropic、英伟达三季度游说支出均创纪录,分别为 <b>150 万、210 万、220 万美元</b>。地方立法侧,广东与杭州条例草案<b>专列词元经济条款</b>,江苏、苏州、南京、厦门、杭州均明确支持<b>一人公司</b>;南京、杭州要求人社部门监测岗位替代风险并防范以 AI 名义恶意裁员。</b>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="toc-wrap">
+  <h2 class="toc-title">📑 今日 6 主题 · 24 张卡</h2>
+  <p class="toc-sub">点击卡片标题跳转到对应主题块</p>
+  <div class="toc">
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">1</span>
+        <span class="icon">🧬</span>
+        <span class="t">AI for Science</span>
+      </div>
+      <ul>
+        <li><a href="#c-1-1">西湖大学 Pinal:一句自然语言描述直接生成全新蛋白序列,四类功能…</a></li>
+        <li><a href="#c-1-2">微软 MAI-DxO 登 Science:序贯诊断 83.2% vs…</a></li>
+        <li><a href="#c-1-3">Hugging Face Carbon-X:14.8B 开源权重把「…</a></li>
+        <li><a href="#c-1-4">DeepMind 把智能体搬进实验室:单次 Antigravity …</a></li>
+        <li><a href="#c-1-5">ICAIS 2026 落幕:诺奖与图灵奖得主同台,分歧不在 AI 有…</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">2</span>
+        <span class="icon">🤖</span>
+        <span class="t">通用智能与机器人</span>
+      </div>
+      <ul>
+        <li><a href="#c-2-1">宇树 H2-X「功夫传奇」:续航从标准 H2 的约 3 小时拉到 8…</a></li>
+        <li><a href="#c-2-2">王兴兴给出物理 AI 的倒计时:1 到 2 年内见突破,「物理 AI…</a></li>
+        <li><a href="#c-2-3">特斯拉 Optimus 在弗里蒙特投产:首条产线设计年产能 100 …</a></li>
+        <li><a href="#c-2-4">智元开源具身推理数据集:同一任务造多种状态,任务设计从「操作难度」转…</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">3</span>
+        <span class="icon">🏢</span>
+        <span class="t">基础模型与开源基础设施</span>
+      </div>
+      <ul>
+        <li><a href="#c-3-1">讯飞星火 X2.6:全国产算力训练的首发端云一体模型,输入价 0.9…</a></li>
+        <li><a href="#c-3-2">Anthropic 推出个人智能体 Claude Duet:可调 6…</a></li>
+        <li><a href="#c-3-3">决策层被拆成独立模型:OpenAI 上线 Decisions API…</a></li>
+        <li><a href="#c-3-4">蚂蚁同日双开源:决策模型 LingDT-Decision-1.0 与…</a></li>
+        <li><a href="#c-3-5">Flint-40B-A2B:AI 科研系统参与全程研发,40B 总参…</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">4</span>
+        <span class="icon">💰</span>
+        <span class="t">资本 & 监管</span>
+      </div>
+      <ul>
+        <li><a href="#c-4-1">OpenAI 新一轮融资传闻:目标 300 亿美元、估值 1.25 …</a></li>
+        <li><a href="#c-4-2">辉羲智能 Pre-B+ 与 B 轮落地:2026 年内累计股权融资超…</a></li>
+        <li><a href="#c-4-3">地方 AI 立法密集推进:广东、杭州条例草案专列词元经济条款,南京、…</a></li>
+        <li><a href="#c-4-4">Anthropic 游说国会:法案设 10 亿美元 / 50 人双门…</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">5</span>
+        <span class="icon">🎓</span>
+        <span class="t">顶会 & 学术生态</span>
+      </div>
+      <ul>
+        <li><a href="#c-5-1">腾讯混元 × 复旦 WorkForge:按专家蓝图搭出 16,665…</a></li>
+        <li><a href="#c-5-2">arXiv 开始限制单作者预印本数量,25 位菲尔兹奖得主联署警告:…</a></li>
+        <li><a href="#c-5-3">Ai2 发布 OlmoEarth v1.3:每 10 米地表生成 1…</a></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <div class="head">
+        <span class="n">6</span>
+        <span class="icon">🔮</span>
+        <span class="t">本周前瞻</span>
+      </div>
+      <ul>
+        <li><a href="#c-6-1">纳指单日 -2.6%、半导体指数 -6.7%:Meta 现金流与特斯…</a></li>
+        <li><a href="#c-6-2">本周上海两场大会同期开跑:GDPS 2026 全球开发者先锋大会 1…</a></li>
+        <li><a href="#c-6-3">400 家拉美金融机构被打穿:黑客把 Claude、Grok 等商用…</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="theme" id="theme-1">
+  <h2>🧬 主题 1 · AI for Science</h2>
+  <span class="scope">覆盖:覆盖:一句话生成新蛋白 · 序贯诊断 83.2% 进 Science · 14.8B 与 DNA 对话 · 智能体单次会话筛出抗菌肽 · 诺奖得主谈抢跑 <b>· 5 张</b></span>
+</div>
+
+
+<div class="theme" id="theme-2">
+  <h2>🤖 主题 2 · 通用智能与机器人</h2>
+  <span class="scope">覆盖:覆盖:宇树 H2-X 八小时续航 · 王兴兴的物理 AI 时间表 · Optimus 首条产线年产能百万台 · 具身数据集从操作难度转向决策难度 <b>· 4 张</b></span>
+</div>
+
+
+<div class="theme" id="theme-3">
+  <h2>🏢 主题 3 · 基础模型与开源基础设施</h2>
+  <span class="scope">覆盖:覆盖:全国产算力端云一体 · 个人智能体进套餐 · 决策层拆成独立模型 · 决策与轻量基座同日开源 · AI 自建 40B 编码模型 <b>· 5 张</b></span>
+</div>
+
+
+<div class="theme" id="theme-4">
+  <h2>💰 主题 4 · 资本 & 监管</h2>
+  <span class="scope">覆盖:覆盖:1.25 万亿估值的新一轮 · 具身芯片年内 25 亿 · 地方立法专章写进词元经济 · 10 亿美元/50 人门槛的阻断权 <b>· 4 张</b></span>
+</div>
+
+
+<div class="theme" id="theme-5">
+  <h2>🎓 主题 5 · 顶会 & 学术生态</h2>
+  <span class="scope">覆盖:覆盖:1.67 万个真实职场环境 · 预印本限流与 25 人声明 · 全球地表嵌入模型的 20/27 项第一 <b>· 3 张</b></span>
+</div>
+
+
+<div class="theme" id="theme-6">
+  <h2>🔮 主题 6 · 本周前瞻</h2>
+  <span class="scope">覆盖:覆盖:纳指单日 -2.6% 与芯片 -6.7% · 上海开发者大会与具身技能赛 · 400 家拉美机构被组合模型打穿 <b>· 3 张</b></span>
+</div>
+
+
+<div class="card" id="c-1-1">
+  <div class="card-head">
+    <div class="card-title">西湖大学 Pinal:一句自然语言描述直接生成全新蛋白序列,四类功能蛋白实验验证通过,成果发 Nature</div>
+    <span class="tag tag-red">重磅·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>西湖大学工学院原发杰团队联合香港科技大学(广州)与中国科学院深圳先进技术研究院,10 月 22 日披露构建了 <span class="data-highlight">Pinal</span> 模型,相关论文在线发表于《自然》。此前蛋白设计模型的主流范式是「给定目标结构、倒推出序列」,这一步的难点在于必须先有结构——而结构恰恰是最难得到的约束。团队的做法是引入蛋白质三维结构作为语言描述与序列之间的中间桥梁:整合多来源蛋白数据构建覆盖约 <span class="data-highlight">1.35 亿</span> 条不同蛋白序列的训练集,为同一蛋白配备多种语言表述后,合成出约 <span class="data-highlight">17 亿</span> 条「蛋白质-文本」配对。推理分三步:先由文字生成结构蓝图,再按蓝图排布氨基酸,最后对候选序列打分筛选。实验验证选了荧光蛋白、降解 PET 塑料的酶、醇脱氢酶与穿梭 H 蛋白四类功能迥异的目标,结果是四条路线都能设计出区别于已知天然序列、且在实验中发挥目标功能的蛋白。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这项工作的产业含义在它挪动了设计流程的入口:过去蛋白设计的瓶颈是「先得有一个可实现的三维结构」,现在这个瓶颈被替换成「能不能把需求描述清楚」。对合成生物与酶工程公司而言,输入侧从结构图变成了自然语言需求描述,意味着非结构背景的工程人员也能发起设计探索,而筛选与验证仍留在湿实验一侧——所以真正的产能瓶颈不会消失,只是从设计端挪到了表达纯化与功能测定端。团队自己划的边界也很清楚:目前处于概念验证阶段,像「用语言指令指定荧光蛋白发光波段」这类精细化需求仍是待解问题,原发杰把它列为团队与学界当前共同面对的科研挑战。</div>
+  </div>
+  <div class="card-desc">真正的门槛在验证端:17 亿配对数据把设计入口从结构图换成自然语言,但表达纯化与功能测定没有变快,产能瓶颈被整体后移。精细化指令(指定发光波段)未解。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.nature.com/nature/articles?searchType=journalSearch&sort=PubDate&type=article&year=2026" target="_blank" rel="noopener">Nature 官方期刊页:Pinal 论文原文与作者机构</a></li>
+      <li><span class="src-2">二手</span><a href="https://m.gmw.cn/2026-10/23/content_1304578345.htm" target="_blank" rel="noopener">光明网:三步推理流程、四类验证目标与团队自陈的概念验证边界</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:AI for Science 与蛋白质设计的持续跟踪</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:科学智能体分工的行业归因</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-1-2">
+  <div class="card-head">
+    <div class="card-title">微软 MAI-DxO 登 Science:序贯诊断 83.2% vs 医生 36.1%,且单例成本降到 1/2 至 1/3</div>
+    <span class="tag tag-red">重磅·学术</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>《自然医学》系列的「Sequential Diagnosis with Language Models」10 月 22 日正式刊于 <span class="data-highlight">Science 394 卷 6822 期 423-428 页</span>,此前 2025 年 6 月的 arXiv 预印本(o3 + 80.0%)被完整重做并扩展。核心方法是把静态病例小测改成序贯问诊:SDBench 基准把 <span class="data-highlight">304 例</span>新英格兰医学杂志 NEJM 临床病理讨论会病例与 <span class="data-highlight">325 例</span> MIMIC-IV-ED 急诊收住院病例转成多轮交互,诊断方每次只能问诊、开检查或下结论,由一个「门卫」模型按需披露信息并对未记载项合成合理结果,避免剧透式泄漏。MAI-DxO 让单个语言模型扮演五个角色——假设、选检查、唱反调、成本把关、清单质控——经「Chain of Debate」达成行动共识。结果:NEJM 病例上 DxO 配 GPT-5 无预算约束达 <span class="data-highlight">83.2%</span>(单例 5,431 美元),受限预算配置下 <span class="data-highlight">80.9% / 2,241 美元</span> 与 <span class="data-highlight">79.6% / 1,303 美元</span>;急诊病例 <span class="data-highlight">80.3%</span>(4,979 美元)对医生 46.8%。医生侧 21 位英美临床医生中位经验 12 年,开卷 36.1%、闭卷 22.3%。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>需要把这条结果的适用边界读清楚,因为它决定了谁会买单。论文明确写了对专科医生、多学科团队与真实临床场景均未证明优势,并预期「若对照的是与病例匹配的专科医生,差距会收窄」;医师研究的病例本身经过教学化挑选,分布不匹配真实门诊,也无法测量假阳性率。成本节省基于 CPT 定价的一阶估算,不是实际医疗支出。真正可迁移的部分是方法论而非那个 83.2%:DXo 是模型无关的编排层,在 OpenAI、Gemini、Claude、Grok、DeepSeek、Llama 各家模型上都能把准确率平均抬高若干百分点,且对较弱基线增益更大。落地路径也已铺好——微软宣布开源 SDBench(MIT 许可,含门卫、评审与成本估算代码),并将在数月内于波士顿 BIDMC 启动前瞻性研究。</div>
+  </div>
+  <div class="card-desc">值得迁移的是编排方法而非 83.2% 这个数:论文自陈对专科医生与真实门诊均未证明优势,成本节省为 CPT 一阶估算。落地进度看数月内 BIDMC 前瞻研究与 SDBench 开源。</div>
+  <div class="links">
+    <div class="links-title">来源 6 · 一手 2 · 二手 4</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://arxiv.org/html/2506.22405v2" target="_blank" rel="noopener">arXiv:2506.22405 全文:SDBench 基准构造、五角色编排与成本-准确率帕累托前沿</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/microsoft-diagnostic-ai-outperforms-generalist-physicians-in-science-study" target="_blank" rel="noopener">Unite.AI:Science 卷期页码、医师研究设计与作者利益披露</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.aol.com/articles/microsoft-says-ai-more-twice-204046000.html" target="_blank" rel="noopener">AOL/The Verge:闭卷 22.3% 对照、BIDMC 前瞻研究计划与临床责任问题</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.pharmazeutische-zeitung.de/klueger-als-die-natuerliche-intelligenz-161629" target="_blank" rel="noopener">Pharmazeutische Zeitung:预印本到 Science 的版本差异与专科医生对照的争议点</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.microsoft.com/en-us/research/blog/" target="_blank" rel="noopener">Microsoft Research 官方博客:MAI-DxO 公告与成本口径说明</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:模型无关编排层的设计要点</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-1-3">
+  <div class="card-head">
+    <div class="card-title">Hugging Face Carbon-X:14.8B 开源权重把「与 DNA 对话」压到单卡,ClinVar 240 万变异体筛查成本约 300 美元</div>
+    <span class="tag tag-red">重磅·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Hugging Face 与中关村学院、意大利那不勒斯费德里科二世大学遗传与医学研究所联合发布 <span class="data-highlight">Carbon-X</span>,10 月 22 日上线路面权重,Apache 2.0 许可。架构上它从 Qwen3-14B 出发,给词表加进 <span class="data-highlight">5,515</span> 个 DNA token(非重叠 6-mer,一个 token 覆盖 6 个碱基),先冻结主干只训新嵌入约 100 亿 token,再用 <span class="data-highlight">3,020 亿</span> token 做中期训练(原始 DNA 占 55%、英文 20%、生物学文本 15%、指令数据 10%),最后 SFT 加两轮异步 GRPO 可验证奖励。在五项 DNA 基准上平均 <span class="data-highlight">66.7%</span>,比起点 Qwen3-14B 高 <span class="data-highlight">27</span> 分,略低于 GPT-6.1 Sol 的 67.5%,而单题推理成本约为后者的 <span class="data-highlight">1/1800</span>。权重 bfloat16 下可放进单张 <span class="data-highlight">80GB</span> GPU。团队给出的经济学换算是:用 Carbon-X 扫完 ClinVar 里 <span class="data-highlight">240 万</span> 个意义未明变异体约需 <span class="data-highlight">300 美元</span>,对照的前沿模型是 3.2 万至 400 万美元。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这张卡最值得记的不是 66.7% 这个分数,而是它把「模型跑在哪」变成了竞争维度。作者 Lewis Tunstall 的动机写在模型卡里:数学研究正在被前沿实验室的门禁化,因为最好的数学模型都在 OpenAI 或 Anthropic 手里,而通用聊天机器人经常把正当的生物学问题误判成生物武器设计并拒答——为此训练数据明确剔除了病毒序列。模型卡的限制段落同样坦白:未做湿实验验证;精确序列操作会数错碱基、混淆坐标;剪接位点与组蛋白标记两项只有 <span class="data-highlight">29.8%</span> 与 <span class="data-highlight">34.6%</span>;上下文上限 40,960 token 但训练主要在 8,192 序列长度上。落地上它更像假设生成器而非诊断工具:适合把整个变异体数据库筛一遍生成候选,临床决策不该碰它。另外有个易踩的坑——DNA tokenizer 是自定义 Python,llama.cpp 与 GGUF 系运行时加载不了。</div>
+  </div>
+  <div class="card-desc">卡在「跑在哪」而非「多强」:66.7% 略低于 GPT-6.1 Sol 的 67.5%,但单题成本约 1/1800,240 万 ClinVar 变异筛查 300 美元对 3.2 万至 400 万美元。剪接位点仅 29.8%。</div>
+  <div class="links">
+    <div class="links-title">来源 3 · 一手 1 · 二手 2</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/HuggingFaceBio/Carbon-X" target="_blank" rel="noopener">Hugging Face 模型卡:完整评测表、训练配比、GRPO 奖励设计与限制清单</a></li>
+      <li><span class="src-2">二手</span><a href="https://i.ifeng.com/c/8xRvbvPQGnu" target="_blank" rel="noopener">凤凰网科技:基于千问的改造路径、1/1800 成本比与排除病毒数据的原因</a></li>
+      <li><span class="src-2">二手</span><a href="https://singularity.kiwi/huggingface-carbon-x-dna-chat-model-2026" target="_blank" rel="noopener">Singularity.Kiwi:ClinVar 成本换算、50,000 bp 运行规模与 GGUF 不兼容提醒</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-1-4">
+  <div class="card-head">
+    <div class="card-title">DeepMind 把智能体搬进实验室:单次 Antigravity 会话从百万条蛋白里筛出 97 aa 抗菌肽候选,湿实验跟进中</div>
+    <span class="tag tag-green">学术成果</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Google DeepMind 研究员在一次人机交互会话中用 <span class="data-highlight">Antigravity</span>(公司自研的 AI 开发平台)识别出一个此前未被表征的抗菌肽候选,并同时推出平台内的生物分子结构查看器与面向学术的额度计划。流程的可复用之处在于它把 ProtNLM 这一蛋白自然语言模型接进了同一工作流:Antigravity 承担数据库检索、蛋白分析与既有文献复核,人类研究员负责提问与决策。任务目标是肺炎链球菌的抗菌肽,系统从<span class="data-highlight">数百万</span>条数据库条目收敛到一组候选,最终锁定一条 <span class="data-highlight">97 氨基酸</span>、属 Lactococcin 972 家族的肽。有意思的细节是序列层面在人工审核过的蛋白里找不到有意义匹配,但结构比对显示出与一个实验测定的细菌素(细菌来源的抗菌肽)相似——也就是说判断依据从同源序列转到了结构。深度学习图像处理产品负责人兼 DeepMind 科学副总裁 Pushmeet Kohli 在 LinkedIn 上把这个流程作为单次会话的范例公开。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这条新闻的边界必须写清:DeepMind 自己表述为「计算阶段的证据,并不确立该候选是有效抗菌治疗手段」,这条肽与其他同流程候选仍在湿实验验证中。它的方法论意义大于结论——把 ProtNLM、AlphaFold 预测结构与文献检索串进一次可对话的会话,相当于给生物学家提供了一个新的检索入口,把「读几千篇文献」的瓶颈压成一次提问。产业侧的机会在药物发现前端:超大化合物库的初筛环节目前高度依赖人工规则与人力,如果这条路径能稳定复现,先筛后验证的成本结构会被改写。风险同样明确——DeepMind 在发布通稿时把这与自家模型能力绑定,而这类发现的第一性证据始终是湿实验,不是跑分。</div>
+  </div>
+  <div class="card-desc">处于计算阶段、湿实验未出结果,官方措辞是「不确立该候选是有效抗菌手段」。可复用的是 ProtNLM + AlphaFold + 文献检索的单会话工作流,预期价值在化合物库初筛成本。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://deepmind.google/discover/blog/" target="_blank" rel="noopener">Google DeepMind 官方博客:Antigravity 科学工作流与生物分子结构查看器发布</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.edtechinnovationhub.com/news/google-deepmind-uses-antigravity-ai-to-identify-potential-new-antimicrobial-peptide" target="_blank" rel="noopener">EdTech Innovation Hub:ProtNLM 收窄候选、结构比对路径与学术额度计划</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:智能体驱动科学发现的同类案例对照</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:决策层拆分对科学智能体的影响</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-1-5">
+  <div class="card-head">
+    <div class="card-title">ICAIS 2026 落幕:诺奖与图灵奖得主同台,分歧不在 AI 有没有用而在「谁来署名」和 arXiv 还能收多少</div>
+    <span class="tag tag-blue">会议快讯</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">会议快讯</span>
+    <span class="sub-tag">政策监管</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>第二届国际人工智能科学家大会(ICAIS 2026)10 月 19 日在北京闭幕,由北京中关村学院、中关村人工智能研究院、清华大学与西湖大学合办,两天半议程里最尖锐的议题不是模型能力,而是学术秩序。Nature 总编辑 Magdalena Skipper 提到 arXiv 近期开始<span class="data-highlight">限制单个作者可存入的预印本数量</span>,以免被 AI 生成的低质量内容淹没,部分期刊也在考虑限制单作者投稿量;她同时点出贡献归属问题——谁是用 AI 工具做出发现的实际作者。2021 年图灵奖得主 Jack Dongarra 直言「AI 系统太容易产生幻觉了」,而当下科研者更需要的正是扎实的知识基础与验证能力。背景是 2026 年的两起事件:OpenAI 宣布 AI 工具用 <span class="data-highlight">88 小时</span>解出纳维-斯托克斯方程后被数学家公开质疑抢跑,10 月 6 日又一次性公开 <span class="data-highlight">722 篇</span>模型生成的数学手稿。9 月 11 日包括陶哲轩、邓煜在内的 <span class="data-highlight">25 位</span>菲尔兹奖得主发表声明警告批量生成会压缩验证与学术交流的时间。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>值得带走的是与会者给出的量化预期差:2013 年诺奖得主 Michael Levitt 用约 6 个智能体处理不同任务,他预测到 <span class="data-highlight">2056 年</span>用智能体的年轻科学家一年可能完成他这一代人一生的工作量;而他与数学家马骁对人机和平共生的信心度分别只有 <span class="data-highlight">35%</span> 与 <span class="data-highlight">80%</span>。2025 年诺奖得主 Omar Yaghi 提出的判断更接近产业约束——人类正从「稀缺时代」进入「丰裕时代」,AI 能生成数百万种可能性,真正稀缺的是提出关键问题并从海量可能性中做选择的能力,所以实验室流程要补上「制造—测量—学习」变成「生成—选择—制造—测量—学习」。这对高校与期刊的启示是直接的:限流已经是进行时,而「选择科学」这条新学科方向目前还没有对应的评审与评价体系。</div>
+  </div>
+  <div class="card-desc">会场给出的量化预期差很大:Levitt 预测 2056 年青年科学家年工作量等于他这一代一生,对人机共生信心仅 35%,马骁给 80%。Yaghi 的「选择科学」尚无评审体系。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.stcn.com/article/detail/4237840.html" target="_blank" rel="noopener">证券时报:ICAIS 2026 全记录,Skipper 与 Dongarra 对 AI 幻觉与抢跑的表态</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.nature.com/nature/" target="_blank" rel="noopener">Nature 官方站点:总编辑关于预印本限流、署名归属与「科学归根到底是一项人类事业」的表述</a></li>
+      <li><span class="src-2">二手</span><a href="https://epaper.oeeee.com/epaper/H/html/2026-10/23/content_9257.htm" target="_blank" rel="noopener">南方都市报:垂直大模型首次纳入国家备案体系的同期案例</a></li>
+      <li><span class="src-2">二手</span><a href="https://lib.cet.com.cn/paper/szb_con/545151.html" target="_blank" rel="noopener">中国经济时报:张平谈可靠/可控/安全三层要求与全生命周期责任划分</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-2-1">
+  <div class="card-head">
+    <div class="card-title">宇树 H2-X「功夫传奇」:续航从标准 H2 的约 3 小时拉到 8 小时,安防与救援是官方定位</div>
+    <span class="tag tag-orange">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 21 日宇树科技发布人形机器人 <span class="data-highlight">H2-X 功夫传奇</span>,官方演示视频里最具传播力的三个画面是:以武术化动作格挡来袭攻击、徒手抬起汽车前端救援、以及应对模拟交通事故。宇树给出的关键参数是最大工作时间约 <span class="data-highlight">8 小时</span>,而官网在售的标准 H2 电池续航约 <span class="data-highlight">3 小时</span>——这是一次接近 <span class="data-highlight">2.7 倍</span>的提升。H2-X 基于 H2 平台开发,X 平台上的开发者解读认为它面向安防、应急响应与巡逻三类场景。发布时机选在人形机器人从实验室走向工厂的节点上,官方演示视频当晚在国际与国内社交平台同时引发讨论,微博「宇树机器人演示抬车救人」进入热搜。宇树创始人王兴兴在次日大会上的表态与之呼应。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这条卡里有一个需要被纠正的常见误读:8 小时是「最大工作时间」,官方并未说明它对应怎样的动作强度与连续作业负载,所以不能直接等同于安防或救援场景下的实际可用时长。宇树至今未公布 H2-X 的完整规格表、定价与发售时间,这意味着采购方目前无法做配置选型。作为参照,标准 H2 售价 29,900 美元、约 1.8 米高、70 公斤、31 自由度。对行业观察者的提示是,这类演示视频已经进入需要提示安全距离的阶段,而厂商愿意主动做风险提示,本身说明品类从「炫技」转向「可交付」的临界点正在到来。</div>
+  </div>
+  <div class="card-desc">8 小时是官方「最大工作时间」,未说明动作强度,不能直接等同安防可用时长。H2-X 规格表、定价与发售时间均未公布,采购方目前无法做配置选型。</div>
+  <div class="links">
+    <div class="links-title">来源 3 · 一手 1 · 二手 2</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.unitree.com/" target="_blank" rel="noopener">宇树科技官网:标准 H2 规格、29,900 美元售价与产品线对照</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.globaltimes.cn/page/202610/1372791.shtml" target="_blank" rel="noopener">Global Times:8 小时 vs 标准 H2 约 3 小时的续航对照与安防救援定位</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9SOFRV20556OP4U.html" target="_blank" rel="noopener">网易·具身之家:9.8 万元情感交互机器人定价与成都实景实训部署对照</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-2-2">
+  <div class="card-head">
+    <div class="card-title">王兴兴给出物理 AI 的倒计时:1 到 2 年内见突破,「物理 AI 的 ChatGPT 时刻最快明年到」</div>
+    <span class="tag tag-orange">重要·判断</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">趋势观察</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日在杭州举行的 2026 世界物理 AI 大会暨宇树合作伙伴生态大会上,宇树创始人王兴兴给出的判断分两层:一是「ChatGPT 时刻」最早在 <span class="data-highlight">明年</span>出现,即机器人在理解与执行真实任务上取得突破;二是物理 AI 已显露出突破迹象,<span class="data-highlight">最可能在接下来 1 到 2 年</span>,或 2 到 3 年内发生。他同时给出了一条被广泛转述的具体表述:GPT-6 已零训练部署到宇树机器人上,机器人可自主画画、下棋、寻找厨房工具。关于落地节奏,他的判断是商用服务场景会快于家庭与工业场景。同场披露的产业数字是,自 <span class="data-highlight">2024 年 5 月</span>发布以来,G1 累计下线约 <span class="data-highlight">1 到 2 万台</span>,被称为全球销量最好的人形机器人。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「零训练部署」这个说法需要谨慎对待——它指的是把通用大模型直接接到机器人上做零样本控制,而不是经过具身训练的专用策略,这类方案在长时程、非结构化任务上的稳定性通常远低于专用 VLA 策略,所以把它当成能力边界的证据会被误导。真正有信息量的是王兴兴对落地顺序的排序:商用服务先于家庭与工业。这与产业界普遍的观察一致——场景结构化程度越低,数据获取成本越高,商业闭环越晚。对投资与创业决策的含义是,「物理 AI 的 ChatGPT 时刻」被锚定在 12 到 24 个月窗口内,那么窗口内最稀缺的不是本体,而是能持续产出高质量真机数据的场景运营方。</div>
+  </div>
+  <div class="card-desc">「零训练部署」指通用大模型零样本接机器人,与经具身训练的专用 VLA 策略在长时程非结构化任务上差距通常很大。窗口 12 到 24 个月内最稀缺的是能持续产出真机数据的场景运营方。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.globaltimes.cn/page/202610/1372791.shtml?id=12" target="_blank" rel="noopener">Global Times:王兴兴 1-2 年物理 AI 突破表态、G1 累计下线台数与商用落地顺序</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:王兴兴世界物理 AI 大会演讲要点与 GPT-6 零训练部署表述</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.unitree.com/" target="_blank" rel="noopener">宇树科技官网:H2 系列官方规格与产品线</a></li>
+      <li><span class="src-2">二手</span><a href="https://robottoday.com/industry-briefing" target="_blank" rel="noopener">RobotToday 行业简报:宇树产能与具身智能融资环境</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-2-3">
+  <div class="card-head">
+    <div class="card-title">特斯拉 Optimus 在弗里蒙特投产:首条产线设计年产能 100 万台,马斯克称对外交付要到 2027 年底</div>
+    <span class="tag tag-orange">重要·判断</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>特斯拉三季度财报宣布 Optimus 已在弗里蒙特工厂启动生产,首批达到量产质量标准的机器人下线,首条产线设计年产能 <span class="data-highlight">100 万台</span>。马斯克在电话会上的表述给了三条边界:灵巧手仍是最大硬件难点;对外交付预计在 <span class="data-highlight">2027 年底</span>左右;周产 <span class="data-highlight">2 万台</span>至少还需一年。他同时透露计划先造 <span class="data-highlight">1 万到 2 万台</span>机器人在 Optimus Academy 中练习。财务背景是三季度营收 <span class="data-highlight">280.46 亿美元</span>,营业利润同比下降 <span class="data-highlight">56%</span>,研发支出 27.61 亿美元、同比增长约 69%——换句话说,当前正处在利润承压而研发加码的阶段,机器人产能是在这样的现金流条件下宣布的。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>把「100 万台年产能」与「2027 年底才对外交付」并排放,新闻的形状就清楚了:前者是产线设计上限而非订单,后者才是可验证的外部交付时间点。中间的差距要用一句话填补——先造 1 到 2 万台进自家训练场。这意味着未来 12 到 18 个月里,判断特斯拉机器人进展的可观测指标不是出货量,而是这批内部机器人能积累多少真机数据、以及灵巧手的良率。灵巧手被反复点名为瓶颈这一点,和整个行业的判断一致:它同时是自由度最高的关节和最依赖精密制造的部件。对二级市场而言,营业利润同比 -56% 与研发 +69% 同时出现,说明这家公司正在用当期利润换远期期权,这个取舍的窗口不会一直开着。</div>
+  </div>
+  <div class="card-desc">100 万台是产线设计上限而非订单,2027 年底才是首个可验证的对外交付时点。中间由 1 万到 2 万台内部机器人补数据;灵巧手良率是主要未解变量。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:Optimus 投产与三季度财报数字汇总</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.trendforce.com/research/download/RP261022AH" target="_blank" rel="noopener">TrendForce 人形机器人市场公报 10-22:Agility Robotics SPAC 与宇树上市后股价回撤</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.humanoidsdaily.com/news/noetix-robotics-hong-kong-ipo-filing" target="_blank" rel="noopener">Humanoids Daily:人形机器人 IPO 进展与产能兑现的对照样本</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:机器人硬件瓶颈的持续报道</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-2-4">
+  <div class="card-head">
+    <div class="card-title">智元开源具身推理数据集:同一任务造多种状态,任务设计从「操作难度」转向「决策难度」,分三档难度</div>
+    <span class="tag tag-green">重要·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">学术成果</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日智元在 AGIBOT INNOVATION DAY 2026 上开源 AGIBOT WORLD 2026 第四期「具身推理」数据集,官方称其为首个真实场景 Physical Agent 数据集。设计思路的转向值得注意:过去的数据集难度定义是操作难度(抓取、插拔这类需要多步精细动作的任务),这一期改为决策难度——围绕物品数量、遮挡关系、位置占用与任务进度去构造<span class="data-highlight">同一任务的多种状态</span>,让模型必须判断当前处于哪个状态、该不该继续。覆盖面是<span class="data-highlight">九类推理能力</span>,按 Easy / Medium / Hard 三档划分。同时提供高层问答与低层动作轨迹两套标注,成功与错误样本并重——错误样本被保留这一点对训练价值通常高于再配比。这套数据已用于智元即将发布的 Agent 框架与新一代基座大模型的训练。同日还开源了首个真实场景 Physical Agent 数据集的整体框架,以及七项具身智能关键技术进展。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「错误样本并重」是这条数据发布里最容易被忽略但最有复用价值的部分。目前具身数据几乎都只留成功轨迹,理由是采集成本高、失败片段利用率低;但如果任务瓶颈已经从操作精度转移到状态判断(比如物体被遮挡时该先移开还是绕行),那么「在错误状态下模型做了什么」恰恰是最需要的监督信号,丢掉它等于把模型最难的部分从训练集里删掉了。数据设计从操作难度转向决策难度,也解释了为什么这一期要专门做同任务多状态——操作类任务天然有清晰的成功判据,决策类任务必须显式构造状态空间才能标注对错。对行业的直接含义是,数据采集团队的评估指标该变了:真机运行时长不再是唯一 KPI,状态覆盖度与错误轨迹的可得性才是。</div>
+  </div>
+  <div class="card-desc">任务难度定义从操作精度转向状态判断,配套做法是同任务多状态构造与错误样本并重——后者在以成功轨迹为主的具身数据里长期缺失。未来数据团队的 KPI 应从真机时长转向状态覆盖度。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:智元 AGIBOT WORLD 第四期九类推理能力与三档难度设计</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/enact-intelligence-raises-30m-pre-seed-for-force-and-touch-robot-dexterity" target="_blank" rel="noopener">Unite.AI:力触觉路线 3,000 万美元 Pre-seed,对照组是纯视觉主导的技术栈</a></li>
+      <li><span class="src-2">二手</span><a href="https://robottoday.com/industry-briefing" target="_blank" rel="noopener">RobotToday:具身智能数据集与训练平台的同周进展</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.globaltimes.cn/page/202610/1372791.shtml" target="_blank" rel="noopener">Global Times:中国人形机器人数据集与量产节奏的对照</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-3-1">
+  <div class="card-head">
+    <div class="card-title">讯飞星火 X2.6:全国产算力训练的首发端云一体模型,输入价 0.9 元/百万 tokens,KV Cache 命中率 63% → 95.7%</div>
+    <span class="tag tag-red">重磅·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日第十届科大讯飞全球 1024 开发者节上,刘庆峰发布基于<span class="data-highlight">全国产算力</span>训练的讯飞星火 X2.6,包含云端 <span class="data-highlight">293-A30B</span> 与端侧 <span class="data-highlight">X2.6-4B</span>(已开源)两个版本。可核对的数字有四个:云端模型支持<span class="data-highlight">百万 token</span> 上下文,输入价 <span class="data-highlight">0.9 元/百万 tokens</span>(缓存命中 0.08 元),输出 <span class="data-highlight">3.6 元/百万 tokens</span>,未命中缓存的输入与输出价均低于 DeepSeek-V4.1-Flash-1017;训练侧以飞星二号万卡训练 2000B、256K 长度数据为例,周期由 <span class="data-highlight">4.5 个月缩短至 1.2 个月</span>,超长上下文训练效率提到 <span class="data-highlight">4 倍</span>;推理侧飞星二号国产芯片效率提升 <span class="data-highlight">4.5 倍</span>,四层 KV Cache 架构把命中率从 <span class="data-highlight">63%</span> 拉到 <span class="data-highlight">95.7%</span>;端云路由准确率从 <span class="data-highlight">81.2%</span> 提到 <span class="data-highlight">96.1%</span>。基准方面,SWE Pro 与 SWE Multilingual 拿下第一,SWE Verified 仅次于 DeepSeek-V4.1-Flash,AA-LCR v1.1 与 MiniMax M3 持平。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>刘庆峰同时把一个常被忽略的事实摆了出来:国产算力对标全球仍有<span class="data-highlight">两代左右</span>的差距。他给出的端云拆分方案是 <span class="data-highlight">60%</span> 任务本地跑、<span class="data-yellow">30%</span> 端云协同、<span class="data-yellow">10%</span> 纯云端。这组比例的商业意义在于它把「全栈自主可控」从口号变成了可核对的成本结构——私有化部署的教育、医疗、法律客户之所以愿意接受略高的单机性能损失,是因为数据不出域这件事对它们的合规价值远高于几个百分点的跑分。需要注意的边界:所有基准与效率数字均为厂商自测,没有第三方复现;端侧上一代 X2.5-4B 自 9 月 1 日开源以来下载量 256 万次这一数字,可与 HF 下载量交叉核对。同期还发布了语音基座模型 SparkAudio 1.0、AI 录音环与 AI 眼镜等硬件。</div>
+  </div>
+  <div class="card-desc">端云拆分 60% 本地 / 30% 协同 / 10% 云端,是可核对的成本结构而非口号。全部基准与效率数字为厂商自测,无第三方复现;刘庆峰自陈国产算力仍差约两代。</div>
+  <div class="links">
+    <div class="links-title">来源 3 · 一手 1 · 二手 2</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.iflytek.com/" target="_blank" rel="noopener">科大讯飞官网:X2.6 端云一体架构、定价与开发者节发布信息</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9TDENH80530NLC9.html" target="_blank" rel="noopener">网易·中国基金报:刘庆峰国产算力两代差距判断与端云一体产品矩阵</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:X2.6-4B 下载量 256 万次与端侧模型全球排名</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-3-2">
+  <div class="card-head">
+    <div class="card-title">Anthropic 推出个人智能体 Claude Duet:可调 6000 余个连接器,预览期与 Pro/Max 共用额度</div>
+    <span class="tag tag-orange">重要·产品</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">产品落地</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日 Anthropic 发布个人智能体 <span class="data-highlight">Claude Duet</span>,由 Claude Opus 5.5 驱动。与企业侧智能体最直观的差别在于三处产品决策:一是<span class="data-highlight">继承</span>原账户的记忆、Skills 与应用连接,不要求用户重建上下文;二是提供独立 iOS、Android 与网页端,并配一个独立云端虚拟机在后台执行任务;三是暂不能访问本地文件,也未接入第三方聊天渠道。能力面上可调用<span class="data-highlight">超过 6,000 个</span>连接器与插件。商业安排上预览期不单独收费,而是与 Claude 共用 Pro、Max 套餐额度,首批面向美国地区 Pro 与 Max 用户开放候补申请。这条发布的背景是同周 Anthropic 还做了两件事:Claude Security 新版进入公测(持续分析代码变更并跟踪漏洞是否真被修复),以及向美国国会游说一份前沿 AI 安全法案。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「继承记忆与连接」这个设计比模型参数更值得注意,因为它把智能体的迁移成本压到了接近零——用户不需要重新授权一遍数据源,也不需要重建 Skills。代价则是隔离性的丧失:Duet 与主账户共享连接授权,意味着一个常驻后台的自主体持有与主会话相同的权限面,这也是它目前不开放本地文件访问的直接原因。共享额度而非独立定价,则是把 Duet 定位成套餐的留存工具而不是新收入线,对 Anthropic 来说这是在基础模型订阅被侵蚀的环境里加固护城河的典型动作。可验证的观察点有三个:候补名单转实际活跃的比例、6,000 余个连接器里有多少被真实高频调用、以及会不会在订阅额度上设独立上限。</div>
+  </div>
+  <div class="card-desc">与主账户共享连接授权意味着后台常驻体持有与主会话相同的权限面,这解释了它当前不开放本地文件访问。共享 Pro/Max 额度而非独立定价,定位是留存工具。观察候补转化率与连接器实际调用量。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic 官方新闻室:Duet 发布、6000 余个连接器与候补申请说明</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:Duet 的独立应用形态、后台虚拟机与本地文件访问限制</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:个人智能体与连接器权限面的行业讨论</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:个人智能体产品形态对照</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-3-3">
+  <div class="card-head">
+    <div class="card-title">决策层被拆成独立模型:OpenAI 上线 Decisions API,中国电信开源 Xing4.0-29B-Intent 专攻意图理解</div>
+    <span class="tag tag-orange">重要·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>同一个 10 月 20 日,两条独立路径指向同一个架构判断:智能体的决策环节正在被从大模型里拆出来,变成可单独采购或开源的组件。OpenAI 正式发布 <span class="data-highlight">Decisions API</span>,定位为应用内短周期、低成本的局部判断,10 月 20 日首次亮相时被语音模型 GPT-Live 直接调用,TechCrunch 把它描述为对标 TypeSafe 判断模型 Jev 的广泛发布,定价、模型名与性能数字尚未披露。中国电信人工智能实验室开源 <span class="data-highlight">Xing4.0-29B-Intent</span>,专攻意图理解,同时覆盖分类任务(在选项中选)与生成任务(填自由文本输出)。同一天蚂蚁数科发布决策模型 <span class="data-highlight">LingDT-Decision-1.0</span>,提供 4B 与 27B 两版,首创原生多选与按序决策(DAG)能力,已上线 DTMaaS 平台。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>把决策层拆出来,直接改变的是成本结构与可替换性。原先「理解意图 + 做决策」都压在同一个大模型的每一次调用里,现在它们可以各自选型:意图分类用 29B 的开源模型就能做,而需要复杂权衡的决策才路由到大模型。对做应用的团队,这条路径意味着智能体的延迟与账单可以被拆开优化,而不是被最贵的那次调用绑定。风险也在同一处:组件越多,边界与权限越难管。当天 Straiker 披露的安全事件正好是这条架构红线的实证——黑客把 Claude、Grok 等多个商用模型串起来自动攻击拉丁美洲约 <span class="data-highlight">400 家</span>金融机构,分工方式正是目标侦察、攻击规划与执行分离。Anthropic 同日让 Claude Security 进入公测、持续跟踪代码变更是否真被修复,是防守侧对这条趋势的直接回应。</div>
+  </div>
+  <div class="card-desc">拆出决策层可让延迟与账单分开优化:意图分类交给 29B 开源模型,复杂权衡才路由大模型。风险是组件越多边界越难管——同日 Straiker 披露的 400 家机构被组合模型打穿正是同一架构的攻击面。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:Decisions API 定位、Xing4.0-29B-Intent 与组合模型攻击的同日因果</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:决策模型与意图模型同日出现的行业跟踪报道</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:中国电信意图模型与蚂蚁决策模型的开源细节</a></li>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/inclusionAI" target="_blank" rel="noopener">Hugging Face inclusionAI:决策模型权重与许可信息</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-3-4">
+  <div class="card-head">
+    <div class="card-title">蚂蚁同日双开源:决策模型 LingDT-Decision-1.0 与 Ling-3.1-flash-1019,后者 AA 智能评分 44 分追平 Kimi K3</div>
+    <span class="tag tag-green">重要·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日蚂蚁百灵(Ant Ling)在 X 平台宣布两项发布。决策侧:LingDT-Decision-1.0,提供 <span class="data-yellow">4B</span> 与 <span class="data-yellow">27B</span> 两个版本,首创原生多选与按序决策(DAG)能力,已上线 DTMaaS 平台;官方称在 <span class="data-yellow">23 项</span>开源评测基准中 27B 版综合性能居首,超过 Microsoft-Decision-1、Jev 1.13.0 等决策模型。基座侧:Ling-3.1-flash-1019 在 Artificial Analysis 的 Intelligence Index 上取得 <span class="data-highlight">44 分</span>,与月之暗面 Kimi K3 同分,比上一代 Ling-3.1-flash 高 <span class="data-highlight">3 分</span>,同时比通义千问 Qwen3.8 Max、DeepSeek V4.1 Flash 1017(Max)与智谱 GLM-5.3(max)低 1 分。分项上 AA-Briefcase 的 Elo 从约 <span class="data-highlight">1400</span> 升到 <span class="data-highlight">1524</span>,AutomationBench-AA 从 62% 升到 <span class="data-highlight">68%</span>。蚂蚁百灵表示即将开放该模型权重与 API。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>两家同分这件事比分数本身更有信息量:AA 的 Intelligence Index 上 Kimi K3 已经停留了一段时间,现在被一个 flash 档位的新模型追平,说明前沿梯队与轻量档之间的分数差正在压缩。对采购决策的实际含义是,在很多场景下用 flash 档模型加更好的编排,总成本和延迟都可能优于直接用同梯队的大模型——这也正是同一天微软 MAI-DxO 那套编排思路能生效的前提。需要留一个心眼:LingDT-Decision-1.0 的「23 项基准综合第一」是厂商自评,且该基准集未说明与公共榜单的可比性;而 Ling-3.1-flash-1019 目前只是宣布,权重与 API 尚未开放,AA 分数的可复现性要等实际可调用之后才能确认。</div>
+  </div>
+  <div class="card-desc">Flash 档在 AA Intelligence Index 拿到 44 分追平 Kimi K3,意味着前沿梯队与轻量档的分数差在压缩。LingDT 的「23 项基准第一」为厂商自评,权重与 API 未开放前无法复现。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:LingDT-Decision-1.0 的 4B/27B 分版与 DAG 决策能力</a></li>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/inclusionAI" target="_blank" rel="noopener">Hugging Face inclusionAI 组织页:蚂蚁百灵模型权重与许可信息</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:决策模型与轻量基座的分工趋势</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:蚂蚁百灵模型线跟踪</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-3-5">
+  <div class="card-head">
+    <div class="card-title">Flint-40B-A2B:AI 科研系统参与全程研发,40B 总参激活 2.5B,MacBook Pro 上跑出每秒 125 token</div>
+    <span class="tag tag-red">重磅·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">前沿产业</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>田渊栋参与创立的 Recursive Superintelligence 10 月 21 日发布首个模型 <span class="data-highlight">Flint-40B-A2B</span>,Apache 2.0 许可权重上 Hugging Face。规模是<span class="data-highlight">398亿总参</span>、每 token 激活约 <span class="data-highlight">25 亿</span>,49 层(2 稠密 + 47 MoE),每层 256 个路由专家、每 token 选 6 个加 1 个共享专家,上下文 <span class="data-highlight">262,144 token</span>。官方自报基准:SWE-bench Verified <span class="data-highlight">74.2%</span>、SWE-bench Pro v2 <span class="data-highlight">89.7%</span>、Terminal-Bench 2.1 <span class="data-highlight">54.9%</span>、IFEval 95.1%。本地速度:M4 Pro 的 MacBook Pro 上 <span class="data-highlight">125+ token/s</span>,64GB 的 RTX Spark 上 <span class="data-yellow">150+ token/s</span>,官方称比同类快 2 倍、比 250-400 亿稠密模型快 5 倍以上。Eureka Machine 参与了架构搜索、量化方案与推理内核三处,包括把输出层也量化到 4 bit(NVFP4)后用离线蒸馏补回精度,与 16 位版差距不超过 <span class="data-highlight">0.7 分</span>。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>两个地方要泼冷水。第一,所有跑分都是厂商自报,发布不到 48 小时时没有独立复现;而且 Recursive 自己标注 SWE-bench Pro v2 是内部测量、与公开 SWE-Bench Pro 结果不可比。第二,Terminal-Bench 2.1 的 54.9% 是它的弱项——同表里稠密 Qwen 3.8 得 73.0%,差 <span class="data-highlight">18 分</span>以上。所以正确的读法是:Flint 在「大规模工具调用型编码」这一类任务上进入了开源第一梯队,在「终端与命令行任务」上明显没跟上。产业侧真正改变的是成本曲线——4-bit 权重约 <span class="data-yellow">23GB</span>,意味着 48GB 显存的机器就能跑起 400 亿模型,数据不出本地,再加上 Apache 2.0 没有授权顾虑。对高频 agent 循环的团队(一次修复可能触发上百轮工具调用),「不按 token 计费」本身就是一种结构性省钱。至于「AI 造 AI」的叙事,公开材料并没有拆解 Eureka Machine 到底参与了哪些环节的多少比重,判断模型价值应当看工件而不是神话。</div>
+  </div>
+  <div class="card-desc">40B 总参激活 2.5B、4-bit 权重约 23GB,让 48GB 显存的机器能本地跑 400 亿模型,数据不出域且无授权顾虑。弱项在 Terminal-Bench 2.1 仅 54.9%,同表稠密 Qwen 3.8 为 73.0%。</div>
+  <div class="links">
+    <div class="links-title">来源 5 · 一手 4 · 二手 1</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/RecursiveSI/flint" target="_blank" rel="noopener">Hugging Face 模型卡:完整架构参数、基准表与评测方法说明</a></li>
+      <li><span class="src-1">一手</span><a href="https://recursive.com/updates/introducing-recursive-flint" target="_blank" rel="noopener">Recursive 官方发布博客:Eureka Machine 的架构搜索、NVFP4 量化和 Metal 融合内核</a></li>
+      <li><span class="src-1">一手</span><a href="https://github.com/recursive-oss/rec" target="_blank" rel="noopener">GitHub 开源推理引擎 rec:面向 M4/M5 的轻量本地部署</a></li>
+      <li><span class="src-1">一手</span><a href="https://recursive.com/updates/first-steps-toward-automated-ai-research" target="_blank" rel="noopener">Recursive 官方:Eureka Machine 自动化研究系统的设计与首轮测试</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:Flint 自报基准与独立复现缺口的讨论</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-4-1">
+  <div class="card-head">
+    <div class="card-title">OpenAI 新一轮融资传闻:目标 300 亿美元、估值 1.25 万亿美元,IPO 前夜的分歧在持续性而非规模</div>
+    <span class="tag tag-orange">重要·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">趋势观察</span>
+    <span class="sub-tag">资本运作</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>TechCrunch 报道 OpenAI 正推进新一轮 <span class="data-highlight">300 亿美元</span>融资,对应估值 <span class="data-highlight">1.25 万亿美元</span>,时点在 IPO 之前。这个数字需要放进坐标系看:今年 4 月该公司已完成一轮 <span class="data-yellow">1220 亿美元</span>融资、估值 <span class="data-yellow">8520 亿</span>,不到半年估值上移约 <span class="data-yellow">47%</span>。同日披露的一组游说数据可以侧面印证资金方向:OpenAI、Anthropic、英伟达三家三季度游说支出均创纪录,英伟达 <span class="data-highlight">220 万美元</span>、Anthropic <span class="data-highlight">210 万美元</span>、OpenAI <span class="data-highlight">150 万美元</span>。与之形成张力的是同日的市场反应——纳斯达克下跌 <span class="data-highlight">2.60%</span>,半导体指数下跌 <span class="data-highlight">6.7%</span>,触发因素是 Meta 现金流与特斯拉资本开支的削减,以及市场对 AI 投资可持续性的重估。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>一级估值创新高与二级市场当日大跌同时发生,是本期最值得写下来的一条张力。这说明定价的分歧点已经从「能不能融到钱」转移到「这轮钱能不能被未来现金流覆盖」——一级市场定价的是稀缺供给(算力与头部模型的入场券),二级市场定价的是资本开支的边际回报率。两种定价在同一周出现并不矛盾,但它把一个具体问题推到了决策层面前:如果 1.25 万亿的估值隐含的是持续增长的算力采购,那么电力、芯片交付周期与折旧压力就会从产业问题变成资本结构问题。需要说明的是,300 亿与 1.25 万亿均为媒体报道的进行中条款,尚未最终确认;而 OpenAI、Anthropic、英伟达的游说支出是可核查的硬数字,恰恰说明监管压力正在被当作经营成本来预算。</div>
+  </div>
+  <div class="card-desc">一级估值创新高与二级单日跌 2.6% 同时发生,分歧已从能否融资转到现金流能否覆盖——电力、芯片交付周期与折旧压力由此从产业问题变成资本结构问题。300 亿与 1.25 万亿均为未确认条款。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:OpenAI 融资条款传闻与纳指、芯片指数当日跌幅</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.humanoidsdaily.com/news/noetix-robotics-hong-kong-ipo-filing" target="_blank" rel="noopener">Humanoids Daily:香港 IPO 今年已募资超 500 亿美元与宇树上市后回撤近 40%</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:前沿模型融资与二级市场估值重估的对照</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.trendforce.com/research/download/RP261022AH" target="_blank" rel="noopener">TrendForce:一级市场热度与二级市场回撤的背离</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-4-2">
+  <div class="card-head">
+    <div class="card-title">辉羲智能 Pre-B+ 与 B 轮落地:2026 年内累计股权融资超 25 亿元,北京市人工智能产业投资基金领投</div>
+    <span class="tag tag-orange">重要·资本</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">资本运作</span>
+    <span class="sub-tag">产品落地</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日,具身智能大算力芯片企业辉羲智能(北京辉羲科技股份有限公司)宣布相继完成 Pre-B+ 及 B 轮融资,<span class="data-highlight">2026 年内累计股权融资规模已超 25 亿元</span>。投资方结构值得单独看:北京市人工智能产业投资基金领投,北京机器人产业发展投资基金、隐山资本、正心谷资本、金浦投资等政府基金与市场化机构共同参与,顺为资本、元生资本等老股东持续加码。产品侧,公司主张「数据闭环定义芯片」的技术理念,推出基于通用可编程架构的高性能 AI SoC 光至 R1 及 Huixi Embodied 算力产品系列,并构建了覆盖模型框架、编译器、算子库、Runtime、中间件、操作系统、仿真与实时控制的完整软件体系。可核实的工程指标是:<span class="data-highlight">6 天</span>连续产线直播作业中,多台搭载该芯片的机器人完成任务 <span class="data-highlight">17,625 次</span>,成功率 <span class="data-highlight">99.99%</span>,芯片已应用于智元精灵 G2 机器人。同期公告还提到公司将启动「辉羲具身智算生态联盟」。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这笔钱的结构比金额更有信息量:领投方是北京市 AI 产业基金,跟投方里政府基金与市场化机构各占一半,老股东全部加码——这是耐心资本与硬科技结合的典型样本,而不是纯财务驱动的追逐。同日商道创投网披露的当日具身智能融资清单里还有多家公司完成 Pre-B 到 B1/B2 轮,单笔规模从数千万元到近 5 亿元不等,说明一级市场对这个赛道的下注并未降温。但要泼两盆冷水:一是 <span class="data-yellow">99.99%</span> 成功率是在自家演示环境下的连续产线直播,不是第三方客户的生产环境,这类数字需要看更长的运行窗口;二是 2026 年 10 月具身智能融资案例数已回落至 <span class="data-yellow">19 例</span>,IPO 延迟让部分创始团队处于焦虑状态。国产具身算力芯片的真正竞争壁垒不在芯片指标,而在软件栈能否让客户少改一行代码。</div>
+  </div>
+  <div class="card-desc">17,625 次任务 / 99.99% 成功率是自家演示环境 6 天连续直播的数据,不是第三方客户产线,需看更长运行窗口。10 月具身智能融资案例已回落至 19 例,IPO 延迟已在影响创始团队状态。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.shangdaovc.cn/h-nd-14770.html" target="_blank" rel="noopener">商道创投网:辉羲智能融资金额、投资方名单与北京市 AI 基金领投说明</a></li>
+      <li><span class="src-2">二手</span><a href="https://robottoday.com/industry-briefing" target="_blank" rel="noopener">RobotToday 行业简报:辉羲融资跟踪与 10 月具身智能融资案例数回落</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.scpublic.cn/news/getNewsDatail?id=885195" target="_blank" rel="noopener">四川发布:地方国资协同支持具身智能的省级样本</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.globaltimes.cn/page/202610/1372791.shtml" target="_blank" rel="noopener">Global Times:国产具身硬件量产节奏对照</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-4-3">
+  <div class="card-head">
+    <div class="card-title">地方 AI 立法密集推进:广东、杭州条例草案专列词元经济条款,南京、杭州要求评估岗位替代风险</div>
+    <span class="tag tag-blue">重要·政策</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>7 至 9 月杭州市人工智能产业发展促进条例草案、广东省人工智能发展促进条例草案送审稿分别公开征求意见;江苏、南京、苏州、无锡、厦门已进入初审,广州修改稿将提交三审。这轮立法相对 2022 年深圳、上海首轮最明显的变化,是出现了两条以前没有的条款结构。其一是<span class="data-yellow">词元经济</span>:广东、杭州草案专列条款,从促进生产、配置、使用三方面作制度安排,南京草案则鼓励分析以词元计费为基础的数据价值体系。其二是<span class="data-yellow">一人公司</span>:江苏、苏州、南京、厦门、杭州均明确支持,南京、杭州进一步要求对一人公司提供平等待遇。监管侧沿用并细化了分级分类框架——高风险应用事前评估加风险预警,中低风险事前披露加事后控制;南京、杭州还提出在限定范围内试点验证,把「沙盒监管」写进法规。杭州草案首设人工智能辅助公共决策条款,要求公开算法基本逻辑与主要参数并建立全过程记录。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>把词元写进地方性法规,这件事的分量常被低估。它等于在制度层面确认了「词元」是一种可计量、可配置的生产要素——一旦有了法律地位,围绕算力补贴、算力券、数据要素入表的政策工具就有了统一的抓手,地方招商的竞争维度也随之从「给多少 GPU」转向「给多少 token」。另一条更直接的成本项是就业条款:南京、杭州要求人社部门采取就业影响监测措施,杭州草案还明确防范以 AI 名义恶意裁员与规避劳动保障义务,并要求制定职业培育与再就业支持政策。企业的合规应对因此需要提前准备——能证明岗位调整有配套转岗与培训方案,比事后解释更有用。国家层面,人工智能综合性立法已列入全国人大常委会 <span class="data-highlight">2026 年度立法工作计划</span>,但具体出台时间仍不确定;梁正等受访者的判断是当前治理体系已初步形成,下一步进入完善、细化、落实阶段。</div>
+  </div>
+  <div class="card-desc">词元获得法律地位后,地方招商维度从「给多少 GPU」转向「给多少 token」。就业条款要求人社部门监测岗位替代并防范以 AI 名义恶意裁员,企业需提前准备转岗与培训方案作为合规材料。</div>
+  <div class="links">
+    <div class="links-title">来源 3 · 一手 1 · 二手 2</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://www.gzwxb.gov.cn/context/contextId/217110" target="_blank" rel="noopener">广州市委网信办:广东省生成式人工智能服务登记信息公告(10 月 20 日),累计 108 款</a></li>
+      <li><span class="src-2">二手</span><a href="https://lib.cet.com.cn/paper/szb_con/545144.html" target="_blank" rel="noopener">中国经济时报:梁正谈治理与技术配速,「1+N」分类规范与综合性立法节奏</a></li>
+      <li><span class="src-2">二手</span><a href="https://k.sina.cn/article_7517400647_1c0126e4705909d10e.html" target="_blank" rel="noopener">新浪转载《每日经济新闻》:ICAIS 现场与地方立法背景的同源报道</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-4-4">
+  <div class="card-head">
+    <div class="card-title">Anthropic 游说国会:法案设 10 亿美元 / 50 人双门槛,才赋予政府阻断前沿模型部署的权力</div>
+    <span class="tag tag-blue">重要·政策</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>据 Politico 报道(10 月 16 日三名知情人士说法),Anthropic 已向国会山议员非公开推销一份前沿 AI 安全法案草案。法案设计的门槛相当具体:只有当模型造成<span class="data-highlight">可预见的迫近风险</span>,且损害金额超过 <span class="data-highlight">10 亿美元</span>或导致 <span class="data-highlight">50 人以上</span>死亡重伤时,政府才可阻断模型的发布或使用,且风险必须源于生物武器制造、模型规避开发者控制或网络攻击三类。执行机制上,独立评估机构在商务部注册、定期评估实验室与前沿模型,若判定存在「迫近的列举风险」须在评估完成后 <span class="data-highlight">72 小时</span>内向商务部报告;可请求哥伦比亚特区联邦地区法院法官下令暂停,但条款明确禁止其他任何政府部门或官员中止开发、部署或内部使用。法案还赋予其覆盖部分州法(含加州)的效力。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这份草案真正的稀缺性不在门槛高低,而在它承认了「开发者的自主控制会失效」这件事。行业目前依赖自愿承诺与行政令,Anthropic 作为 2 月被五角大楼禁入、6 月被华盛顿要求暂停最先进模型近三周的公司,推动立法本身带有明确的防御性质,而 AI 智库 Institute for Law & AI 的评价是「比其他前沿实验室做的都更合理」,同时指出它弱于众院今年夏天提出的 FRONTIER Act。AI 安全公司 LiveNerf 对 Opus 5.5 连续 29 天的追踪则未检测到能力退化——两组事实放在一起,说明关于「模型是否正在变强到失控」的判断目前仍缺乏可操作的量化标准。对监管研究者的提示是,72 小时报告窗口与「仅法院可下令」这两处设计,很可能成为后续联邦立法争议的焦点。</div>
+  </div>
+  <div class="card-desc">法案承认开发者自主控制会失效,故 72 小时报告窗口与「仅法院可下令」两处设计将成为后续联邦立法争点。智库评价为强于其他前沿实验室但弱于众院 FRONTIER Act。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.channelnewsasia.com/business/anthropic-quietly-pitches-its-own-ai-safety-bill-us-lawmakers-6467581" target="_blank" rel="noopener">CNA/Reuters:法案门槛、72 小时报告义务与仅法院可下令的限制条款</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic 官方新闻室:Advanced AI 框架与前沿模型评估承诺</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:组合模型攻击与持续化防守的同日因果</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:前沿模型安全承诺的落地方式对照</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-5-1">
+  <div class="card-head">
+    <div class="card-title">腾讯混元 × 复旦 WorkForge:按专家蓝图搭出 16,665 个真实职场环境,27B 模型 GDPval 82.4 分</div>
+    <span class="tag tag-green">重要·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">学术成果</span>
+    <span class="sub-tag">产学研交叉</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>腾讯混元与复旦大学提出 <span class="data-highlight">WorkForge</span> 框架,用专家蓝图从真实代码仓库、数据集与网页搭建工作区,再用程序化检查与 LLM 语义评分双重核验产物质量。WorkForge-16K 含 <span class="data-highlight">16,665 个</span>环境,覆盖 <span class="data-yellow">40 个</span>专业领域、<span class="data-yellow">60 种</span>文件类型,单条轨迹平均约 <span class="data-highlight">7.6 万 tokens</span>——这个长度本身就是它与传统短程编码环境的关键差别。训练后的效果是:WorkForge-A3B 在 GDPval 上从 45.5 提到 <span class="data-highlight">73.6</span>,WorkForge-27B 达到 <span class="data-highlight">82.4</span>,超过了 <span class="data-yellow">397B-A17B</span> 的 79.7。这是一个小模型超过大模型的样本,规模比接近 1:15。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>值得注意的是这个反转的量级。GDPval 类基准考的是「交付物是否达到专业工作标准」,而 A3B 拿到 73.6 分与 27B 的 82.4 分之间只差 <span class="data-highlight">8.8 分</span>,考虑到参数量差 <span class="data-yellow">9 倍</span>、推理成本差可能更大一两个数量级,选型上的含义相当直接:大量结构化的专业交付任务未必需要旗舰档模型。方法论层面,WorkForge 值得借鉴的机制是「程序化检查 + LLM 语义评分」的双重核验——单一评分器会被reward hacking,前者对可执行产物给硬判定,后者覆盖无法自动验证的语义质量,这个组合对自建环境数据集的团队有直接参考价值。风险则是环境多样性来自蓝图构造,真实职业工作的长尾分布是否被覆盖,需要更长时间检验。</div>
+  </div>
+  <div class="card-desc">A3B 与 27B 在 GDPval 上差 8.8 分,参数量差约 9 倍,提示结构化专业交付未必需要旗舰档。可复用机制是程序化检查加 LLM 语义评分的双重核验——单评分器易被 reward hacking。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:WorkForge-16K 的 16,665 个环境与 GDPval 逐档分数</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.tomesphere.com/paper/2506.22405" target="_blank" rel="noopener">Tomesphere:同期论文索引与评测方法交叉核对</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:决策层拆分与轻量基座同日的行业归因分析</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:智能体环境与评测基准的持续跟踪报道</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-5-2">
+  <div class="card-head">
+    <div class="card-title">arXiv 开始限制单作者预印本数量,25 位菲尔兹奖得主联署警告:AI 批量生成正在压缩验证窗口</div>
+    <span class="tag tag-blue">重要·生态</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">学术成果</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>两条信息在同一天进入视野,构成一个完整的因果链。第一条是 Nature 总编辑 Magdalena Skipper 在 ICAIS 2026 主旨演讲中披露:<span class="data-highlight">arXiv</span> 近期开始限制单个作者可存入的预印本数量,以免被 AI 生成的低质量内容淹没,部分期刊也在考虑限制单作者投稿量。第二条是今年 <span class="data-yellow">9 月 11 日</span>包括陶哲轩、邓煜在内的 <span class="data-highlight">25 位</span>菲尔兹奖得主发表声明,警告 AI 快速批量生成数学成果会压缩成果验证、方法总结、学术交流和引用前人成果的时间,并引发署名与抄袭问题,使 AI 发展目标与数学研究目标严重错位。时间线上的压力点有两个:9 月 8 日 OpenAI 宣布 AI 工具用 <span class="data-highlight">88 小时</span>解出千禧年大奖难题之一的纳维-斯托克斯方程后遭数学家公开质疑抢跑;10 月 6 日 OpenAI 一次性公开 <span class="data-highlight">722 篇</span>模型生成的数学手稿,再度引发争议。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>限流这件事的分量在于它承认了「发表」本身已经成为瓶颈。过去预印本平台的隐含假设是作者产出速度慢于评审速度,所以预印本是加速传播;当产出速度被模型抬高几个数量级,瓶颈就反转成评审与验证,而预印本机制反而成了稀释注意力的渠道。对投稿者的直接建议是,把自己的工作时间从「产出更多」转向「产出可被快速验证的东西」——具体说,给出可复现代码、数据与失败的边界条件,因为这些正是自动生成内容最难伪造的部分。Skipper 提出的规则方向(明确人与 AI 工具的贡献归属、科学家作为结果最终责任人)也值得研究机构提前对齐到自己的署名政策上,否则等规则落地再改流程成本更高。</div>
+  </div>
+  <div class="card-desc">预印本机制的隐含假设是产出慢于评审,产出被模型提速后瓶颈反转为验证。研究机构应提前对齐署名与贡献归属规则,并把时间从「产出更多」转向「产出可被快速验证」。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 1 · 二手 3</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://www.stcn.com/article/detail/4237840.html" target="_blank" rel="noopener">证券时报:Skipper 披露 arXiv 限流、25 位菲尔兹奖得主声明与 722 篇手稿争议</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.nature.com/nature/" target="_blank" rel="noopener">Nature 官方站点:总编辑关于预印本限流与署名归属的原始表述</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:预印本限流与研究者协作困境的当日条目</a></li>
+      <li><span class="src-2">二手</span><a href="https://k.sina.cn/article_7517400647_1c0126e4705909d10e.html" target="_blank" rel="noopener">新浪转载《每日经济新闻》:ICAIS 与预印本生态的完整现场记录</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-5-3">
+  <div class="card-head">
+    <div class="card-title">Ai2 发布 OlmoEarth v1.3:每 10 米地表生成 128 维年度嵌入,27 项基准中 20 项排名第一</div>
+    <span class="tag tag-green">重要·开源</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">开源生态</span>
+    <span class="sub-tag">学术成果</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>Allen Institute for AI(Ai2)10 月 22 日发布卫星嵌入模型 <span class="data-highlight">OlmoEarth v1.3</span>,模型权重、数据与代码均开放。技术要点是把一整年的雷达与光学卫星观测压缩为每个 <span class="data-yellow">10 米 × 10 米</span>地表块的一组 <span class="data-highlight">128 维</span>嵌入,同时发布全星球面的预计算年度嵌入库与一个浏览器端工具 Embeddings Explorer。对照基准是与 AlphaEarth Foundations、Tessera v2 在 <span class="data-highlight">27 项</span>任务、六个大洲上比较,128 维版本在其中 <span class="data-yellow">20 项</span>排名第一,64 维轻量版在 18 项领先。效率端 v1.3 只用了前代 <span class="data-yellow">53%</span> 的训练算力、约一半的碳排放,基础模型预训练租用 H100 的成本约 <span class="data-yellow">2,720 美元</span>。同期发布面向热带作物分类的新基准 PLANTEUR,专门测试模型在从未见过的农业区域的泛化能力。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>「2,720 美元训出覆盖全球的嵌入模型」这个数字把遥感分析的准入门槛降到了机构级别。此前做地表变化监测要么买商业影像,要么租 GPU 自己跑,而这些预计算嵌入的意义是:先验数据已经算好了,用户点几个位置就能训一个基础土地覆盖分类器,不需要 GPU、不需要账号、不需要下载 TB 级影像。对做气候、森林、农业、保险的团队,落地成本从「一个数据工程项目」降到了「一次内部分析」。需要注意的是官方声明的定位——这仍是表征工具而非预测模型,没有内建的因果物理先验,所以在洪水预报、山火风险这类安全攸关的场景里,它的输出应当作为特征而非结论。另外覆盖时间是不均匀的:全球嵌入在发布时覆盖 <span class="data-yellow">2023 至 2025</span>,2017 至 2022 只有部分国家,这一点在做跨年趋势分析时必须先确认。</div>
+  </div>
+  <div class="card-desc">预训练成本约 2,720 美元使遥感分析降到机构级,但这是表征工具不是预测模型,无因果物理先验,安全攸关场景只应作特征。全球嵌入仅覆盖 2023-2025,跨年分析须先确认。</div>
+  <div class="links">
+    <div class="links-title">来源 7 · 一手 4 · 二手 3</div>
+    <ul>
+      <li><span class="src-1">一手</span><a href="https://huggingface.co/allenai/OlmoEarth-v1_3-Base" target="_blank" rel="noopener">Hugging Face 模型卡:架构、许可与 olmoearth_pretrain 代码库链接</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai2day.live/story/a-free-ai-tool-now-lets-anyone-map-the-entire-planet-year-by-year" target="_blank" rel="noopener">Ai2Day:27 项基准逐项胜负、Embeddings Explorer 上手路径与 PLANTEUR 基准</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:OlmoEarth v1.3 与 ThinkingBox 的同日条目</a></li>
+      <li><span class="src-1">一手</span><a href="https://allenai.org/blog/" target="_blank" rel="noopener">Ai2 官方研究页:OlmoEarth v1.3 技术报告与效率数据</a></li>
+      <li><span class="src-1">一手</span><a href="https://allenai.org/papers/" target="_blank" rel="noopener">Ai2 论文索引:PLANTEUR 基准与模型卡引用</a></li>
+      <li><span class="src-1">一手</span><a href="https://github.com/allenai/olmoearth_pretrain" target="_blank" rel="noopener">GitHub:Earth system 基础模型训练与嵌入计算代码库</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:卫星嵌入模型的行业应用讨论</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-6-1">
+  <div class="card-head">
+    <div class="card-title">纳指单日 -2.6%、半导体指数 -6.7%:Meta 现金流与特斯拉资本开支削减触发 AI 资本开支可持续性质疑</div>
+    <span class="tag tag-orange">重要·市场</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">趋势观察</span>
+    <span class="sub-tag">资本运作</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>10 月 22 日纳斯达克下跌 <span class="data-highlight">2.60%</span>、半导体指数下跌 <span class="data-highlight">6.7%</span>,触发因素是 Meta 现金流与特斯拉资本开支的削减,市场对 AI 投资的可持续性重估。这组数字需要和同一天的三条公司级新闻并读:特斯拉三季度营收 <span class="data-highlight">280.46 亿美元</span>但营业利润同比下降 <span class="data-yellow">56%</span>、研发支出同比增约 <span class="data-yellow">69%</span>;OpenAI 正推进 <span class="data-yellow">300 亿美元</span>新融资、估值 <span class="data-yellow">1.25 万亿</span>;辉羲智能与多家具身智能公司同期完成亿元至十亿元级融资。可以看到一个清晰的背离:一级市场还在加注,二级市场已经开始给资本开支定价。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>本条前瞻的判断是:接下来 4 到 8 周,市场的聚焦点会从「谁的模型更强」转向「谁的推理成本曲线更平」。原因很简单——如果二级市场开始怀疑 AI 资本开支的边际回报,那么所有以调用量计价的产品(API、智能体服务、agent 订阅)在收入预测里都要面对同一个问题:客户会因为模型变强而多用,还是会因为价格战而少付。这个问题在 10 月 22 日这一天里有了两个方向相反的答案,一方面 OpenAI Decisions API 与蚂蚁 LingDT 都在把决策层做成更便宜的独立组件,另一方面 Flash 档模型在 AA 分数上追平旗舰档。可跟踪的指标有三个:主要云厂商下季度资本开支指引、Token 单位价格的变化方向、以及算力租赁市场的现货报价。</div>
+  </div>
+  <div class="card-desc">未来 4 到 8 周市场聚焦点会从模型强弱转向推理成本曲线。跟踪三个指标:主要云厂商下季资本开支指引、Token 单位价格方向、算力租赁现货报价。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:纳指与芯片指数跌幅、触发因素与决策模型同日动态</a></li>
+      <li><span class="src-2">二手</span><a href="https://lib.cet.com.cn/paper/szb_con/545151.html" target="_blank" rel="noopener">中国经济时报:张平谈 AI 治理的四层工具与全生命周期责任划分</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.unite.ai/" target="_blank" rel="noopener">Unite.AI:资本开支削减与前沿模型公司的现金流对照</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.trendforce.com/research/download/RP261022AH" target="_blank" rel="noopener">TrendForce:硬件板块回撤与人形机器人估值重定价</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-6-2">
+  <div class="card-head">
+    <div class="card-title">本周上海两场大会同期开跑:GDPS 2026 全球开发者先锋大会 10 月 23-24 日,具身智能技能大赛 10 月 23-25 日</div>
+    <span class="tag tag-blue">观察·前瞻</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🇨🇳 中国动向</span>
+    <span class="sub-tag">会议快讯</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>本周的可预期事件密度集中在上海。<span class="data-yellow">GDPS 2026 全球开发者先锋大会</span>于 <span class="data-highlight">10 月 23 日至 24 日</span>在上海举办,预计吸引 <span class="data-highlight">4.5 万人</span>与超过 <span class="data-yellow">200 个</span>开发者社区,议题明确指向具身智能与真实场景应用。同期举行的 <span class="data-yellow">2026 国际具身智能技能大赛</span>为 <span class="data-highlight">10 月 23 日至 25 日</span>,由工信部相关部署推动,目标是推动机器人与具身智能技术的规模化落地。产业侧的背景数据可以给这两场活动一个坐标:2026 上半年中国人形机器人产量已超过 <span class="data-highlight">4 万台</span>,全年预期冲击 <span class="data-highlight">10 万台</span>;行业前十大上市公司在手订单合计超过 <span class="data-yellow">300 亿元</span>。但转化能力仍是行业公认难点——信通院在 10 月的报告里判断具身智能未来两年内将经历第一轮行业出清。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>把产量、订单与出清预期放在一起看,是这周最该记住的张力:供给端上半年 4 万台、全年冲 10 万台,需求端前十大上市公司订单 300 亿,但信通院同时给出「两年内第一轮出清」的判断。这三组数字不矛盾——它们描述的是从「能不能造出来」向「能不能卖出去并持续服务」过渡的阶段,而开发者大会与技能大赛这类活动,本质上是在为这个过渡补人才与标准。工信部牵头的技能大赛值得关注的指标不是参赛队伍数,而是赛项设置是否覆盖真实产线工况;如果赛题脱离工厂实际,产教融合的成效就要打折。对参会者的实操建议是,重点看有没有公布可复用的数据集、仿真环境与评测接口的开放清单——这三项决定行业能否把比赛成果转成开发者能直接用的基础设施。</div>
+  </div>
+  <div class="card-desc">上半年产量 4 万台、全年冲 10 万台、前十大上市公司订单超 300 亿元,信通院同时判断两年内第一轮出清。技能大赛的看点是赛项是否覆盖真实产线工况,以及是否开放可复用的数据集与评测接口。</div>
+  <div class="links">
+    <div class="links-title">来源 4 · 一手 0 · 二手 4</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://robottoday.com/industry-briefing" target="_blank" rel="noopener">RobotToday 行业简报:GDPS 2026 与具身智能技能大赛的日期、规模与议题</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.scpublic.cn/news/getNewsDatail?id=885195" target="_blank" rel="noopener">四川发布:地方具身智能项目落地与省级中试研发支持的配套样本</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091363921_455313" target="_blank" rel="noopener">腾讯研究院 AI 速递:本周开发者生态与具身智能落地条目</a></li>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:上海同期行业议程</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card" id="c-6-3">
+  <div class="card-head">
+    <div class="card-title">400 家拉美金融机构被打穿:黑客把 Claude、Grok 等商用模型串成分工攻击链,防守方转向持续验证</div>
+    <span class="tag tag-orange">重要·安全</span>
+  </div>
+  <div class="sub-tags">
+    <span class="sub-tag">🌍 全球信号</span>
+    <span class="sub-tag">政策监管</span>
+    <span class="sub-tag">趋势观察</span>
+  </div>
+  <div class="perspective">
+    <div class="p-item"><span class="p-label">🎓 学术:</span>安全公司 Straiker 披露,黑客组织 CyberCartel 把包括 Claude 与 Grok 在内的多个商用大模型串联起来,自动化攻击了拉丁美洲约 <span class="data-highlight">400 家</span>金融机构,攻击智能体被明确分工为<span class="data-yellow">目标侦察</span>、<span class="data-yellow">攻击规划</span>与<span class="data-yellow">执行</span>三段。这条披露同一天,Anthropic 让 Claude Security 新版本进入公开测试,该版本的核心变化是持续分析代码变更并跟踪漏洞是否真被修复——从一次性扫描变成持续操作。两条新闻放在一起构成了攻防两端的同一件事:当模型被拆成多个可组合的组件时,防守方也必须把检查变成跨组件的持续操作,而不是等发布前跑一次。</div>
+    <div class="p-item"><span class="p-label">🏢 产业:</span>这个事件的诊断价值在于它精确复刻了 10 月 20 日那套架构判断的攻防两面。同一天 OpenAI 上线 Decisions API、中国电信开源意图理解模型,都在把智能体拆成专职组件;而 CyberCartel 用的是完全相同的组装思路,只是组件换成了商用大模型。结论因此不是「模型不安全」而是「组件编排的权限模型没有跟上」——当每个组件只被授予完成自己那一段任务的权限时,串起来的能力远超单点评估所覆盖的范围,这与上一期 PHP2Shell 里云厂商提前九小时开 WAF 的应对逻辑一致:防守方必须在攻击链完成之前就把规则铺上去。对企业 IT 而言,可执行的动作是给每一个接入的模型调用设独立配额与审计日志,并把「变更后是否真被修复」纳入 CI 的常驻检查项。</div>
+  </div>
+  <div class="card-desc">这不是「模型不安全」而是「组件编排的权限模型没跟上」:每个组件只获授权完成一段任务,串起来的能力远超单点评估范围。企业应给每个模型调用设独立配额与审计日志。</div>
+  <div class="links">
+    <div class="links-title">来源 3 · 一手 1 · 二手 2</div>
+    <ul>
+      <li><span class="src-2">二手</span><a href="https://ai-trend.me/en/briefs/2026-10-23" target="_blank" rel="noopener">AI Trend Research 日报:Straiker 披露的攻击链分工与 Claude Security 公测</a></li>
+      <li><span class="src-1">一手</span><a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic 官方新闻室:Claude Security 公测与前沿模型评估承诺</a></li>
+      <li><span class="src-2">二手</span><a href="https://www.cssn.cn/fx/fx_tpxw/202610/t20261022_6074555.shtml" target="_blank" rel="noopener">中国社会科学网:数字虚拟人治理的四类法律风险与跨部门协同机制</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<footer class="footer">
+  <div class="footer-stats">
+    <div><b>6</b><span>主题</span></div>
+    <div><b>24</b><span>条目</span></div>
+    <div><b>24</b><span>一手来源</span></div>
+    <div><b>73</b><span>二手来源</span></div>
+  </div>
+  © 2026 Daily AI · minimax slot · 最后更新 2026-10-23 08:58 GMT+8
+</footer>
+
+</div>
+
+</body>
+</html>
