@@ -120,6 +120,60 @@
 
 ---
 
+---
+
+> ⚠️ **2026-10-25 六条更新（本次 audit 实测得出，优先级高于上面所有正文）**：
+>
+> 1. **【最重要·新】SSL `CERTIFICATE_VERIFY_FAILED: Hostname mismatch` 是假 P0，不是死链。**
+>    今天 `https://sh.people.com.cn/n2/2026/1023/c134768-41731092.html` 被判 `fail`，
+>    实际是**本地网络 TLS 中间人**：verify=On → SSL 报错；verify=OFF（`CERT_NONE` +
+>    `check_hostname=False`）→ **200 + 37512 B**，正文命中卡片主题
+>    （<title>「推动人工智能技术走出实验室，中国移动发布时空智能系列模型能力及标杆场景」）。
+>    与 10-24 products audit 的 `politics.people.com.cn` 是**同一类**。
+>    → **audit 脚本已修**（`scripts/audit-minimax-daily-10-25.py`）：`_attempt(..., insecure=True)`
+>    走免校验 opener，命中即记 `ssl_false_positive=True` 并判 pass。**明天直接用 10-25 这一版。**
+>    ⚠️ 判据：**先探针再换源**。看到 SSL 报错直接去"找真源"会把好链接改坏。
+>
+> 2. **【规则订正】`openai.com` 的 403 触发条件比旧记忆更窄。**
+>    今天实测：`base(仅 UA+Accept)` → 403；**任一 `Sec-Fetch-*` 头即 200**（Dest / Mode / Site / User 任一），
+>    正文 300 KB+；`Upgrade-Insecure-Requests` 单独加**无效**；`Referer` 单独加**无效**；
+>    `Referer` + `Sec-Fetch-Site:same-origin` 这种**自相矛盾组合反而被判可疑 → 403**。
+>    → audit 脚本 `FALLBACK_HEADERS` 已补一组「Chrome UA + Sec-Fetch 三件套 + **不带 Referer**」。
+>    → 仍然 403 的按 **P2 forbidden** 记录，**不要换源**（真浏览器能打开）。
+>
+> 3. **【新】Hugging Face 模型页 URL 必须带 org 段。**
+>    `https://huggingface.co/MiniMax-M3.1-Flash` → **404**（漏了 `MiniMaxAI/`）；
+>    `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` → 200。
+>    核对方式：`https://huggingface.co/api/models/<org>/<name>` 返回 `id / gated / lastModified / downloads`；
+>    或 `https://huggingface.co/api/models?author=<org>&search=<kw>`。
+>    **生成端写 HF 链接时 org 段最容易漏**（今天就是漏了，被 audit 抓出）。
+>
+> 4. **【新】prompt 副本早已脱节 —— live 才是真相。**
+>    `repo/cron-prompts/minimax/ai-daily-audit-minimax-cron-prompt.txt` 自 **2026-07-11** 起
+>    再没更新过（17053 B，缺 10-22 / 10-23 / 10-24 三批全部更新）；
+>    live `C:\TempAI\ai-daily-audit-minimax-cron-prompt.txt` 是 26147 B（2026-10-24）。
+>    旧记忆说的"repo 副本含 10-20 学术版修正"**已不成立**（实测 repo 副本里没有"学术版"三个字）。
+>    今天已把 live 覆盖到 repo 副本并提交（与 products 副本的同步惯例一致：两者 byte-identical）。
+>    → **两份 prompt 的"漂移"其实是"副本过时"，不是"目标不同"**，两边都审综合版。
+>
+> 5. **【沿用】首页仍无 minimax 综合卡** → 首页同步步骤是**合法空操作**，
+>    `homepage_minimax_card_updated=false`。今天实测首页 4 张卡三字段全 PASS
+>    （gpt-academic 2026-10-25/6 期 · gpt-products 2026-10-25/36 期 ·
+>    minimax-academic 2026-10-20/1 期 · minimax-products 2026-10-25/74 期），
+>    **期数必须从 slot 目录实测派生**（并行 cron 今天改过 3 张卡，硬编码必误报）。
+>
+> 6. **【新·自坑】自己写的校验脚本也会中 `_No308` 陷阱。**
+>    今天第一版公网校验脚本把 `/ai-daily/minimax/archive.html`、`briefs.html` 判成
+>    **308 + 0 bytes FAIL** —— 因为 `_No308` 让 3xx 走「成功路径」，只在 except 分支跟跳转就会假失败。
+>    → **成功分支也必须判 `resp.status in (301,302,303,307,308)` 并 `urljoin` 跟 Location**。
+>
+> 7. **【沿用】`scripts/audit-minimax-daily-<MM-DD>.py` 取最新要按 `LastWriteTime`**；
+>    今天已把 `audit-minimax-daily-10-25.py`（v2 + SSL 免校验 + Sec-Fetch 兜底）就位，
+>    **明天 Copy-Item 成 10-26 的名字再跑**，别直接改 10-25 那份（它是今天的归档）。
+>
+> 8. **【沿用】autofix v2.9（`scripts/autofix-minimax-daily-10-24.py`）今天 0 硬规则动作、0 no_source**，
+>    dry-run 不落盘；`render_archives.py --repo repo --check` → `changed: []` 无漂移。
+
 ## 一、你的角色
 
 你是 **minimax 简报审核员 + 双循环全自动修复执行者**。
