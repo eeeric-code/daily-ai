@@ -7,9 +7,116 @@
 > 4. **限制循环 2 不无限重试**（最多 2 轮，找不到真源 → 报告 partial，不循环到天荒地老）
 >
 > 配套 SOP：`D:\ECNU\其他\每日AI推送\prompts\audit-minimax-每日简报.md`（§11.10 v2.7 升级）
-> 入口脚本：`D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily.ps1`（v3.0 audit）
-> 自动修复脚本：`D:\ECNU\其他\每日AI推送\scripts\audit-autofix.ps1`（v2.7：search_query 改 card_title 去 site:）
+> 入口脚本：`D:\ECNU\其他\每日AI推送\scripts\audit-minimax-daily-<MM-DD>.py`（**Python，不是 .ps1**）
+> 自动修复脚本：`D:\ECNU\其他\每日AI推送\scripts\autofix-minimax-daily-<MM-DD>.py`
 > 当前日期：`$DATE`
+
+> ⚠️ **2026-10-22 三条过时声明，作废**：
+> 1. 上面写的 `audit-minimax-daily.ps1` / `audit-autofix.ps1` **不存在**。实际是按日期存档的 Python 脚本，
+>    用之前先 `Get-ChildItem scripts\audit-minimax-daily-*.py | Sort-Object Name -Descending` 取最近版，
+>    `Copy-Item` 成当天日期名再跑。正文所有 `powershell -File *.ps1` 段落照此替换。
+> 2. **STEP 6.5 里 `<span class="model-name">minimax</span>` 锚点已失效**（模板改版后
+>    model-name 退化成单字 GPT/MiniMax，4 张卡并排会全部匹配失败或匹配错块）。
+>    唯一稳定锚点是 `<section[^>]*data-edition="minimax-daily"[\s\S]*?</section>`。
+>    且本 prompt 的正则 patch 路径**已整体废弃** —— 正确做法是部署 slot 目录后跑
+>    `repo/scripts/render_portal.py`，它自动从已发布日期目录派生首页四张卡的日期/期数/href。
+>    **注：当前 `repo/index.html` 只有 gpt-academic / gpt-products / minimax-academic / minimax-products
+>    四个 `data-edition`，没有 minimax 综合卡** → 本 cron 的首页同步步骤是**合法空操作**，
+>    `homepage_minimax_card_updated` 保持 `false`，不要为了"让它有改动"去动别的 cron 的卡。
+> 3. audit 脚本已修入 **WAF-UA 回退**：部分站点（`onemetrik.com`）对「Chrome UA + Python TLS 指纹」返回假 403，
+>    但 `curl/8.4.0` / 无 UA / Safari UA 都 200。遇到 P2 403 先跑 4 组 UA 对照探针再决定换源。
+
+---
+
+> ⚠️ **2026-10-23 四条更新（本次 audit 实测得出，优先级高于下面所有正文）**：
+>
+> 1. **audit 脚本已升到 v2，WARN/FAIL 很可能是脚本缺陷造成的假阳性 —— 不要一上来就去"找真源"。**
+>    2026-10-23 首跑报 `WARN (P0=1, P2=2)`，3 条全是误报，已在
+>    `scripts/audit-minimax-daily-10-23.py` 修掉，**明天请直接用这一版**：
+>    | 症状 | 根因 | 已修 |
+>    |---|---|---|
+>    | `allenai.org/papers/` `allenai.org/blog/` `ai-trend.me/en/briefs/...` 判 deep_link_warn / redirect | **`urllib` 默认不跟 308**，Cloudflare 站几乎全用 308→extensionless；Location 还是相对路径 | 加 `_No308` handler，在 `fetch()` 里按 `r.status in (301,302,307,308)` 自己 `urljoin` 跟 |
+>    | `www.shangdaovc.cn/h-nd-14770.html` 判 fail（204 空 body） | **缺 `Accept` 头就稳定返回 204**（Server: F-WEB 的 WAF 判定"非浏览器"，重试 4 次全 204，**不是抖动**）。Python urllib 默认只发 UA | HEADERS 补齐 `Accept` / `Accept-Language` / `Accept-Encoding: identity` / `Connection: close` |
+>    | 偶发瞬时限流被当成死链 | 10 线程并发打崩小站 | 首轮判失败的用 **3 线程 + 22s 超时复核**一次，只有复核仍失败才算 fail |
+>
+>    **流程要求**：P0 非 0 时，**先跑 `probe-p0.py` 类 UA/重定向对照探针**确认，
+>    确认是真死链再进 §5.2 找真源。否则 LLM 会被假阳性带着去"修"活链接，把好内容改坏。
+>
+> 2. **audit 脚本支持 slot 参数**：`python scripts/audit-minimax-daily-10-23.py <DATE> [slot]`，
+>    `slot` 默认 `ai-daily/minimax`（综合版）。传 `ai-academic/minimax` 则审学术版，
+>    输出文件名自动带 `-ai-academic-minimax` 后缀，不覆盖综合版报告。
+>
+> 3. **两份 cron prompt 已漂移，需要你拍板**：本文件（`C:\TempAI\...`，mtime 2026-10-22 09:37）
+>    审**综合版** `ai-daily/minimax`；而仓库内
+>    `cron-prompts/minimax/ai-daily-audit-minimax-cron-prompt.txt`（mtime 2026-10-20 20:04）
+>    顶部有一条 2026-10-20 用户修正，说本 cron 应改审**学术版** `ai-academic/minimax`、
+>    状态写 `.cron-state-academic-minimax.json`、首页只能用 `render_portal.py` 生成。
+>    **2026-10-23 本次按本文件（较新）审了综合版，并额外把学术版也审了一遍，两边都 PASS。**
+>    报告里请把这条漂移原样带给用户，别自己默默选一个。
+>
+> 4. **首页 4 张卡的期数字段写法已统一为「已收录 N 期」**（倒装）。
+>    旧记忆里「gpt 卡 = N 期已收录 / minimax 卡 = 倒装」**已失效**。
+>    校验正则两种都兼容：`已收录\s*(\d+)\s*期` 或 `(\d+)\s*期已收录`。
+>    另外：判某张卡是否同步时，**期望日期要取该 slot 目录下最新一期，不是今天**
+>    —— 例如 `minimax-academic` 只发到 2026-10-20，首页显示 2026-10-20 是正确的，
+>    按"必须等于今天"判会误报 FAIL。
+>
+> 5. `autofix` 升到 v2.8：`DATE` 走 argv（不再硬编码 2026-10-16）、og:title 日期跟着走、
+>    **真正实现 no_source 检测**（旧版是空 list 占位）、默认 dry-run 加 `--write` 才落盘、
+>    无变更时完全不碰文件。
+
+---
+
+> ⚠️ **2026-10-24 五条更新（本次 audit 实测得出，优先级高于下面所有正文）**：
+>
+> 1. **【最重要】brief cron 崩溃后，audit cron 必须自己把发布补完。**
+>    2026-10-24 08:15 的 `ai-daily-brief-minimax` session 在 **09:09:58 被上游 529**
+>    （errorCode 50151「服务集群负载过高」）打断。它 **已经跑完 build.py + selftest.py**
+>    （24 卡 / 6 主题 / 82 链接 / 29 一手，selftest PASS），**但死在 deploy 之前**：
+>    - `2026-10-24\index.html` 存在且完整（85741 bytes）
+>    - `repo/ai-daily/minimax/2026-10-24/` **不存在** → 简报没上线
+>    - `.cron-state-minimax.json` 卡在 `html_generated=false / deploy_verified=false`
+>
+>    **判定规则**：`.cron-state-minimax.json` 的 flags 不可信（brief 崩在中途就没人写），
+>    **必须以磁盘实际产物为准**去恢复检查：
+>    1. `2026-10-24\index.html` 存在 && `minimax-work/selftest.txt` 最后一行是 `PASS`
+>       && `repo/ai-daily/minimax/<DATE>/` 不存在 → 判定「产物就绪、发布未完成」
+>    2. 满足上面的条件 → **不要直接结束**，按 §4.1-4.3 补完发布（见第 2 条），再继续双循环审核
+>    3. 产物不存在 / selftest 不是 PASS → 才按老规矩「生成端未就绪，结束并报告」
+>
+> 2. **补完发布的完整步骤**（脚本模板：`2026-10-24/minimax-work/deploy-daily.py`）：
+>    | 步 | 动作 |
+>    |---|---|
+>    | 4.1 | `shutil.copyfile(2026-10-24/index.html → repo/ai-daily/minimax/<DATE>/index.html)` |
+>    | 4.2 | 更新 `repo/ai-daily/minimax/index.html` 三处：`<span class="date">` → DATE、`已收录 N 期` → 该 slot 目录下日期目录数、`<a class="primary" href="./DATE/">阅读最新</a>` |
+>    | 4.3 | `python repo/scripts/render_archives.py --repo repo`（自动重建 root + 各 slot 的 archive/briefs） |
+>    | 4.4 | `git add -- <显式 8 个路径>` → commit → push（**绝不用 `git add -A`**） |
+>    | 4.5 | 公网校验 `https://daily-ai-2o3.pages.dev/ai-daily/minimax/<DATE>/` |
+>    > 4.2 的 N 期 = `repo/ai-daily/minimax/` 下**匹配 `\d{4}-\d{2}-\d{2}` 的目录数**（含当天）。
+>    > 4.3 的副作用：会连带改 `ai-academic/minimax/archive.html` + `briefs.html`
+>    > （LEGACY 历史稿要汇进学术版页），这与 10-23 的 commit 文件集完全一致，**属正常**。
+>    > `repo/index.html` **不会**被改（综合版在首页没有卡）→ 对并行 cron 零回归风险。
+>
+> 3. **autofix 升 v2.9：og:title / `<title>` 的日期必须真正跟随 DATE。**
+>    v2.8 的实现是「**缺失**才补全」→ 2026-10-24 的产物里 og:title 存在但日期还是**昨天**的
+>    （`2026年10月23日` / `2026-10-23`），v2.8 一个 action 都不报，直接发布会把错误日期
+>    暴露给社交卡片 / 搜索结果 / 浏览器标签页。v2.9 改成「**存在但日期 ≠ DATE 就改写**」。
+>    → **明天请用 `scripts/autofix-minimax-daily-10-24.py`（v2.9）**，
+>    并确认 v2.9 规则在文件里（搜 `硬规则 2b`）。
+>
+> 4. **取最近版脚本要按 `LastWriteTime` 排，不能按 `Name` 排。**
+>    prompt 里写的 `Get-ChildItem scripts\audit-minimax-daily-*.py | Sort-Object Name -Descending`
+>    会取到 **`audit-minimax-daily-9-8.py`**（"9" > "1"，字典序 9 月版本排在 10 月版本前面），
+>    拿到的是 9 月的旧脚本。正确写法：
+>    `Get-ChildItem scripts\audit-minimax-daily-*.py | Sort-Object LastWriteTime -Descending | Select -First 1`
+>
+> 5. **自己写公网校验脚本时：`_No308` 会让 3xx 走「成功路径」。**
+>    注册 `_No308(HTTPRedirectHandler)` 后，urllib **不抛 HTTPError**，而是把 308 当普通响应返回
+>    （status=308、body 空）。如果只在 `except HTTPError` 分支里跟跳转，就会得到
+>    **308 + 0 bytes** 的假「死页」。→ 必须在 **成功分支** 里也判断
+>    `resp.status in (301,302,303,307,308)` 并 `urljoin` 跟。
+>    （本次 4 个归档页误报 FAIL 就是这个坑，homepage href 期望值也要带 slot 路径：
+>    `./ai-products/gpt/2026-10-24/`，不能只写日期。）
 
 ---
 
