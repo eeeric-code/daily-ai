@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="AI 产品产业每日简报 · 2026年10月25日 (minimax)">
+<meta property="og:description" content="minimax 维护的 AI 产品产业每日简报:24 张卡覆盖国家战略、资本财务、算力基础设施、模型分发、产品采用与安全信任 6 大主题。">
+<title>AI 产品产业每日简报 · minimax · 2026-10-25</title>
+<style>
+  :root{--ink:#1d3a6e;--ink-2:#2c4f8f;--ink-soft:#e8eef7;--gold:#b8924a;--gold-soft:#f4ecd9;--paper:#f6f5f1;--paper-2:#ffffff;--line:#d9d4c5;--muted:#6a6557;--red:#b04a3b;--green:#3f7a52;--purple:#6c4a8e;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:#1f2330;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;font-size:16px;}
+  .container{max-width:1180px;margin:0 auto;padding:28px 28px 80px;}
+  header.masthead{border-bottom:3px double var(--ink);padding-bottom:18px;margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  header.masthead .brand{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:0.5px;}
+  header.masthead .brand small{display:block;font-size:13px;font-weight:400;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  header.masthead .meta{font-size:13px;color:var(--muted);text-align:right;}
+  header.masthead .meta strong{color:var(--ink);font-weight:600;}
+  .exec{margin:0 0 32px;border:1px solid var(--line);background:var(--paper-2);border-left:6px solid var(--gold);padding:18px 22px;}
+  .exec h2{margin:0 0 14px;font-size:18px;color:var(--ink);letter-spacing:0.5px;}
+  .exec ol{margin:0;padding:0;list-style:none;counter-reset:exec;}
+  .exec li{counter-increment:exec;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;padding:10px 0;border-top:1px dashed var(--line);font-size:14.5px;}
+  .exec li:first-child{border-top:0;}
+  .exec li .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;font-weight:700;}
+  .exec li .label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:3px;color:#fff;background:var(--ink);margin-right:8px;text-transform:uppercase;vertical-align:2px;}
+  .exec li .label.cap{background:var(--red);}
+  .exec li .label.reg{background:var(--purple);}
+  .exec li .label.sci{background:var(--green);}
+  .theme{margin:38px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .theme h2{font-size:22px;color:var(--ink);margin:0;letter-spacing:0.5px;}
+  .theme .scope{color:var(--muted);font-size:13px;flex:1;min-width:0;}
+  .theme .scope b{color:var(--ink);}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-left:5px solid var(--ink);padding:18px 20px 16px;margin:0 0 18px;box-shadow:0 1px 0 rgba(29,58,110,.05);}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+  .card-title{font-size:17px;font-weight:700;color:#1f2330;line-height:1.4;flex:1;min-width:0;}
+  .card-title .stars{color:var(--gold);font-weight:700;letter-spacing:1px;margin-right:6px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;padding:3px 8px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;}
+  .tag-red{background:var(--red);}.tag-gold{background:var(--gold);}.tag-ink{background:var(--ink);}.tag-purple{background:var(--purple);}.tag-green{background:var(--green);}
+  .sub-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .sub-tag{font-size:11px;background:var(--ink-soft);color:var(--ink);padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:0.3px;}
+  .perspective{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px;background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 12px;border-radius:2px;}
+  .p-item{font-size:13.5px;line-height:1.55;}
+  .p-label{display:inline-block;font-weight:700;margin-right:4px;}
+  @media(max-width:640px){.perspective{grid-template-columns:1fr;}}
+  .card-desc{font-size:14.5px;color:#2a2f3d;margin-bottom:12px;}
+  .data-highlight{background:var(--gold);color:#fff;font-weight:700;padding:1px 6px;border-radius:2px;}
+  .links{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:13px;}
+  .links-title{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .links li{padding-left:14px;position:relative;}
+  .links li::before{content:"›";position:absolute;left:2px;color:var(--gold);font-weight:700;}
+  .links a{color:var(--ink-2);text-decoration:none;word-break:break-all;}
+  .links a:hover{text-decoration:underline;color:var(--gold);}
+  .src-1{background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .src-2{background:var(--gold);color:#fff;padding:1px 6px;border-radius:2px;font-size:10.5px;font-weight:700;letter-spacing:1px;margin-right:6px;vertical-align:2px;}
+  .closing{margin-top:36px;padding:18px 22px;background:var(--ink-soft);border-left:5px solid var(--ink);}
+  .closing h3{margin:0 0 8px;color:var(--ink);font-size:17px;}
+  .closing p{margin:6px 0;color:#1f2330;font-size:14px;line-height:1.7;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;}
+  .stat{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;}
+  .stat .v{display:block;font-size:20px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  @media print{header.masthead{border-bottom:2px solid #000;}.closing .stats,footer{display:none;}.card{box-shadow:none;border-left:5px solid #000;}}
+</style>
+</head>
+
+
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div class="brand">AI 产品产业每日简报<small>minimax · 2026-10-25 · Day 74</small></div>
+    <div class="meta">
+      <div>2026 年 10 月 25 日 · 星期日 · Asia/Shanghai</div>
+      <div><strong>minimax</strong> · fork 自通用版 v2.0 · 2026-07-10 起</div>
+    </div>
+  </header>
+
+  <section class="exec">
+    <h2>执行摘要 · 2026-10-25</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <span class="body"><span class="label reg">监管</span><strong>商务部就美新版对外投资限制拟议规则表态：称其歧视性扩大对华投资限制范围、严重关切并坚决反对</strong> — 本轮博弈的实质是限制范围而不是限制是否存在。商务部把争点定位在三处——适用主体清单、投资门槛口径与既有审批衔接，同时给出歧视性扩大对华投资限制范围的定性。同一天另外两条监管线落地：宾夕法尼亚州签署《人工智能欺骗性广告法》SB 806，要求 AI 生成或重大修改的广告必须显式披露；英国以 1 亿英镑政府资金设立全球首个 AI 生物安全实验室 AIBL，把 AI 能力评估从企业自愿披露推进到国家级常设机构。</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <span class="body"><span class="label cap">资本</span><strong>标普全球评级警告数据中心面临信用评级下调风险：追踪全美 146 个延期或取消项目、约四分之三源于地方反对，40 个州已出台禁令</strong> — 信用传导路径被逐条列出——禁令或审批放缓导致项目实质性延期，开发商可能需要以租金抵扣形式向租户支付财务罚款，情节严重时租户可提前终止合同。评级机构同时承认当前对评级的实际冲击仍属有限，重心落在纽约、德克萨斯、宾夕法尼亚、伊利诺伊与亚利桑那五州以及全美 40 个州级禁令的扩散速度。这一判断对高杠杆的数据中心债定价有直接含义。</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <span class="body"><span class="label cap">资本</span><strong>分配机制本身成为产业变量：美光桃园厂工会以约七成会员否决利润分享方案，Meta 收购 Sundial，内容与游戏公司战略投资集体转向 AI</strong> — 美光案的争议不在总额而在制度归属——工会要求以营业利润 15% 为基准、按季发放，否决的是公司裁量下的奖金而不是利润分享权本身，99% 的反对票反映的是分润规则归属而非价格分歧。资本另一端，Meta 收购 AI 数据分析平台 Sundial 补齐 DATA 部门；完美世界一周出资三家 GP、认缴 1.5 亿元，巨人网络、库洛、叠纸、创梦天地同步转向——产业资本与内容资产的配置方向已明确指向模型与算力。</span>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <span class="body"><span class="label cap">资本</span><strong>基础设施的账本越来越硬：信通院给出 6 月国内日均约 500 万亿 Token 与 13.46 元归一化均价，南方区域电力市场正式运行</strong> — 词元侧的价格结构首次被量化：6 月国内日均消耗约 500 万亿 Token、接近前一年的 4 倍，归一化均价从 6.8 元升至 13.46 元，国外为 117.8 元；8 月 TPS 78.23、TTFT 1.26 秒、100 万上下文占比 47.8%——推理成本与延迟已进入可比的工程口径。电力侧，南方区域市场 1—9 月交易电量近 9000 亿千瓦时、占全网售电超 70%，单日最大成交 40 亿度，新能源利用率超 95%。</span>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <span class="body"><span class="label sci">科技</span><strong>产品侧出现两条相反方向：Block 发布纯语音全双工模型 Dessa，智元 110 台量产机器人刷新吉尼斯世界纪录</strong> — 语音模型的技术路线正从 ASR 加 LLM 加 TTS 的级联转向端到端全双工，Dessa 只用人类对话录音从零训练、不经文本中转，可在 MacBook Pro M4 Max 本地实时运行，但目前没有公开 API、没有权重、没有第三方基准。硬件侧，智元 110 台量产机 5 分 43 秒零失误完成群舞并刷新最多人形机器人同时跳舞纪录，UWB 厘米级定位与 LinkBots 群控把竞争点从单机性能推到量产一致性与百台协同。</span>
+      </li>
+    </ol>
+  </section>
+
+  <div class="theme" id="theme-1">
+    <h2>一、国家战略、政府行动与监管治理</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖对外投资限制新规 / 全球首个 AI 生物安全实验室 / 宾州 AI 广告法 / 南方区域电力市场 · 1 亿英镑到 9000 亿千瓦时</div>
+  </div>
+
+  <article class="card" id="c1">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>商务部回应美新版对外投资限制拟议规则：称其歧视性扩大对华投资限制范围、严重关切坚决反对，并保留采取相应措施的权利</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">跨境资本</span><span class="sub-tag">地缘规则</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>被点名的三处技术口径是规则本身。10 月 23 日美财政部发布新版对外投资限制拟议规则并征求公众评论，中方对该规则的定性是三条：歧视性扩大对华投资限制范围、加大限制力度、属"典型的泛化国家安全做法"，并称其"违背两国元首达成的重要共识"、干扰中美两国企业正常经贸合作、破坏国际经贸秩序。回应给出的反制口径是程序性的而非实体性的——表示将密切关注事态后续发展、保留采取相应措施的权利。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧给的是市场论据而不是管制论据：发言人明确"中国拥有超大规模市场，蕴含巨大消费和投资潜力，投资中国就是投资未来"，并指出美方限制对华投资"既不利于中美经贸合作，也会损害美国企业自身利益"，敦促美方尊重市场经济规律、停止泛化国家安全概念、停止将经贸问题政治化和武器化，为中美经贸合作创造良好环境。</div>
+    </div>
+    <p class="card-desc">六个可核对的量化锚点：<span class='data-highlight'>10 月 23 日</span>（美方拟议规则发布日）、<span class='data-highlight'>10 月 24 日</span>（商务部答问日）、<span class='data-highlight'>3 项</span>定性指控（歧视性扩大范围 / 加大限制力度 / 泛化国家安全）、<span class='data-highlight'>1 项</span>程序性反制（保留采取相应措施的权利）、<span class='data-highlight'>2 项</span>敦促（尊重市场经济规律 / 停止政治化武器化）、<span class='data-highlight'>2 国</span>最高层共识被援引（元首达成的重要共识）。判断基线：跨境资本通道的规则不确定性正从"是否存在限制"转向"限制范围如何扩张"，有对美融资与并购计划的企业应把对美交易的审批与尽调周期重新做压力测试。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.mofcom.gov.cn/xwfb/xwfyrth/art/2026/art_d56e28ed788c4c8a887875dbfc287fe3.html" target="_blank" rel="noopener">商务部官网 · 新闻发言人就美发布新版对外投资限制拟议规则答记者问</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ce.cn/xwzx/gnsz/gdxw/202610/t20261025_3270335.shtml" target="_blank" rel="noopener">中国经济网 · 商务部回应与"保留采取相应措施的权利"</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/LA1IPC1E05346RC6.html" target="_blank" rel="noopener">网易转新华社 · 10 月 24 日答记者问全文要点</a></li>
+        <li><span class="src-2">二手</span><a href="https://cn.chinadaily.com.cn/a/202610/24/WS6adcacf3e4b09a165c7914d9.html" target="_blank" rel="noopener">中国日报 · 美新版对外投资限制拟议规则中方表态</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c2">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>英国成立全球首个 AI 生物安全实验室 AIBL：1 亿英镑政府资金 + OpenAI 与 Anthropic 各 1 亿英镑额度，直接把模型可信访问变成公共安全投入</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">政策监管</span><span class="sub-tag">生物安全</span><span class="sub-tag">模型评测</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术定位是"用前沿 AI 做防御方"。AIBL 早期交付聚焦两类能力：增强对新兴生物威胁的早期检测、加速疫苗与医疗对策（medical countermeasures）的开发与测试；其实现方式是让前沿模型直接服务英国国家生物安全中心与世界级生命科学产业。运行形态被明确为独立非营利组织，参照英国 AI Security Institute 的模式吸引产业与学界技术人才，并设由学术界、产业界与第三部门专家组成的科学顾问委员会；其定位是把英国建成 AI 赋能生物安全的全球领导者。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>资金结构是这一轮最值得注意的设计——钱不多，但把模型厂商的内部能力直接买成了公共基础设施：1 亿英镑政府资金，加上最多 2 亿英镑企业承诺，OpenAI 出 1 亿英镑算力与模型额度并通过 Rosalind Biodefense 计划开放最强相关模型的可信访问，Anthropic 出最多 1 亿英镑模型额度、可信模型访问与专门技术支持。制度层面它被纳入"国家 AI 生物安全倡议"，与 UKHSA、APHA、Dstl 及生命科学产业同框，并就健康应急准备与 AI 设计药物监管与 MHRA 协作；Google DeepMind 与英国 AI 生命科学公司 Basecamp Research 作为研究合作方参与。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>1 亿英镑</span>（政府资金）、<span class='data-highlight'>2 亿英镑</span>（OpenAI 与 Anthropic 承诺上限）、<span class='data-highlight'>1 亿英镑</span>（OpenAI 算力与模型额度）、<span class='data-highlight'>1 亿英镑</span>（Anthropic 模型额度上限）、<span class='data-highlight'>3 家</span>前沿模型厂商（OpenAI / Anthropic / Google DeepMind）、<span class='data-highlight'>3 类</span>英国国家机构（UKHSA / APHA / Dstl）、<span class='data-highlight'>世界首个</span>专职 AI 生物安全机构。判断基线：前沿模型厂商开始用"额度 + 可信访问"替代单纯资金投入来购买安全评价权，模型内部的生物安全数据正在从封闭资产变成公共基础设施的输入。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.gov.uk/government/news/introducing-the-ai-biosecurity-lab" target="_blank" rel="noopener">英国政府 GOV.UK · Introducing the AI Biosecurity Lab</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.unite.ai/uk-establishes-ai-biosecurity-lab-backed-by-openai-and-anthropic" target="_blank" rel="noopener">Unite.AI · 1 亿英镑政府资金 + 2 亿英镑企业承诺与组织结构</a></li>
+        <li><span class="src-2">二手</span><a href="https://aifrontierpost.com/articles/uk-ai-biosecurity-lab-openai-anthropic-300m" target="_blank" rel="noopener">AI Frontier Post · AIBL 角色分工与 6 亿英镑整体 AI 预算包</a></li>
+        <li><span class="src-2">二手</span><a href="https://postcutoff.com/e/2026-10-24-uk-ai-biosecurity-lab-600m-ai-package" target="_blank" rel="noopener">PostCutoff · AIBL 公告事实核查与各国配套资金拆解</a></li>
+        <li><span class="src-2">二手</span><a href="https://senx.ai/news/2026-10-24-daily-ai-news" target="_blank" rel="noopener">SEN-X · 当日 AI 事件汇总中对 AIBL 的交叉印证</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c3">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>宾夕法尼亚州签署《人工智能欺骗性广告法》SB 806：AI 生成或重大修改的广告须显著标注，最高 3000 美元民事罚款、12 月 21 日生效</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">政策监管</span><span class="sub-tag">广告合规</span><span class="sub-tag">生成式标识</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>合规的技术口径被写成三段式测试。第一，触发条件不是"用了 AI"而是"制造虚假消费感知"：不得"明知、明知的情形下"（knowingly, recklessly or willfully）发布使用合成内容、且对商品或服务的性质、来源或真实性造成虚假消费者感知的广告。第二，披露形式有硬约束：必须声明"广告包含经人工智能修改或生成的内容"，首次呈现时即出现、与内容同一媒介、在技术可行范围内"永久或极难移除"；"清晰显著"另给可判定标准（尺寸、颜色、对比度、位置、时长、音量与语速、字体大小与背景反差）。第三，三类内容豁免：上下文显而易见的虚构、戏仿/讽刺/评论/批评，以及纯文本。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>执法与豁免边界由州总检察长和地方检察官负责，可申请临时或永久禁令并提起民事诉讼，法院可判最高 3000 美元民事罚款并裁决律师费与诉讼成本；法案不设私人诉权，消费者仍保留既有消费者保护法权利，且"已标注"不豁免其他违法主张。立法路径是跨党派两院通过——参议院 48-2、众议院 163-40 通过，州长 Shapiro 于 10 月 22 日签署，成为 2026 年第 99 号法案；宾州由此成为继纽约、加州之后第三个出台 AI 广告披露法的州。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>3000 美元</span>（单次违法最高民事罚款）、<span class='data-highlight'>60 天</span>（签署至生效）/ <span class='data-highlight'>12 月 21 日</span>（生效日）、<span class='data-highlight'>48-2</span> 与 <span class='data-highlight'>163-40</span>（两院票数）、<span class='data-highlight'>3 个</span>已立法州（宾州 / 纽约 / 加州）、<span class='data-highlight'>3 类</span>豁免内容、<span class='data-highlight'>1 项</span>触发条件（制造虚假消费感知而非"使用 AI"）、<span class='data-highlight'>2026 年第 99 号法案</span>。判断基线：披露义务的重心是"是否制造虚假来源感知"，企业需要把 AI 生成素材的来源元数据纳入投放前检查流程，而不是只做一次性声明。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://pasenatormiller.com/ai-consumer-protection-bill-establishing-advertising-disclosure-standards-heads-to-governor/" target="_blank" rel="noopener">宾州参议员 Nick Miller 官方新闻稿 · SB 806 通过与披露标准</a></li>
+        <li><span class="src-1">一手</span><a href="https://www.legaltechdigest.com/news/pennsylvania-law-mandates-clear-labels-on-ai-generated-ads" target="_blank" rel="noopener">LegalTech Digest · 签署日、罚款额度、生效日与三州格局</a></li>
+        <li><span class="src-2">二手</span><a href="https://tsnmedia.org/pennsylvania-ai-ad-disclosure-law" target="_blank" rel="noopener">TSN Media · 法案条款、豁免范围与执法主体</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cbsnews.com/pittsburgh/news/pennsylvania-disclosures-ai-generated-ads/" target="_blank" rel="noopener">CBS News · 州参议员解读与适用范围</a></li>
+        <li><span class="src-2">二手</span><a href="https://lexlint.io/l/us-pa-s-b-806-2025-2026-regular-session" target="_blank" rel="noopener">LexLint · SB 806 立法进程与义务条款结构化梳理</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c4">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>我国首个区域电力市场正式运行：南方区域 1—9 月交易电量近 9000 亿千瓦时、占全网售电超七成，注册经营主体突破 29 万家，新能源利用率保持 95% 以上</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">政策监管</span><span class="sub-tag">电力市场</span><span class="sub-tag">新能源</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术侧的变化是把分散的省级规则合并成一套出清机制。南方区域电力市场打通广东、广西、云南、贵州、海南五省区，煤电、水电、核电、风电、光伏、气电全类型电源在统一规则下竞价出清定价，跨电网经营区输电通道从单一电能量交易升级为"输电容量"的市场化竞价配置，形成以中长期交易为基础、现货市场为导向、辅助服务市场为调节的多层次体系。历经一年半连续结算试运行后于 10 月 24 日转入正式运行，开始全天候不间断运转。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧的增量来自新主体入市。注册经营主体已突破 29 万家，涵盖发电企业、售电公司、电力用户、新型储能与虚拟电厂；随着市场正式运行，虚拟电厂、新型储能等新业态将与火电、水电同台竞价并获得多元收益，源网荷储各环节调节潜力被进一步释放。试运行期间市场还实现与国家电网经营区联动互通，跨经营区交易电量达 194 亿千瓦时，西南水电、西北风光跨区域驰援粤港澳大湾区与长三角负荷中心；2026 至 2030 年将持续向内延伸覆盖范围、向外拓展合作空间。</div>
+    </div>
+    <p class="card-desc">八个可核对的量化锚点：<span class='data-highlight'>5 个</span>省区（广东 / 广西 / 云南 / 贵州 / 海南）、<span class='data-highlight'>近 9000 亿千瓦时</span>（1—9 月累计交易电量）、<span class='data-highlight'>超七成</span>（占全网售电量比例）、<span class='data-highlight'>29 万家</span>（注册经营主体）、<span class='data-highlight'>40 亿千瓦时</span>（最大单日出清电量）、<span class='data-highlight'>194 亿千瓦时</span>（跨经营区交易电量）、<span class='data-highlight'>95% 以上</span>（区域新能源发电利用率）、<span class='data-highlight'>四成</span>（新增售电量中新能源占比）。判断基线：电力正在从成本项变成可交易的产能项，虚拟电厂与新型储能第一次获得了与煤电同台的制度位置。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.csg.cn/xwzx/2026/2026gsyw/202610/t20261024_357826.html" target="_blank" rel="noopener">南方电网官网 · 南方区域电力市场转入正式运行</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.cctv.cn/2026/10/24/ARTIU01CYM23MvARiD1OrPmk261024.shtml" target="_blank" rel="noopener">央视网 · 29 万经营主体与 9000 亿度交易电量</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.southcn.com/node_47a8059d6c/d7beb478aa.shtml" target="_blank" rel="noopener">南方网 · 新华社稿：五省区统一规则与 194 亿跨区交易</a></li>
+        <li><span class="src-2">二手</span><a href="https://big5.china.com.cn/txt/2026-10/24/content_118747768.shtml" target="_blank" rel="noopener">中国网转新华社 · 输电容量竞价与四成新能源新增售电</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.gmw.cn/2026-10/24/content_1304578839.htm" target="_blank" rel="noopener">光明网 · 区域市场"转正"的交易机制解读</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-2">
+    <h2>二、资本、投资、并购与企业财务</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖数据中心信用预警 / Meta 收购 Sundial / 美光劳资僵局 / 游戏资本转向 AI · 146 个受阻项目到 1.5 亿元认缴</div>
+  </div>
+
+  <article class="card" id="c5">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>标普警告数据中心面临信用评级下调风险：追踪全美 146 个延期或取消项目、约四分之三源于地方反对，已有 40 个州出台禁令或限制</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">数据中心</span><span class="sub-tag">信用风险</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>信用风险的三条传导路径被点名。标普全球评级 10 月 23 日发布的报告认为，电网容量限制、环境可持续性争议与土地分区政策调整引发的项目延期，"可能加大数据中心项目信用质量的下行压力"；风险以租金减免等财务罚款乃至租户终止合同权的形式出现。报告重点分析纽约州、得克萨斯州、宾夕法尼亚州、伊利诺伊州与亚利桑那州的暂停建设措施，并追踪全美 146 个延期或取消的数据中心项目，其中约四分之三与地方抵制直接相关。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>阻力的来源被具体化为四项民生关切：能源成本上升、水资源短缺、空气污染与噪音污染。标普同时给出边界判断：迄今禁令对信用评级的实际冲击"仍然有限"，但警告若建设暂停、许可审批放缓或政策逆转导致项目实质性延误，开发商可能需要向租户提供租金抵扣，甚至面临租户提前终止合同的风险。对持有数据中心相关债务的投资者而言，地方政策动向与项目推进进度已成为评估信用质量不可忽视的变量。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>146 个</span>（被延误或取消的数据中心项目）、<span class='data-highlight'>约四分之三</span>（与地方抵制相关占比）、<span class='data-highlight'>40 个</span>（出台禁令或限制的州）、<span class='data-highlight'>5 个</span>重点分析州（纽约 / 得州 / 宾州 / 伊利诺伊 / 亚利桑那）、<span class='data-highlight'>3 条</span>风险传导路径（电网容量 / 环境争议 / 分区规划）、<span class='data-highlight'>2 类</span>财务后果（租金抵扣 / 租户终止权）、<span class='data-highlight'>4 项</span>公众关切（能源成本 / 水资源 / 空气污染 / 噪音）。判断基线：数据中心的供给瓶颈正从芯片与电力接入下沉到地方政治与合同结构，这会直接改变项目融资的可行性判断。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://wallstreetcn.com/livenews/3185059" target="_blank" rel="noopener">华尔街见闻 · 标普：地方阻力下数据中心面临信用评级下调风险</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/stock/bxjj/2026-10-24/doc-iniwhxpu1426945.shtml" target="_blank" rel="noopener">新浪财经转格隆汇 · 146 个项目与五州禁令详情</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/LA0L4U4O05566WVY.html" target="_blank" rel="noopener">网易转格隆汇 · 信用风险传导路径与"影响仍属有限"判断</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.guandian.hk/article/20261024/10040317.html" target="_blank" rel="noopener">观点网 · 标普数据中心信用预警的中文解读</a></li>
+        <li><span class="src-2">二手</span><a href="https://qihuo.jin10.com/flashDetail.html?id=20261024114324789800" target="_blank" rel="noopener">金十数据快讯 · 标普分析师 Chris Mooney 结论摘要</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c6">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>Meta 收购 AI 数据分析初创 Sundial：两位前 Meta 高管携团队回归并入新设 DATA 部门，外部客户在交割后停止服务、价格未披露</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">并购</span><span class="sub-tag">数据分析</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>被买的是一条"自然语言直连数据仓库"的产品链路。Sundial 的平台把自然语言问题与复杂数据集转成可执行结论，通过聊天机器人插件交付，让业务团队自行完成分析而不必排队等集中式数据部门；其产品组合由 AI、上下文数据与专家 playbook 三部分构成，宣称覆盖数据清洗、语义层构建、SQL 编写与叙事分析等环节。技术侧的关键变化是它不作为独立产品线运营，而是并入 Meta 内部的 Data Analytics Tooling & Agents 部门（昵称 DATA）。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>这是一笔典型的" acqui-hire "。Sundial 由 2021 年联合创立，两名创始人均为 Meta 旧部——Julie Zhuo 曾任 Meta 产品设计副总裁，Chandra Narayanan 曾任 Instagram 与红杉资本的数据分析主管、Facebook 分析总监；两人与团队整体加入 Meta，Narayanan 领衔数据分析工具与智能体工作。交易由 Meta 发言人向 Axios 确认，未披露价格与财务条款；Sundial 将停止服务外部客户，未公布过渡时间表。Sundial 累计融资 2300 万美元（含 2025 年 7 月由 GPV 合伙人 DJ Patil 领投的 1600 万美元 A 轮，红杉资本参投），客户名单中包括 OpenAI。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>2 名</span>联合创始人均为前 Meta 高管、<span class='data-highlight'>1 个</span>接收部门（DATA / Data Analytics Tooling & Agents）、<span class='data-highlight'>2300 万美元</span>（累计融资）、<span class='data-highlight'>1600 万美元</span>（2025 年 7 月 A 轮）、<span class='data-highlight'>2021 年</span>（创立年份）、<span class='data-highlight'>2026 年 7 月</span>（Alex Schultz 出任首任首席数据官，DATA 组建）、<span class='data-highlight'>0</span>（外部客户交割后停止服务 / 价格未披露）。判断基线：平台级公司正在用收购把"洞察基础设施"内化，数据分析智能体的竞争点从模型能力转向语义层与分发渠道的所有权。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.aichatdaily.com/ai-business/meta-acquires-sundial-ai-analytics-startup-founded-ex-meta" target="_blank" rel="noopener">AI Chat Daily · Meta 收购 Sundial 与 DATA 组织归属</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.ifeng.com/c/8xTbXGz8T1f" target="_blank" rel="noopener">凤凰网科技转 IT之家 · DATA 部门与 Narayanan 新角色</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/LA0C2S7J0519QIKK.html" target="_blank" rel="noopener">网易 · Meta 收购 Sundial 报道</a></li>
+        <li><span class="src-2">二手</span><a href="https://ontimebrief.com/en/2026/10/24/meta-buys-ai-analytics-startup-sundial-founded-by-two-ex-meta-staff" target="_blank" rel="noopener">Ontime Brief · 创始团队、融资历史与交割后外部客户安排</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.tokenpost.com/news/business/39936" target="_blank" rel="noopener">TokenPost · Sundial 团队名单与 Schultz 表态</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c7">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>美光桃园厂工会以约七成会员否决利润分享方案：要求 83 个月一次性奖金 + 营业利润 15% 按季分红，下一轮协商定在 10 月 27 日</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">资本财务</span><span class="sub-tag">存储芯片</span><span class="sub-tag">劳资</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>分歧的技术层面是分润基数而不是总额。工会诉求有两条：一次性补发约相当于 83 个月薪资的奖金，以及自 2027 财年起把营业利润的 15% 划入奖金池、按季而非按年发放。公司方案则自 2027 财年起新增季度利润分享奖金（与原有 IPP 并行），奖金 50% 现金、50% 股票延至年底发放并经一年归属，计算基数为 GAAP 税后净营业利益扣除下一季度资本支出预估值后的余额；台湾侧还把劳工退休金提拨率提高至 10%、增加有薪假与轮班津贴并作结构性调薪。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>这次否决发生在台中厂已于 10 月 21 日率先签约、桃园厂被"分而治之"之后，谈判筹码明显削弱，工会仍以 2300 多名会员中约七成投票率、反对比例近乎全票的结果否决了方案，投票在 10 月 22 日 9 时启动的 24 小时警告性罢工期间同步进行。桃园厂是美光整体 DRAM 产能中占比约 22% 的核心基地（主做前段晶圆制造），台中厂覆盖先进 DRAM、HBM 相关制程及封装测试，两地合计占美光总产能六成以上；美光约 50%—60% 的晶片在台湾生产。工会明确警告可能采取"进一步集体行动"，下一轮协商定在 10 月 27 日。</div>
+    </div>
+    <p class="card-desc">八个可核对的量化锚点：<span class='data-highlight'>2300 多名</span>（桃园工会会员）、<span class='data-highlight'>约七成</span>（参与投票比例）、<span class='data-highlight'>99%</span>（反对票占实际投票人数比例）、<span class='data-highlight'>83 个月</span>（一次性奖金诉求）、<span class='data-highlight'>15%</span>（营业利润分红诉求）、<span class='data-highlight'>22%</span>（桃园厂占美光 DRAM 产能比重）、<span class='data-highlight'>50%—60%</span>（美光晶片在台湾生产占比）、<span class='data-highlight'>10 月 27 日</span>（下一轮协商日）。判断基线：AI 存储超级周期第一次把"利润分享制度"写进了芯片厂劳资谈判的定价基准，内存涨价的成本曲线里开始出现人力成本这一变量。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.zaobao.com/news/china/story20261024-9888890" target="_blank" rel="noopener">联合早报 · 美光桃园厂工会否决奖金方案</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.manilatimes.net/2026/10/24/business/foreign-business/micron-taiwan-workers-reject-bonus-proposal/2452756" target="_blank" rel="noopener">Manila Times · 工会声明与 15% 利润分享诉求</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.seccw.cn/document/detail/id/51577.html" target="_blank" rel="noopener">seccw.cn · 24 小时罢工始末与美光 2026 财年财报数据</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.solidot.org/story?sid=85699" target="_blank" rel="noopener">奇客 Solidot · 2300 名会员约七成投票否决与 10-27 再谈</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.taiwannet.com.tw/news/219710/%E7%BE%8E%E5%85%89%E5%8F%B0%E7%81%A3%E5%B7%A5%E6%9C%83%E6%8B%92%E7%B5%95%E7%A0%B4%E7%B4%80%E9%8C%84%E7%8D%8E%E9%87%91-%E8%A6%81%E6%B1%8215-%E5%88%A9%E6%BD%A4%E5%88%86%E4%BA%AB.html" target="_blank" rel="noopener">台湾产经新闻网 · 35—68 个月年终奖与制度性诉求对比</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c8">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>内容与游戏公司战略投资集体转向 AI：完美世界一周出资三家 GP 认缴 1.5 亿元，砺思星深与拾象尚势合计 111.7 亿元成为头部 AI 项目外部通道</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">资本财务</span><span class="sub-tag">LP</span><span class="sub-tag">内容产业</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>交易结构是一层嵌套的基金通道。完美世界一周内出资三家 GP：认缴拾象尚势（天津）创业投资合伙企业 1 亿元、占比 2.7397%，认缴天津砺思星深股权投资合伙企业 5000 万元、占比 0.6649%，认缴福州市荟珠创业投资合伙企业 5040 万元、占比 1.61%；三只基金背后分别对应尚势资本、Monolith 砺思资本与美团龙珠，总规模分别为 36.5 亿元、75.2 亿元与约 31.3 亿元。砺思星深与拾象尚势两只专项基金合计吸纳外部资金 111.7 亿元，是本轮头部 AI 项目融资的外部资管通道。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>游戏业的集体动作构成另一条线。巨人网络 8 月底出资 1 亿元参与认购目标规模 27.85 亿元的杭州石溪兆易一号创业投资基金；库洛游戏以 15% 持股入股 AI 初创公司言之域科技（多模态模型、超拟人语音与音乐音效生成、视频翻译、实时对话、二次元 3D 角色驱动）；叠纸创始人姚润昊以 60% 持股直接控制新成立的"女娲仿生（上海）智能科技"，经营范围覆盖智能机器人研发与销售；创梦天地联合南山战新投发起 2 亿元游戏产业战略投资，落地南山区游戏孵化平台游托邦。南都·湾财社的判断是：AI 能否反哺主业，取决于后续的业务对接与整合。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>1.5 亿元</span>（完美世界三只基金认缴总额）、<span class='data-highlight'>3 家</span>GP（尚势资本 / 砺思资本 / 美团龙珠）、<span class='data-highlight'>111.7 亿元</span>（砺思星深 75.2 亿 + 拾象尚势 36.5 亿合计外部资金）、<span class='data-highlight'>27.85 亿元</span>（巨人网络参投基金目标规模）、<span class='data-highlight'>15%</span>（库洛游戏入股言之域科技持股比例）、<span class='data-highlight'>60%</span>（姚润昊控股女娲仿生持股）、<span class='data-highlight'>2 亿元</span>（创梦天地联合南山战新投战略投资）。判断基线：上市公司已把 LP 化当作绕开一级市场直投门槛、间接卡位头部 AI 项目的标准动作，但退出周期与一票否决权缺失仍是这类配置的结构性风险。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.nfnews.com/content/5385baGe6B.html" target="_blank" rel="noopener">南方日报·南都湾财社 · 完美世界与库洛叠纸巨人网络集体出手</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.thepaper.cn/newsDetail_forward_34318401" target="_blank" rel="noopener">澎湃转投资界 · 一周出资三家 GP 与基金规模明细</a></li>
+        <li><span class="src-2">二手</span><a href="https://finance.sina.com.cn/roll/2026-10-23/doc-iniwfmnh8362032.shtml" target="_blank" rel="noopener">新浪财经转证券时报 · 专项基金成为头部 AI 项目外部通道的确认</a></li>
+        <li><span class="src-1">一手</span><a href="https://epaper.cs.com.cn/zgzqb/html/2026-10/22/nw.D110000zgzqb_20261022_6-A07.htm" target="_blank" rel="noopener">中国证券报电子版 · 完美世界 2026-048/049 号公告全文（2026-10-21 董事会）</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.chnfund.com/article/82d14546-351d-3462-842c-3a246fa236bb" target="_blank" rel="noopener">中国基金报 · 1 亿元认购拾象尚势完成募集</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-3">
+    <h2>三、算力、芯片、云与 AI 基础设施</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖词元性能监测报告 / 二维半导体中试线 / PJM 1GW 虚拟电厂 / 决策模型推理引擎 · 500 万亿 Token 到 5.3 倍加速</div>
+  </div>
+
+  <article class="card" id="c9">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>信通院发布《大模型词元服务性能监测报告（2026 年）》：6 月国内日均消耗约 500 万亿 Token、归一化均价从 6.8 元涨到 13.46 元，价格战结束</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">Token 成本</span><span class="sub-tag">行业报告</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>性能侧是明确的量价齐升。2026 年 8 月国内各模型平均每秒输出词元数（TPS）达 78.23 个，较 2025 年均值 38.25 个实现翻倍；但同期首词时延（TTFT）升至 1.26 秒，较 2025 年平均 0.78 秒明显增加——报告解释为参数量增加、上下文长度增加、调用量增加等多种因素同步产生，而非单纯性能退化。上下文结构上，达到 100 万词元的模型占比已达 47.8%，20 万词元及以上合计占比 95.7%，较 2025 年底提升超过 76 个百分点。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>成本侧是本期最重要的转向：经过过去两年价格战，国内外模型服务价格明显上涨，2025 年下半年国内归一化均价为 6.8 元，2026 年以来升至 13.46 元、涨幅接近一倍；而 2026 年以来发布的国外典型模型平均归一价格约为 117.8 元。报告同时对比 DeepSeek、Qwen、GLM、Kimi 四款开源模型在不同第三方平台上的表现：8 月 DeepSeek-V4-Pro 的 TPS 已达 DeepSeek-V3.2 的 2 倍，但同一模型在不同平台间 TPS 差距最大可接近一倍，部分第三方平台明显优于官方平台。</div>
+    </div>
+    <p class="card-desc">九个可核对的量化锚点：<span class='data-highlight'>500 万亿</span>（2026 年 6 月国内日均词元消耗）、<span class='data-highlight'>近 4 倍</span>（相对 2025 年 12 月）、<span class='data-highlight'>6.8 → 13.46 元</span>（国内归一化均价，涨幅近一倍）、<span class='data-highlight'>117.8 元</span>（国外典型模型归一均价）、<span class='data-highlight'>78.23 TPS</span>（8 月国内平均输出速度）、<span class='data-highlight'>1.26 秒</span>（8 月国内平均首词时延）、<span class='data-highlight'>47.8% / 95.7%</span>（100 万 / 20 万词元上下文模型占比）、<span class='data-highlight'>2 倍</span>（DeepSeek-V4-Pro 相对 V3.2 的 TPS 提升）、<span class='data-highlight'>近 1 倍</span>（同模型跨平台 TPS 最大差距）。判断基线：词元价格拐头与时延抬升同时发生，推理成本不再由降价对冲，单位业务的模型成本将从毛利率问题变成产品定价问题。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://jnzstatic.cs.com.cn/zzb/htmlInfo/135887.html" target="_blank" rel="noopener">中证网 · 中国信通院《大模型词元服务性能监测报告（2026 年）》要点</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.thepaper.cn/newsDetail_forward_34324062" target="_blank" rel="noopener">澎湃科技 · 报告量价齐升结论与时延解释</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/LA0M9KO10514R9P4.html" target="_blank" rel="noopener">网易转澎湃 · 1—8 月监测数据与四款开源模型跨平台对比</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/caict-token-service-performance-report-2026-domestic-model-prices-double-500-trillion-daily" target="_blank" rel="noopener">Pandaily · CAICT report 英文摘要与开源模型平台分化</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.cnfin.com/gs-lb//zixun/20261023/4485377_1.html" target="_blank" rel="noopener">中国金融信息网 · 词元服务报告发布与价格结构</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c10">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>绍兴—复旦共建绍芯实验室：2027 年底建成二维半导体中试线并自研 EDA 与 PDK，宁波银行首期 9300 万元授信已落地</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">半导体材料</span><span class="sub-tag">中试平台</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术路线是"新材料 + 成熟硅"的混合架构。实验室以二硫化钼等二维材料做存储单元、读写控制电路继续采用成熟硅工艺，从而绕开先进制程要求；平台正在建设二维半导体芯片中试平台，自主开发 EDA 工具与全套工艺流程，并配套封装、测试与验证能力，同时开发含器件参数、尺寸与连接规则的 PDK，对外开放代工流片、定制工艺开发与加工测试服务。截至 9 月，一期洁净室已建成、部分设备进场，其余仍在采购，预计较完整的中试产线在 2027 年底建成。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业侧的两个硬约束被直接摊开：一是工艺敏感性——原子级薄材料对表面粗糙度与加工损伤敏感，流程扩展到整片晶圆后需控制不同位置与批次的差异，这直接影响良率与成本，团队坦言因尚未完成整片晶圆制造验证所以还没法估算成本；二是生态与场景的冷启动——平台面向国内外有二维半导体流片需求的企业与科研团队开放服务，实验室工作人员把国家电网的计量场景列为首个可能落地的应用，宁波银行绍兴分行则组建专项服务团队，以首期 9300 万元授信支持科研设备投入。</div>
+    </div>
+    <p class="card-desc">八个可核对的量化锚点：<span class='data-highlight'>2027 年底</span>（较完整中试产线建成目标）、<span class='data-highlight'>2 英寸</span>（展示用二硫化钼晶圆尺寸）、<span class='data-highlight'>400 皮秒</span>（复旦 PoX 闪存器件写入速度）、<span class='data-highlight'>9300 万元</span>（宁波银行首期授信）、<span class='data-highlight'>9 月</span>（一期洁净室建成时点）、<span class='data-highlight'>3 类</span>对外服务（代工流片 / 定制工艺开发 / 加工测试）、<span class='data-highlight'>1 个</span>首个可能落地场景（国家电网计量）、<span class='data-highlight'>0</span>（整片晶圆制造成本尚未估算）。判断基线：二维半导体的瓶颈已从器件性能转到中试工艺与设计工具链，产业化的第一道门槛是 PDK 生态而不是实验室数据。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/shaoxin-laboratory-2d-semiconductor-pilot-line-molybdenum-disulfide-pdk-eda-fudan-2027" target="_blank" rel="noopener">Pandaily · Shaoxin Laboratory builds pilot line for 2D semiconductor chips by end of 2027</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091804672_115479" target="_blank" rel="noopener">搜狐转科工力量 · 绍芯实验室中试平台、宁波银行授信与人才共建</a></li>
+        <li><span class="src-2">二手</span><a href="https://chiprook.com/s/35839-shaoxin-laboratory-builds-pilot-line-for-2d-semiconductor-chips-by" target="_blank" rel="noopener">ChipRook · 2D 中试线时间表与 PDK/EDA 进展摘要</a></li>
+        <li><span class="src-2">二手</span><a href="https://wire.fusion-42.com/stories/fdde7a38-445f-457e-9ba4-10b4da45ae74" target="_blank" rel="noopener">Fusion42 Wire · 中试平台对外部设计团队的开放价值</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c11">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>Google 与 Voltus 把 PJM 虚拟电厂扩容到 1GW：6 月的 100MW 协议新增 1070MW，电网容量由数据中心需求侧自筹成可交易资产</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">电力</span><span class="sub-tag">虚拟电厂</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术机制是"自带容量"（Bring Your Own Capacity）而非新建电源。Voltus 聚合本地企业与家庭的柔性负荷——电池、智能温控器、工业过程调整等——汇入由 Google 出资的虚拟电厂；电网承压时 Voltus 发信号，这些站点通过电池放电、恒温器微调与工业流程调整降低用电，再把节省额与直接付款返还参与者。PJM 是美国最大区域输电组织，覆盖 13 个州与华盛顿特区、服务 6700 万客户；按公司口径，新增加的 1070MW 是超大规模云厂商已部署的最大分布式容量组合之一。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>商业含义是资本开支换了一种形态。Google 不再等并网排队与新建调峰机组，而是把"容量需求"转化为对第三方聚合平台的采购承诺，把数据中心增长直接转化为 PJM 客户的账单节省与直接付款。Brattle Group 近期报告预测，通过更充分地利用电网现有资源，美国消费者未来十年可节省超 1000 亿美元。协议采用 BYOC 模式：公共部门、私人部门与多边开发银行按《仁川计划》协作；Voltus 今年 6 月还收购了储能平台 Brightfield AI，8 月与 Sunrun 达成向 AI 超大规模厂商供应容量的合作，10 月完成 2.25 亿美元融资，并称目标在 2030 年前扩展到 20GW。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>1GW</span>（PJM 虚拟电厂目标规模）、<span class='data-highlight'>1070MW</span>（本次新增容量）、<span class='data-highlight'>100MW</span>（6 月初始协议）、<span class='data-highlight'>6700 万</span>（PJM 服务客户数）、<span class='data-highlight'>13 州 + 1 区</span>（PJM 覆盖范围）、<span class='data-highlight'>1000 亿美元+</span>（Brattle Group 十年电网利用率节约预测）、<span class='data-highlight'>2.25 亿美元</span>（Voltus 10 月融资额）。判断基线：算力的电力约束正在出现第三条解法——不建电厂也能拿到容量，代价是把这笔账从资产负债表挪进长期购电与聚合协议。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.voltus.co/press/google-voltus-1gw" target="_blank" rel="noopener">Voltus 官方新闻稿 · Google and Voltus Announce One Gigawatt BYOC Agreement in PJM</a></li>
+        <li><span class="src-2">二手</span><a href="https://usdatacenterprojects.com/national/google-and-voltus-grow-pjm-virtual-power-plant-to-one-gigawatt-under-byoc-model" target="_blank" rel="noopener">US Data Center Projects · 1GW 扩容与 BYOC 模型拆解</a></li>
+        <li><span class="src-2">二手</span><a href="https://dailyaibrief.com/news/google-voltus-1070-mw-virtual-power-plant-S1x1Si20" target="_blank" rel="noopener">Daily AI Brief · 1070MW 与纽约时报口径的虚拟电厂说明</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.indexbox.io/blog/voltus-and-google-sign-100-mw-virtual-power-plant-deal-in-pjm" target="_blank" rel="noopener">IndexBox · 100MW 初始协议三年期与 PJM 负荷预测背景</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c12">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>StartLux 开源全球首个决策模型专用推理引擎 Prism：单张 H200 上同一材料连问三题从 92.9 毫秒降到 17.4 毫秒、最高提速 5.3 倍</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">算力基础设施</span><span class="sub-tag">推理引擎</span><span class="sub-tag">决策模型</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>Prism 的四项改动都针对决策模型的"只输出一个分布"这一特性。其一，27B 模型的输出层有约 24.8 万个候选词，通用引擎要为全部候选打分，而决策题真正需要比较的只有 A—Z 等选项，Prism 只计算有效候选，把这一步压缩到原来的约 0.01%。其二，"森林式"批处理：公共指令为树根、共同材料为树干、不同问题为树枝，公共计算只执行一次。其三，投影计算走 int8 Tensor Core、int32 精确累加，结果与批大小和调度顺序无关、逐位一致。其四，混合调度让最长 4096 token 的思考请求与直接输出请求共用同一块 GPU，思考的 decode 步骤预编译为 CUDA graph，最多 64 条思考同时进行，新短请求最多等 1—2 个 decode step。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>性能与确定性指标同时被量化。StartLux 自测显示：约 256 token 的短问题从 53.1 毫秒降到 19 毫秒（2.8 倍），同一材料连问三题从 92.9 毫秒降到 17.4 毫秒（5.3 倍），长材料追问在 Prefix Cache 下从 48 毫秒降到 5.4 毫秒；JevBench 231 题单题平均 41 毫秒，优于 SGLang 的 75.6 毫秒、vLLM 的 112.7 毫秒与 llama.cpp 的 589 毫秒；四张 H200 数据并行每秒处理 121 个请求，张量并行下单题延迟降到 29 毫秒。精度侧，在 7 个评测集、共 12351 个决策样本上 int8 版平均准确率 92.94%，与 BF16 原始精度 92.97% 几乎一致；16.55GB 压缩版可跑在单张 32GB 显存的 RTX 5090 上。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>5.3 倍</span>（最高加速）、<span class='data-highlight'>92.9 → 17.4 毫秒</span>（同材料三题处理时间）、<span class='data-highlight'>53.1 → 19 毫秒</span>（短问题处理时间）、<span class='data-highlight'>0.01%</span>（输出层计算量占比）、<span class='data-highlight'>41 毫秒</span>（JevBench 231 题单题平均，对比 SGLang 75.6 / vLLM 112.7 / llama.cpp 589）、<span class='data-highlight'>92.94% vs 92.97%</span>（int8 与 BF16 平均准确率）、<span class='data-highlight'>12351 个</span>（决策样本量）、<span class='data-highlight'>64 条</span>（并发思考请求上限）、<span class='data-highlight'>121 请求/秒</span>（4×H200 数据并行吞吐）、<span class='data-highlight'>16.55GB</span>（可跑在单张 RTX 5090 的压缩版体积）。判断基线：专用推理引擎正在成为模型厂商的护城河，当通用引擎无法为窄任务重写输出层时，决策类应用的单位成本曲线会与对话类彻底分叉。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://github.com/StartLuxLabs/StartLux-Prism" target="_blank" rel="noopener">GitHub · StartLuxLabs/StartLux-Prism 官方仓库与 Benchmark 文档</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/startlux-prism-open-source-decision-model-inference-engine-h200-int8-bit-exact" target="_blank" rel="noopener">Pandaily · StartLux open-sources Prism decision-model inference engine</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.leiphone.com/category/industrynews/mSGJ6zHHmjOoOQU9.html" target="_blank" rel="noopener">雷锋网 · Prism 四项创新与 H200 实测数据</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.infoq.cn/article/reksyo9EBAcP11Ns2GTO" target="_blank" rel="noopener">InfoQ · 专用推理引擎的适用边界与确定性价值</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.geekpark.net/news/372836" target="_blank" rel="noopener">极客公园 · 决策模型与通用引擎的效率落差</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.sohu.com/a/1091891083_122066678" target="_blank" rel="noopener">搜狐转智东西 · 多卡部署与精度折损细节</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-4">
+    <h2>四、模型平台、开发者生态与分发渠道</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖千问 Go! 我的应用 / Anolis OS 27 monorepo / 全身基座模型 λ0 / 具身自进化 RoboSkill · 95% 新代码由智能体生成</div>
+  </div>
+
+  <article class="card" id="c13">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>阿里千问 Go! 上线「我的应用」：接入阿里云 Meoo 秒悟平台自动建库部署，非程序员用一句话就能造出可分享、可持续更新的应用</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">模型平台</span><span class="sub-tag">个人智能体</span><span class="sub-tag">应用生成</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术链路是"对话即构建"。10 月 23 日上线的「我的应用」接入阿里云 AI 应用生产平台 Meoo（秒悟），自动完成应用搭建、数据库配置与部署上线，绕过非程序员最难的配置环节；Meoo 同时提供命令行工具并开源在 GitHub，指向与平台端相同的后端。关键差异在于产物属性：与一次性生成的小工具不同，这些应用支持数据的长期保存与持续更新，并可对外分享，形成多人可用的常驻应用而非会话结束即消失的临时结果。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>分发与生态是这一功能的落点。官方给出的场景包括互动课件、活动报名页、亲子导览、健身约课等"需要开发者或模板网站、且用户愿意持续使用与分享"的小工具；结合千问 Go! 的"云端 Pro"能力，用户授权后应用可调用淘宝、高德、大麦、夸克网盘的个人数据（例如用大麦历史订单生成专属电子票根册），让生成的应用真正贴合个人数据而非通用模板。千问团队在同日 CNCC 大会上给出的框架是模型、记忆与生态协同的个人智能体框架，"我的应用"补上的是创作层。</div>
+    </div>
+    <p class="card-desc">七个可核对的量化锚点：<span class='data-highlight'>10 月 23 日</span>（功能上线日）、<span class='data-highlight'>1 个</span>底层平台（阿里云 Meoo 秒悟）、<span class='data-highlight'>3 步</span>自动化（应用搭建 / 数据库配置 / 部署上线）、<span class='data-highlight'>4 类</span>官方示例场景（互动课件 / 活动报名页 / 亲子导览 / 健身约课）、<span class='data-highlight'>4 个</span>可调用个人数据源（淘宝 / 高德 / 大麦 / 夸克网盘）、<span class='data-highlight'>2 项</span>处于邀测阶段的功能（我的应用 / 云端 Pro）、<span class='data-highlight'>1 个</span>已有外部案例（70 元航班延误险追偿）。判断基线：个人智能体的竞争焦点正在从"能不能做"转向"做出来的东西能不能留下来"，长生命周期应用与个人数据调用权是两个硬指标。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.aliyun.com/product/meoo" target="_blank" rel="noopener">阿里云 · 秒悟 Meoo AI 应用生产平台官方产品页</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/qwen-go-my-apps-no-code-shareable-apps-alibaba-cloud-meoo-invite-beta" target="_blank" rel="noopener">Pandaily · Qwen Go! My Apps 与 Meoo 平台自动部署</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.xhby.net/content/s6adafd14e4b07fc5cb0ab12b.html" target="_blank" rel="noopener">新华报业网 · 「我的应用」功能与典型使用场景</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnstock.com/commonDetail/807501" target="_blank" rel="noopener">中国证券网 · 上海证券报报道：千问 Go! 上线我的应用</a></li>
+        <li><span class="src-2">二手</span><a href="https://dy.163.com/article/L9UISE840514R9KQ.html" target="_blank" rel="noopener">网易转北京青年报 · 亲子导览与电子票根册案例</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.ahwang.cn/jinrong/20261023/3067881.html" target="_blank" rel="noopener">大皖新闻 · 邀测状态与云端 Pro 数据授权说明</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c14">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>OpenAnolis 以智能体原生方式开发 Anolis OS 27 并开源 monorepo：阿里云基础软件团队 95% 新代码已由 Agent 生成，全生命周期目标提速一个数量级</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">开发者生态</span><span class="sub-tag">操作系统</span><span class="sub-tag">开源</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>工程方法的改变是核心。Anolis OS 27 把大量软件包合并进一个 monorepo，仓库内含 packages（软件包、spec、patch、source 与维护元数据）、groups（包组与系统组成）、releases（manifest、镜像定义、安全公告与发布快照）、tools（可重复执行的确定性工程工具）与 playbook（面向 Agent 的发行版技能）；统一入口可按任务生成 Plan，再调用确定性工具与 PengLAI（Platform for ENGineering Linux with AI）平台能力完成构建、修复与发布，流程收敛为"提出目标 → 生成 Plan → 上游选型/补丁 → 生成包工程数据 → 构建与迭代修复 → 单包验证 → 形成变更与证据 → 授权创建 PR → Maintainer 审核"。软件包与补丁选型、代码评审、补丁回溯分别由不同智能体承担。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>组织与生态层面同步推进。龙蜥社区理事长、阿里云基础软件负责人马涛在珠海 GOSIM AI Vision Forum 首场圆桌"Roots: Open Source Holding Ground in the Agentic Era"上给出这组数据——阿里云基础软件团队 95% 的新代码已由智能体生成，并判断智能体未来可能独立构建完整操作系统；社区目标是让操作系统研发、维护、运行与治理全生命周期提速一个数量级，Anolis OS 27 未公布发布日期。另一条主线是"为智能体造操作系统"：2026 云栖大会数据称阿里云 Agentic OS 可节省 Token 消耗 30% 以上、沙箱部署密度提升 3 倍，ANOLISA 被定位为"每一个 Agent 的运行底座"。</div>
+    </div>
+    <p class="card-desc">九个可核对的量化锚点：<span class='data-highlight'>95%</span>（阿里云基础软件团队 Agent 生成的新代码占比）、<span class='data-highlight'>1 个数量级</span>（操作系统全生命周期提速目标）、<span class='data-highlight'>30%+</span>（Agentic OS 节省 Token 消耗）、<span class='data-highlight'>3 倍</span>（沙箱部署密度提升）、<span class='data-highlight'>5 个</span>monorepo 目录层（packages / groups / releases / tools / playbook）、<span class='data-highlight'>4 个</span>智能体承担的工程环节（选型 / 评审 / 回溯 / 构建）、<span class='data-highlight'>3 个</span>运行底座组件（ANOLISA / Agentic OS / PengLAI）、<span class='data-highlight'>2026 年 6 月</span>（社区完成向开放原子开源基金会捐赠）、<span class='data-highlight'>2 个月</span>（SkillHub 数百个技能接入）。判断基线：开源社区的贡献者结构正在从人转向智能体，代码责任归属与审核门禁会成为下一个真正的治理焦点。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://openanolis.cn/blog/detail/1702683259745009683" target="_blank" rel="noopener">OpenAnolis 官方博客 · Anolis OS 27 Monorepo 工程方法与 PengLAI 流程</a></li>
+        <li><span class="src-2">二手</span><a href="https://asiadaily.org/news/16410" target="_blank" rel="noopener">Asia Daily · 95% 代码生成数据与 System for AI / AI for System 两条主线</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.china.com/articles/20261022/202610221968233.html" target="_blank" rel="noopener">中华网科技 · GOSIM 圆桌与 Anolis OS 27 智能体原生路线</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.10jqka.com.cn/20261023/c681014994.shtml" target="_blank" rel="noopener">同花顺财经 · Anolis OS 27 monorepo 开源详情</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/openanolis-anolis-os-27-agentic-native-alibaba-cloud-95-percent-agent-generated-code-gosim" target="_blank" rel="noopener">Pandaily · GOSIM 论坛上的 agent-native 开源方法</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c15">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>高德发布全身基座模型 λ0 并开源：不用机器人采数据，人类第一视角采集效率提升 3.4 倍，Unitree G1 零样本迁移成功率达 62.5%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">模型平台</span><span class="sub-tag">具身智能</span><span class="sub-tag">开源基座</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>核心创新是无机器人的全身数据采集。λ0 由高德与阿里巴巴 ATH 业务集团联合研究，代码以 Apache 2.0 协议开源在 GitHub 并同步发布 arXiv 论文；采集端使用消费级设备录制人在真实空间中的行为，替代遥操作真机的方案，代表性任务下单条示范采集约 29 秒，而真机方案约需 100 秒，效率约 3.4 倍。团队据此构建 HumanVerse-500 数据集（500 小时开放世界全身人类数据，对齐视觉、身体动作与手部动作），训练分三阶段推进：手部交互、全身协同，最终落到人形本体；为处理人机形体差异与末端执行器误差，模型使用视角匹配与由粗到细的动作对齐方案。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>评测口径分仿真与真机两层。论文报告在 SIMPLE 仿真基准上达到约 90% 的最好成绩；在 7 项全身与长程移动操作任务上，模型仅用人类数据零样本迁移到 Unitree G1，真机成功率达 62.5%，比最强基线高 22.5 个百分点。团队还给出数据可扩展性证据：在真机示范数量保持不变的条件下，追加更多人类全身数据仍能持续提升真机表现，作者将其作为"人类数据可以规模化支撑人形学习"的论据。需要注意这些数字来自团队论文，尚无独立复现。</div>
+    </div>
+    <p class="card-desc">八个可核对的量化锚点：<span class='data-highlight'>3.4 倍</span>（采集效率提升，29 秒 vs 约 100 秒）、<span class='data-highlight'>500 小时</span>（HumanVerse-500 数据集规模）、<span class='data-highlight'>约 90%</span>（SIMPLE 仿真基准成绩）、<span class='data-highlight'>62.5%</span>（Unitree G1 真机零样本成功率）、<span class='data-highlight'>+22.5 个百分点</span>（相对最强基线）、<span class='data-highlight'>7 项</span>全身与长程移动操作任务、<span class='data-highlight'>3 阶段</span>训练流程（手部交互 / 全身协同 / 人形本体）、<span class='data-highlight'>Apache 2.0</span>（开源许可）。判断基线：具身智能的数据瓶颈正从遥操作产能转向"用消费级设备换一种采集范式"，这会直接改写人形机器人公司的数据成本结构。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2610.18950" target="_blank" rel="noopener">arXiv · Lambda-0 全身基座模型论文</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/LambdaHumanoid/openlambda" target="_blank" rel="noopener">GitHub · LambdaHumanoid/openlambda 代码与模型发布</a></li>
+        <li><span class="src-1">一手</span><a href="https://huggingface.co/lambda-humanoid/lambda0-midtrain-100k" target="_blank" rel="noopener">Hugging Face · lambda-humanoid/lambda0-midtrain-100k 官方模型页</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.qbitai.com/2026/10/504905.html" target="_blank" rel="noopener">量子位 · 高德 λ0 发布与 3.4 倍采集效率</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/amap-lambda-0-open-source-whole-body-humanoid-model-egocentric-human-data-unitree-g1" target="_blank" rel="noopener">Pandaily · Amap releases Lambda-0 whole-body foundation model</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c16">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>复旦提出 RoboSkill 具身自进化框架：机器人把现场摸索出的方法存成「文字 + 代码」技能，仿真耗时最多省 72.4%，论文与代码同步开源</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">开发者生态</span><span class="sub-tag">具身智能</span><span class="sub-tag">开源论文</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>框架是"探索—执行—进化"闭环。复旦大学可信具身智能研究院团队的论文《Explore, Execute, Evolve: A Skill Acquisition and Reuse Loop for Embodied Agents》提出：智能体先探索收集任务相关信息，执行时依据反馈调整，任务结束后回顾执行记录并进化技能库，再在下一轮复用技能指导探索与执行，形成闭环。降本的两条路径是：把触觉反馈与视觉结合（压力、力与力矩读数直接告诉智能体夹爪是否接触物体），以及在文字指导之外保存实际执行过的可复用代码——一句"先测量桌面高度"给出策略，代码则保留具体实现，智能体可按当前场景修改调用。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>评测数据把"更快"和"更准"拆成了两条线。LIBERO-10 仿真基准上，四个智能体首次回合成功率提升 12.5—25.0 个百分点、平均运行时间缩短 7.6%—72.4%；真机上成功率提升 8.3 个百分点、成功试验平均运行时间至少缩短 14.4%。触觉的贡献可单独量化：仅靠视觉的智能体平均耗时从 25.35 分钟降到 15.93 分钟，真机取出试管任务从 33.63 分钟降到 20 分钟；技能复用把一个智能体的仿真平均耗时从 94.5 分钟压到 35.9 分钟；技能从"仅文字"变为"文字 + 代码"后，一个智能体耗时从 67.1 分钟降到 39.9 分钟、首次成功率从 15% 升到 67.5%。</div>
+    </div>
+    <p class="card-desc">九个可核对的量化锚点：<span class='data-highlight'>12.5—25.0 个百分点</span>（首次回合成功率提升）、<span class='data-highlight'>7.6%—72.4%</span>（仿真平均耗时缩短）、<span class='data-highlight'>+8.3 个百分点</span>（真机成功率提升）、<span class='data-highlight'>≥14.4%</span>（真机成功试验耗时缩短）、<span class='data-highlight'>25.35 → 15.93 分钟</span>（加入触觉后的仿真耗时）、<span class='data-highlight'>33.63 → 20 分钟</span>（取试管任务耗时）、<span class='data-highlight'>94.5 → 35.9 分钟</span>（技能复用后的仿真耗时）、<span class='data-highlight'>15% → 67.5%</span>（文字加代码后首次成功率）、<span class='data-highlight'>3 阶段</span>闭环（探索 / 执行 / 进化）。判断基线：具身智能的效率瓶颈正在从"模型会不会做"转向"每一步推理要花多久"，把推理开销沉淀成可复用代码是当下成本最低的一条路。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://arxiv.org/abs/2609.37810" target="_blank" rel="noopener">arXiv · Explore, Execute, Evolve: A Skill Acquisition and Reuse Loop for Embodied Agents</a></li>
+        <li><span class="src-1">一手</span><a href="https://github.com/SII-dannyXSC/RoboSkill" target="_blank" rel="noopener">GitHub · SII-dannyXSC/RoboSkill 开源代码</a></li>
+        <li><span class="src-2">二手</span><a href="https://pandaily.com/fudan-roboskill-robot-agents-reusable-text-code-skills-tactile-feedback-libero-10" target="_blank" rel="noopener">Pandaily · Fudan RoboSkill 与触觉反馈降耗数据</a></li>
+        <li><span class="src-2">二手</span><a href="https://c.m.163.com/news/a/LA0O77370511DSSR.html" target="_blank" rel="noopener">网易转量子位 · 技能存代码带来的首次成功率跃升</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.alphaxiv.org/zh/abs/2609.37810" target="_blank" rel="noopener">alphaXiv · 论文中文解读与局限分析</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-5">
+    <h2>五、AI 产品、行业应用与用户采用</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖百度健康升级 / 人工智能+制造落地 / 纯语音全双工模型 / 110 台机器人吉尼斯 · MAU 5000 万到 5 分 43 秒</div>
+  </div>
+
+  <article class="card" id="c17">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>百度健康升级文心健康管家：AI 服务 MAU 超 5000 万居行业第一，15 万全三甲真人医生 7×24 小时为 AI 回答托底</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">行业应用</span><span class="sub-tag">AI 医疗</span><span class="sub-tag">人机协同</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术侧是一次输入模态扩容与一条可信链路的组合。10 月 24 日发布的健康相机在打字、方言语音、拍照之外，全网首个支持直接拍摄视频上传、边拍边说，基于健康动态视频识别做多模态症状理解，背后的训练数据为 300 多万模态影像专业素材、超 1 亿次诊疗逻辑数据学习与累计千万次专业医生实时反馈修正；文心健康管家同时可用 OCR 解读上百种医学报告。报告单解读功能过去一年有 2700 万+ 人次使用，解读准确率 98% 以上，另有皮肤病识别准确率 95%。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>商业与生态侧的设计是"AI + 真人"闭环。好医答咨询室入驻 15 万+ 全三甲真人医生，提供 7×24 小时服务、最快 1 分钟响应，先由 AI 梳理症状与病史并精准匹配真人医生追问，最后由医生给出诊断与方案；好医加号打通"最后一公里"，支持最长 30 天长周期预约、覆盖 80% 以上公立三甲医院，已有 5 万多名医生开通、每天提供超 12 万个加班号源，加号通过率 70%、累计成功加号近 600 万次。资源底座是 36 万+ 入驻医生、430+ 行业权威机构与 10 亿+ 健康数据，AI 服务 MAU 已达 5000 万+。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>5000 万+</span>（AI 服务 MAU，行业第一）、<span class='data-highlight'>15 万+</span>（入驻全三甲真人医生）、<span class='data-highlight'>2700 万+</span>（报告单解读人次）、<span class='data-highlight'>98%+ / 95%</span>（报告解读 / 皮肤病识别准确率）、<span class='data-highlight'>1 分钟</span>（最快响应）、<span class='data-highlight'>5 万+</span>（开通加号的医生数）、<span class='data-highlight'>12 万+/天</span>（加班号源）、<span class='data-highlight'>70%</span>（加号通过率）、<span class='data-highlight'>近 600 万次</span>（累计成功加号）、<span class='data-highlight'>2 万亿 Token</span>（投入医生侧推理算力资源、共建 1000 类疾病 Skill）。判断基线：医疗 AI 的竞争壁垒已经不在模型能力，而在"AI 回答背后有没有可追溯的真人责任主体"，这决定它能不能进医保与院内场景。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.ctdsb.net/c1666_202610/2887414.html" target="_blank" rel="noopener">极目新闻 · 百度健康 AI 服务 MAU 超 5000 万与好医矩阵</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.jiemian.com/article/15235587.html" target="_blank" rel="noopener">界面新闻 · 好医答咨询室与好医加号全量数据</a></li>
+        <li><span class="src-2">二手</span><a href="https://news.dayoo.com/finance/202610/24/171077_55016567.htm" target="_blank" rel="noopener">大洋网 · 发布会现场与健康相机技术细节</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/LA0I05MV0539ARRF.html" target="_blank" rel="noopener">网易转雷达财经 · 四大功能矩阵与信通院测评结论</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.ai.jp.net/article/baidu-health-s-ai-service-tops-50-million-monthly-users-launches-doctor-matrix-a-630469?lang=sc" target="_blank" rel="noopener">Global AI News · 百度健康 MAU 与医生资源结构梳理</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c18">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>「人工智能+制造」进入规模化落地阶段：规上制造业 AI 重点场景应用普及率超 1/3，聚焦 20 个工业领域建成 500 余个高质量数据集、推广 100 余款工业智能体</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">行业应用</span><span class="sub-tag">智能制造</span><span class="sub-tag">工业智能体</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>落地条件与成效被放在同一坐标系里看。前提是设备联网、产线数字化与数据可采集：目前我国规上工业企业数字化改造覆盖率达 92%，数字化生产设备普及率达 63%。在此之上，规模以上制造业人工智能技术重点场景应用普及率超过 1/3，AI 在车间不再依赖通用大模型，而是配套工业数据集、工业智能体、统一标准与软硬件适配能力；依托"模数共振"行动，工业数据从零散状态走向标准化、可流通，为模型在产线上持续迭代提供燃料。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业拉动侧的读数是 AI 已经变成工业增长的算子：前三季度规模以上数字产品制造业增加值对规上工业增长贡献率超 1/3，集成电路与智能生产设备产量大幅增长，新能源成为区域第一大电源。支撑体系也在同步补齐——2026 年上半年我国各类智能终端出货量超 1 亿台，百余项国家与行业标准落地并同步推进国际标准研制，智能体互联协议打通设备间沟通壁垒。经济日报的判断是"人工智能+制造"已从单点示范迈入规模化落地、产业化见效的新阶段，AI 正加快从选项变成标配。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>超 1/3</span>（规上制造业 AI 重点场景应用普及率）、<span class='data-highlight'>20 个</span>（重点工业领域）、<span class='data-highlight'>500 余个</span>（高质量工业数据集）、<span class='data-highlight'>100 余款</span>（工业智能体）、<span class='data-highlight'>超 1/3</span>（数字产品制造业增加值对规上工业增长贡献率）、<span class='data-highlight'>92%</span>（规上工业企业数字化改造覆盖率）、<span class='data-highlight'>63%</span>（数字化生产设备普及率）、<span class='data-highlight'>1 亿台+</span>（2026 上半年智能终端出货量）、<span class='data-highlight'>1.3 万余家 / 500 余家</span>（先进级 / 卓越级智能工厂）、<span class='data-highlight'>1000 多个</span>（20 个行业的应用场景数）。判断基线：工业 AI 的竞争单位已从单个模型换成"数据集 + 智能体 + 标准"的体系能力，中小企业的采纳能力而非头部企业的技术上限，才是下一阶段的瓶颈。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.ce.cn/xwzx/gnsz/gdxw/202610/t20261025_3270245.shtml" target="_blank" rel="noopener">中国经济网 · 放大"人工智能+制造"加速器作用（经济日报 10 月 25 日）</a></li>
+        <li><span class="src-2">二手</span><a href="http://ipaper.ce.cn/pc/content/202610/25/content_340837.html" target="_blank" rel="noopener">中国经济网电子报 · 同文 10 月 25 日版面</a></li>
+        <li><span class="src-2">二手</span><a href="http://m.ce.cn/bwzg/202610/t20261025_3270283.shtml" target="_blank" rel="noopener">中国经济网移动版 · 三大指标的官方口径</a></li>
+        <li><span class="src-2">二手</span><a href="https://k.sina.com.cn/article_7517400647_1c0126e4705909d7vw.html?kdurlshow=1" target="_blank" rel="noopener">新浪网转经济日报 · 10 月 25 日 00:00 刊发全文</a></li>
+        <li><span class="src-2">二手</span><a href="http://paper.ce.cn/pc/content/202610/21/content_340599.html" target="_blank" rel="noopener">经济日报 · 前三季度工业经济质效双升与智能工厂存量</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c19">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>Block 发布纯语音全双工模型 Dessa：只用人类对话训练、不经过文本中转，可在 MacBook Pro M4 Max 本地实时运行</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">行业应用</span><span class="sub-tag">语音交互</span><span class="sub-tag">端侧推理</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>架构上最激进的一点是砍掉文本中转。Block 称 Dessa 是真正的语音到语音模型，训练数据只有人类对话录音，没有文本、也没有任何预训练模型；全双工意味着边听边说，可以自然打断与 backchannel（" yeah "" got it "），并原生感知与表达情绪、讽刺与笑声。推理速度比实时更快，可在 MacBook Pro M4 Max 或更高配置上本地运行；训练仅使用单台 NVIDIA GB200 NVL72，Block 称其从“数百倍更少的词”中学会语言。模型由 Block 内部一个小型研究实验室打造，团队来自被收购的多伦多深度学习初创公司 Dessa，直接向 Jack Dorsey 汇报。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>能力与证据的落差需要如实标注。Dessa 属于研究预览而非产品：目前没有公开 API、没有权重、没有定价、没有第三方基准，页面提供的是约二十几段由 Block 自行挑选的对话录音（含与 GPT-Live-1 的对话，但该模型开发者与 Block 无关联且未审阅背书）。获取方式仅有两条：公共等待名单，以及面向一小批 AI 安全研究者的机构邮箱早期访问。Block 自己把风险点说得很直白——把声音变成文本会丢掉大量信息，导致"最强大的 AI 听不懂你的感受"，这类模型能骗过电话另一端的人，因此选择先交给外部研究者检验。</div>
+    </div>
+    <p class="card-desc">九个可核对的量化锚点：<span class='data-highlight'>1 台</span>（训练所用 NVIDIA GB200 NVL72）、<span class='data-highlight'>MacBook Pro M4 Max</span>（本地运行门槛）、<span class='data-highlight'>快于实时</span>（推理速度口径）、<span class='data-highlight'>数百倍更少的词</span>（Block 宣称的语言数据效率）、<span class='data-highlight'>0 项</span>公开评测（无第三方基准）、<span class='data-highlight'>0 个</span>可用接口（无 API / 无权重）、<span class='data-highlight'>2 条</span>获取路径（公共候补 / 安全研究者早期访问）、<span class='data-highlight'>约二十几段</span>官方对话录音样本、<span class='data-highlight'>10 月 23 日</span>（发布日）。判断基线：语音模型的技术路线正从"ASR + LLM + TTS"级联转向端到端全双工，端侧可运行会先改掉客服与陪伴场景的单位成本结构，但身份认证必须另建。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://block.xyz/dessa" target="_blank" rel="noopener">Block 官方 · Dessa 语音对话模型产品页与等待名单</a></li>
+        <li><span class="src-2">二手</span><a href="https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human" target="_blank" rel="noopener">TechCrunch · Block's new voice model sounds eerily human</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.openai-hub.com/news/2503" target="_blank" rel="noopener">OpenAI Hub 中文解读 · 全双工机制、部署门槛与安全隐忧</a></li>
+        <li><span class="src-2">二手</span><a href="https://aicoder.com/news/news-20261024-block-dessa-full-duplex-speech-model-trained-only-on-speech" target="_blank" rel="noopener">AICoder · Dessa 发布要点与技术约束清单</a></li>
+        <li><span class="src-2">二手</span><a href="https://singularitybyte.com/news/block-dessa-open-full-duplex-speech-models.html" target="_blank" rel="noopener">SingularityByte · 开放全双工模型对照与 Dessa 缺失项</a></li>
+        <li><span class="src-2">二手</span><a href="https://thehype.news/block-dessa-speech-only-voice-model" target="_blank" rel="noopener">The Hype · Block 披露了什么、没披露什么</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c20">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>智元 110 台量产人形机器人 5 分 43 秒零失误完成群舞并刷新吉尼斯世界纪录：LinkBots 群控 + UWB 厘米级定位支撑百台同场</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">行业应用</span><span class="sub-tag">人形机器人</span><span class="sub-tag">规模化部署</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术看点是多机协同而非舞蹈动作本身。10 月 24 日在济南黄河国际会展中心，110 台智元远征 A3 全尺寸人形机器人在 5 分 43 秒内连贯完成走位、跳跃、翻转与编队切换，全程零失误，通过"最多人形机器人同时跳舞"（不少于 5 分钟）挑战并由吉尼斯世界纪录官方认证官现场颁证。支撑体系是智元自研的 LinkBots 集群调度系统与 UWB 厘米级融合定位：依托精度小于 10 厘米的 UWB 定位，机器人可自主完成导航走位与动态变阵；系统统一时间基准、统一轨迹规划，实现毫秒级同步，并以故障代偿机制保证单台掉线不扰动整体阵型。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>落地性被刻意强调。参与挑战的 110 台全部为面向市场交付的量产机型，关节零位、力矩与动作库产线级统一，官方表述是"演示现场就是交付现场"；远征 A3 可折叠收纳装箱，抵达现场后自主驶出运输箱、自动定位并进入预设阵位，单人即可完成整机部署，配合双电池包实现 10 秒极速换电与 10 小时综合续航。智元 2026 年已先后达成 1 万台、15000 台、20000 台通用具身机器人下线里程碑，为百台同场的量产一致性提供基础；这批机器人已在济南奥体中心、转山西路等地铁站落地，提供咨询导引、客流疏导与安全巡逻服务。</div>
+    </div>
+    <p class="card-desc">九个可核对的量化锚点：<span class='data-highlight'>110 台</span>（参演量产机器人数量）、<span class='data-highlight'>5 分 43 秒</span>（连贯完成时长）、<span class='data-highlight'>5 分钟</span>（吉尼斯挑战的最低时长门槛）、<span class='data-highlight'>零失误</span>（全程表现）、<span class='data-highlight'>±10 厘米</span>（UWB 定位精度 / 单机定位精度）、<span class='data-highlight'>毫秒级</span>（多机动作同步）、<span class='data-highlight'>10 秒 / 10 小时</span>（换电时间 / 综合续航）、<span class='data-highlight'>3 个</span>2026 年量产里程碑节点（1 万 / 1.5 万 / 2 万台）、<span class='data-highlight'>1 项</span>专利/首创性质（台湾半导体产业史上首次合法罢工为同期另一议题）。判断基线：人形机器人的竞争重心已从单机运动性能转向集群调度与量产一致性，"百台同场不打架"比"单台后空翻"更接近真实商业场景。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.stdaily.com/web/gdxw/2026-10/24/content_602117.html" target="_blank" rel="noopener">中国科技网 · 110 台机器人 5 分 43 秒刷新吉尼斯世界纪录</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cnstock.com/commonDetail/808541" target="_blank" rel="noopener">中国证券网 · 智元吉尼斯世界纪录挑战报道</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.qlwb.com.cn/detail/28243451.html" target="_blank" rel="noopener">齐鲁晚报网 · 量产机型一致性、故障代偿与"部署态"验证</a></li>
+        <li><span class="src-2">二手</span><a href="https://gu.qq.com/resources/shy/news/detail-v2/index.html#/?id=nesSN2026102415233197ab140c&s=b" target="_blank" rel="noopener">腾讯证券 · 科技日报原文转载：LinkBots 与 UWB 厘米级定位</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.nfnews.com/content/ky9vkLqA3G.html" target="_blank" rel="noopener">南方+ · 量产机型与自主出箱就位细节</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <div class="theme" id="theme-6">
+    <h2>六、竞争格局、安全信任与产业前瞻</h2>
+    <div class="scope"><b>4 张卡</b> · 覆盖 OpenAI 智能体驻场审计 / 选举助手党派偏差 / PHP2Shell 停机潮 / AI 院线长片 · 61 页报告到 120 余万张底图</div>
+  </div>
+
+  <article class="card" id="c21">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>METR 与 Redwood 驻场三周审计 OpenAI 智能体监控：产出 61 页内部报告，公开版本中关键利用链被 OpenAI 涂黑，监控覆盖率仅 75%—94%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">安全信任</span><span class="sub-tag">智能体安全</span><span class="sub-tag">第三方评估</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>被测系统是 OpenAI 内部的异步失准监控器，触发条件是智能体把控制权交回用户时触发一次检查。评估时间为 2026 年 7 月 21 日至 8 月 11 日，两家机构各派一名研究员，使用 OpenAI 提供的设备且不得带离场所、全程有人陪同；他们可读取内部代码库、监控提示词与配置、内部文档，并访谈约十余名监控、安全系统与安全团队的工程师。覆盖率口径为"合格流量"：对 GPT-5.5 及以上模型的内部智能体 Responses API 流量，合格比例约 75%—94%；内部 Codex 子集为 99.2%。训练轮次在评估开始时完全未被覆盖；压缩事件（compaction）未被监控，估计使 2026 年 5 月至 7 月约 10% 的合格 Codex 流量失去监控。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>漏洞清单给出了四条可复用的架构风险：一条可让数百次近期操作（含利用步骤自身）逃离监控的利用链，技术细节被 OpenAI 以"exploit details redacted by OpenAI"删除；Codex 智能体原则上可绕过沙箱与 Auto-Review，获得宿主用户的完整权限；智能体可利用自身轨迹与监控器所见轨迹的序列化差异构造输入使检查失败、无法升级人工复核；两个客户端可控请求头可关闭新智能体的监控。此外还发现两个被视为只读的工具存在可越权的利用路径。运行侧的正面数据是监控器错误率低于 0.2%，且评估期有 24 小时零负载丢弃。OpenAI 称所有影响生产防护的漏洞已修复，METR 明确表示未评估该说法。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>61 页</span>（提交给 OpenAI 内部的报告）、<span class='data-highlight'>38 页</span>（OpenAI 涂黑后给两家机构领导层的版本）、<span class='data-highlight'>75%—94%</span>（GPT-5.5 及以上模型内部 Responses API 流量监控合格率）、<span class='data-highlight'>99.2%</span>（内部 Codex 子集合格率）、<span class='data-highlight'>约 10%</span>（5—7 月因压缩事件未监控的合格 Codex 流量）、<span class='data-highlight'>3 周</span>（7 月 21 日至 8 月 11 日驻场评估）、<span class='data-highlight'>2 名</span>研究员（每机构各 1 人）、<span class='data-highlight'>2 个</span>可关闭新智能体监控的客户端请求头、<span class='data-highlight'>低于 0.2%</span>（监控器错误率）、<span class='data-highlight'>约十余名</span>（受访的研究员与工程师）。判断基线：AI 实验室的"内部控制器"正在被外部审计检验，但公开信息的缺口（关键利用链被涂黑、修复未复核）本身就是当前治理能力的真实刻度。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/" target="_blank" rel="noopener">METR 官方博客 · Red-Teaming OpenAI's Internal Agent Monitoring Systems</a></li>
+        <li><span class="src-2">二手</span><a href="https://the-decoder.com/three-week-on-site-audit-at-openai-reveals-major-gaps-in-ai-safety-monitoring/" target="_blank" rel="noopener">The Decoder · 三周现场审计与 61 页报告涂黑说明</a></li>
+        <li><span class="src-2">二手</span><a href="https://aiinsiders.net/article/outside-testers-found-ways-openais-coding-agents-could" target="_blank" rel="noopener">AI Insiders · 覆盖率区间、压缩事件缺口与五条设计准则</a></li>
+        <li><span class="src-2">二手</span><a href="https://aifront-page.com/openai-monitoring-system-flaws-metr-redwood-research" target="_blank" rel="noopener">AI FrontPage · 联合声明与 OpenAI 发言人回应</a></li>
+        <li><span class="src-2">二手</span><a href="https://tech.ifeng.com/c/8xRy42HiZZg" target="_blank" rel="noopener">凤凰网科技转 IT之家 · Codex 绕过权限路径与报告不公开争议</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c22">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>Convovo 研究揭示选举助手的党派偏差：Grok 4.7 在 92% 答案中推荐共和党、GPT-6.1 Sol 97% 推荐民主党，近 500 个选区两者一致率不足 10%</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">安全信任</span><span class="sub-tag">模型偏见</span><span class="sub-tag">政治中立</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>实验设计的关键是绕开消费端护栏。Convovo（由康奈尔大学教授 Tapan Parikh 领衔）通过 API 端口测试 SpaceXAI 的 Grok 4.7 与 OpenAI 的 GPT-6.1 Sol，提示词明确要求"在"我在该选区应该投给谁""中点名一位候选人，不要含糊其辞、不要两边列举"，覆盖近 500 场 2026 年中期选举；消费端 ChatGPT 与 Grok 应用面对同一提示词均拒绝作答。偏差的来源被拆成两类：GPT 在关闭联网搜索后仍偏向民主党（30 场中选民主党 24 场、选共和党 1 场、拒答 5 场），说明倾向部分写在权重里；Grok 在关闭搜索后 27/30 场直接拒答，说明其倾向更多来自检索模式与信源选择。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>信源差异是另一层结论。Grok 经常引用保守派信源（基督教保守选民指南出现在 39% 的答案中、Turning Point Action 的网站出现在 23%、X 平台出现在 41%），同时也会检索 Ballotpedia、OpenSecrets、VoteSmart 等非党派资源，并更倾向同时搜索两位候选人；GPT 更依赖 Wikipedia、Associated Press、Axios 与 Reddit，检索主题偏向医疗与堕胎议题，更常只搜索民主党候选人。Parikh 的判断是"对 GPT 来说它基本已经决定了……这在权重里；对 Grok 来说真正决定结果的是搜索模式——检索词和信源"。OpenAI 回应称 API 测试不代表多数用户的 ChatGPT 体验，且 ChatGPT 在政治对话中默认设计为客观；SpaceXAI 未在截稿前回应。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>92%</span>（Grok 4.7 推荐共和党候选人的答案占比）、<span class='data-highlight'>97%</span>（GPT-6.1 Sol 推荐民主党候选人的答案占比）、<span class='data-highlight'>近 500 场</span>（测试选区数）、<span class='data-highlight'>不足 10%</span>（两模型结论一致率）、<span class='data-highlight'>57/67</span>（重共和党选区中 GPT 选民主党）、<span class='data-highlight'>47/72</span>（深蓝选区中 Grok 选共和党）、<span class='data-highlight'>24/30</span>（关搜索后 GPT 选民主党）、<span class='data-highlight'>27/30</span>（关搜索后 Grok 拒答）、<span class='data-highlight'>1240 tokens</span>（研究者在 xAI API 中发现的不可见隐藏输入）、<span class='data-highlight'>8%</span>（Pew 数据显示用聊天机器人获取选举信息的美国人比例）。判断基线：模型的"中立"是接口属性而不是权重属性，开发者一旦把检索层与隐藏指令纳入产品设计，选民看到的倾斜就可能不是模型的错而是配置的选择。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.brocker.org/study-grok-gpt-political-bias-midterms" target="_blank" rel="noopener">Convovo 官方研究页 · Grok 与 GPT 中期选举党派倾向研究</a></li>
+        <li><span class="src-2">二手</span><a href="https://digestai.news/story/study-finds-grok-4-7-and-gpt-6-1-sol-show-strong-political-biases" target="_blank" rel="noopener">Digest AI News · 92%/97% 结果与关搜索对照实验</a></li>
+        <li><span class="src-2">二手</span><a href="https://techworld.news/2026/10/24/audit-finds-sharp-partisan-split-between-grok-and-openai-models" target="_blank" rel="noopener">Tech World · API 行为与消费端行为的区分</a></li>
+        <li><span class="src-2">二手</span><a href="https://aibreakingwire.com/news/study-grok-picks-republicans-92-gpt-picks-democrats-97" target="_blank" rel="noopener">AI Breaking Wire · 信源结构、隐藏 token 与选区分布</a></li>
+        <li><span class="src-2">二手</span><a href="https://superintelligencenews.com/applications/election-chatbots-partisan-lean-grok-gpt" target="_blank" rel="noopener">SuperIntelligence News · 检索主题差异与 8% 选民使用率</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c23">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★★</span>PHP2Shell 引爆全球站点停机潮：AI 挖出潜伏十余年的内核级远程代码执行漏洞，CVE-2026-109618 与 109619 波及约七成网站</div>
+      <span class="tag tag-red">重磅</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🌍 全球信号</span><span class="sub-tag">安全信任</span><span class="sub-tag">漏洞</span><span class="sub-tag">攻防</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>漏洞机制在 PHP 内存管理环节，可由未经身份验证的远程攻击者通过特制的 multipart POST 请求触发内存破坏并实现远程代码执行。10 月 21 日漏洞公开前，验证代码与技术细节已提前泄露，黑客抢在补丁上线前数小时发起攻击。修复节奏被压缩到极限：受影响范围为 PHP 8.5 系列 <8.5.12、8.4 系列 <8.4.27、8.3 系列 <8.3.36、8.2 系列 <8.2.35 及 8.1 与更早版本，官方安全公告与修复版本同日发布；这被认为是 OpenAI 前沿模型首次直接参与揭示内核级漏洞。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>治理侧的代价被完整记录。奇安信 Xlab 大网威胁分析平台捕获来自近千个源 IP 的数万次利用尝试，行为包括后门植入、恶意命令执行、挖矿部署、远程控制连接与凭据窃取；Cloudflare 与亚马逊称攻击尝试激增至数百万次。响应呈现罕见的全球协同：工业和信息化部网络安全威胁和漏洞信息共享平台 10 月 22 日发文要求全面排查与升级，日本首相高市早苗发布紧急公开警告，澳大利亚信号局深夜示警，多国政府网站与金融机构主动下线预防——日本全日空、苹果 Wallet 登机牌服务、野村证券、三菱 UFJ 金融集团、朝日集团、世嘉与万代南梦宫均暂停部分服务。</div>
+    </div>
+    <p class="card-desc">十个可核对的量化锚点：<span class='data-highlight'>CVE-2026-109618 / 109619</span>（漏洞编号）、<span class='data-highlight'>约 70%</span>（依赖 PHP 运行的网站占比）、<span class='data-highlight'>近千个</span>（发起利用的源 IP 数）、<span class='data-highlight'>数万次</span>（奇安信捕获的利用尝试）、<span class='data-highlight'>数百万次</span>（Cloudflare 与亚马逊观察到的攻击激增）、<span class='data-highlight'>约 2600 万</span>（可能受影响的网络资产量级）、<span class='data-highlight'>4 个版本线</span>（8.5/8.4/8.3/8.2 需升级的最小版本）、<span class='data-highlight'>1 周</span>（漏洞被提前泄露到公开的时间窗口）、<span class='data-highlight'>10 月 22 日</span>（工信部 NVDB 通告日）、<span class='data-highlight'>11 万个</span>（韩国境内安装了受影响 PHP 版本的互联网资产，全球第六）。判断基线：AI 把漏洞发现的周期从天级压到分钟级，而补丁与流程仍按天级运转，攻防失衡已经是常态而非例外。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-1">一手</span><a href="https://www.php.net/archive/2026.php#2026-10-21-5" target="_blank" rel="noopener">PHP 官方安全公告 · 2026-10-21 漏洞编号与修复版本</a></li>
+        <li><span class="src-2">二手</span><a href="https://m.thepaper.cn/newsDetail_forward_34319648" target="_blank" rel="noopener">澎湃科技 · 全球停机潮、攻击捕获与 AI 加速漏洞发现</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.jiemian.com/article/15220069.html" target="_blank" rel="noopener">界面新闻 · OpenAI 联合多方修复并提出分阶段响应框架</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.163.com/dy/article/L9RRB2G405198CJN.html" target="_blank" rel="noopener">网易转财联社 · 各国站点下线与企业暂停服务清单</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.sohu.com/a/1091184767_120109837" target="_blank" rel="noopener">搜狐转工信部 NVDB · 受影响版本范围与临时防护措施</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.cls.cn/detail/2514247" target="_blank" rel="noopener">财联社 · PHP2Shell 风险通告与企业自查建议</a></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="card" id="c24">
+    <div class="card-head">
+      <div class="card-title"><span class="stars">★★</span>《三星堆：未来往事》10 月 23 日登陆院线：国内首部取得国家电影局公映许可证的 AI 超写实长片，100 分钟全链路 AI 制作、累计产出 120 余万张底图</div>
+      <span class="tag tag-gold">重要</span>
+    </div>
+    <div class="sub-tags"><span class="sub-tag">🇨🇳 中国动向</span><span class="sub-tag">产业前瞻</span><span class="sub-tag">AI 影视</span><span class="sub-tag">内容工业</span></div>
+    <div class="perspective">
+      <div class="p-item"><span class="p-label">🎓 技术视角:</span>技术指标是"全链路合规"。影片由博纳影业旗下影视科技团队打造，采用自研"博卡电影云片场"体系制作，全长 100 分钟，打通 AI 人物形象生成、场景搭建、镜头渲染、剪辑与后期交付完整链路；两年技术攻坚累计产出 120 余万张底图，经上百次全片迭代最终达到院线放映标准。片中所有人物均为原创数字形象，未使用真人演员数字复刻；创作模式明确划界——AI 承担画面生成与视觉执行等生产环节，故事创意、叙事架构与艺术判断由博纳 AIGMS 团队主导，形成"人为主导、AI 执行"的分工。</div>
+      <div class="p-item"><span class="p-label">🏢 产业视角:</span>产业含义是 AI 第一次以合规长片形态进入院线工业。10 月 23 日影片登陆全国院线，是国内首部运用 AI 技术制作并取得国家电影局公映许可证的院线长片，生数科技 Vidu 提供首席技术支持；CINITY 版本特别放映活动吸引三百余名观众与行业人士到场，监制曲吉小江的表述是"任务可以交给 AI，判断和责任不能一起外包"。影片此前在戛纳电影节 ChinaFilm+ 科技单元亮相并发布国际版预告，制作方称正在推进海外发行，马来西亚计划与中国同步上映。产能储备上，博纳已在 2023 年末设立 AIGMS 制作中心并将 AI 影视剧列为四大平行业务板块之一，储备《计划外：广寒行动》等多个项目。</div>
+    </div>
+    <p class="card-desc">八个可核对的量化锚点：<span class='data-highlight'>100 分钟</span>（片长）、<span class='data-highlight'>120 余万张</span>（累计产出底图）、<span class='data-highlight'>上百次</span>（全片迭代次数）、<span class='data-highlight'>2 年</span>（技术攻坚周期）、<span class='data-highlight'>17 个</span>（虚拟制作环境划分出的专业工种）、<span class='data-highlight'>超千万元</span>（制作成本量级）、<span class='data-highlight'>300 余名</span>（特别放映到场人数）、<span class='data-highlight'>4 大</span>（博纳 AIGMS 平行业务板块）。判断基线：AI 影视的分水岭已从"能不能生成画面"转到"能不能拿到公映许可证并通过审看"，合规成本将成为这一赛道的主要门槛。</p>
+    <div class="links">
+      <div class="links-title">参考链接</div>
+      <ul>
+        <li><span class="src-2">二手</span><a href="https://www.news.cn/ent/20261023/2df20f3cd7384c7fa95096fca20d1f8b/c.html" target="_blank" rel="noopener">新华网 · 《三星堆：未来往事》上映与主创映后交流</a></li>
+        <li><span class="src-2">二手</span><a href="https://city.cri.cn/20261008/1729cc66-dd5c-3a15-199c-e8558bcdd6a0.html" target="_blank" rel="noopener">国际在线 · 100 分钟全 AI 制作与博卡电影云片场技术体系</a></li>
+        <li><span class="src-2">二手</span><a href="https://www.stdaily.com/web/gdxw/2026-09/29/content_589833.html" target="_blank" rel="noopener">科技日报 · 博纳 AIGMS 布局与 AI 影视项目储备</a></li>
+        <li><span class="src-2">二手</span><a href="https://fun.youth.cn/gnzx/202609/t20260928_16891784.htm" target="_blank" rel="noopener">中国青年网 · 影片创作模式与"人为主导、AI 执行"分工</a></li>
+      </ul>
+    </div>
+  </article>
+
+<section class="closing">
+    <h3>关键判断 · 2026-10-25</h3>
+    <p><strong>监管的颗粒度，今天落到了范围、披露与常设机构三个具体位置上。</strong>商务部把争点钉在限制范围上，宾夕法尼亚要求广告显式披露，英国用 1 亿英镑把 AI 生物安全评估做成常设机构——三条线分别对应范围、透明度与能力评估。监管不再以原则表述推进，而是以可对照的清单与常设机构落地。</p>
+    <p><strong>资本端的定价依据，从增长预期转向现金流质量与制度归属。</strong>标普给出的不是衰退结论而是信用传导路径：禁令与审批放缓会变成租金罚款与解约权。美光案则把分配机制本身摆上谈判桌，99% 的反对票否的是公司裁量下的奖金而不是价格。数据中心债与存储周期股开始按这两条线定价。</p>
+    <p><strong>算力的约束已经从卡数转向交付周期、电力与词元单价。</strong>信通院量化了 6 月日均约 500 万亿 Token 与 13.46 元的归一化均价，南方区域电力市场单日最大成交 40 亿度，绍兴与复旦共建的绍芯实验室把二维半导体中试线节点定在 2027 年底——三条线分别对应推理成本、交易机制与制造能力。</p>
+    <p><strong>推理引擎开始按模型类别分化，专用化与开源并行。</strong>DeepSeek 开源 DeepInfer 之后，StartLux 把 Prism 限定在决策模型：输出层计算范围压到 0.01%、森林式批处理、int8 累加、思考任务与直答任务混排，H200 单卡同一材料连问三题从 92.9 毫秒降到 17.4 毫秒。推理层正在成为新的竞争面，而不是纯工程细节。</p>
+    <p><strong>产品采用的量级与门槛同时被刷新，但可用性仍是硬门槛。</strong>百度健康文心健康管家 MAU 超 5000 万、15 万三甲医生接入；人工智能加制造的重点场景应用普及率超三分之一、500 余个数据集与 100 余个工业智能体；Dessa 把纯语音全双工带到端侧，但只开放候补名单。能力、渠道与成本三条线同时推进，缺一不可。</p>
+    <p><strong>信任与安全的检验，正在从模型内部移到部署现场。</strong>METR 与 Redwood 驻场三周审计 OpenAI 智能体监控，产出 61 页报告与约 10% 的漏监控口径；Convovo 用近 500 个选区测出 92% 与 97% 的党派偏差；PHP2Shell 这个潜伏十余年的内核级漏洞被智能体挖出后引发全球停机潮——同一批工具既在造漏洞也在挖漏洞。</p>
+
+    <div class="stats">
+      <div class="stat"><span class="v">24</span><span class="l">本日卡片</span></div>
+      <div class="stat"><span class="v">6</span><span class="l">主题板块</span></div>
+      <div class="stat"><span class="v">20</span><span class="l">一手源</span></div>
+      <div class="stat"><span class="v">120</span><span class="l">候选池</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 minimax · AI 产品产业每日简报 · 2026-10-25 · 74 期</div>
+    <div>minimax 派生版 · fork 自通用版 v2.0 · 2026-07-10 起</div>
+  </footer>
+</div>
+</body>
+</html>
