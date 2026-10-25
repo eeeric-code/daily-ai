@@ -524,6 +524,44 @@ duration: Xm Ys
     10-22: 60 条 / 24 卡 avg 2.50，19 卡 <4；10-23: 61 条 avg 2.54，21 卡 <4；
     10-24: 89 条 avg 3.71，10 卡 <4（**在改善**）。这属于**生成端**（brief cron）的域，
     audit 只记录观察、**不自行补链接**（凭空造链 = 编造）。
+22. **【新·P0 假阴性 C】`WinError 10053` = 连接层失败（本地代理/TLS 链路），不是 404 —— 新增 `conn_reset` 分类**
+    `big5.china.com.cn/txt/2026-10/24/content_118747768.shtml` 报
+    `URL Error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。` → 原脚本归 `fail` → 进 P0。
+    探针（4 组 UA + 免校验 + HTTP 降级共 20 次）**全部失败**；curl 报
+    `schannel: failed to receive handshake, SSL/TLS connection failed`（0.009s 即挂）。
+    **根因**：本机 DNS 是 **Clash fake-IP 模式** —— `Resolve-DnsName big5.china.com.cn` → `198.18.0.120`
+    （`198.18.0.0/16` 是 fake-ip 保留段），所有流量走本地代理
+    （注册表 `ProxyEnable=1` / `ProxyServer=127.0.0.1:7897`），该站点在代理链上 **TLS 握手被掐断**。
+    同域对照：`finance.china.com.cn` → 403（通）、`www.china.com.cn` → 302（通）、`news.china.com.cn` → 000（不通）。
+    **修法**：audit 脚本新增 `conn_reset` 分类，连接层错误特征串
+    （`10053` / `10054` / `Connection reset` / `Connection aborted` / `Connection refused` /
+    `RemoteDisconnected` / `ConnectionResetError` / `Connection timed out` / `连接被中止`）命中即归此类。
+    **仍计 P0**（必须处理，不放过），但标签明确指向「先探针再换源」；
+    autofix 的 `no_source` 检测同步加入 `conn_reset`（否则该类不会被列进行动清单）。
+    **处置顺序**：① 多 UA + 免校验 + HTTP 降级探针 → ② `Resolve-DnsName` 看是否落在 fake-IP 段
+    → ③ 换**同源可验证**的等价媒体链接（本次 `big5.china.com.cn` → `www.stdaily.com` 科技日报全文：
+    200 + 39361 B + 原标签声称的主题词「输电容量/四成/29万/95%」全命中 + 全篇 120 URL 查重未占用）。
+    ⚠️ **不要**因为 TLS 断了就判定「这条事件不存在」—— 本次同一事件有央视网 / 南方电网官网 / 新华社等
+    6 家权威源同日发布，可换源而非改写事实。
+23. **【新】slot 入口页 `<title>` 会陈旧（brief cron 的部署脚本漏更）**
+    `repo/ai-products/minimax/index.html` 的 `<title>` 停在 **2026-10-21**，连续 4 天没动，
+    而同页 `<span class="status">最新一期 · 2026-10-25 · 74 期</span>` 已是最新
+    → 浏览器标签 / SEO 与页面正文自相矛盾。
+    根因：brief cron 的 `deploy-products.py` Step 4.3 只更新 `status` 与 `href`，**不更新 `<title>`**；
+    对照 GPT 产业 / GPT 学术两个 slot 的 title 都是当天的（2026-10-25）→ 属 minimax 这条部署链的漏项。
+    **audit 必查**：slot 入口页 `<title>` 日期 == 该 slot 最新一期日期。
+    不一致要**同时**修两处：① 部署产物 ② `deploy-products.py` Step 4.3（否则明天复发）。
+24. **【新】校验 slot 入口页要用真实结构，别照抄首页卡片的 class**
+    slot 入口页实测结构：`<span class="status">最新一期 · DATE · N 期</span>`
+    + `<a class="primary" href="./DATE/">阅读最新</a>` + `<title>… DATE …</title>`。
+    **不是** `<span class="date">`，**也没有**「已收录 N 期」字样（那是首页卡片写法）。
+    我第一版校验脚本按首页结构写 → 期数/日期/href 三项全误报 MISSING，差点误判 FAIL。
+    **教训**：校验 slot 页与首页卡片要用两套正则，别混用。
+25. **【新】`curl.exe` 与 Python urllib 的代理行为不一致，探针要跟审计脚本同口径**
+    `curl.exe` 默认**不**读 Windows 注册表/IE 的代理设置；Python `urllib` **会**（`getproxies_registry`）。
+    → 用 curl 探针得出的「能开 / 打不开」结论可能与 audit 脚本正好相反。
+    **探针一律用 Python + 与 audit 脚本相同的 HEADERS**，否则结论不可迁移。
+
 ---
 
 ## 元信息
@@ -532,5 +570,5 @@ duration: Xm Ys
 - **基础版本**：fork 自 minimax 综合 audit v2.7 编排提示
 - **维护者**：Mavis（minimax 产业 slot 审核）
 - **配套 cron**：`ai-products-brief-minimax`（07:00 生成）+ 本编排（07:30 审核）
-- **最后更新**：2026-10-24（补入 2026-10-20 用户修正 + 踩坑 13–21；2026-10-24 双循环 PASS）
+- **最后更新**：2026-10-25（补入踩坑 22–25：conn_reset 连接层假阴性 / slot 入口页 title 陈旧 / slot 页结构 / curl 与 urllib 代理口径差异；2026-10-25 双循环 PASS，audit 补换 1 条 P0 + 修 1 处 slot title）
 - **反馈渠道**：自动化脚本的 bug、autofix 失败 case、portal-template 路径耦合问题都直接编辑本提示
