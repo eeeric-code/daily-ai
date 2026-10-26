@@ -176,6 +176,65 @@
 > 8. **【沿用】autofix v2.9（`scripts/autofix-minimax-daily-10-24.py`）今天 0 硬规则动作、0 no_source**，
 >    dry-run 不落盘；`render_archives.py --repo repo --check` → `changed: []` 无漂移。
 
+> ⚠️ **2026-10-26 五条更新（本次 audit 实测得出，优先级高于下面所有正文）**：
+>
+> 1. **【最重要·新】slot 入口页 `<title>` 漏期号日期 —— 6 个 slot 里唯一漏的那个。**
+>    实测 6 个 slot 入口页的 `<title>`：
+>    | slot | title | 带日期? |
+>    |---|---|---|
+>    | `ai-academic/gpt` | GPT 学术每日简报 · 2026-10-26 | ✅ |
+>    | `ai-academic/minimax` | MiniMax 学术每日简报 · 2026-10-20 | ✅ |
+>    | `ai-daily/gpt` | AI 学术与产业每日简报 · 2026-10-20 | ✅ |
+>    | `ai-products/gpt` | GPT AI 产品产业简报 · 2026-10-26 | ✅ |
+>    | `ai-products/minimax` | AI 产品产业简报 · minimax · 2026-10-26 | ✅ |
+>    | `ai-daily/minimax` | AI 每日简报 · minimax | ❌ **唯一没有日期** |
+>    根因：`deploy.py` Step 4.2 只 patch 了 `<span class="date">` / `已收录 N 期` /
+>    `<a class="primary" href="./DATE/">`，**从来没碰 `<title>`** ——
+>    与 10-25 products audit 抓到的「`deploy-products.py` 漏 title」是**同一类漏项**，
+>    只是产业版会「停在旧日期」，综合版是「压根不写日期」（git log 回溯 5 个 revision 都一样，
+>    说明是长期漏项，不是当天回归）。
+>    **处置（已落地）**：产物 `repo/ai-daily/minimax/index.html` 的 title 改成
+>    `AI 每日简报 · minimax · 2026-10-26`；**同时改了 `2026-10-26/minimax-work/deploy.py`
+>    和 `2026-10-25/minimax-work/deploy.py` 两份**（后者是次日的复制源）。
+>    → **明天直接用 `scripts/audit-minimax-daily-10-26.py`**：已加 `slot_entry` 硬检查
+>    （`title_ok` / `date_ok` / `count_ok` / `href_ok`，任一不符 → verdict 直接升 FAIL），
+>    抄成 10-27 的名字即自动带上这条防线。
+>
+> 2. **【新】slot 入口页有「两种结构」，校验正则必须兼容，否则三项全误报 MISSING。**
+>    - 综合版 `ai-daily/*`：`<title>AI 每日简报 · minimax · DATE</title>`
+>      + `<p>最新一期：<span class="date">DATE</span></p>` + `<p>已收录 N 期</p>`
+>      + `<a class="primary" href="./DATE/">阅读最新</a>`
+>    - 产业版 `ai-products/*`：`<span class="status">最新一期 · DATE · N 期</span>`
+>      + `<a class="primary" href="./DATE/">`
+>    **只有产业版有 `<span class="status">`**；综合版的期数是裸文本 `已收录 N 期`、日期在
+>    `<span class="date">`。10-25 在产业版上栽过一次，今天在综合版上又栽一次（照抄产业版
+>    正则 → title/status/href 三项全判 MISSING）。
+>    → 正确写法：日期用 `<span class="date">` **或** `<span class="status">` 二选一正则；
+>      期数用 `已收录\s*(\d+)\s*期` **或** `(\d+)\s*期已收录` 二选一正则。
+>
+> 3. **【新】prompt 有三份副本，`base` 那份会脱节 —— 改完 live 必须三份都同步。**
+>    - live  `C:\TempAI\ai-daily-audit-minimax-cron-prompt.txt`
+>    - base  `cron-prompts/minimax/ai-daily-audit-minimax-cron-prompt.txt`
+>    - repo  `repo/cron-prompts/minimax/ai-daily-audit-minimax-cron-prompt.txt`
+>    今天实测：live = repo = 30685 B（一致），但 **base 那份还是 26147 B（10-24 的旧版）**。
+>    → **同步要写三份**：`shutil.copyfile(LIVE, BASE)` + `shutil.copyfile(LIVE, REPO)`，
+>      只同步 repo 是不够的（10-25 的「三副本同步」说的是 products prompt 那条链）。
+>
+> 4. **【新·自坑】EXEC 摘要块是 `<section class="exec">`（不是 `<div class="exec">`）。**
+>    结构：`<section class="exec"><h2>…</h2><ol><li><span class="num">1</span>
+>    <div class="body"><span class="label …">…</span>…</div></li>…</ol></section>`；
+>    卡片标题是 `<div class="card-title">`。用 `<h4>` 抓 EXEC 标题会 **0 命中**（我今天第一次
+>    就写错了，正则不报错、直接静默判 FAIL）。
+>    **10-26 记忆里的「EXEC 拷贝即事故」今天未复发**：4 条 EXEC 与当天 24 张卡的重合度
+>    8 / 18 / 34 / 39（阈值 ≥2 即通过）。
+>
+> 5. **【沿用】首页仍无 minimax 综合卡 → 合法空操作，`homepage_minimax_card_updated=false`。**
+>    今天实测首页 4 张卡全 PASS（gpt-products 2026-10-26/37 期 · gpt-academic 2026-10-26/7 期 ·
+>    minimax-products 2026-10-26/75 期 · minimax-academic 2026-10-20/1 期），
+>    **期数仍必须从 slot 目录实测派生**（并行 cron 今天改过 3 张卡，硬编码必误报）。
+>    另：`ai-daily/minimax` slot 目录今天实测 **86 期**（首页无此卡，但 slot 入口页要用）。
+
+
 ## 一、你的角色
 
 你是 **minimax 简报审核员 + 双循环全自动修复执行者**。
