@@ -562,6 +562,33 @@ duration: Xm Ys
     → 用 curl 探针得出的「能开 / 打不开」结论可能与 audit 脚本正好相反。
     **探针一律用 Python + 与 audit 脚本相同的 HEADERS**，否则结论不可迁移。
 
+26. **【新·P0 假阴性 D】本地代理瞬时 502 / Timeout = 链路抖动，不是坏链 —— 新增 `transient` 重试类**
+    2026-10-26 首轮 audit 报 2 条 P0（`m.cnyes.com/news/id/6635816`、
+    `www.cfi.cn/p20261025001431.html`，error 均为 `Timeout`）。
+    Python 同口径探针（4 组 UA × 2 轮 + 免校验 + HTTP 降级）：**两条都是 200 且正文命中卡片主题词**
+    —— cnyes 首轮 502 → 次轮 200（179724 B，标题「定義下一代決策模型 螞蟻數科推出LingDT-Decision-1.0」）；
+    cfi.cn 首轮 Timeout → 次轮 200（5642 B，标题「Optimus量产启动 物理AI催化人形机器人新周期」）。
+    **根因**：本机 Clash fake-IP 代理偶发 **502 Bad Gateway** 或连接超时，**下一轮即恢复**。
+    ⚠️ **不重试就换源 = 把好链接换成内容不对的链接，比原链更糟。**
+    **修法**（已进 `scripts/audit-products-minimax-daily-10-26.py`）：
+    `status is None`（Timeout / URL Error / Exception）**或** `status ∈ {502,503,504}` 时，
+    退避重试 3 次（HEADERS / curl-UA 交替，2s/4s/6s），命中 200 即 pass 并打 `transient_retry_ok`；
+    **重试全部失败仍计 P0**（真问题不放过）。
+    **回归证明**：`2026-10-26/_scratch/verify-transient-class-1026.py` 注入 2 条瞬时错误 →
+    `transient_retry_ok=2 / P0=0 / verdict=PASS`，其余 107 条零误伤。
+    **判据**：报错是 `Timeout` 或 `502/503/504` → **先重试再判定**；
+    只有 404 / fake-200 / 5xx / 连接层错误才换源。
+27. **【新】相关性判定要用「锚点文字 vs 页面标题」，别用猜出来的关键词**
+    2026-10-26 误判两次：
+    (a) c21 卡的 `wenzhou.gov.cn`（正文无「启元 / 5000」）被判「与卡片无关」→
+        实际对应「温州第一届具身智能机器人与应用论坛 + 亚龙轮式人形机器人发布」，**锚点标签已写明**；
+    (b) `cfi.cn` 那条对应「Optimus 量产启动」，本来就不是启元故事。
+    一张卡可以有**多个侧面**的链接（启元交付 / 温州论坛 / Optimus 爬坡 / 宇树累计），
+    只要**锚点文字 == 页面标题**就算相关 —— **不要求每条链接都覆盖卡片标题里的每个数字**。
+    ⚠️ **繁体站**（`m.cnyes.com` 正文是繁体：螞蟻數科 / 多選）用简体关键词 grep → 全 MISSING → 误判无关。
+    **修法**：繁体站的关键词表必须同时含简繁两种写法（螞蟻/蚂蚁、多選/多选、量產/量产、產能/产能）；
+    最终以**页面 `<title>`** 为准。
+
 ---
 
 ## 元信息
@@ -570,5 +597,5 @@ duration: Xm Ys
 - **基础版本**：fork 自 minimax 综合 audit v2.7 编排提示
 - **维护者**：Mavis（minimax 产业 slot 审核）
 - **配套 cron**：`ai-products-brief-minimax`（07:00 生成）+ 本编排（07:30 审核）
-- **最后更新**：2026-10-25（补入踩坑 22–25：conn_reset 连接层假阴性 / slot 入口页 title 陈旧 / slot 页结构 / curl 与 urllib 代理口径差异；2026-10-25 双循环 PASS，audit 补换 1 条 P0 + 修 1 处 slot title）
+- **最后更新**：2026-10-26（补入踩坑 26–27：代理瞬时 502/Timeout 假 P0 → audit 脚本新增 `transient` 重试类并做注入式回归证明；相关性判定改用「锚点文字 vs 页面标题」+ 繁简变体注意；2026-10-26 双循环 PASS，2 条 P0 均为代理抖动误判 → 链接保留未换源）
 - **反馈渠道**：自动化脚本的 bug、autofix 失败 case、portal-template 路径耦合问题都直接编辑本提示
