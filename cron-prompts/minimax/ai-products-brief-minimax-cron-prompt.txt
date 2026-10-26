@@ -1,3 +1,20 @@
+# 2026-10-20 用户修正（覆盖下文冲突 · 2026-10-26 重建并补入 live 副本）
+
+先完整读取项目 `AGENTS.md`、`repo/AGENTS.md` 和 `prompts/AI产品产业每日简报.md` 的 A–G 及继承质量规则。
+**直接使用该现存完整提示词**,不依赖下文已缺失的 `minimax-产品产业每日简报.md`(该文件不存在,读到即视为路径错误)。
+将出品模型及路径限定为 MiniMax、`ai-products/minimax/`、状态 `.cron-state-products-minimax.json`,其他模型正文禁止改写。
+
+首页只有 GPT 产业 / GPT 学术 / MiniMax 产业 / MiniMax 学术;
+**统一运行 `python repo/scripts/render_portal.py --repo repo --workspace .`**,不得按旧脚本全局替换日期/期数或恢复综合/Claude 栏目。
+产业版不混入纯论文,数量与引用随真实证据,不机械凑固定引用数 —— **但 24 张卡 / 6 主题 / 每卡 4–6 条链接的结构仍是硬门槛**(见 Step 3),「不机械凑」指卡内引用条数与证据数不硬凑。
+更新本栏入口及归档,保留历史。
+
+> **2026-10-26 补充**:下文 Step 4.2–4.6 的部署段已按真实仓库结构订正
+> (slot 入口页 = `status` / `title` / `primary href`;归档 = `render_archives.py` 重建;
+> 首页 = `render_portal.py` 渲染,锚点用 `data-edition="minimax-products"`,旧的 `model-name` 锚点已失效)。
+
+下文只作无冲突编排参考。
+
 你是 Mavis,作为 **minimax** 模型（MiniMax 系）出品每日 AI 产品产业简报。今天是 $DATE (Asia/Shanghai)。这是 **minimax 产业 slot 专属** 的编排提示,与 gpt 产品产业编排提示完全平行,所有路径和责任范围都属于 minimax 产业,绝不写到 gpt 产业名下的文件。
 
 # 一、强制前置：读 prompt 文件
@@ -143,10 +160,77 @@
 ## Step 2.5: 24-48h 新鲜度强制过滤
 所有候选必须 date >= 今天-1(48 小时内)。否则 `[STALE]` 剔除。
 
-## Step 2.6: URL 真实 fetch 验证
-对每个候选做 webfetch,标记 [OK] / [DEAD] / [FAKE-200] / [NO-REF]。
-**绝不允许"假设的 URL"**进入 candidates。
-news.qq.com / 企鹅号 / so.html5.qq.com 链接必须 webfetch 验证,假 200 一律剔除。
+## Step 2.6: URL 真实 fetch 验证(2026-07-11 升级)
+
+> **用户硬性要求**:7-11 简报里 32 条 deep_link_only(首页/目录页)+ 5 条 fail,用户体验差。cron 必须严格验证每条 URL,失败则重新搜索,不接受降级到首页。
+
+对每个候选的所有 URL 做 webfetch,执行以下 5 步验证:
+
+```python
+def validate_url_strict(url, card_keywords):
+    """返回 (status, level, error)"""
+    # Step 1: fetch
+    try:
+        content = webfetch(url, timeout=15)
+    except Exception as e:
+        return ('fail', 'fetch_error', str(e)[:80])
+
+    if not content or len(content) < 200:
+        return ('fail', 'empty_body', 'body too short')
+
+    # Step 2: fake-200 检测
+    fake_200_signals = ['宝贝回家', 'babyhome', '您访问的页面不存在', 'page not found',
+                        '404 Not Found', 'Access Denied', '请输入验证码']
+    if any(s in content for s in fake_200_signals):
+        return ('fail', 'fake_200', 'page content is 404/wall')
+
+    # Step 3: 禁止首页/目录页模式
+    import re
+    homepage_patterns = [
+        r'^https?://[^/]+/?$',                          # https://example.com/
+        r'^https?://[^/]+/(index\.html)?$',             # https://example.com/index.html
+        r'^https?://[^/]+/blog/?$',                     # /blog 索引
+        r'^https?://[^/]+/news/?$',                     # /news 索引
+        r'^https?://[^/]+/blog/index\.html?$',
+        r'^https?://[^/]+/products?/?$',                # 产品列表
+        r'^https?://[^/]+/articles?/?$',                # 文章列表
+    ]
+    for pat in homepage_patterns:
+        if re.match(pat, url):
+            return ('fail', 'homepage', f'url 命中禁止首页模式 {pat}')
+
+    # Step 4: 禁止企鹅号 / 微信公众号
+    if 'so.html5.qq.com' in url or 'mp.weixin.qq.com' in url or 'new.qq.com/rain' in url:
+        return ('fail', 'wechat_closed', '企鹅号/微信封闭生态,公网不可达')
+
+    # Step 5: 主题词匹配(至少 1 个 card 关键词出现在 body)
+    body_lower = content.lower()
+    matched = sum(1 for kw in card_keywords if kw.lower() in body_lower)
+    if matched < 1:
+        return ('fail', 'topic_mismatch', f'no card keyword in body ({matched}/3+)')
+
+    return ('pass', 'pass', '')
+```
+
+**标记规则**(沿用通用版):
+- `[OK]`: Step 1-5 全过
+- `[DEAD]`: fetch_error / http 4xx 5xx
+- `[FAKE-200]`: 内容是 404 / babyhome / 验证页
+- `[HOMEPAGE]`: URL 命中禁止模式
+- `[WECHAT-CLOSED]`: 企鹅号/微信
+- `[TOPIC-MISMATCH]`: 主题不匹配
+- `[NO-REF]`: 任何 fail
+
+**重试策略**:每条候选的所有 URL 跑 validate_url_strict。
+- ≥ 1 个 URL 通过 → 保留,移除 fail 的 URL
+- 全部 URL fail → web_search 重找真源(限 3 次,不限 site:)
+- 仍找不到 → 标记 `[NO-REF]`,降级为"二手解析"卡(不写 reference),或删除该卡
+
+**绝对禁止**:
+- ❌ "假设的 URL"进入 candidates(LLM hallucination)
+- ❌ URL fetch 失败时降级到产品/机构首页
+- ❌ 企鹅号 / 微信生态作为 reference
+- ❌ 媒体首页(无具体文章)作为主来源
 
 ## Step 2.7: 7 天去重(从 minimax 产业历史去重)
 **注意:只读 minimax 产业 slot 历史**,不是 gpt 产业的、不是 minimax 综合的:
@@ -155,12 +239,18 @@ news.qq.com / 企鹅号 / so.html5.qq.com 链接必须 webfetch 验证,假 200 �
 - 候选标题与 minimax 产业历史标题有 ≥3 个共同关键词(>3 字符)→ `[DEDUPLICATED]`
 - 例外:同一事件的"后续进展"不去重(如 0705 minimax 产业写过"Anthropic ARR $4B" → 0706 minimax 产业写"ARR $5B" 保留)
 
+**新增(2026-07-11)**:与当天 gpt 产业 slot 互查,避免同一事件 minimax 和 gpt hallucination 出不同 URL:
+- 读 `repo/ai-products/gpt/{today}/index.html`(如果存在)
+- 提取所有 URL,如果同一事件 gpt 已经用了**可信 URL**,minimax 优先复用(不重复搜索)
+
 ## Step 2.8: 事件指纹去重 + 公司频率限制
 - 指纹 = `{company}|{event_type}`(沿用通用版)
 - **公司频率**(minimax 沿用通用版,更严格):同公司原则上最多 2 张卡
 - 资本级事件(融资/IPO) 同公司每日 ≤ 1 张(重大事件可破例)
 - 产品发布同公司每日 ≤ 1 张(旗舰级发布可破例到 2 张)
 - 政策/监管事件同公司每日 ≤ 1 张(国家级立法可破例)
+
+**新增(2026-07-11)**:**URL 跨卡去重**:同一 URL 不能作为 2 张不同卡的 reference(避免被滥用为"通用源")。
 
 ## Step 3: 筛选 + 生成(15-20 分钟)
 按 minimax 派生产业版 §2/§3/§5:
@@ -201,160 +291,198 @@ news.qq.com / 企鹅号 / so.html5.qq.com 链接必须 webfetch 验证,假 200 �
 - [ ] 没有 minimax 编辑签名段
 - [ ] 公开 HTML 没有任何内部审计/路径/cron 信息
 
+**Step 3.5 新增(2026-07-11)·URL 零首页自检(必须通过才能 commit)**:
+
+```python
+import re
+with open(f"D:\\ECNU\\其他\\每日AI推送\\{date}\\index-products-minimax.html", 'r', encoding='utf-8') as f:
+    html = f.read()
+
+# 禁首页模式
+banned_patterns = [
+    (r'href="https?://[^/]+/?"', '机构/产品首页(必须换具体文章)'),
+    (r'href="https?://[^/]+/blog/?"', 'blog 索引页'),
+    (r'href="https?://[^/]+/news/?"', 'news 索引页'),
+    (r'href="https?://[^/]+/articles?/?"', 'articles 索引页'),
+    (r'href="https?://[^/]+/products?/?"', 'products 索引页'),
+    (r'href="[^"]*so\.html5\.qq\.com/', '企鹅号转载(封闭生态)'),
+    (r'href="[^"]*mp\.weixin\.qq\.com/s/', '微信公众号原文(封闭生态)'),
+    (r'href="https?://new\.qq\.com/rain/', '腾讯 news.qq.com(fake-200 重灾区)'),
+]
+
+# 一手源数量统计
+primary_count = 0
+for h in re.findall(r'href="(https?://[^"]+)"', html):
+    if any(domain in h for domain in ['.gov.cn', '.gov/', 'sec.gov', 'hkex.com.hk', 'github.com', 'arxiv.org', 'nature.com', 'science.org']):
+        primary_count += 1
+
+# 自检
+fail_count = 0
+for pat, desc in banned_patterns:
+    matches = re.findall(pat, html)
+    if matches:
+        print(f"⚠ 自检 FAIL [{desc}]: {len(matches)} 处")
+        for m in matches[:3]:
+            print(f"    {m}")
+        fail_count += len(matches)
+
+# 一手源数量
+if primary_count < 12:
+    print(f"⚠ 自检 FAIL [一手源不足]: {primary_count} < 12")
+    fail_count += (12 - primary_count)
+
+if fail_count > 0:
+    print(f"\n=== 自检 FAIL count: {fail_count} ===")
+    print("**禁止 commit + push**。必须 web_search 找真源替换或删除该卡。")
+    # 触发 autofix: web_search 找真源
+    # 限 3 次,失败标记 partial_skip
+    raise Exception("Step 3.5 自检 FAIL,不能 commit")
+else:
+    print("✓ Step 3.5 自检 PASS - 24 张卡无首页/企鹅号/微信/缺源")
+```
+
+**自检 FAIL 时的处理**:
+1. 列出所有 fail URL
+2. 对每条 fail URL 重新 web_search(限 3 次,不限 site:)
+3. 找到真源 → patch HTML
+4. 找不到 → 标记 partial_skip,或删除该 reference,或降级该卡
+5. 全部处理完后重跑自检,直到 PASS 才能进 Step 4
+
+**绝对禁止**:自检 FAIL 时仍然 git commit + push。
+
 ## Step 4: 部署(minimax 产业 slot 专属,严格只动 minimax 产业名下文件)
 
 按顺序执行(**顺序不能错**,中间失败回滚):
 
 ### 4.1 复制简报到归档(minimax 产业 slot)
 ```powershell
-$dailyHtml = "D:\ECNU\其他\每日AI推送\$DATE\index-products-minimax.html"
+$dailyHtml = "D:\ECNU\其他\每日AI推送\$DATE\index-products-minimax-$DATE.html"
 $destDir = "D:\ECNU\其他\每日AI推送\repo\ai-products\minimax\$DATE"
 if (Test-Path $dailyHtml) {
     New-Item -ItemType Directory -Force -Path $destDir | Out-Null
     Copy-Item $dailyHtml "$destDir\index.html" -Force
     Write-Host "✓ minimax products daily → ai-products/minimax/$DATE/index.html"
 } else {
-    Write-Host "✗ Daily brief not found"; exit 1
+    Write-Host "✗ Daily brief not found: $dailyHtml"; exit 1
 }
 ```
+> 简报文件名带日期后缀:`index-products-minimax-$DATE.html`。旧文档写的 `index-products-minimax.html` 不存在。
+
 **绝不写到** `repo/ai-products/gpt/`(那是 gpt 产业的)或 `repo/ai-daily/...`(那是综合简报的)。
-
 ### 4.2 更新 minimax 产业入口页 ai-products/minimax/index.html
-首次部署:把"首期筹备中"占位换成正式卡片(参考 `repo/ai-products/gpt/index.html` 的结构):
-- `<span class="status">首期简报筹备中</span>` → `<span class="status">最新一期 · YYYY-MM-DD · N 条</span>`
-- `<a class="primary" href="./archive.html">往期归档</a>` → `<a class="primary" href="./YYYY-MM-DD/">阅读最新</a> + <a href="./archive.html">往期归档</a>`
 
-后续部署:只改 3 处:
-- `<p>最新一期：<span class="date">YYYY-MM-DD</span></p>` → 今天
-- `<p>N 期已收录</p>` → 实际期数(扫描 ai-products/minimax/ 子目录数)
-- `<a class="primary" href="./YYYY-MM-DD/">阅读最新</a>` → 今天
+**实测结构(2026-10-26 为准;旧文档的 `<p class="date">` / `<p>N 期已收录</p>` 早已不存在,照抄等于没改)**:
+- `<title>AI 产品产业每日简报 · minimax · YYYY-MM-DD</title>`
+- `<span class="status">最新一期 · YYYY-MM-DD · N 期</span>`
+- `<a class="primary" href="./YYYY-MM-DD/">阅读最新</a>`
+
+**必须改 3 处,缺一不可**:
+1. `<title>` 里的日期 → 今天
+2. `<span class="status">最新一期 · …</span>` → 今天 + 实际期数(扫描 `repo/ai-products/minimax/` 下匹配 `^\d{4}-\d{2}-\d{2}$` 的子目录数)
+3. `<a class="primary" href="./YYYY-MM-DD/">阅读最新</a>` → 今天
+
+**改完必须回读断言**:`<title>` 里的日期 == 今天、status 的期数 == 目录实测数。
+> 2026-10-25 事故:只改了 status 和 href,**漏改 `<title>`** → 浏览器标签/SEO 停在旧日期连续 4 天,正文却写「最新一期 2026-10-25」,自相矛盾,已由 audit cron 兜底修过一次。
 
 ### 4.3 更新 minimax 产业归档 ai-products/minimax/archive.html
-在 `<ul class="archive-list">` 顶部插入新 `<li class="archive-item" data-model="minimax">`:
-```html
-<li class="archive-item" data-model="minimax">
-  <div class="left">
-    <div class="date">$DATE <span class="model-pill">minimax</span></div>
-    <div class="title">{今日 24 张卡精炼主标题,≤ 30 字}</div>
-    <div class="summary">{今日 4 项 exec 摘要,≤ 200 字}</div>
-  </div>
-  <div class="right"><a class="open-btn" href="./$DATE/index.html">查看 →</a></div>
-</li>
-```
-其他旧条目**不动**。
 
-### 4.4 更新 portal-template.html 首页源(minimax 产业卡片部分)
-**这是首页的源文件**(`D:\ECNU\其他\每日AI推送\portal-template.html`),gpt cron 每天会从这里重新生成 `repo/index.html`。
-minimax 产业改这里的 minimax 产业卡片,gpt cron 重新生成时会把变更带过去。
+**不要手工插 `<li>`** —— 归档由 `repo/scripts/render_archives.py` 从每一期的 `archive.json` 重建。
+旧文档教的手工结构(`<li class="archive-item" data-model="minimax">` + `<span class="model-pill">`)已被渲染器取代,
+当前真实结构是:
+`<li class="archive-item" data-path="ai-products/minimax/$DATE" data-date="$DATE" data-available="true">`
++ `.edition-pill` + 来自该期 `archive.json` 的 title / summary。
 
-只改 minimax 产业 card 块内 3 个字段(用派生版 §6.2.1 的 PowerShell regex):
-- **字段 A** 最新日期: `<span>最新：YYYY-MM-DD</span>` → 今天
-- **字段 B** 收录数(倒装): `<span>已收录 N 期</span>` → minimax 产业 slot 实际期数
-- **字段 C** 阅读最新链接: `href="./ai-products/minimax/YYYY-MM-DD/"` → 今天
+**正确做法**:
+1. 写 `repo/ai-products/minimax/$DATE/archive.json`:`{"title": "<8-100 字、事件化标题>", "summary": "<40-200 字摘要>"}`
+   —— 两个长度都要**写断言**,超长会被渲染器丢掉整条记录
+2. `python scripts/render_archives.py --repo . --workspace ..`
+3. `python scripts/render_archives.py --repo . --check` → 期望 `changed=[]`
+4. 断言 slot `archive.html` 里出现 `ai-products/minimax/$DATE`
 
-**重要**:字段 B 用倒装"已收录 N 期",**绝不**写成"N 期已收录"。原因:与 minimax 综合简报规则一致,避开 gpt cron 的 regex 覆盖。
+### 4.4 更新首页(`repo/index.html` 部署版 + `portal-template.html` 源)—— **用官方渲染器,禁止手改卡片**
 
-**gpt card 块、minimax 综合 card 块、minimax 产业 card 块以外的位置完全不动**。
+> **2026-10-26 订正**:旧文档让你用 regex 直接改 `portal-template.html` 和 `repo/index.html` 里的
+> `<span class="model-name">minimax · global products</span>` 卡片块。**该锚点已不存在**:
+> `portal-template.html` 里根本没有卡片(只有 `<!-- EDITION_CARDS -->` 占位符),4 张卡是
+> `repo/scripts/render_portal.py` 运行时按真实 slot 目录注入的,结构为
+> `<section class="card model-card" data-edition="minimax-products">`。
+> 所以那些 regex **永远匹配不到、静默空转** —— 这正是 2026-07-10「minimax cron 跑完公网首页仍是最旧日期」的根因。
 
-**首次部署特殊处理**:
-- 把占位的"首期筹备中 / 0 期已收录"状态改为正式:"MiniMax 维护的全球 AI 产业链简报" + "最新：YYYY-MM-DD" + "已收录 1 期"
-- 把 `href="./ai-products/minimax/"` 链接改为 `href="./ai-products/minimax/YYYY-MM-DD/"`
-- `model-desc` 改为 "MiniMax 维护的全球 AI 产品产业链简报：监管、资本、算力、平台、产品采用与安全信任。"
-
-**PowerShell 示例**:
+**正确做法(两条命令,顺序不能错)**:
 ```powershell
-$portalPath = "D:\ECNU\其他\每日AI推送\portal-template.html"
-$content = Get-Content $portalPath -Encoding UTF8 -Raw
-
-# 字段 A:minimax 产业 最新日期(限定在 "minimax · global products" card 块内)
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?<span>最新[：:]?)\d{4}-\d{2}-\d{2}', "`$1$date"
-
-# 字段 B:minimax 产业 收录数(倒装,限定在 "minimax · global products" card 块内)
-$minimaxProductsCount = (Get-ChildItem -Path "D:\ECNU\其他\每日AI推送\repo\ai-products\minimax" -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}$' }).Count
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?<span>已收录 ?)\d+( ?期</span>)', "`$1$minimaxProductsCount`$2"
-
-# 字段 C:minimax 产业 阅读最新链接(path 含 ai-products/minimax/)
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?href="\./ai-products/minimax/)\d{4}-\d{2}-\d{2}(/)"', "`$1$date`$2"
-
-Set-Content $portalPath -Value $content -Encoding UTF8 -NoNewline
+Set-Location "D:\ECNU\其他\每日AI推送\repo"
+python scripts/render_portal.py --repo . --workspace ..
+# 期望输出: {'editions': 4, 'latest': '$DATE'}
 ```
+- `render_portal.py` 从 `repo/ai-products/<model>/` 等**真实目录**派生每张卡的日期与期数,直接写 `repo/index.html`(部署版),
+  并同步刷新 base 镜像的 `index.html` / `portal-template.html`。
+- **这一步就是「直接 patch 部署版 repo/index.html」的正确实现**,不需要手写 regex,也不会误伤其它三张卡。
+- 之后 `repo/portal-template.html` **无需改动**(它不含卡片内容),git 里也不会因此产生 diff。
 
-### 4.4b 直接 patch 部署版 `repo/index.html` (独立更新 minimax 产业卡片,绕过 gpt cron 二次生成)
-
-> **2026-07-11 用户明确要求**:minimax cron 跑完必须**立即**在公网首页看到 minimax 产业卡片更新,不能等 gpt cron 9:00 二次生成。
-> 之前只改 portal-template.html 会导致:minimax 产业 07:00 跑完 → 用户看首页仍是最旧的 → 必须等 09:00 gpt cron 才能刷新。
-> 现在**两个地方都改**:portal-template.html(源)+ repo/index.html(部署版,保证立即生效)。
-
-**PowerShell 示例**:
-```powershell
-$deployedIndex = "D:\ECNU\其他\每日AI推送\repo\index.html"
-$repoMinimaxProductsPath = "D:\ECNU\其他\每日AI推送\repo\ai-products\minimax"
-$content = Get-Content $deployedIndex -Encoding UTF8 -Raw
-
-# 计算 minimax 产业 slot 实际期数
-$minimaxProductsCount = (Get-ChildItem -Path $repoMinimaxProductsPath -Directory -ErrorAction SilentlyContinue |
-    Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}$' }).Count
-
-# 字段 A:minimax 产业 最新日期(限定在 "minimax · global products" card 块内)
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?<span>最新[：:]?)\d{4}-\d{2}-\d{2}', "`$1$date"
-
-# 字段 B:minimax 产业 收录数(倒装"已收录 N 期",限定在 "minimax · global products" card 块内)
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?<span>已收录 ?)\d+( ?期</span>)', "`$1$minimaxProductsCount`$2"
-
-# 字段 C:minimax 产业 阅读最新链接(限定在 "minimax · global products" card 块内,path 含 ai-products/minimax/)
-$content = $content -replace '(<span class="model-name">minimax · global products</span>[\s\S]*?href="\./ai-products/minimax/)\d{4}-\d{2}-\d{2}(/)"', "`$1$date`$2"
-
-Set-Content $deployedIndex -Value $content -Encoding UTF8 -NoNewline
-Write-Host "✓ patched repo/index.html minimax 产业卡片: latest=$date count=$minimaxProductsCount"
-```
-
-**关键安全点**:
-- `[\s\S]*?` 限定在 model-name 块内,绝不跨过下一个 `<section class="model-card">`
-- model-name 严格匹配 `>minimax · global products<`,不匹配 `>minimax<`(那是综合 card)
-- 字段 B 倒装"已收录 N 期",gpt card 用的"N 期已收录"不匹配此 regex
-- 字段 C path 限定 `ai-products/minimax/`,不匹配 `ai-daily/minimax/`
-
-**gpt 综合 / gpt 产业 / minimax 综合 card 完全不动**(只动 minimax 产业 card)。
-
-### 4.4c 把 portal-template.html 和 repo/index.html 一起 commit + push
+### 4.4b 校验部署版首页卡片(必做,不能只看命令输出)
 
 ```powershell
-Set-Location D:\ECNU\其他\每日AI推送\repo
-git add portal-template.html index.html
-git diff --cached --stat  # 应显示两个文件改动
+$h = Get-Content "D:\ECNU\其他\每日AI推送\repo\index.html" -Encoding UTF8 -Raw
+$blk = [regex]::Match($h, '<section[^>]*data-edition="minimax-products"[\s\S]*?</section>').Value
+if (-not $blk) { throw "找不到 minimax-products 卡片块" }
+$A = [regex]::Match($blk, '<span>最新[：:]?\s*([\d-]+)</span>').Groups[1].Value
+$B = [regex]::Match($blk, '<span>已收录\s*(\d+)\s*期</span>').Groups[1].Value
+$C = [regex]::Match($blk, 'href="\./ai-products/minimax/([\d-]+)/"').Groups[1].Value
+$cnt = (Get-ChildItem "D:\ECNU\其他\每日AI推送\repo\ai-products\minimax" -Directory |
+        Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}$' }).Count
+if ($A -ne $DATE)      { throw "字段A 日期错: $A" }
+if ($B -ne "$cnt")     { throw "字段B 期数错: $B != $cnt" }
+if ($C -ne $DATE)      { throw "字段C href 错: $C" }
+Write-Host "✓ 首页 minimax 产业卡片: $A / $B 期 / ./ai-products/minimax/$C/"
 ```
 
-> **重要**:portal-template.html 改动是为 gpt cron 09:00 跑时同步;repo/index.html 改动是为公网立即生效。**两个文件必须一起 commit**,否则 git push 顺序会乱。
+**关键边界(别再踩)**:
+- 锚点用 `data-edition="minimax-products"`,**不要**用 `model-name` 文本(已不存在),也不要只匹配 `minimax` 文本(会命中 minimax 学术卡)
+- 字段 A 的冒号要兼容中英文:minimax 产业卡是 `最新：`(中文全角),gpt 卡是 `最新:`(英文半角)→ 正则统一写 `最新[：:]?`
+- 字段 B 两种写法并存:gpt 综合/产业卡是 `N 期已收录`,minimax 两张卡是 `已收录 N 期`(倒装)→ 正则只写 `已收录\s*(\d+)\s*期`,且**必须限定在 `data-edition` 块内**,否则会误匹配
+- 期数永远**从 slot 目录实测**(`Get-ChildItem` 数日期子目录),不要抄别处写死的数字 —— 并行 cron 会同时改别的卡
 
-### 4.5 更新总归档 archive.html
-在 `<ul class="archive-list">` 顶部插入新条目,标注 model-pill minimax:
-```html
-<li class="archive-item" data-model="minimax">
-  <div class="left">
-    <div class="date">$DATE <span class="model-pill">minimax</span></div>
-    <div class="title">{今日 24 张卡精炼主标题,≤ 30 字}</div>
-    <div class="summary">{今日 4 项 exec 摘要,≤ 200 字}</div>
-  </div>
-  <div class="right"><a class="open-btn" href="./ai-products/minimax/$DATE/index.html">查看 →</a></div>
-</li>
+### 4.4c commit + push(只 stage 本 cron 的文件)
+
+```powershell
+Set-Location "D:\ECNU\其他\每日AI推送\repo"
+git add -- index.html ai-products/minimax/
+git diff --cached --stat
 ```
-**briefs.html 由 gpt cron 维护**,minimax 产业 cron **不写** briefs.html。
+- **禁止 `git add -A`**:并行 cron(gpt 综合/产业、minimax 综合)同时在同一个 repo 提交,`-A` 会把别人的改动一起带进本次 commit
+- 预期 staged 文件:`index.html` + `ai-products/minimax/$DATE/index.html` + `ai-products/minimax/$DATE/archive.json`
+  + `ai-products/minimax/index.html` + `ai-products/minimax/archive.html` + `ai-products/minimax/briefs.html`
+- `repo/index.html` 里其它三张卡的字段由 `render_portal.py` 自动派生,**随本次 commit 进版本库是正常的**
+- 你的 sha 从 `git log --oneline -2` 取(**推完之后并行 cron 可能还会再推一个 commit,`git rev-parse HEAD` 会拿到别人的 sha**)
+
+### 4.5 总归档 archive.html / briefs.html
+
+**同样不要手工插 `<li>`** —— `scripts/render_archives.py` 会从**所有** edition 的 `archive.json` 重建
+`repo/archive.html`、`repo/briefs.html` 以及各 slot 的 `archive.html` / `briefs.html`。
+真实结构同 4.3:`data-path="ai-products/minimax/$DATE"`,标题与摘要取自该期 `archive.json`。
+
+- 跑完 4.3 的 `render_archives.py` 后,总归档里的 minimax 产业条目**自动出现**,无需额外操作
+- 断言 `repo/archive.html` 与 `repo/briefs.html` 都含 `ai-products/minimax/$DATE`
+- 旧文档「briefs.html 由 gpt cron 维护,minimax 产业 cron 不写 briefs.html」**已过时**:渲染器会重建 briefs.html,
+  因此本次 commit 里 `briefs.html` 出现 diff 是正常的,不是误改
+- 若 `render_archives.py --check` 报 changed,说明还有别的 slot 缺 `archive.json`,**不要手改 HTML**,回去补 archive.json
 
 ### 4.6 git add + commit + push
 ```powershell
-Set-Location D:\ECNU\其他\每日AI推送\repo
+Set-Location "D:\ECNU\其他\每日AI推送\repo"
 git status --short
 # 预期改动:
 #   repo/ai-products/minimax/$DATE/index.html (新建)
-#   repo/ai-products/minimax/index.html (改)
-#   repo/ai-products/minimax/archive.html (改)
-#   repo/portal-template.html (改 - 只 minimax 产业卡片,Step 4.4)
-#   repo/index.html (改 - 只 minimax 产业卡片,Step 4.4b,**关键:公网立即生效**)
-#   repo/archive.html (改 - 加 minimax 产业条目)
+#   repo/ai-products/minimax/$DATE/archive.json (新建)
+#   repo/ai-products/minimax/index.html (改 - status / title / href)
+#   repo/ai-products/minimax/archive.html (改 - 顶部新增本期)
+#   repo/ai-products/minimax/briefs.html (改 - 顶部新增本期,渲染器重建)
+#   repo/index.html (改 - 4 张卡字段由 render_portal.py 派生,**关键:公网立即生效**)
 
-git add -A
+git add -- index.html ai-products/minimax/     # 禁止 git add -A(并行 cron 会串台)
 git commit -m "feat(minimax-products): $DATE AI products industry brief"
 git push origin main
+git log --oneline -2     # 取自己的 sha,不要用 git rev-parse HEAD
 ```
 
 ### 4.7 部署验证(30s 后)
