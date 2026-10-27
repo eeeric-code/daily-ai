@@ -235,6 +235,69 @@
 >    另：`ai-daily/minimax` slot 目录今天实测 **86 期**（首页无此卡，但 slot 入口页要用）。
 
 
+> ⚠️ **2026-10-27 六条更新（本次 audit 实测得出，优先级高于下面所有正文）**：
+>
+> 1. **【最重要·新】机场节点挂掉（HTTP 521）= 海外链路全断，不是内容缺陷。**
+>    今天 08:15 起 brief cron 就报 `arxiv.org / github.com / huggingface.co / sec.gov /
+>    openai.com / anthropic.com 本机不可达`，09:20 audit 首跑 **23 条 P0**（18 arxiv +
+>    3 github + 2 huggingface），10:29 复测全好 —— 全是假 P0。
+>    **诊断手法（3 步，2 分钟出结论）**：
+>    | 步 | 命令 | 判据 |
+>    |---|---|---|
+>    | 1 | `Resolve-DnsName github.com -Type A` | 返回 `198.18.x.x` = Clash fake-IP（本机 DNS 正常） |
+>    | 2 | `Get-Content "$env:APPDATA\io.github.clash-verge-rev.clash-verge-rev\logs\service\service_latest.log" -Tail 40` | 出现 `dial <机场组> ... unexpected status: 521` = **机场服务端挂了** |
+>    | 3 | 拿国内站对照：`Invoke-WebRequest https://www.qbitai.com/` | 国内 200 + 海外挂 = **代理线路问题，与内容无关** |
+>    日志原文样例：`[TCP] dial 亏本机场 (match DomainKeyword/github) 127.0.0.1:9605 -->
+>    github.com:443 error: 172.64.229.30:443 connect error: unexpected status: 521 <none>`
+>    → **处置：绝不换源**（换了会把内容正确的链接换成内容不对的链接，比原链更糟）。
+>      正确做法 = 退避重试 + **等链路恢复后重跑 audit**，别在断网窗口里改 HTML。
+>    → 链路恢复是**分钟级到小时级**的，今天 10:29 前后自行恢复（arxiv/github/hf/pages.dev 全 200）。
+>
+> 2. **【新】daily 版 audit 脚本今天补上 `transient` 重试类（端口自 10-26 products 版）。**
+>    10-26 只给 **products** 版加了 transient 重试类，**daily 版漏了** → 今天首跑 23 条 P0
+>    里 21 条是链路抖动假 P0，只有 2 条（huggingface）需要重试救回。
+>    **明天请用 `scripts/audit-minimax-daily-10-27.py`**（已含 transient 类）：
+>    `status is None`（URLError/Timeout）或 502/503/504 → 退避重试 3 次，
+>    命中 200 记 `transient_retry_ok=True` 并判 pass；**重试全失败仍计 P0**。
+>    → 顺带把 daily 版 `FALLBACK_HEADERS` 也留了（Chrome UA + Sec-Fetch 三件套 + curl UA）。
+>
+> 3. **【新】注入式回归证明的标准做法**（今天已跑通，模板 `2026-10-27/inject-test-transient.py`）：
+>    复制 audit 脚本 → 在「# 并发检查」前注入 `_attempt` monkeypatch
+>    （目标 URL **首轮**强制返回 `status=None` + URLError，后续放行真实请求）
+>    → 把 `OUTPUT_JSON` 改写到独立文件（别覆盖真实审计结果）
+>    → 断言 `transient_retry_ok >= N` 且 `P0 == 0` 且其余 URL 与基线零误伤。
+>    今天实测：`transient_retry_ok=2 / P0=0 / verdict=PASS / 81 pass + 32 deep_link_pass = 113`。
+>
+> 4. **【新·自坑】Python 打印 audit 输出会踩 GBK 控制台编码**：
+>    `UnicodeEncodeError: 'gbk' codec can't encode character '\ufffd' in position 18`
+>    → harness 开头先 `sys.stdout.reconfigure(encoding="utf-8", errors="replace")`。
+>    注意这会让 harness 以 exit code 1 挂掉，**但 audit 本身已经跑完并写完 JSON** ——
+>    别误判成 audit 失败，直接去读 JSON。
+>
+> 5. **【新】brief cron 今天跑了 2 小时才交付**（08:15 启动 → 10:13 部署 → 10:15 commit）。
+>    audit 09:20 触发时产物还没出来，`index.html` 要到 09:41 才生成。
+>    **恢复检查要轮询等待，别急着判「生成端未就绪」**：
+>    - `2026-10-27\index.html` 存在 **且** `minimax-work\selftest.txt` 最后是 `PASS`
+>      **且** `repo/ai-daily/minimax\<DATE>\index.html` 存在 → 才算交付完成
+>    - 今天 selftest 先 FAIL 4 次（banned 微信链接 / 裸首页 URL ×2 / 6 张卡 desc 缺变量 /
+>      卡 14 缺 🇨🇳 中国动向）→ 09:55 才 PASS，**产物存在 ≠ selftest PASS**
+>    - 判据优先级：**磁盘实际产物 > `.cron-state-minimax.json` 的 flags**
+>      （brief 崩在中途就没人写 state，今天 state 到 10:05 才更新）
+>
+> 6. **【新】公网深度校验脚本模板**：`2026-10-27/verify-cdn-daily.py`（**明天直接复制**）。
+>    覆盖：7 个关键 URL（root / slot 入口 / 当期页 / slot archive+briefs / root archive+briefs）
+>    + 当期页 24 卡 / 6 主题 / 24 desc / src-1 ≥12 / 禁用域 / 裸首页 URL / nav-date
+>    + slot 入口四字段（title/date/count/href，两种结构兼容）
+>    + **首页 4 张卡（期数从 slot 目录实测派生）** + 本地 vs 公网**逐字一致** + 卫生检查。
+>    ⚠️ 写公网校验脚本必然踩 `_No308` 陷阱：**成功分支**也必须判 3xx 并 `urljoin` 跟 Location，
+>    否则拿到「308 + 0 bytes」假 FAIL（今天又一次确认）。
+>
+> **今天基线（期数均从 slot 目录实测派生）**：首页 4 张卡
+> gpt-products 2026-10-26/37 · gpt-academic 2026-10-26/7 · minimax-products 2026-10-27/76 · minimax-academic 2026-10-20/1；
+> `ai-daily/minimax` slot 目录 **87 期**（入口页 title/date/count/href 四项全对）；
+> 首页**仍无 minimax 综合卡** → 同步步骤仍是**合法空操作**（`homepage_minimax_card_updated=false`）。
+
+
 ## 一、你的角色
 
 你是 **minimax 简报审核员 + 双循环全自动修复执行者**。
